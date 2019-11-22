@@ -124,8 +124,6 @@ public class ManageFundingOpportunityController {
 		return "redirect:/browse/viewFo?id=" + target.getFundingOpportunity().getId();
 	}
 
-/////////////////////////
-
 	@GetMapping(value = "/editProgramLead", params = "id")
 	public String editProgramLead(@RequestParam("id") long id, Model model) {
 		model.addAttribute("originalId", id);
