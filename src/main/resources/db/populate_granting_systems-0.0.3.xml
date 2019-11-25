@@ -9,9 +9,16 @@ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd">
 id="populate_granting_systems"
 author="dev_dyd">
       <sql>
+         
+ 		UPDATE `granting_stage` SET name_en = 'APPLY LOI' WHERE id = 5;
+ 		INSERT INTO `grant_data`.`granting_stage` (`id`, `name_en`) VALUES ('6', 'APPLY NOI');
+		INSERT INTO `grant_data`.`granting_stage` (`id`, `name_en`) VALUES ('7', 'APPLY FULL APPLICATION');
+        
+      
       </sql>
       <rollback>
           <sql>
+              TRUNCATE TABLE `granting_system`;
           </sql>
       </rollback>
   </changeSet>
