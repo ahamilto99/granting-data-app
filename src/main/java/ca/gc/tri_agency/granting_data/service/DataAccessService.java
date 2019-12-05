@@ -59,4 +59,8 @@ public interface DataAccessService {
 
 	Map<String, List<FundingCycle>> getAllEndingDates(Long plusMinusMonth);
 
+	Map<String, List<FundingCycle>> getAllDatesNOI(long plusMinusMonth);
+
+	Map<String, List<FundingCycle>> getAllDatesLOI(long plusMinusMonth);
+
 }

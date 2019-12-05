@@ -46,6 +46,8 @@ public class FundingOpportunity implements LocalizedParametersModel {
 
 	private String awardManagementSystem;
 
+	private boolean isJointInitiative;
+
 	public boolean isNOI;
 
 	private boolean isLOI;
@@ -174,8 +176,6 @@ public class FundingOpportunity implements LocalizedParametersModel {
 	public void setProgramLeadDn(String programLeadDn) {
 		this.programLeadDn = programLeadDn;
 	}
-
-	private boolean isJointInitiative;
 
 	public boolean isJointInitiative() {
 		return isJointInitiative;
