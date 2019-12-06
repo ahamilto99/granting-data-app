@@ -128,7 +128,7 @@
 		<p>This view shows the opening and closing dates of upcomming funding opportunities</p>
 		<div class="col-md-12">
 			<div class="row">
-				<div class="col-md-1" style="text-align: center;"><a th:href="@{viewCalendar(plusMinusMonth=${minusMonth})}"><<</a></div>
+				<div class="col-md-1" style="text-align: center;"><a th:href="@{viewCalendar(plusMinusMonth=${minusMonth})}"> << </a></div>
 				<div class="col-md-5" style="text-align: center;"> <span th:utext="#{${'cal.' + calGrid.month.monthValue}}"></span> - <span th:text="${calGrid.month.year}"></span></div>
 				<div class="col-md-1" style="text-align: center;"><a th:href="@{viewCalendar(plusMinusMonth=${plusMonth})}">>></a></div>
 			</div>
@@ -186,10 +186,10 @@
 					
 					<div th:each="fc : ${startingDates.get(col.cellDate)}">
 						  <div th:if="${fc.fundingOpportunity.leadAgency.id == 2}" >
-							<div class="cal-day-event-nserc-startDates"><a th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}"  th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a></div>
+							<div class="cal-day-event-nserc-startDates"><a style="color:white" th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}"  th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a></div>
 						</div>
 						 <div th:if="${fc.fundingOpportunity.leadAgency.id == 1}" >
-							<div class="cal-day-event-sshrc-startDates"><a th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}"   th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a></div>
+							<div class="cal-day-event-sshrc-startDates"><a style="color:white" th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}"   th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a></div>
 							
 							</div>
 					</div>	
