@@ -1,5 +1,10 @@
 package ca.gc.tri_agency.granting_data.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -8,12 +13,122 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import ca.gc.tri_agency.granting_data.model.FiscalYear;
+import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
+import ca.gc.tri_agency.granting_data.model.GrantingCapability;
+import ca.gc.tri_agency.granting_data.model.GrantingStage;
+import ca.gc.tri_agency.granting_data.model.GrantingSystem;
 import ca.gc.tri_agency.granting_data.model.util.CalendarGrid;
+import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
+import ca.gc.tri_agency.granting_data.repo.GrantingCapabilityRepository;
+import ca.gc.tri_agency.granting_data.repo.GrantingStageRepository;
+import ca.gc.tri_agency.granting_data.repo.GrantingSystemRepository;
 import ca.gc.tri_agency.granting_data.service.DataAccessService;
 
 @Controller
 @RequestMapping("/browse")
 public class BrowseController {
+
+	// TODO: remove these fields when you are done with the
+	// populateWithDesiredStructure method
+	@Autowired
+	private GrantingCapabilityRepository grantingCapabilityRepo;
+	@Autowired
+	private FundingOpportunityRepository foRepo;
+	@Autowired
+	private GrantingSystemRepository grantingSystemRepo;
+	@Autowired
+	private GrantingStageRepository grantingStageRepo;
+
+	// TODO: this method should not be in the release therefore delete it once you
+	// are done with it
+	private void populateWithDesiredStructure() {
+		List<GrantingSystem> grantingSystemList = grantingSystemRepo.findAll();
+		Map<String, GrantingSystem> grantingSystemMap = new HashMap<>();
+		grantingSystemList
+				.forEach(grantingSystem -> grantingSystemMap.put(grantingSystem.getAcronym(), grantingSystem));
+
+		List<GrantingStage> grantingStageList = new ArrayList<>();
+		grantingStageList = grantingStageRepo.findAll();
+
+		List<FundingOpportunity> foList = foRepo.findAll();
+
+		// APPLY stage entries
+		GrantingStage grantingStageApply = null;
+		for (GrantingStage grantingStage : grantingStageList) {
+			if (grantingStage.getNameEn().equals("APPLY")) {
+				grantingStageApply = grantingStage;
+				break;
+			}
+		}
+		for (FundingOpportunity fo : foList) {
+			GrantingCapability grantingCapability = new GrantingCapability();
+			grantingCapability.setGrantingStage(grantingStageApply);
+			grantingCapability.setFundingOpportunity(fo);
+			for (Map.Entry<String, GrantingSystem> entry : grantingSystemMap.entrySet()) {
+				if (entry != null && entry.getKey() != null && fo.getApplyMethod() != null
+						&& fo.getApplyMethod().equals(entry.getKey())) {
+					grantingCapability.setGrantingSystem(entry.getValue());
+					break;
+				}
+			}
+			// TODO: remove output statement when done debugging
+			String stage = "";
+			if (grantingCapability.getGrantingStage() != null
+					&& grantingCapability.getGrantingStage().getNameEn() != null) {
+				stage = grantingCapability.getGrantingStage().getNameEn();
+			}
+			String system = "";
+			if (grantingCapability.getGrantingSystem() != null
+					&& String.valueOf(grantingCapability.getGrantingSystem().getId()) != null) {
+				system = String.valueOf(grantingCapability.getGrantingSystem().getAcronym());
+			}
+			System.out.printf("id=%s : foId=%s : stage=%s : granting system=%s%n", grantingCapability.getId(),
+					grantingCapability.getFundingOpportunity().getId(), stage, system);
+
+			// grantingCapabilityRepo.save(grantingCapability);
+		}
+
+		// AWARD stage entries
+		GrantingStage grantingStageAward = null;
+		for (GrantingStage grantingStage : grantingStageList) {
+			if (grantingStage.getNameEn().equals("AWARD")) {
+				grantingStageAward = grantingStage;
+				break;
+			}
+		}
+		for (FundingOpportunity fo : foList) {
+			GrantingCapability grantingCapability = new GrantingCapability();
+			grantingCapability.setGrantingStage(grantingStageAward);
+			grantingCapability.setFundingOpportunity(fo);
+
+			for (Map.Entry<String, GrantingSystem> entry : grantingSystemMap.entrySet()) {
+				if (entry != null && entry.getKey() != null && fo.getAwardManagementSystem() != null
+						&& fo.getAwardManagementSystem().equals(entry.getKey())) {
+					grantingCapability.setGrantingSystem(entry.getValue());
+					break;
+				}
+			}
+			// TODO: remove output statement when done debugging
+			String stage = "";
+			if (grantingCapability.getGrantingStage() != null
+					&& grantingCapability.getGrantingStage().getNameEn() != null) {
+				stage = grantingCapability.getGrantingStage().getNameEn();
+			}
+			String system = "";
+			if (grantingCapability.getGrantingSystem() != null
+					&& String.valueOf(grantingCapability.getGrantingSystem().getId()) != null) {
+				system = String.valueOf(grantingCapability.getGrantingSystem().getAcronym());
+			}
+			System.out.printf("id=%s : foId=%s : stage=%s : granting system=%s%n", grantingCapability.getId(),
+					grantingCapability.getFundingOpportunity().getId(), stage, system);
+
+			// grantingCapabilityRepo.save(grantingCapability);
+		}
+		// TODO: remove output statements when done debugging
+		System.out.println(foRepo.getOne(92L).getAwardManagementSystem());
+		System.out.println(foRepo.getOne(135L).getAwardManagementSystem());
+		System.out.println(foRepo.getOne(136L).getAwardManagementSystem());
+	}
 
 	// private static final Logger LOG = LogManager.getLogger();
 
@@ -31,6 +146,9 @@ public class BrowseController {
 	public String goldListDisplay(Model model) {
 		model.addAttribute("goldenList", dataService.getAllFundingOpportunities());
 		model.addAttribute("fcByFoMap", dataService.getFundingCycleByFundingOpportunityMap());
+
+		// TODO: remove method call when done with it
+		populateWithDesiredStructure();
 
 		return "browse/goldenList";
 	}
