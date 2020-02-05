@@ -14,4 +14,32 @@
 	<include file="db/version-0.0.3.xml"/>
 	<!-- <include file="db/PopulateGoldenList.xml"/> -->
      
+     <changeSet author="dev_aha" id="add-more-granting-systems">
+		<insert tableName="grantingSystem">
+			<column name="acronym" value="CIMS" />
+			<column name="name_en" value="CIMS" />
+			<column name="name_fr" value="CIMS" />
+		</insert>
+		<insert tableName="grantingSystem">
+			<column name="acronym" value="ResearchNet" />
+			<column name="name_en" value="ResearchNet" />
+			<column name="name_fr" value="ResearchNet" />
+		</insert>
+		<insert tableName="grantingSystem">
+			<column name="acronym" value="Convergence" />
+			<column name="name_en" value="Convergence (RP2)" />
+			<column name="name_fr" value="Convergence (RP2" />
+		</insert>
+		<insert tableName="grantingSystem">
+			<column name="acronym" value="SP Secure Upload" />
+			<column name="name_en" value="SharePoint Secure Upload" />
+			<column name="name_fr" value="SharePoint Secure Upload" />
+		</insert>
+		<insert tableName="grantingSystem">
+			<column name="acronym" value="SP Review" />
+			<column name="name_en" value="SharePoint Review" />
+			<column name="name_fr" value="SharePoint Review" />
+		</insert>
+	</changeSet>
+     
 </databaseChangeLog>

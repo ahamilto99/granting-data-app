@@ -130,6 +130,37 @@ public class BrowseController {
 		System.out.println(foRepo.getOne(136L).getAwardManagementSystem());
 	}
 
+	// TODO: this method should not be in the release therefore delete it once you
+	// are done with it
+	private static String assignGrantingSystem(String awardOrApplyMethod) {
+		switch (awardOrApplyMethod) {
+		case "ApearsinNAMISakaSCYSN":
+		case "ApearsinNAMISakaCYN":
+		case "NAMIS":
+			return "NAMIS";
+		case "NOLS":
+			return "NSERC Online";
+		case "SOLS":
+			return "SSHRC Online";
+		case "RP 1.0":
+		case "RP1.0":
+			return "RP1";
+		case "CIMS":
+			return "CIMS";
+		case "ResearchNet":
+		case "ResearchNet (CIHR)":
+			return "ResearchNet";
+		case "CRM":
+			return "CRM";
+		case "Secure Upload":
+			return "SP Secure Upload";
+		case "RP2":
+		case "RP 2.0 (New system being developed)":
+			return "Convergence";
+		default:
+			return null;
+		}
+	}
 	// private static final Logger LOG = LogManager.getLogger();
 
 	@Autowired
