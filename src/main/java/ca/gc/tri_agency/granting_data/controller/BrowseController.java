@@ -85,7 +85,7 @@ public class BrowseController {
 			System.out.printf("id=%s : foId=%s : stage=%s : granting system=%s%n", grantingCapability.getId(),
 					grantingCapability.getFundingOpportunity().getId(), stage, system);
 
-			// grantingCapabilityRepo.save(grantingCapability);
+			 grantingCapabilityRepo.save(grantingCapability);
 		}
 
 		// AWARD stage entries
@@ -122,7 +122,7 @@ public class BrowseController {
 			System.out.printf("id=%s : foId=%s : stage=%s : granting system=%s%n", grantingCapability.getId(),
 					grantingCapability.getFundingOpportunity().getId(), stage, system);
 
-			// grantingCapabilityRepo.save(grantingCapability);
+                        grantingCapabilityRepo.save(grantingCapability);
 		}
 		// TODO: remove output statements when done debugging
 		System.out.println(foRepo.getOne(92L).getAwardManagementSystem());
