@@ -28,199 +28,299 @@ import ca.gc.tri_agency.granting_data.service.DataAccessService;
 @RequestMapping("/browse")
 public class BrowseController {
 
-	// TODO: remove these fields when you are done with the
-	// populateWithDesiredStructure method
-	@Autowired
-	private GrantingCapabilityRepository grantingCapabilityRepo;
-	@Autowired
-	private FundingOpportunityRepository foRepo;
-	@Autowired
-	private GrantingSystemRepository grantingSystemRepo;
-	@Autowired
-	private GrantingStageRepository grantingStageRepo;
+    // TODO: remove these fields when you are done with the
+    // populateWithDesiredStructure method
+    @Autowired
+    private GrantingCapabilityRepository grantingCapabilityRepo;
+    @Autowired
+    private FundingOpportunityRepository foRepo;
+    @Autowired
+    private GrantingSystemRepository grantingSystemRepo;
+    @Autowired
+    private GrantingStageRepository grantingStageRepo;
 
-	// TODO: this method should not be in the release therefore delete it once you
-	// are done with it
-	private void populateWithDesiredStructure() {
-		List<GrantingSystem> grantingSystemList = grantingSystemRepo.findAll();
-		Map<String, GrantingSystem> grantingSystemMap = new HashMap<>();
-		grantingSystemList
-				.forEach(grantingSystem -> grantingSystemMap.put(grantingSystem.getAcronym(), grantingSystem));
+    // TODO: this method should not be in the release therefore delete it once you
+    // are done with it
+    private void populateWithDesiredStructure() {
+        List<GrantingSystem> grantingSystemList = grantingSystemRepo.findAll();
+        Map<String, GrantingSystem> grantingSystemMap = new HashMap<>();
+        grantingSystemList.forEach(grantingSystem -> grantingSystemMap.put(grantingSystem.getAcronym(), grantingSystem));
 
-		List<GrantingStage> grantingStageList = new ArrayList<>();
-		grantingStageList = grantingStageRepo.findAll();
+        List<GrantingStage> grantingStageList = new ArrayList<>();
+        grantingStageList = grantingStageRepo.findAll();
 
-		List<FundingOpportunity> foList = foRepo.findAll();
+        List<FundingOpportunity> foList = foRepo.findAll();
 
-		// APPLY stage entries
-		GrantingStage grantingStageApply = null;
-		for (GrantingStage grantingStage : grantingStageList) {
-			if (grantingStage.getNameEn().equals("APPLY")) {
-				grantingStageApply = grantingStage;
-				break;
-			}
-		}
-		for (FundingOpportunity fo : foList) {
-			GrantingCapability grantingCapability = new GrantingCapability();
-			grantingCapability.setGrantingStage(grantingStageApply);
-			grantingCapability.setFundingOpportunity(fo);
-			for (Map.Entry<String, GrantingSystem> entry : grantingSystemMap.entrySet()) {
-				if (entry != null && entry.getKey() != null && fo.getApplyMethod() != null
-						&& fo.getApplyMethod().equals(entry.getKey())) {
-					grantingCapability.setGrantingSystem(entry.getValue());
-					break;
-				}
-			}
-			// TODO: remove output statement when done debugging
-			String stage = "";
-			if (grantingCapability.getGrantingStage() != null
-					&& grantingCapability.getGrantingStage().getNameEn() != null) {
-				stage = grantingCapability.getGrantingStage().getNameEn();
-			}
-			String system = "";
-			if (grantingCapability.getGrantingSystem() != null
-					&& String.valueOf(grantingCapability.getGrantingSystem().getId()) != null) {
-				system = String.valueOf(grantingCapability.getGrantingSystem().getAcronym());
-			}
-			System.out.printf("id=%s : foId=%s : stage=%s : granting system=%s%n", grantingCapability.getId(),
-					grantingCapability.getFundingOpportunity().getId(), stage, system);
+        // APPLY stage entries
+        GrantingStage grantingStageApply = null;
+        for (GrantingStage grantingStage : grantingStageList) {
+            if (grantingStage.getNameEn()
+                .equals("APPLY")) {
+                grantingStageApply = grantingStage;
+                break;
+            }
+        }
+        for (FundingOpportunity fo : foList) {
+            GrantingCapability grantingCapability = new GrantingCapability();
+            grantingCapability.setGrantingStage(grantingStageApply);
+            grantingCapability.setFundingOpportunity(fo);
+            String applyMethod = fo.getApplyMethod();
+            if (null != fo.getDivision() && fo.getDivision()
+                .equals("MCT")) {
+                grantingCapability.setGrantingSystem(grantingSystemRepo.findByAcronym("ResearchNet"));
+                grantingCapabilityRepo.save(grantingCapability);
+                continue;
+            } else if (null != fo.getProgramLeadName() && fo.getProgramLeadName()
+                .equals("Open")) {
+                grantingCapability.setGrantingSystem(grantingSystemRepo.findByAcronym("NSERC Online"));
+                grantingCapabilityRepo.save(grantingCapability);
+            } else if ((applyMethod == null || applyMethod.equals("Offline") || applyMethod.equals("NotApplicable") || applyMethod.equals("Email")) && null != fo.getAwardManagementSystem() && !fo.getAwardManagementSystem()
+                .equals("null") && !fo.getAwardManagementSystem()
+                    .equals("ApearsinNAMISakaCSYN")
+                && !fo.getAwardManagementSystem()
+                    .equals("ApearsinNAMISakaSYN")) {
+                grantingCapability.setGrantingSystem(grantingSystemRepo.findByAcronym(fo.getAwardManagementSystem()));
+                grantingCapabilityRepo.save(grantingCapability);
+                continue;
+            } else if (null != fo.getProgramLeadName() && fo.getProgramLeadName()
+                .equals("AllanahBrown")) {
+                grantingCapability.setGrantingSystem(grantingSystemRepo.findByAcronym("ResearchNet"));
+                grantingCapabilityRepo.save(grantingCapability);
+                continue;
+            } else if (null != fo.getNameEn() && fo.getNameEn()
+                .equals("SubatomicPhysics-Individual(SAPIN)(5840)")) {
+                grantingCapability.setGrantingSystem(grantingSystemRepo.findByAcronym("RP1"));
+                grantingCapabilityRepo.save(grantingCapability);
+                continue;
+            } else if (null != fo.getNameEn() && fo.getNameEn()
+                .equals("ThematicResourcesSupportinMathematicsandStatistics(CTRMS)")) {
+                grantingCapability.setGrantingSystem(grantingSystemRepo.findByAcronym("SP Secure Upload"));
+                grantingCapabilityRepo.save(grantingCapability);
+                continue;
+            } else if (null != fo.getNameEn() && fo.getNameEn()
+                .equals("ResearchSupportFund(RSF)")) {
+                grantingCapability.setGrantingSystem(grantingSystemRepo.findByAcronym("CIMS"));
+                grantingCapabilityRepo.save(grantingCapability);
+                continue;
+            } else if (null != fo.getNameEn() && fo.getNameEn()
+                .equals("DiggingintoData")) {
+                grantingCapability.setGrantingSystem(grantingSystemRepo.findByAcronym("SP Secure Upload"));
+                grantingCapabilityRepo.save(grantingCapability);
+                continue;
+            } else if (null != fo.getNameEn() && fo.getNameEn()
+                .equals("SpecialInitiativesFundForResearchSupportAndCollaboration")) {
+                grantingCapability.setGrantingSystem(grantingSystemRepo.findByAcronym("SP Secure Upload"));
+                grantingCapabilityRepo.save(grantingCapability);
+                continue;
+            } else if (null != fo.getNameEn() && fo.getNameEn()
+                .contains("Synergy")) {
+                grantingCapability.setGrantingSystem(grantingSystemRepo.findByAcronym("NAMIS"));
+                grantingCapabilityRepo.save(grantingCapability);
+                continue;
+            }
 
-			 grantingCapabilityRepo.save(grantingCapability);
-		}
+            for (Map.Entry<String, GrantingSystem> entry : grantingSystemMap.entrySet()) {
+                if (entry != null && entry.getKey() != null && fo.getApplyMethod() != null && fo.getApplyMethod()
+                    .equals(entry.getKey())) {
+                    grantingCapability.setGrantingSystem(entry.getValue());
+                    grantingCapabilityRepo.save(grantingCapability);
+                    break;
+                } else if (null != fo.getApplyMethod() && null != assignGrantingSystem(fo.getApplyMethod())) {
+                    grantingCapability.setGrantingSystem(grantingSystemRepo.findByAcronym(assignGrantingSystem(fo.getApplyMethod())));
+                    grantingCapabilityRepo.save(grantingCapability);
+                    break;
+                }
+            }
+        }
 
-		// AWARD stage entries
-		GrantingStage grantingStageAward = null;
-		for (GrantingStage grantingStage : grantingStageList) {
-			if (grantingStage.getNameEn().equals("AWARD")) {
-				grantingStageAward = grantingStage;
-				break;
-			}
-		}
-		for (FundingOpportunity fo : foList) {
-			GrantingCapability grantingCapability = new GrantingCapability();
-			grantingCapability.setGrantingStage(grantingStageAward);
-			grantingCapability.setFundingOpportunity(fo);
+        // AWARD stage entries
+        GrantingStage grantingStageAward = null;
+        for (GrantingStage grantingStage : grantingStageList) {
+            if (grantingStage.getNameEn()
+                .equals("AWARD")) {
+                grantingStageAward = grantingStage;
+                break;
+            }
+        }
+        for (FundingOpportunity fo : foList) {
+            GrantingCapability grantingCapability = new GrantingCapability();
+            grantingCapability.setGrantingStage(grantingStageAward);
+            grantingCapability.setFundingOpportunity(fo);
 
-			for (Map.Entry<String, GrantingSystem> entry : grantingSystemMap.entrySet()) {
-				if (entry != null && entry.getKey() != null && fo.getAwardManagementSystem() != null
-						&& fo.getAwardManagementSystem().equals(entry.getKey())) {
-					grantingCapability.setGrantingSystem(entry.getValue());
-					break;
-				}
-			}
-			// TODO: remove output statement when done debugging
-			String stage = "";
-			if (grantingCapability.getGrantingStage() != null
-					&& grantingCapability.getGrantingStage().getNameEn() != null) {
-				stage = grantingCapability.getGrantingStage().getNameEn();
-			}
-			String system = "";
-			if (grantingCapability.getGrantingSystem() != null
-					&& String.valueOf(grantingCapability.getGrantingSystem().getId()) != null) {
-				system = String.valueOf(grantingCapability.getGrantingSystem().getAcronym());
-			}
-			System.out.printf("id=%s : foId=%s : stage=%s : granting system=%s%n", grantingCapability.getId(),
-					grantingCapability.getFundingOpportunity().getId(), stage, system);
+            if (null != fo.getDivision() && fo.getDivision()
+                .equals("MCT")) {
+                grantingCapability.setGrantingSystem(grantingSystemRepo.findByAcronym("NAMIS"));
+                grantingCapabilityRepo.save(grantingCapability);
+                continue;
+            } else if (null != fo.getProgramLeadName() && fo.getProgramLeadName()
+                .equals("Open")) {
+                grantingCapability.setGrantingSystem(grantingSystemRepo.findByAcronym("NAMIS"));
+                grantingCapabilityRepo.save(grantingCapability);
+            } else if (null != fo.getAwardManagementSystem() && fo.getAwardManagementSystem()
+                .equals("NAMIS/AMIS/CIHRSystem")) {
+                grantingCapability.setGrantingSystem(grantingSystemRepo.findByAcronym("NAMIS"));
+                grantingCapabilityRepo.save(grantingCapability);
+                grantingCapability = new GrantingCapability();
+                grantingCapability.setGrantingSystem(grantingSystemRepo.findByAcronym("AMIS"));
+                grantingCapability.setGrantingStage(grantingStageAward);
+                grantingCapability.setFundingOpportunity(fo);
+                grantingCapabilityRepo.save(grantingCapability);
+                continue;
+            } else if ((fo.getAwardManagementSystem() == null || fo.getAwardManagementSystem()
+                .equals("ViaResearchOffices") || fo.getAwardManagementSystem()
+                    .equals("Partner"))
+                && fo.getApplyMethod() != null && !fo.getApplyMethod()
+                    .equals("Offline")
+                && !fo.getApplyMethod()
+                    .equals("NotApplicable")
+                && !fo.getApplyMethod()
+                    .equals("offline")
+                && !fo.getApplyMethod()
+                    .equals("CIMS/Extranet(SP)")) {
+                grantingCapability.setGrantingSystem(grantingSystemRepo.findByAcronym(assignGrantingSystem(fo.getApplyMethod())));
+                grantingCapabilityRepo.save(grantingCapability);
+                continue;
+            } else if (null != fo.getProgramLeadName() && fo.getProgramLeadName()
+                .equals("AllanahBrown")) {
+                grantingCapability.setGrantingSystem(grantingSystemRepo.findByAcronym("ResearchNet"));
+                grantingCapabilityRepo.save(grantingCapability);
+                continue;
+            } else if (null != fo.getNameEn() && fo.getNameEn()
+                .equals("SubatomicPhysics-Individual(SAPIN)(5840)")) {
+                grantingCapability.setGrantingSystem(grantingSystemRepo.findByAcronym("RP1"));
+                grantingCapabilityRepo.save(grantingCapability);
+                continue;
+            } else if (null != fo.getNameEn() && fo.getNameEn()
+                .equals("ThematicResourcesSupportinMathematicsandStatistics(CTRMS)")) {
+                grantingCapability.setGrantingSystem(grantingSystemRepo.findByAcronym("NAMIS"));
+                grantingCapabilityRepo.save(grantingCapability);
+                continue;
+            } else if (null != fo.getNameEn() && fo.getNameEn()
+                .equals("ResearchSupportFund(RSF)")) {
+                grantingCapability.setGrantingSystem(grantingSystemRepo.findByAcronym("CIMS"));
+                grantingCapabilityRepo.save(grantingCapability);
+                continue;
+            } else if (null != fo.getNameEn() && fo.getNameEn()
+                .equals("DiggingintoData")) {
+                grantingCapability.setGrantingSystem(grantingSystemRepo.findByAcronym("NAMIS"));
+                grantingCapabilityRepo.save(grantingCapability);
+                continue;
+            } else if (null != fo.getNameEn() && fo.getNameEn()
+                .equals("SpecialInitiativesFundForResearchSupportAndCollaboration")) {
+                grantingCapability.setGrantingSystem(grantingSystemRepo.findByAcronym("AMIS"));
+                grantingCapabilityRepo.save(grantingCapability);
+                continue;
+            }
 
-                        grantingCapabilityRepo.save(grantingCapability);
-		}
-		// TODO: remove output statements when done debugging
-		System.out.println(foRepo.getOne(92L).getAwardManagementSystem());
-		System.out.println(foRepo.getOne(135L).getAwardManagementSystem());
-		System.out.println(foRepo.getOne(136L).getAwardManagementSystem());
-	}
+            for (Map.Entry<String, GrantingSystem> entry : grantingSystemMap.entrySet()) {
+                if (entry != null && entry.getKey() != null && fo.getAwardManagementSystem() != null && fo.getAwardManagementSystem()
+                    .equals(entry.getKey())) {
+                    grantingCapability.setGrantingSystem(entry.getValue());
+                    grantingCapabilityRepo.save(grantingCapability);
+                    break;
+                } else if (null != fo.getAwardManagementSystem() && null != assignGrantingSystem(fo.getAwardManagementSystem())) {
+                    grantingCapability.setGrantingSystem(grantingSystemRepo.findByAcronym(assignGrantingSystem(fo.getAwardManagementSystem())));
+                    grantingCapabilityRepo.save(grantingCapability);
+                    break;
+                }
+            }
 
-	// TODO: this method should not be in the release therefore delete it once you
-	// are done with it
-	private static String assignGrantingSystem(String awardOrApplyMethod) {
-		switch (awardOrApplyMethod) {
-		case "ApearsinNAMISakaSCYSN":
-		case "ApearsinNAMISakaCYN":
-		case "NAMIS":
-			return "NAMIS";
-		case "NOLS":
-			return "NSERC Online";
-		case "SOLS":
-			return "SSHRC Online";
-		case "RP 1.0":
-		case "RP1.0":
-			return "RP1";
-		case "CIMS":
-			return "CIMS";
-		case "ResearchNet":
-		case "ResearchNet (CIHR)":
-			return "ResearchNet";
-		case "CRM":
-			return "CRM";
-		case "Secure Upload":
-			return "SP Secure Upload";
-		case "RP2":
-		case "RP 2.0 (New system being developed)":
-			return "Convergence";
-		default:
-			return null;
-		}
-	}
-	// private static final Logger LOG = LogManager.getLogger();
+        }
+    }
 
-	@Autowired
-	DataAccessService dataService;
+    // TODO: this method should not be in the release therefore delete it once you
+    // are done with it
+    private static String assignGrantingSystem(String awardOrApplyMethod) {
+        switch (awardOrApplyMethod) {
+        case "ApearsinNAMISakaCSYN":
+        case "ApearsinNAMISakaSYN":
+        case "NAMIS":
+            return "NAMIS";
+        case "NOLS":
+            return "NSERC Online";
+        case "SOLS":
+            return "SSHRC Online";
+        case "RP 1.0":
+        case "RP1.0":
+            return "RP1";
+        case "CIMS":
+        case "CIMS/Extranet(SP) ":
+            return "CIMS";
+        case "ResearchNet":
+        case "Researchnet":
+        case "ResearchNet(CIHR)":
+            return "ResearchNet";
+        case "CRM":
+            return "CRM";
+        case "SecureUpload":
+        case "Extranet(SP)":
+            return "SP Secure Upload";
+        case "RP2":
+        case "RP2.0(Newsystembeingdeveloped)":
+            return "Convergence";
+        default:
+            return null;
+        }
+    }
+    // private static final Logger LOG = LogManager.getLogger();
 
-	@GetMapping(value = "/viewAgency")
-	public String viewAgency(@RequestParam("id") long id, Model model) {
-		model.addAttribute("agency", dataService.getAgency(id));
-		model.addAttribute("agencyFos", dataService.getAgencyFundingOpportunities(id));
-		return "browse/viewAgency";
-	}
+    @Autowired
+    DataAccessService dataService;
 
-	@GetMapping("/goldenList")
-	public String goldListDisplay(Model model) {
-		model.addAttribute("goldenList", dataService.getAllFundingOpportunities());
-		model.addAttribute("fcByFoMap", dataService.getFundingCycleByFundingOpportunityMap());
+    @GetMapping(value = "/viewAgency")
+    public String viewAgency(@RequestParam("id") long id, Model model) {
+        model.addAttribute("agency", dataService.getAgency(id));
+        model.addAttribute("agencyFos", dataService.getAgencyFundingOpportunities(id));
+        return "browse/viewAgency";
+    }
 
-		// TODO: remove method call when done with it
-		populateWithDesiredStructure();
+    @GetMapping("/goldenList")
+    public String goldListDisplay(Model model) {
+        model.addAttribute("goldenList", dataService.getAllFundingOpportunities());
+        model.addAttribute("fcByFoMap", dataService.getFundingCycleByFundingOpportunityMap());
 
-		return "browse/goldenList";
-	}
+        // TODO: remove method call when done with it
+        populateWithDesiredStructure();
 
-	@GetMapping(value = "/viewFo")
-	public String viewFundingOpportunity(@RequestParam("id") long id, Model model) {
-		model.addAttribute("fo", dataService.getFundingOpportunity(id));
-		// model.addAttribute("systemFoCycles",
-		// dataService.getSystemFundingCyclesByFoId(id));
-		model.addAttribute("grantingCapabilities", dataService.getGrantingCapabilitiesByFoId(id));
-		model.addAttribute("fcDataMap", dataService.getFundingCycleDataMapByYear(id));
-		return "browse/viewFundingOpportunity";
-	}
+        return "browse/goldenList";
+    }
 
-	@GetMapping(value = "/viewCalendar")
-	public String viewCalendar(@RequestParam(name = "plusMinusMonth", defaultValue = "0") Long plusMinusMonth,
-			Model model) {
-		model.addAttribute("plusMonth", plusMinusMonth + 1);
-		model.addAttribute("minusMonth", plusMinusMonth - 1);
-		model.addAttribute("calGrid", new CalendarGrid(plusMinusMonth));
-		model.addAttribute("fcCalEvents", dataService.getMonthlyFundingCyclesMapByDate(plusMinusMonth));
-		model.addAttribute("startingDates", dataService.getAllStartingDates(plusMinusMonth));
-		model.addAttribute("endDates", dataService.getAllEndingDates(plusMinusMonth));
-		model.addAttribute("datesNoiStart", dataService.getAllDatesNOIStart(plusMinusMonth));
-		model.addAttribute("datesLoiEnd", dataService.getAllDatesLOIEnd(plusMinusMonth));
-		model.addAttribute("datesNoiEnd", dataService.getAllDatesNOIEnd(plusMinusMonth));
-		model.addAttribute("datesLoiStart", dataService.getAllDatesLOIStart(plusMinusMonth));
-		return "browse/viewCalendar";
-	}
+    @GetMapping(value = "/viewFo")
+    public String viewFundingOpportunity(@RequestParam("id") long id, Model model) {
+        model.addAttribute("fo", dataService.getFundingOpportunity(id));
+        // model.addAttribute("systemFoCycles",
+        // dataService.getSystemFundingCyclesByFoId(id));
+        model.addAttribute("grantingCapabilities", dataService.getGrantingCapabilitiesByFoId(id));
+        model.addAttribute("fcDataMap", dataService.getFundingCycleDataMapByYear(id));
+        return "browse/viewFundingOpportunity";
+    }
 
-	@GetMapping(value = "/viewFiscalYear")
-	public String viewFundingCycles(Model model) {
-		model.addAttribute("fiscalYears", dataService.findAllFiscalYears());
-		model.addAttribute("fy", new FiscalYear());
-		return "browse/viewFiscalYear";
-	}
+    @GetMapping(value = "/viewCalendar")
+    public String viewCalendar(@RequestParam(name = "plusMinusMonth", defaultValue = "0") Long plusMinusMonth, Model model) {
+        model.addAttribute("plusMonth", plusMinusMonth + 1);
+        model.addAttribute("minusMonth", plusMinusMonth - 1);
+        model.addAttribute("calGrid", new CalendarGrid(plusMinusMonth));
+        model.addAttribute("fcCalEvents", dataService.getMonthlyFundingCyclesMapByDate(plusMinusMonth));
+        model.addAttribute("startingDates", dataService.getAllStartingDates(plusMinusMonth));
+        model.addAttribute("endDates", dataService.getAllEndingDates(plusMinusMonth));
+        model.addAttribute("datesNoiStart", dataService.getAllDatesNOIStart(plusMinusMonth));
+        model.addAttribute("datesLoiEnd", dataService.getAllDatesLOIEnd(plusMinusMonth));
+        model.addAttribute("datesNoiEnd", dataService.getAllDatesNOIEnd(plusMinusMonth));
+        model.addAttribute("datesLoiStart", dataService.getAllDatesLOIStart(plusMinusMonth));
+        return "browse/viewCalendar";
+    }
 
-	@GetMapping(value = "/viewFcFromFy")
-	public String viewFundingCyclesFromFiscalYear(@RequestParam("id") long id, Model model) {
-		model.addAttribute("fc", dataService.fundingCyclesByFiscalYearId(id));
-		return "browse/viewFcFromFy";
-	}
+    @GetMapping(value = "/viewFiscalYear")
+    public String viewFundingCycles(Model model) {
+        model.addAttribute("fiscalYears", dataService.findAllFiscalYears());
+        model.addAttribute("fy", new FiscalYear());
+        return "browse/viewFiscalYear";
+    }
+
+    @GetMapping(value = "/viewFcFromFy")
+    public String viewFundingCyclesFromFiscalYear(@RequestParam("id") long id, Model model) {
+        model.addAttribute("fc", dataService.fundingCyclesByFiscalYearId(id));
+        return "browse/viewFcFromFy";
+    }
 
 }

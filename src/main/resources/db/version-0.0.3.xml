@@ -6,5 +6,38 @@
     xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
     
+    <changeSet author="dev_aha" id="addMissingGrantingSystems">
+        <insert dbms="h2" tableName="granting_system">
+            <column name="id" value="1"></column>
+            <column name="acronym" value="CIMS" />
+            <column name="name_en" value="Corporate Inventory Management System" />
+            <column name="name_fr" value="Corporate Inventory Management System" />
+        </insert>
+        <insert dbms="h2" tableName="granting_system">
+            <column name="id" value="2"></column>
+            <column name="acronym" value="ResearchNet" />
+            <column name="name_en" value="ResearchNet" />
+            <column name="name_fr" value="ResearchNet" />
+        </insert>
+        <insert dbms="h2" tableName="granting_system">
+            <column name="id" value="3"></column>
+            <column name="acronym" value="Convergence" />
+            <column name="name_en" value="Convergence" />
+            <column name="name_fr" value="Convergence" />
+        </insert>
+        <insert dbms="h2" tableName="granting_system">
+            <column name="id" value="4"></column>
+            <column name="acronym" value="SP Secure Upload" />
+            <column name="name_en" value="SharePoint Secure Upload" />
+            <column name="name_fr" value="Téléchargement Sécurisé SharePoint" />
+        </insert>
+        <insert dbms="h2" tableName="granting_system">
+            <column name="id" value="5"></column>
+            <column name="acronym" value="SP Review" />
+            <column name="name_en" value="SharePoint Review" />
+            <column name="name_fr" value="Examen de SharePoint" />
+        </insert>
+    </changeSet>
+    
 </databaseChangeLog>
 
