@@ -169,7 +169,7 @@ public class GoldenFundingOpportunityIntegrationTest {
 				.param("isLOI", Boolean.toString(loi)).param("programLeadName", pln).param("programLeadDn", pld))
 				.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
 				.andExpect(MockMvcResultMatchers.redirectedUrl("/admin/home"))
-				.andExpect(MockMvcResultMatchers.flash().attribute("actionMessage", "Created the Funding Opportunity named: " + nameEn));
+				.andExpect(MockMvcResultMatchers.flash().attribute("actionMessage", "Created Funding Opportunity named: " + nameEn));
 
 		// when the page is refreshed, the flash attribute should disappear
 		mvc.perform(MockMvcRequestBuilders.get("/admin/home"))

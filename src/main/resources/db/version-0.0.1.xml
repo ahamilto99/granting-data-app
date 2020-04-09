@@ -247,6 +247,23 @@
             </column>
         </addColumn>
     </changeSet>
+    <changeSet id="00000000000026" author="dev_aha">
+        <createSequence sequenceName="seq_member_role" startValue="1" incrementBy="1"/>
+    </changeSet>
+    <changeSet id="00000000000027" author="dev_aha">
+        <createTable tableName="member_role">
+            <column name="id" type="BIGINT" valueSequenceNext="seq_member_role">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="full_name" type="VARCHAR(255)"/>
+            <column name="last_name" type="VARCHAR(255)"/>
+            <column name="email" type="VARCHAR(255)"/>
+            <column name="role" type="VARCHAR(255)"/>
+            <column name="business_unit_id" type="BIGINT">
+                <constraints foreignKeyName="fk_member_role_business_unit" nullable="false" references="business_unit(id)"/>
+            </column>
+        </createTable>
+    </changeSet>
     <!-- 
     <changeSet author="dev_yab (generated)" id="1574353543232-28">
         <createIndex indexName="FK14tr15getkq8fb5kjrrjptvjr" tableName="system_funding_opportunity">
