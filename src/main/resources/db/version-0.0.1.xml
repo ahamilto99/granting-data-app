@@ -255,9 +255,7 @@
             <column name="id" type="BIGINT" valueSequenceNext="seq_member_role">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="full_name" type="VARCHAR(255)"/>
-            <column name="last_name" type="VARCHAR(255)"/>
-            <column name="email" type="VARCHAR(255)"/>
+            <column name="user_login" type="VARCHAR(255)"/>
             <column name="role" type="VARCHAR(255)"/>
             <column name="business_unit_id" type="BIGINT">
                 <constraints foreignKeyName="fk_member_role_business_unit" nullable="false" references="business_unit(id)"/>

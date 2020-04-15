@@ -1,4 +1,4 @@
-package ca.gc.tri_agency.granting_data.model.ldap;
+package ca.gc.tri_agency.granting_data.model;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -9,10 +9,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
-import ca.gc.tri_agency.granting_data.model.BusinessUnit;
+import org.springframework.ldap.odm.annotations.Attribute;
+
+import ca.gc.tri_agency.granting_data.model.ldap.Role;
 
 @Entity
 public class MemberRole {
@@ -22,14 +24,9 @@ public class MemberRole {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_MEMBER_ROLE")
 	private Long id;
 
-	@Transient
-	private ADUser adUser;
-
-	private String fullName;
-
-	private String lastName;
-
-	private String email;
+	@Attribute(name = "uid")
+	@Size(min = 3, max = 3)
+	private String userLogin;
 
 	@Enumerated(EnumType.STRING)
 	private Role role;
@@ -37,46 +34,42 @@ public class MemberRole {
 	@ManyToOne
 	@JoinColumn(name = "business_unit_id")
 	@NotNull
-	private BusinessUnit bu;
+	private BusinessUnit businessUnit;
 
 	public MemberRole() {
-	}
-
-	public MemberRole(ADUser adUser, Role role, @NotNull BusinessUnit bu) {
-		this.adUser = adUser;
-		fullName = adUser.getFullName();
-		lastName = adUser.getLastName();
-		email = adUser.getEmail();
-		this.role = role;
-		this.bu = bu;
 	}
 
 	public Long getId() {
 		return id;
 	}
 
-	public ADUser getAdUser() {
-		return adUser;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
-	public String getFullName() {
-		return fullName;
+	public String getUserLogin() {
+		return userLogin;
 	}
 
-	public String getLastName() {
-		return lastName;
-	}
-
-	public String getEmail() {
-		return email;
+	public void setUserLogin(String userLogin) {
+		this.userLogin = userLogin;
 	}
 
 	public Role getRole() {
 		return role;
 	}
 
-	public BusinessUnit getBusinessUnit() {
-		return bu;
+	public void setRole(Role role) {
+		this.role = role;
 	}
 
+	public BusinessUnit getBusinessUnit() {
+		return businessUnit;
+	}
+
+	public void setBusinessUnit(BusinessUnit businessUnit) {
+		this.businessUnit = businessUnit;
+	}
+
+	
 }
