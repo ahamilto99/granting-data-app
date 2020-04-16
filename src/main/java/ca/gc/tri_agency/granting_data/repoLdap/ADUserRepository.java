@@ -2,6 +2,8 @@ package ca.gc.tri_agency.granting_data.repoLdap;
 
 import static org.springframework.ldap.query.LdapQueryBuilder.query;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.naming.NamingException;
@@ -70,8 +72,22 @@ public class ADUserRepository {
 			ADUser person = new ADUser();
 			person.setFullName((String) attrs.get("cn").get());
 			person.setLastName((String) attrs.get("sn").get());
-			person.setUid((String) attrs.get("uid").get()); 
+			person.setUid((String) attrs.get("uid").get());
 			return person;
 		}
+	}
+
+	public List<ADUser> searchADUsersForMemberRoleCreation(String searchStr) {
+		final String search = searchStr.toLowerCase();
+		final List<ADUser> allADUsers = getAllPersons();
+		final List<ADUser> matchingADUsers = new ArrayList<>();
+		if (searchStr.length() <= 3) {
+			allADUsers.stream().filter(user -> user.getUid().toLowerCase().startsWith(search)).limit(10L)
+					.sorted(Comparator.comparing(ADUser::getFullName)).forEach(matchingADUsers::add);
+		} else {
+			allADUsers.stream().filter(user -> user.getFullName().toLowerCase().contains(search)).limit(10L)
+					.sorted(Comparator.comparing(ADUser::getFullName)).forEach(matchingADUsers::add);
+		}
+		return matchingADUsers;
 	}
 }
