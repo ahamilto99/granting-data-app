@@ -22,10 +22,10 @@ import ca.gc.tri_agency.granting_data.service.RoleService;
 @RunWith(SpringRunner.class)
 @ActiveProfiles("local")
 public class RoleServiceTest {
-	
+
 	@Autowired
 	private RoleService roleService;
-	
+
 	@Autowired
 	private RoleRepository roleRepo;
 
@@ -33,50 +33,26 @@ public class RoleServiceTest {
 	@Test
 	public void test_adminCanCreateRole() {
 		long initRoleCount = roleRepo.count();
-		
+
 		String nameEn = RandomStringUtils.randomAlphabetic(10);
 		String nameFr = RandomStringUtils.randomAlphabetic(10);
-		
+
 		Role newRole = roleService.saveRole(new Role(nameEn, nameFr));
-		
+
 		assertEquals(initRoleCount + 1, roleRepo.count());
 
 		assertNotNull(newRole.getId());
 		assertEquals(nameEn, newRole.getNameEn());
 		assertEquals(nameFr, newRole.getNameFr());
 	}
-	
+
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test(expected = AccessDeniedException.class)
 	public void test_nonAdminCannotCreateRole() {
 		String nameEn = RandomStringUtils.randomAlphabetic(10);
 		String nameFr = RandomStringUtils.randomAlphabetic(10);
-		
+
 		roleService.saveRole(new Role(nameEn, nameFr));
 	}
-	
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
