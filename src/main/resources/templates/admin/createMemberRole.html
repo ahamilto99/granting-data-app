@@ -1,10 +1,44 @@
 <!DOCTYPE html>
-<html>
-<head>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/general.html :: common_header(~{::title},~{::link},~{::script})}">
 <meta charset="ISO-8859-1">
-<title>Insert title here</title>
+<title th:text="#{title.createMR}"></title>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" />
+<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript">
+	$(document).ready(function() {
+	        var table = $('#memberRoleTable').DataTable({});
+        });
+</script>
 </head>
-<body>
+<body id="createMemberRolePage">
+	<div th:insert="~{fragments/general.html :: header_nav('home')}"></div>
+	<div class="container">
+
+		<!-- <input hidden="true" th:field="${bu.id})"/> -->
+
+		<h1 th:text="#{h.createMR}" class="col-md-8"></h1>
+		<label th:utext="#{label.role}" class="col-md-2" style="margin-top: 40px; text-align: right; padding-right: 0px"></label> 
+		<select class="col-md-2" style="margin-top: 40px;">
+			<option th:each="role : ${@roleServiceImpl.findAllRoles()}" th:text="${role.getLocalizedAttribute('name')}">
+		</select>
+
+		<table id="memberRoleTable" class="display">
+			<thead>
+				<tr>
+					<th th:text="#{th.userLogin}"></th>
+					<th th:text="#{th.select}" style="width: 65px; text-align: left;"></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="user : ${@ADUserRepository.getAllPersons()}">
+					<td th:text="${user.uid}" th:field="*{userLogin}"></td>
+					<td><input type="radio" name="select" style="width: 65px;"/></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 
 </body>
 </html>
+

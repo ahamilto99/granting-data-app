@@ -248,20 +248,35 @@
         </addColumn>
     </changeSet>
     <changeSet id="00000000000026" author="dev_aha">
-        <createSequence sequenceName="seq_member_role" startValue="1" incrementBy="1"/>
+        <createSequence sequenceName="seq_role" startValue="1" incrementBy="1"/>
     </changeSet>
     <changeSet id="00000000000027" author="dev_aha">
+        <createTable tableName="role">
+            <column name="id" type="BIGINT" valueSequenceNext="seq_role">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="name_en" type="VARCHAR(255)"/>
+            <column name="name_fr" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="00000000000028" author="dev_aha">
+        <createSequence sequenceName="seq_member_role" startValue="1" incrementBy="1"/>
+    </changeSet>
+    <changeSet id="00000000000029" author="dev_aha">
         <createTable tableName="member_role">
             <column name="id" type="BIGINT" valueSequenceNext="seq_member_role">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="user_login" type="VARCHAR(255)"/>
-            <column name="role" type="VARCHAR(255)"/>
+            <column name="role_id" type="BIGINT">
+                <constraints foreignKeyName="fk_member_role_role" nullable="false" references="role(id)"/>
+            </column>
             <column name="business_unit_id" type="BIGINT">
                 <constraints foreignKeyName="fk_member_role_business_unit" nullable="false" references="business_unit(id)"/>
             </column>
         </createTable>
     </changeSet>
+    
     <!-- 
     <changeSet author="dev_yab (generated)" id="1574353543232-28">
         <createIndex indexName="FK14tr15getkq8fb5kjrrjptvjr" tableName="system_funding_opportunity">

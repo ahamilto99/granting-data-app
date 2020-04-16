@@ -6,13 +6,15 @@ public class ADUser {
 
 	private String fullName;
 	private String lastName;
+	private String uid;
 
 	public ADUser() {
 	}
 
-	public ADUser(String fullName, String lastName) {
+	public ADUser(String fullName, String lastName, String uid) {
 		this.fullName = fullName;
 		this.lastName = lastName;
+		this.uid = uid;
 	}
 
 	public String getFullName() {
@@ -37,6 +39,14 @@ public class ADUser {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public String getUid() {
+		return uid;
+	}
+
+	public void setUid(String uid) {
+		this.uid = uid;
 	}
 
 	@Override

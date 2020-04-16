@@ -70,6 +70,7 @@ public class ADUserRepository {
 			ADUser person = new ADUser();
 			person.setFullName((String) attrs.get("cn").get());
 			person.setLastName((String) attrs.get("sn").get());
+			person.setUid((String) attrs.get("uid").get()); 
 			return person;
 		}
 	}
