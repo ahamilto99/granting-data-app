@@ -1,8 +1,6 @@
 package ca.gc.tri_agency.granting_data.model;
 
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,6 +19,7 @@ public class MemberRole {
 	private Long id;
 
 	@Size(min = 3, max = 3)
+	@NotNull(message = "{userLogin.NotNull}")
 	private String userLogin;
 
 	@ManyToOne

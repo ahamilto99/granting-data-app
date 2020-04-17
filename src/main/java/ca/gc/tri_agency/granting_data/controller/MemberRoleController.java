@@ -1,13 +1,18 @@
 package ca.gc.tri_agency.granting_data.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import ca.gc.tri_agency.granting_data.model.MemberRole;
 import ca.gc.tri_agency.granting_data.repoLdap.ADUserRepository;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.BusinessUnitService;
@@ -36,7 +41,9 @@ public class MemberRoleController {
 	@GetMapping("/admin/createMR")
 	public String showCreateMR(@RequestParam("buId") Long buId,
 			@RequestParam(value = "searchStr", required = false) String searchStr, Model model) {
-		model.addAttribute("bu", buService.findBusinessUnitById(buId));
+		MemberRole memberRole = new MemberRole();
+		memberRole.setBusinessUnit(buService.findBusinessUnitById(buId));
+		model.addAttribute("memberRole", memberRole);
 		if (null != searchStr && !searchStr.trim().isEmpty()) {
 			model.addAttribute("adUserList", aduRepo.searchADUsersForMemberRoleCreation(searchStr.trim()));
 		}
@@ -45,9 +52,16 @@ public class MemberRoleController {
 
 	@AdminOnly
 	@PostMapping("/admin/createMR")
-	public String processCreateMRUserSearch(@RequestParam("buId") Long buId, Model model, RedirectAttributes redirectAttributes) {
-		model.addAttribute("bu", buService.findBusinessUnitById(buId));
-		return "admin/createMemberRole";
+	public String processCreateMRUserSearch(@RequestParam("buId") Long buId,
+			@RequestParam(value = "searchStr") String searchStr,
+			@Valid @ModelAttribute("memberRole") MemberRole mr, BindingResult bindingResult, Model model,
+			RedirectAttributes redirectAttributes) {
+		if (bindingResult.hasErrors()) {
+			model.addAttribute("adUserList", aduRepo.searchADUsersForMemberRoleCreation(searchStr.trim()));
+			return "admin/createMemberRole";
+		}
+		memberRoleService.saveMemberRole(mr);
+		return "redirect:/browse/viewBU?id=" + buId;
 	}
 
 }
