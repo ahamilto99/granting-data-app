@@ -27,7 +27,7 @@
 
 			<div class="form-group row" style="margin-bottom: 25px">
 				<div th:text="#{link.fo.searchUser}" class="col-sm-2"></div>
-				<input id="userSearchBox" th:type="search" th:name="searchStr" th:value="${param.searchStr}"/>
+				<input id="userSearchBox" th:type="search" th:name="searchStr" th:value="${param.searchStr}" />
 			</div>
 
 			<div class="form-group row" style="margin-bottom: 25px">
@@ -76,18 +76,6 @@
 			<h4 class="col-sm-6" th:text="#{h.noUserSearchResults}"></h4>
 		</div>
 	</div>
-
-	<!-- 	<script>
-		function searchAD() {
-	                var searchBoxInputText = document
-	                                .getElementById("userSearchBox").value;
-		                document.getElementById("searchResultsDiv").style.display = "none";
-	                if (!searchBoxInputText.endsWith("...")) {
-		                document.getElementById("searchResultsDiv").style.display = "block";
-		                return searchBoxInputText;
-	                }
-                };
-	</script> -->
 
 </body>
 </html>
