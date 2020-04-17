@@ -5,39 +5,89 @@
 <title th:text="#{title.createMR}"></title>
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" />
 <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-<script type="text/javascript">
-	$(document).ready(function() {
-	        var table = $('#memberRoleTable').DataTable({});
-        });
-</script>
 </head>
 <body id="createMemberRolePage">
 	<div th:insert="~{fragments/general.html :: header_nav('home')}"></div>
 	<div class="container">
 
-		<!-- <input hidden="true" th:field="${bu.id})"/> -->
+		<div style="margin-bottom: 25px">
+			<h1 th:text="#{h.createMR}"></h1>
+		</div>
 
-		<h1 th:text="#{h.createMR}" class="col-md-8"></h1>
-		<label th:utext="#{label.role}" class="col-md-2" style="margin-top: 40px; text-align: right; padding-right: 0px"></label> 
-		<select class="col-md-2" style="margin-top: 40px;">
-			<option th:each="role : ${@roleServiceImpl.findAllRoles()}" th:text="${role.getLocalizedAttribute('name')}">
-		</select>
+		<form action="#" th:action="@{createMR(buId=${bu.id})}" method="get">
 
-		<table id="memberRoleTable" class="display">
-			<thead>
-				<tr>
-					<th th:text="#{th.userLogin}"></th>
-					<th th:text="#{th.select}" style="width: 65px; text-align: left;"></th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr th:each="user : ${@ADUserRepository.getAllPersons()}">
-					<td th:text="${user.uid}" th:field="*{userLogin}"></td>
-					<td><input type="radio" name="select" style="width: 65px;"/></td>
-				</tr>
-			</tbody>
-		</table>
+			<input hidden="true" name="buId" th:value="${bu.id}" />
+
+			<div class="form-group row" style="margin-bottom: 25px">
+				<div th:text="#{form.role}" class="col-sm-2"></div>
+				<select>
+					<option th:each="role : ${@roleServiceImpl.findAllRoles()}" th:text="${role.getLocalizedAttribute('name')}">
+				</select>
+			</div>
+
+			<div class="form-group row" style="margin-bottom: 25px">
+				<div th:text="#{link.fo.searchUser}" class="col-sm-2"></div>
+				<input id="userSearchBox" th:type="search" th:name="searchStr" th:value="${param.searchStr}"/>
+			</div>
+
+			<div class="form-group row" style="margin-bottom: 25px">
+				<div class="col-sm-2">
+					<input type="submit" id="searchButton" th:value="#{searchUser.submit}" class="btn btn-primary" />
+				</div>
+			</div>
+
+		</form>
+
+		<div th:if="${adUserList != null and !adUserList.isEmpty()}" id="searchResultsDiv" style="margin-bottom: 25px;">
+
+			<form action="#" th:action="@{/browse/viewBU(id=${bu.id})}" method="post">
+
+				<table id="memberRoleTable" class="table table-bordered" style="margin-bottom: 25px;">
+					<thead>
+						<tr>
+							<th th:text="#{th.select}" style="text-align: center; width: 25px;"></th>
+							<th th:text="#{th.name}"></th>
+							<th th:text="#{th.userLogin}"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="user : ${adUserList}">
+							<td><input type="radio" name="select" style="width: 65px;" /></td>
+							<td th:text="${user.fullName}" th:field="*{fullName}"></td>
+							<td th:text="${user.uid}" th:field="*{userLogin}"></td>
+						</tr>
+					</tbody>
+				</table>
+
+				<div class="form-group row">
+					<div class="col-sm-1">
+						<input type="submit" class="btn btn-primary" th:value="#{input.submit}" />
+					</div>
+					<div class="col-sm-1">
+						<a th:href="@{/browse/viewBU(id=${bu.id})}" th:text="#{msg.cancel}" class="btn btn-primary"></a>
+					</div>
+				</div>
+
+			</form>
+
+		</div>
+
+		<div th:if="${adUserList != null and adUserList.isEmpty()}" id="noUserSearchResults" class="form-group row" style="margin-bottom: 25px;">
+			<h4 class="col-sm-6" th:text="#{h.noUserSearchResults}"></h4>
+		</div>
 	</div>
+
+	<!-- 	<script>
+		function searchAD() {
+	                var searchBoxInputText = document
+	                                .getElementById("userSearchBox").value;
+		                document.getElementById("searchResultsDiv").style.display = "none";
+	                if (!searchBoxInputText.endsWith("...")) {
+		                document.getElementById("searchResultsDiv").style.display = "block";
+		                return searchBoxInputText;
+	                }
+                };
+	</script> -->
 
 </body>
 </html>
