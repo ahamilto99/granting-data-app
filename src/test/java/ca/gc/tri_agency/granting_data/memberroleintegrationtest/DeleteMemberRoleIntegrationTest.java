@@ -1,6 +1,5 @@
 package ca.gc.tri_agency.granting_data.memberroleintegrationtest;
 
-import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 
 import org.hamcrest.Matchers;
@@ -25,7 +24,7 @@ import ca.gc.tri_agency.granting_data.repo.MemberRoleRepository;
 @SpringBootTest(classes = GrantingDataApp.class)
 @RunWith(SpringRunner.class)
 @ActiveProfiles("local")
-public class CreateMemberRoleIntegrationTest {
+public class DeleteMemberRoleIntegrationTest {
 
 	@Autowired
 	private MemberRoleRepository mrRepo;
@@ -42,64 +41,46 @@ public class CreateMemberRoleIntegrationTest {
 
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
-	public void test_createMRLinkVisibleToAdmin_shouldSucceedWith200() throws Exception {
+	public void test_deleteMRLinkVisibleToAdmin_shouldSucceedWith200() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/browse/viewBU").param("id", "1"))
-				.andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.content()
-						.string(Matchers.containsString("id=\"createMemberRoleLink\"")));
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("id=\"deleteMemberRole\"")));
 	}
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
-	public void test_createMRLinkNotVisibleToNonAdmin_shouldReturn200() throws Exception {
+	public void test_deleteMRLinkNotVisibleToNonAdmin_shouldReturn200() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/browse/viewBU").param("id", "1"))
 				.andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.content()
-						.string(Matchers.not(containsString("id=\"createMemberRoleLink\""))));
+						.string(Matchers.not(Matchers.containsString("id=\"deleteMemberRole\""))));
 	}
 
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
-	public void test_adminCanAccessCreateMRPage_shouldSucceedWith200() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get("/admin/createMR").param("buId", "1"))
-				.andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.content()
-						.string(Matchers.containsString("id=\"createMemberRolePage\"")));
-	}
-
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
-	@Test
-	public void test_nonAdminCannotAccessCreateMRPage_shouldReturn403() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get("/admin/createMR").param("buId", "1"))
-				.andExpect(MockMvcResultMatchers.status().isForbidden()).andExpect(MockMvcResultMatchers.content()
-						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
-	}
-
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
-	@Test
-	public void testController_adminCanCreateMR_shouldSucceedWith302() throws Exception {
+	public void testController_adminCanDeleteMR_shouldSucceedWith302() throws Exception {
 		long initMRCount = mrRepo.count();
 
-		mvc.perform(MockMvcRequestBuilders.post("/admin/createMR").param("buId", "1").param("businessUnit", "1")
-				.param("searchStr", "user").param("role", "2").param("userLogin", "adm"))
+		mvc.perform(MockMvcRequestBuilders.post("/browse/viewBU").param("mrId", "1"))
 				.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-				.andExpect(MockMvcResultMatchers.redirectedUrl("/browse/viewBU?id=1"))
-				.andExpect(MockMvcResultMatchers.flash().attribute("actionMsg",
-						Matchers.is("Successfully Created Member Role for: adm")));
+				.andExpect(MockMvcResultMatchers.redirectedUrl("/browse/viewBU?id=1")).andExpect(MockMvcResultMatchers
+						.flash().attribute("actionMsg", "Successfully Deleted a Member Role for: adm"));
 
-		mvc.perform(MockMvcRequestBuilders.get("/browse/viewBU").param("id", "1"))
+		mvc.perform(MockMvcRequestBuilders.get("/browse/ViewBU").param("id", "1"))
 				.andExpect(MockMvcResultMatchers.flash().attributeCount(0));
 
-		assertEquals(initMRCount + 1, mrRepo.count());
+		assertEquals(initMRCount - 1, mrRepo.count());
 	}
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
-	public void testController_nonAdminCannotCreateMR_shouldReturn403() throws Exception {
+	public void testController_nonAdminCannotDelete_shouldReturn403() throws Exception {
 		long initMRCount = mrRepo.count();
 
-		mvc.perform(MockMvcRequestBuilders.post("/admin/createMR").param("buId", "1").param("businessUnit", "1")
-				.param("searchStr", "user").param("userLogin", "adm").param("role", "2"))
+		mvc.perform(MockMvcRequestBuilders.post("/browse/viewBU").param("mrId", "1"))
 				.andExpect(MockMvcResultMatchers.status().isForbidden()).andExpect(MockMvcResultMatchers.content()
 						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
 
 		assertEquals(initMRCount, mrRepo.count());
 	}
+	
 }
