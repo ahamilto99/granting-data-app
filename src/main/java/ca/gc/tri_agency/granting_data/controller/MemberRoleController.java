@@ -44,8 +44,8 @@ public class MemberRoleController {
 		MemberRole memberRole = new MemberRole();
 		memberRole.setBusinessUnit(buService.findBusinessUnitById(buId));
 		model.addAttribute("memberRole", memberRole);
-		if (null != searchStr && !searchStr.trim().isEmpty()) {
-			model.addAttribute("adUserList", aduRepo.searchADUsersForMemberRoleCreation(searchStr.trim()));
+		if (null != searchStr) {
+			model.addAttribute("adUserList", aduRepo.searchADUsersForMemberRoleCreation(searchStr));
 		}
 		return "admin/createMemberRole";
 	}
@@ -57,7 +57,7 @@ public class MemberRoleController {
 			@Valid @ModelAttribute("memberRole") MemberRole mr, BindingResult bindingResult, Model model,
 			RedirectAttributes redirectAttributes) {
 		if (bindingResult.hasErrors()) {
-			model.addAttribute("adUserList", aduRepo.searchADUsersForMemberRoleCreation(searchStr.trim()));
+			model.addAttribute("adUserList", aduRepo.searchADUsersForMemberRoleCreation(searchStr));
 			return "admin/createMemberRole";
 		}
 		memberRoleService.saveMemberRole(mr);

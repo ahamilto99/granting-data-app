@@ -78,8 +78,12 @@ public class ADUserRepository {
 	}
 
 	public List<ADUser> searchADUsersForMemberRoleCreation(String searchStr) {
+		List<ADUser> allADUsers = new ArrayList<>();
+		if (searchStr.isEmpty()) {
+			return allADUsers;
+		}
 		final String search = searchStr.toLowerCase();
-		final List<ADUser> allADUsers = getAllPersons();
+		allADUsers = getAllPersons();
 		final List<ADUser> matchingADUsers = new ArrayList<>();
 		if (searchStr.length() <= 3) {
 			allADUsers.stream().filter(user -> user.getUid().toLowerCase().startsWith(search)).limit(10L)

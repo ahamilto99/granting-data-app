@@ -14,17 +14,9 @@
 			<h1 th:text="#{h.createMR}"></h1>
 		</div>
 
-
 		<form action="#" th:action="@{createMR(buId=${param.buId})}" method="get">
 
 			<input hidden="true" name="buId" th:value="${param.buId}" />
-
-			<div class="form-group row" style="margin-bottom: 25px">
-				<div th:text="#{form.role}" class="col-sm-2"></div>
-				<select id="visibleRoleDropDown" onchange="setRole()">
-					<option th:each="role : ${@roleServiceImpl.findAllRoles()}" th:text="${role.getLocalizedAttribute('name')}" th:value="${role}">
-				</select>
-			</div>
 
 			<div class="form-group row" style="margin-bottom: 25px">
 				<div th:text="#{link.fo.searchUser}" class="col-sm-2"></div>
@@ -43,7 +35,7 @@
 
 			<form action="#" th:action="@{createMR(buId=${param.buId})}" method="post" th:object="${memberRole}">
 
-				<div hidden="true" class="form-group row" style="margin-bottom: 25px">
+				<div class="form-group row" style="margin-bottom: 25px">
 					<div th:text="#{form.role}" class="col-sm-2"></div>
 					<select id="hiddenRoleDropDown" th:field="*{role}">
 						<option th:each="role : ${@roleServiceImpl.findAllRoles()}" th:text="${role.getLocalizedAttribute('name')}" th:value="${role.id}">
@@ -80,7 +72,7 @@
 				</div>
 
 				<div th:if="${#fields.hasErrors('userLogin')}" th:errors="*{userLogin}" style="color: red;" th:text="#{err.userLogin}"></div>
-			
+
 			</form>
 
 		</div>
@@ -90,15 +82,6 @@
 		</div>
 
 	</div>
-
-	<script type="text/javascript">
-		function setRole() {
-	                var visibleDropDown = document
-	                                .getElementById('visibleRoleDropDown');
-	                var selection = visibleDropDown.selectedIndex;
-	                document.getElementById('hiddenRoleDropDown').selectedIndex = selection;
-                };
-	</script>
 
 </body>
 </html>
