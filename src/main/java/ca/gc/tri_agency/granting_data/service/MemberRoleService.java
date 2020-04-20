@@ -14,4 +14,6 @@ public interface MemberRoleService {
 	
 	void deleteMemberRole(Long id);
 	
+	List<MemberRole> findMemberRolesByBusinessUnitId(Long id);
+	
 }

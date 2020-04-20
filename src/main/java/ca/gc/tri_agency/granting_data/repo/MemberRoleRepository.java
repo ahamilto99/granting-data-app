@@ -10,6 +10,6 @@ import ca.gc.tri_agency.granting_data.model.MemberRole;
 @Repository
 public interface MemberRoleRepository extends JpaRepository<MemberRole, Long> {
 
-	List<MemberRole> findByBusinessUnitIdOrderByUserLogin(Long id);
+	List<MemberRole> findByBusinessUnitIdOrderByUserLogin(Long buId);
 
 }

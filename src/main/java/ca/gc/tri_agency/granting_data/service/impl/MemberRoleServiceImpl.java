@@ -42,4 +42,9 @@ public class MemberRoleServiceImpl implements MemberRoleService {
 		memberRoleRepo.deleteById(id);
 	}
 
+	@Override
+	public List<MemberRole> findMemberRolesByBusinessUnitId(Long buId) {
+		return memberRoleRepo.findByBusinessUnitIdOrderByUserLogin(buId);
+	}
+
 }
