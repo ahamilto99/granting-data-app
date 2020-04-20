@@ -60,7 +60,7 @@ public class MemberRoleServiceTest {
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test(expected = AccessDeniedException.class)
-	public void test_nonAdminCannotCreateMR() {
+	public void test_nonAdminCannotCreateMR_shouldThrowAccessDeniedException() {
 		MemberRole mr = new MemberRole();
 		mr.setUserLogin(RandomStringUtils.randomAlphabetic(3));
 		mr.setRole(rService.findRoleById(1L));
@@ -81,7 +81,7 @@ public class MemberRoleServiceTest {
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test(expected = AccessDeniedException.class)
-	public void test_nonAdminCannotDeleteMR() {
+	public void test_nonAdminCannotDeleteMR_shouldThrowAccessDeniedException() {
 		mrService.deleteMemberRole(mrService.findAllMemberRoles().get(0).getId());
 	}
 

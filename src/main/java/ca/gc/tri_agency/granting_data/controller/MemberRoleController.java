@@ -3,6 +3,8 @@ package ca.gc.tri_agency.granting_data.controller;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,6 +21,7 @@ import ca.gc.tri_agency.granting_data.service.BusinessUnitService;
 import ca.gc.tri_agency.granting_data.service.MemberRoleService;
 import ca.gc.tri_agency.granting_data.service.RoleService;
 
+@AdminOnly
 @Controller
 public class MemberRoleController {
 
@@ -27,6 +30,9 @@ public class MemberRoleController {
 	private RoleService roleService;
 
 	private BusinessUnitService buService;
+	
+	@Autowired
+	private MessageSource msgSrc;
 
 	@Autowired
 	private ADUserRepository aduRepo;
@@ -37,7 +43,6 @@ public class MemberRoleController {
 		this.buService = buService;
 	}
 
-	@AdminOnly
 	@GetMapping("/admin/createMR")
 	public String showCreateMR(@RequestParam("buId") Long buId,
 			@RequestParam(value = "searchStr", required = false) String searchStr, Model model) {
@@ -50,7 +55,6 @@ public class MemberRoleController {
 		return "admin/createMemberRole";
 	}
 
-	@AdminOnly
 	@PostMapping("/admin/createMR")
 	public String processCreateMRUserSearch(@RequestParam("buId") Long buId,
 			@RequestParam(value = "searchStr") String searchStr,
@@ -60,7 +64,9 @@ public class MemberRoleController {
 			model.addAttribute("adUserList", aduRepo.searchADUsersForMemberRoleCreation(searchStr));
 			return "admin/createMemberRole";
 		}
-		memberRoleService.saveMemberRole(mr);
+		mr = memberRoleService.saveMemberRole(mr);
+		String actionMsg = msgSrc.getMessage("h.createdMR", null, LocaleContextHolder.getLocale());
+		redirectAttributes.addFlashAttribute("actionMsg", actionMsg + mr.getUserLogin());
 		return "redirect:/browse/viewBU?id=" + buId;
 	}
 
