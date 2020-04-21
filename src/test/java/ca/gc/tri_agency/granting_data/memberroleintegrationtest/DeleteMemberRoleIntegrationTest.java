@@ -60,10 +60,10 @@ public class DeleteMemberRoleIntegrationTest {
 	public void testController_adminCanDeleteMR_shouldSucceedWith302() throws Exception {
 		long initMRCount = mrRepo.count();
 
-		mvc.perform(MockMvcRequestBuilders.post("/browse/viewBU").param("mrId", "1"))
+		mvc.perform(MockMvcRequestBuilders.get("/browse/viewBU").param("mrId", "3"))
 				.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
 				.andExpect(MockMvcResultMatchers.redirectedUrl("/browse/viewBU?id=1")).andExpect(MockMvcResultMatchers
-						.flash().attribute("actionMsg", "Successfully Deleted a Member Role for: adm"));
+						.flash().attribute("actionMsg", "Successfully Deleted Member Role for: rwi"));
 
 		mvc.perform(MockMvcRequestBuilders.get("/browse/ViewBU").param("id", "1"))
 				.andExpect(MockMvcResultMatchers.flash().attributeCount(0));
@@ -76,7 +76,7 @@ public class DeleteMemberRoleIntegrationTest {
 	public void testController_nonAdminCannotDelete_shouldReturn403() throws Exception {
 		long initMRCount = mrRepo.count();
 
-		mvc.perform(MockMvcRequestBuilders.post("/browse/viewBU").param("mrId", "1"))
+		mvc.perform(MockMvcRequestBuilders.get("/browse/viewBU").param("mrId", "1"))
 				.andExpect(MockMvcResultMatchers.status().isForbidden()).andExpect(MockMvcResultMatchers.content()
 						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
 

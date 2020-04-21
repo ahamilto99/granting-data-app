@@ -1,4 +1,4 @@
-package applicationparticipationintegrationtest;
+package ca.gc.tri_agency.granting_data.applicationparticipationintegrationtest;
 
 import static org.junit.Assert.assertEquals;
 

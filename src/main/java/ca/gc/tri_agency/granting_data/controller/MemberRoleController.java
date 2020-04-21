@@ -19,7 +19,6 @@ import ca.gc.tri_agency.granting_data.repoLdap.ADUserRepository;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.BusinessUnitService;
 import ca.gc.tri_agency.granting_data.service.MemberRoleService;
-import ca.gc.tri_agency.granting_data.service.RoleService;
 
 @AdminOnly
 @Controller
@@ -27,19 +26,16 @@ public class MemberRoleController {
 
 	private MemberRoleService memberRoleService;
 
-	private RoleService roleService;
-
 	private BusinessUnitService buService;
-	
+
 	@Autowired
 	private MessageSource msgSrc;
 
 	@Autowired
 	private ADUserRepository aduRepo;
 
-	public MemberRoleController(MemberRoleService memberRoleService, RoleService roleService, BusinessUnitService buService) {
+	public MemberRoleController(MemberRoleService memberRoleService, BusinessUnitService buService) {
 		this.memberRoleService = memberRoleService;
-		this.roleService = roleService;
 		this.buService = buService;
 	}
 
@@ -56,8 +52,7 @@ public class MemberRoleController {
 	}
 
 	@PostMapping("/admin/createMR")
-	public String processCreateMRUserSearch(@RequestParam("buId") Long buId,
-			@RequestParam(value = "searchStr") String searchStr,
+	public String processCreateMRUserSearch(@RequestParam("buId") Long buId, @RequestParam(value = "searchStr") String searchStr,
 			@Valid @ModelAttribute("memberRole") MemberRole mr, BindingResult bindingResult, Model model,
 			RedirectAttributes redirectAttributes) {
 		if (bindingResult.hasErrors()) {
@@ -67,6 +62,20 @@ public class MemberRoleController {
 		mr = memberRoleService.saveMemberRole(mr);
 		String actionMsg = msgSrc.getMessage("h.createdMR", null, LocaleContextHolder.getLocale());
 		redirectAttributes.addFlashAttribute("actionMsg", actionMsg + mr.getUserLogin());
+		return "redirect:/browse/viewBU?id=" + buId;
+	}
+
+	@GetMapping(value = "/browse/viewBU", params = "mrId")
+	public String processDeleteMR(@RequestParam("mrId") Long mrId, RedirectAttributes redirectAttributes) {
+		MemberRole mr = memberRoleService.findMemberRoleById(mrId);
+		Long buId = mr.getBusinessUnit().getId();
+		String mrLogin = mr.getUserLogin();
+		
+		memberRoleService.deleteMemberRole(mrId);
+		
+		String actionMsg = msgSrc.getMessage("h.deletedMR", null, LocaleContextHolder.getLocale());
+		redirectAttributes.addFlashAttribute("actionMsg", actionMsg + mrLogin);
+		
 		return "redirect:/browse/viewBU?id=" + buId;
 	}
 
