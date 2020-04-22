@@ -12,7 +12,7 @@
 	</script>
 </head>
 <body>
-	<div th:insert="~{fragments/general.html :: header_nav('programs')}" />
+	<div th:insert="~{fragments/general.html :: header_nav('programs')}"></div>
 	<div class="container">
 		<h1 th:text="#{h.searchUser}"></h1> <!--  th:utext="${fundingOpp.searchUser}" --> 
 		
@@ -34,8 +34,8 @@
 	       			<tr th:each="user : ${matchingUsers}">
 	       				<td><input name="leadUserDn" th:value="${user.dn}" type="radio" /></td>
 	       				<!-- <td><input name="selectedUser" th:value="${user}" type="radio" /></td> -->
-	           			<td><span th:text="${user.username}"></span></td>
-	           			<td><span th:text="${user.sn}"></span></td>
+	           			<td><span th:text="${user.userLogin}"></span></td>
+	           			<td><span th:text="${user.lastName}"></span></td>
 	           			<td><span th:text="${user.dn}"></span></td>
 	       			</tr>
 	   			</tbody>

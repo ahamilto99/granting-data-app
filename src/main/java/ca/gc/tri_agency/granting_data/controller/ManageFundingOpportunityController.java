@@ -17,15 +17,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import ca.gc.tri_agency.granting_data.ldap.ADUser;
+import ca.gc.tri_agency.granting_data.ldap.ADUserService;
 import ca.gc.tri_agency.granting_data.model.Agency;
 import ca.gc.tri_agency.granting_data.model.FiscalYear;
 import ca.gc.tri_agency.granting_data.model.FundingCycle;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.GrantingCapability;
-import ca.gc.tri_agency.granting_data.model.User;
 import ca.gc.tri_agency.granting_data.repo.GrantingStageRepository;
 import ca.gc.tri_agency.granting_data.repo.GrantingSystemRepository;
-import ca.gc.tri_agency.granting_data.repoLdap.UserRepo;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.DataAccessService;
 import ca.gc.tri_agency.granting_data.service.RestrictedDataService;
@@ -33,14 +33,16 @@ import ca.gc.tri_agency.granting_data.service.RestrictedDataService;
 @Controller
 @RequestMapping(value = "/manage", method = RequestMethod.GET)
 public class ManageFundingOpportunityController {
+	
 	@Autowired
-	UserRepo userRepo;
+	ADUserService adUserService;
 
 	@Autowired
 	RestrictedDataService restrictedDataService;
 
 	@Autowired
 	DataAccessService dataService;
+	
 	@Autowired
 	GrantingSystemRepository grantingSystemRepo;
 
@@ -63,7 +65,7 @@ public class ManageFundingOpportunityController {
 
 	@GetMapping(value = "/searchUser", params = "username")
 	public String searchUserAction(@RequestParam("username") String username, Model model) {
-		String matchingUsers = userRepo.getDnByUsername(username);
+		String matchingUsers = adUserService.findDnByADUserLogin(username);
 		model.addAttribute("matchingUsers", matchingUsers);
 		return "manage/searchUser";
 	}
@@ -131,7 +133,7 @@ public class ManageFundingOpportunityController {
 	@GetMapping(value = "/editProgramLead", params = "id")
 	public String editProgramLead(@RequestParam("id") long id, Model model) {
 		model.addAttribute("originalId", id);
-		List<User> matchingUsers = userRepo.getAllPersons();
+		List<ADUser> matchingUsers = adUserService.findAllADUsers();
 		model.addAttribute("matchingUsers", matchingUsers);
 		return "manage/editProgramLead";
 	}
@@ -140,7 +142,7 @@ public class ManageFundingOpportunityController {
 	@GetMapping(value = "/editProgramLead", params = { "id", "username" })
 	public String editProgramLeadSearchUser(@RequestParam("id") long id, @RequestParam("username") String username,
 			Model model) {
-		List<User> matchingUsers = userRepo.searchOther(username);
+		List<ADUser> matchingUsers = adUserService.searchADUsers(username);
 		model.addAttribute("matchingUsers", matchingUsers);
 		model.addAttribute("originalId", id);
 		return "manage/editProgramLead";

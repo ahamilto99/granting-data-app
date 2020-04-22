@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import ca.gc.tri_agency.granting_data.ldap.ADUserService;
 import ca.gc.tri_agency.granting_data.model.MemberRole;
-import ca.gc.tri_agency.granting_data.repoLdap.ADUserRepository;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.BusinessUnitService;
 import ca.gc.tri_agency.granting_data.service.MemberRoleService;
@@ -28,15 +28,16 @@ public class MemberRoleController {
 
 	private BusinessUnitService buService;
 
+	private ADUserService adUserService;
+
 	@Autowired
 	private MessageSource msgSrc;
 
-	@Autowired
-	private ADUserRepository aduRepo;
 
-	public MemberRoleController(MemberRoleService memberRoleService, BusinessUnitService buService) {
+	public MemberRoleController(MemberRoleService memberRoleService, BusinessUnitService buService, ADUserService adUserService) {
 		this.memberRoleService = memberRoleService;
 		this.buService = buService;
+		this.adUserService = adUserService;
 	}
 
 	@GetMapping("/admin/createMR")
@@ -46,7 +47,7 @@ public class MemberRoleController {
 		memberRole.setBusinessUnit(buService.findBusinessUnitById(buId));
 		model.addAttribute("memberRole", memberRole);
 		if (null != searchStr) {
-			model.addAttribute("adUserList", aduRepo.searchADUsersForMemberRoleCreation(searchStr));
+			model.addAttribute("adUserList", adUserService.searchADUsers(searchStr));
 		}
 		return "admin/createMemberRole";
 	}
@@ -56,7 +57,7 @@ public class MemberRoleController {
 			@Valid @ModelAttribute("memberRole") MemberRole mr, BindingResult bindingResult, Model model,
 			RedirectAttributes redirectAttributes) {
 		if (bindingResult.hasErrors()) {
-			model.addAttribute("adUserList", aduRepo.searchADUsersForMemberRoleCreation(searchStr));
+			model.addAttribute("adUserList", adUserService.searchADUsers(searchStr));
 			return "admin/createMemberRole";
 		}
 		mr = memberRoleService.saveMemberRole(mr);
