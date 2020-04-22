@@ -35,9 +35,9 @@ import ca.gc.tri_agency.granting_data.controller.AdminController;
 import ca.gc.tri_agency.granting_data.model.Agency;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
-import ca.gc.tri_agency.granting_data.repo.AgencyRepository;
 import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.repo.SystemFundingOpportunityRepository;
+import ca.gc.tri_agency.granting_data.service.AgencyService;
 import ca.gc.tri_agency.granting_data.service.DataAccessService;
 
 @RunWith(SpringRunner.class)
@@ -48,7 +48,7 @@ public class GoldenFundingOpportunityIntegrationTest {
 	@Autowired
 	private AdminController adminController;
 	@Autowired
-	private AgencyRepository agencyRepo;
+	private AgencyService agencyService;
 	@Autowired
 	private FundingOpportunityRepository foRepo;
 	@Autowired
@@ -117,7 +117,7 @@ public class GoldenFundingOpportunityIntegrationTest {
 		String po = RandomStringUtils.randomAlphabetic(25);
 		String pld = RandomStringUtils.randomAlphabetic(25);
 		String pln = RandomStringUtils.randomAlphabetic(25);
-		List<Agency> agencyList = agencyRepo.findAll();
+		List<Agency> agencyList = agencyService.findAllAgencies();
 		Agency la = agencyList.size() > 0 ? agencyList.remove(0) : null;
 //		Set<Agency> pas = agencyList.size() > 0 ? new HashSet<>(agencyList) : null;
 
@@ -138,8 +138,6 @@ public class GoldenFundingOpportunityIntegrationTest {
 	@Test
 	@Transactional
 	public void test_AdminCanCreateGoldenFo_usingMvcPerform_shouldSucceed() throws Exception {
-		String am = RandomStringUtils.randomAlphabetic(10);
-		String ams = RandomStringUtils.randomAlphabetic(10);
 		boolean cpx = true;
 		String div = RandomStringUtils.randomAlphabetic(10);
 		boolean edi = true;
@@ -153,9 +151,8 @@ public class GoldenFundingOpportunityIntegrationTest {
 		String po = RandomStringUtils.randomAlphabetic(25);
 		String pld = RandomStringUtils.randomAlphabetic(25);
 		String pln = RandomStringUtils.randomAlphabetic(25);
-		List<Agency> agencyList = agencyRepo.findAll();
+		List<Agency> agencyList = agencyService.findAllAgencies();
 		Agency la = agencyList.size() > 0 ? agencyList.remove(0) : null;
-//		Set<Agency> pas = agencyList.size() > 0 ? new HashSet<>(agencyList) : null;
 
 		List<FundingOpportunity> fos = foRepo.findAll();
 		String idParam = String.valueOf(fos.get(fos.size() - 1).getId() + 1L);
@@ -229,7 +226,7 @@ public class GoldenFundingOpportunityIntegrationTest {
 		gfo.setPartnerOrg(RandomStringUtils.randomAlphabetic(25));
 		gfo.setProgramLeadDn(RandomStringUtils.randomAlphabetic(25));
 		gfo.setProgramLeadName(RandomStringUtils.randomAlphabetic(25));
-		List<Agency> agencyList = agencyRepo.findAll();
+		List<Agency> agencyList = agencyService.findAllAgencies();
 		gfo.setLeadAgency(agencyList.size() > 0 ? agencyList.remove(0) : null);
 		gfo.setParticipatingAgencies(agencyList.size() > 0 ? new HashSet<Agency>(agencyList) : null);
 
