@@ -87,9 +87,4 @@ public class BrowseController {
 		return "browse/viewFcFromFy";
 	}
 
-	@GetMapping(value = "/viewBusinessUnit")
-	public String viewBusinessUnit(@RequestParam("id") Long id, Model model) {
-		return "browse/viewBU";
-	}
-
 }
