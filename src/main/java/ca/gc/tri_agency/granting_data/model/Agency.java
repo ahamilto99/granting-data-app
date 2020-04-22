@@ -12,6 +12,7 @@ import ca.gc.tri_agency.granting_data.model.util.LocalizedParametersModel;
 
 @Entity
 public class Agency implements LocalizedParametersModel {
+	
 	@Id
 	@SequenceGenerator(name = "SEQ_AGENCY", sequenceName = "SEQ_AGENCY", initialValue = 1, allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_AGENCY")

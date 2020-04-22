@@ -28,6 +28,7 @@ import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.file.FundingCycleDatasetRow;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.AdminService;
+import ca.gc.tri_agency.granting_data.service.AgencyService;
 import ca.gc.tri_agency.granting_data.service.DataAccessService;
 
 @Controller
@@ -40,6 +41,9 @@ public class AdminController {
 
 	@Autowired
 	private DataAccessService dataSevice;
+	
+	@Autowired
+	private AgencyService agencyService;
 
 	@Autowired
 	private MessageSource msgSource;
@@ -138,7 +142,7 @@ public class AdminController {
 			fo.setNameEn(sfo.getNameEn());
 			fo.setNameFr(sfo.getNameFr());
 		}
-		List<Agency> allAgencies = dataSevice.getAllAgencies();
+		List<Agency> allAgencies = agencyService.findAllAgencies();
 		model.addAttribute("fo", fo);
 		model.addAttribute("allAgencies", allAgencies);
 		return "admin/createFo";
@@ -149,7 +153,7 @@ public class AdminController {
 			Model model, RedirectAttributes redirectAttributes) throws Exception {
 		if (bindingResult.hasErrors()) {
 			// required in order to re-populate the drop-down list
-			List<Agency> allAgencies = dataSevice.getAllAgencies();
+			List<Agency> allAgencies = agencyService.findAllAgencies();
 			model.addAttribute("allAgencies", allAgencies);
 			return "admin/createFo";
 		}

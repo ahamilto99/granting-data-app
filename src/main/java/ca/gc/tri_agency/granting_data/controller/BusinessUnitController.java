@@ -16,22 +16,22 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import ca.gc.tri_agency.granting_data.model.BusinessUnit;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
+import ca.gc.tri_agency.granting_data.service.AgencyService;
 import ca.gc.tri_agency.granting_data.service.BusinessUnitService;
-import ca.gc.tri_agency.granting_data.service.DataAccessService;
 
 @Controller
 public class BusinessUnitController {
 
 	private BusinessUnitService buService;
-	private DataAccessService das; // TODO: refactor DataAccessService
+	private AgencyService agencyService; // TODO: refactor DataAccessService
 
 	@Autowired
 	private MessageSource msgSource;
 
 	@Autowired
-	public BusinessUnitController(BusinessUnitService buService, DataAccessService das) {
+	public BusinessUnitController(BusinessUnitService buService, AgencyService agencyService) {
 		this.buService = buService;
-		this.das = das;
+		this.agencyService = agencyService;
 	}
 
 	@GetMapping("/browse/viewBU")
@@ -44,7 +44,7 @@ public class BusinessUnitController {
 	@GetMapping("/admin/createBU")
 	public String showCreateBU(@RequestParam("agencyId") Long agencyId, Model model) {
 		BusinessUnit bu = new BusinessUnit();
-		bu.setAgency(das.getAgency(agencyId));
+		bu.setAgency(agencyService.findAgencyById(agencyId));
 		model.addAttribute("bu", bu);
 		return "admin/createBU";
 	}

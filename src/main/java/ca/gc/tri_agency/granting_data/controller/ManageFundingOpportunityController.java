@@ -27,6 +27,7 @@ import ca.gc.tri_agency.granting_data.repo.GrantingStageRepository;
 import ca.gc.tri_agency.granting_data.repo.GrantingSystemRepository;
 import ca.gc.tri_agency.granting_data.repoLdap.UserRepo;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
+import ca.gc.tri_agency.granting_data.service.AgencyService;
 import ca.gc.tri_agency.granting_data.service.DataAccessService;
 import ca.gc.tri_agency.granting_data.service.RestrictedDataService;
 
@@ -41,6 +42,10 @@ public class ManageFundingOpportunityController {
 
 	@Autowired
 	DataAccessService dataService;
+	
+	@Autowired
+	private AgencyService agencyService;
+	
 	@Autowired
 	GrantingSystemRepository grantingSystemRepo;
 
@@ -74,7 +79,7 @@ public class ManageFundingOpportunityController {
 		FundingOpportunity fo = dataService.getFundingOpportunity(id);
 		model.addAttribute("programForm", fo);
 
-		List<Agency> allAgencies = dataService.getAllAgencies();
+		List<Agency> allAgencies = agencyService.findAllAgencies();
 		List<Agency> otherAgencies = new ArrayList<Agency>();
 		for (Agency a : allAgencies) {
 			if (fo.getParticipatingAgencies().contains(a) == false) {

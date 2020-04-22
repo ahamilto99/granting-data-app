@@ -30,7 +30,6 @@ import ca.gc.tri_agency.granting_data.model.GrantingSystem;
 import ca.gc.tri_agency.granting_data.model.SystemFundingCycle;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.file.FundingCycleDatasetRow;
-import ca.gc.tri_agency.granting_data.repo.AgencyRepository;
 import ca.gc.tri_agency.granting_data.repo.BusinessUnitRepository;
 import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.repo.GrantingSystemRepository;
@@ -50,9 +49,6 @@ public class AdminServiceImpl implements AdminService {
 
 	@Autowired
 	private FundingOpportunityRepository foRepo;
-
-	@Autowired
-	private AgencyRepository agencyRepo;
 
 	@Autowired
 	private SystemFundingCycleRepository systemFundingCycleRepo;

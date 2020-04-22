@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
 
-import ca.gc.tri_agency.granting_data.model.Agency;
 import ca.gc.tri_agency.granting_data.model.FiscalYear;
 import ca.gc.tri_agency.granting_data.model.FundingCycle;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
@@ -22,7 +21,6 @@ import ca.gc.tri_agency.granting_data.model.GrantingSystem;
 import ca.gc.tri_agency.granting_data.model.SystemFundingCycle;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.util.FundingCycleInfo;
-import ca.gc.tri_agency.granting_data.repo.AgencyRepository;
 import ca.gc.tri_agency.granting_data.repo.FiscalYearRepository;
 import ca.gc.tri_agency.granting_data.repo.FundingCycleRepository;
 import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
@@ -41,8 +39,6 @@ public class DataAccessServiceImpl implements DataAccessService {
 	private SystemFundingCycleRepository systemFundingCycleRepo;
 	@Autowired
 	private FundingOpportunityRepository foRepo;
-	@Autowired
-	private AgencyRepository agencyRepo;
 	@Autowired
 	private FundingCycleRepository fundingCycleRepo;
 	@Autowired
@@ -72,11 +68,6 @@ public class DataAccessServiceImpl implements DataAccessService {
 	public FundingOpportunity getFundingOpportunity(long id) {
 		return foRepo.findById(id)
 				.orElseThrow(() -> new DataRetrievalFailureException("That Funding Opportunity does not exist"));
-	}
-
-	@Override
-	public List<Agency> getAllAgencies() {
-		return agencyRepo.findAll();
 	}
 
 	@Override
@@ -138,12 +129,6 @@ public class DataAccessServiceImpl implements DataAccessService {
 			retval.put(fc.getFundingOpportunity().getId(), fc);
 		}
 		return retval;
-	}
-
-	@Override
-	public Agency getAgency(long id) {
-		return agencyRepo.findById(id)
-				.orElseThrow(() -> new DataRetrievalFailureException("That Agency does not exist"));
 	}
 
 	@Override

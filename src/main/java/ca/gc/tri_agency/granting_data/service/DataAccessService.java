@@ -22,8 +22,6 @@ public interface DataAccessService {
 
 	FundingOpportunity getFundingOpportunity(long id);
 
-	List<Agency> getAllAgencies();
-
 	List<FundingCycle> getFundingCyclesByFoId(Long id);
 
 	List<SystemFundingCycle> getSystemFundingCyclesByFoId(Long id);
@@ -35,8 +33,6 @@ public interface DataAccessService {
 	Map<Long, FundingCycle> getFundingCycleByFundingOpportunityMap();
 
 	Map<String, FundingCycleInfo> getFundingCycleDataMapByYear(Long id);
-
-	Agency getAgency(long id);
 
 	List<FundingOpportunity> getAgencyFundingOpportunities(long id);
 
