@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
-import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.repo.SystemFundingOpportunityRepository;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -36,9 +35,6 @@ public class SystemFundingOpportunityIntegrationTests {
 
 	@Autowired
 	private SystemFundingOpportunityRepository sfoRepo;
-
-	@Autowired
-	private FundingOpportunityRepository foRepo;
 
 	private MockMvc mvc;
 

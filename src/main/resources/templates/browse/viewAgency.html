@@ -60,8 +60,8 @@
 					</thead>
 					<tbody>
 						<tr th:each="bu : ${agencyBUs}">
-							<td><a th:href="@{'/browse/viewBU'(id=${bu.id})}" id="viewBULink" th:text="${bu.getName()}"></a></td>
-							<td th:text="${bu.getAcronym()}"></td>
+							<td><a th:href="@{'/browse/viewBU'(id=${bu.id})}" id="viewBULink" th:text="${bu.getLocalizedAttribute('name')}"></a></td>
+							<td th:text="${bu.getLocalizedAttribute('acronym')}"></td>
 						</tr>
 					</tbody>
 				</table>

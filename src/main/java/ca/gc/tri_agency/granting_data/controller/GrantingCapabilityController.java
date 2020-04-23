@@ -16,26 +16,26 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import ca.gc.tri_agency.granting_data.model.GrantingCapability;
 import ca.gc.tri_agency.granting_data.repo.GrantingStageRepository;
-import ca.gc.tri_agency.granting_data.repo.GrantingSystemRepository;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.GrantingCapabilityService;
+import ca.gc.tri_agency.granting_data.service.GrantingSystemService;
 
 @Controller
 public class GrantingCapabilityController {
 
 	private GrantingCapabilityService gcService;
 	private GrantingStageRepository gStageRepo; // TODO: REFACTOR
-	private GrantingSystemRepository gSystemRepo; // TODO: REFACTOR
+	private GrantingSystemService gSystemService;
 
 	@Autowired
 	private MessageSource msgSource;
 
 	@Autowired
 	public GrantingCapabilityController(GrantingCapabilityService gcService, GrantingStageRepository gStageRepo,
-			GrantingSystemRepository gSystemRepo) {
+			GrantingSystemService gSystemService) {
 		this.gcService = gcService;
 		this.gStageRepo = gStageRepo;
-		this.gSystemRepo = gSystemRepo;
+		this.gSystemService = gSystemService;
 	}
 
 	@AdminOnly
@@ -43,7 +43,7 @@ public class GrantingCapabilityController {
 	public String viewEditGC(@RequestParam("id") Long id, Model model) {
 		model.addAttribute("gc", gcService.findGrantingCapabilityById(id));
 		model.addAttribute("grantingStages", gStageRepo.findAll());
-		model.addAttribute("grantingSystems", gSystemRepo.findAll());
+		model.addAttribute("grantingSystems", gSystemService.findAllGrantingSystems());
 		return "manage/editGrantingCapability";
 	}
 
@@ -53,7 +53,7 @@ public class GrantingCapabilityController {
 			RedirectAttributes redirectAttributes, Model model) {
 		if (bindingResult.hasErrors()) {
 			model.addAttribute("grantingStages", gStageRepo.findAll());
-			model.addAttribute("grantingSystems", gSystemRepo.findAll());
+			model.addAttribute("grantingSystems", gSystemService.findAllGrantingSystems());
 			return "manage/editGrantingCapability";
 		}
 		gcService.saveGrantingCapability(gc);

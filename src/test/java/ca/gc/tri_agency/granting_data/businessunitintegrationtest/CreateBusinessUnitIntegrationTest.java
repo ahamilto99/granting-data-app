@@ -27,8 +27,8 @@ import org.springframework.web.context.WebApplicationContext;
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
 import ca.gc.tri_agency.granting_data.model.Agency;
 import ca.gc.tri_agency.granting_data.model.BusinessUnit;
-import ca.gc.tri_agency.granting_data.repo.AgencyRepository;
 import ca.gc.tri_agency.granting_data.repo.BusinessUnitRepository;
+import ca.gc.tri_agency.granting_data.service.AgencyService;
 import ca.gc.tri_agency.granting_data.service.BusinessUnitService;
 
 @RunWith(SpringRunner.class)
@@ -39,7 +39,7 @@ public class CreateBusinessUnitIntegrationTest {
 	@Autowired
 	private BusinessUnitRepository buRepo;
 	@Autowired
-	private AgencyRepository agencyRepo;
+	private AgencyService agencyService;
 
 	@Autowired
 	private BusinessUnitService buService;
@@ -73,7 +73,7 @@ public class CreateBusinessUnitIntegrationTest {
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_adminCanAccessCreateBUPage_shouldSucceedWith200() throws Exception {
-		String agencyName = agencyRepo.findById(1L).get().getNameEn();
+		String agencyName = agencyService.findAgencyById(1L).getNameEn();
 		assertTrue(mvc.perform(get("/admin/createBU?agencyId=1")).andExpect(status().isOk()).andReturn().getResponse()
 				.getContentAsString().contains('>' + agencyName + "</div>"));
 	}
@@ -92,7 +92,7 @@ public class CreateBusinessUnitIntegrationTest {
 	public void testSerivce_adminCanCreateBU() {
 		long initBuCount = buRepo.count();
 
-		Agency agency = agencyRepo.findAll().get(0);
+		Agency agency = agencyService.findAllAgencies().get(0);
 		BusinessUnit bu = new BusinessUnit("EN NAME TEST", "FR NAME TEST", "EN ACRONYM TEST", "FR ACRONYM TEST", agency);
 		buService.saveBusinessUnit(bu);
 
@@ -103,7 +103,7 @@ public class CreateBusinessUnitIntegrationTest {
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test(expected = AccessDeniedException.class)
 	public void testService_nonAdminCannotCreateBU_shouldthrowAccessDeniedException() {
-		Agency agency = agencyRepo.findAll().get(0);
+		Agency agency = agencyService.findAllAgencies().get(0);
 		BusinessUnit bu = new BusinessUnit("EN NAME TEST", "FR NAME TEST", "EN ACRONYM TEST", "FR ACRONYM TEST", agency);
 		buService.saveBusinessUnit(bu);
 	}

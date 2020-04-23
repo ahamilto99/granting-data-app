@@ -29,8 +29,8 @@ import org.springframework.web.context.WebApplicationContext;
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
 import ca.gc.tri_agency.granting_data.model.Agency;
 import ca.gc.tri_agency.granting_data.model.BusinessUnit;
-import ca.gc.tri_agency.granting_data.repo.AgencyRepository;
 import ca.gc.tri_agency.granting_data.repo.BusinessUnitRepository;
+import ca.gc.tri_agency.granting_data.service.AgencyService;
 import ca.gc.tri_agency.granting_data.service.impl.AdminServiceImpl;
 
 @RunWith(SpringRunner.class)
@@ -41,7 +41,7 @@ public class PBI_19048_CreateBusinessUnitTest {
 	@Autowired
 	private BusinessUnitRepository buRepo;
 	@Autowired
-	private AgencyRepository agencyRepo;
+	private AgencyService agencyService;
 
 	@Autowired
 	private AdminServiceImpl asi;
@@ -75,7 +75,7 @@ public class PBI_19048_CreateBusinessUnitTest {
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_accessCreateBusinessUnitPageByAdmin_shouldSucceedWith200() throws Exception {
-		String agencyName = agencyRepo.findById(1L).get().getNameEn();
+		String agencyName = agencyService.findAgencyById(1L).getNameEn();
 		mvc.perform(get("/admin/createBU?agencyId=1")).andExpect(status().isOk()).andReturn().getResponse()
 				.getContentAsString()
 				.contains("<input class=\"col-sm-2\" id=\"agencyNameLabel\" name=\"agencyNameLabel\" value=\""
@@ -128,7 +128,7 @@ public class PBI_19048_CreateBusinessUnitTest {
 	public void test_onlyAdminUserCanCreateOrUpdateBusinessUnits() {
 		long initBuCount = buRepo.count();
 
-		Agency agency = agencyRepo.findAll().get(0);
+		Agency agency = agencyService.findAllAgencies().get(0);
 		BusinessUnit bu = new BusinessUnit("EN NAME TEST", "FR NAME TEST", "EN ACRONYM TEST", "FR ACRONYM TEST", agency);
 		asi.createOrUpdateBusinessUnit(bu);
 
@@ -140,7 +140,7 @@ public class PBI_19048_CreateBusinessUnitTest {
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test(expected = AccessDeniedException.class)
 	public void test_nonAdminUserCannotCreateOrUpdateBusinessUnits_shouldThrowAccessDeniedException() {
-		Agency agency = agencyRepo.findAll().get(0);
+		Agency agency = agencyService.findAllAgencies().get(0);
 		BusinessUnit bu = new BusinessUnit("EN NAME TEST", "FR NAME TEST", "EN ACRONYM TEST", "FR ACRONYM TEST", agency);
 		asi.createOrUpdateBusinessUnit(bu);
 	}

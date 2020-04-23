@@ -24,11 +24,11 @@ import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.GrantingCapability;
 import ca.gc.tri_agency.granting_data.model.User;
 import ca.gc.tri_agency.granting_data.repo.GrantingStageRepository;
-import ca.gc.tri_agency.granting_data.repo.GrantingSystemRepository;
 import ca.gc.tri_agency.granting_data.repoLdap.UserRepo;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.AgencyService;
 import ca.gc.tri_agency.granting_data.service.DataAccessService;
+import ca.gc.tri_agency.granting_data.service.GrantingSystemService;
 import ca.gc.tri_agency.granting_data.service.RestrictedDataService;
 
 @Controller
@@ -47,7 +47,7 @@ public class ManageFundingOpportunityController {
 	private AgencyService agencyService;
 	
 	@Autowired
-	GrantingSystemRepository grantingSystemRepo;
+	GrantingSystemService gSystemService;
 
 	@Autowired
 	GrantingStageRepository grantingStageRepo;
@@ -190,7 +190,7 @@ public class ManageFundingOpportunityController {
 	public String addGrantingCapabilities(@RequestParam("id") long id, Model model) {
 		model.addAttribute("foId", id);
 		model.addAttribute("gc", new GrantingCapability());
-		model.addAttribute("grantingSystems", grantingSystemRepo.findAll());
+		model.addAttribute("grantingSystems", gSystemService.findAllGrantingSystems());
 		model.addAttribute("grantingStages", grantingStageRepo.findAll());
 		return "manage/addGrantingCapabilities";
 	}

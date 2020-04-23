@@ -58,7 +58,7 @@ public class BusinessUnitController {
 		}
 		buService.saveBusinessUnit(bu);
 		String actionMsg = msgSource.getMessage("h.createdBu", null, LocaleContextHolder.getLocale());
-		redirectAttributes.addFlashAttribute("actionMsg", actionMsg + bu.getName());
+		redirectAttributes.addFlashAttribute("actionMsg", actionMsg + bu.getLocalizedAttribute("name"));
 		return "redirect:/browse/viewAgency?id=" + bu.getAgency().getId();
 	}
 
@@ -78,7 +78,7 @@ public class BusinessUnitController {
 		}
 		buService.saveBusinessUnit(bu);
 		String actionMsg = msgSource.getMessage("h.editedBu", null, LocaleContextHolder.getLocale());
-		redirectAttributes.addFlashAttribute("actionMsg", actionMsg + bu.getName());
+		redirectAttributes.addFlashAttribute("actionMsg", actionMsg + bu.getLocalizedAttribute("name"));
 		return "redirect:/browse/viewAgency?id=" + bu.getAgency().getId();
 	}
 

@@ -36,7 +36,7 @@ public class AgencyController {
 		model.addAttribute("agency", agency);
 		model.addAttribute("agencyFos", dataService.getAgencyFundingOpportunities(id));
 		model.addAttribute("agencyBUs", buService.findAllBusinessUnitsByAgency(agency).stream()
-				.sorted(Comparator.comparing(BusinessUnit::getName)).collect(Collectors.toList()));
+				.sorted(Comparator.comparing((BusinessUnit bu) -> bu.getLocalizedAttribute("name"))).collect(Collectors.toList()));
 		return "browse/viewAgency";
 	}
 

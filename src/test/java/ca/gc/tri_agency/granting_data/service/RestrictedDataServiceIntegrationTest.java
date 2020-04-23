@@ -16,7 +16,6 @@ import ca.gc.tri_agency.granting_data.model.GrantingCapability;
 import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.repo.GrantingCapabilityRepository;
 import ca.gc.tri_agency.granting_data.repo.GrantingStageRepository;
-import ca.gc.tri_agency.granting_data.repo.GrantingSystemRepository;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = GrantingDataApp.class)
@@ -28,7 +27,7 @@ public class RestrictedDataServiceIntegrationTest {
 	@Autowired
 	private GrantingCapabilityRepository gcRepo;
 	@Autowired
-	private GrantingSystemRepository gSystemRepo;
+	private GrantingSystemService gSystemService;
 	@Autowired
 	private GrantingStageRepository gStageRepo;
 	@Autowired
@@ -41,7 +40,7 @@ public class RestrictedDataServiceIntegrationTest {
 		newGc.setDescription("TEST GRANTING CAPABILITY");
 		newGc.setUrl("www.testGrantingCapability.com");
 		newGc.setGrantingStage(gStageRepo.findAll().get(0));
-		newGc.setGrantingSystem(gSystemRepo.findAll().get(0));
+		newGc.setGrantingSystem(gSystemService.findAllGrantingSystems().get(0));
 		newGc.setFundingOpportunity(foRepo.findAll().get(0));
 
 		GrantingCapability addedGc = restrictedDataService.createGrantingCapability(newGc);

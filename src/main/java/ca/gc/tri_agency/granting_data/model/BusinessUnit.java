@@ -12,8 +12,6 @@ import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.context.i18n.LocaleContextHolder;
-
 import ca.gc.tri_agency.granting_data.model.util.LocalizedParametersModel;
 
 @Entity
@@ -99,14 +97,6 @@ public class BusinessUnit implements LocalizedParametersModel {
 
 	public Long getId() {
 		return id;
-	}
-
-	public String getAcronym() {
-		return LocaleContextHolder.getLocale().getLanguage().equals("en") ? getAcronymEn() : getAcronymFr();
-	}
-
-	public String getName() {
-		return LocaleContextHolder.getLocale().getLanguage().equals("en") ? getNameEn() : getNameFr();
 	}
 
 	@Override
