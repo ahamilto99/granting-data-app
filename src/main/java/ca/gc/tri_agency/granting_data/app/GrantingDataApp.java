@@ -5,7 +5,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.data.ldap.repository.config.EnableLdapRepositories;
 
 //import ca.gc.tri_agency.granting_data.service.ImportService;
 
@@ -13,7 +12,6 @@ import org.springframework.data.ldap.repository.config.EnableLdapRepositories;
 @ComponentScan("ca.gc.tri_agency.granting_data")
 @EntityScan("ca.gc.tri_agency.granting_data.model")
 @EnableJpaRepositories(basePackages = { "ca.gc.tri_agency.granting_data.repo" })
-@EnableLdapRepositories(basePackages = { "ca.gc.tri_agency.granting_data.repoLdap" })
 public class GrantingDataApp {
 
 //	@Autowired
