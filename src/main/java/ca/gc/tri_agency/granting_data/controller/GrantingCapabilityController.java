@@ -16,26 +16,28 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import ca.gc.tri_agency.granting_data.model.GrantingCapability;
-import ca.gc.tri_agency.granting_data.repo.GrantingStageRepository;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.GrantingCapabilityService;
+import ca.gc.tri_agency.granting_data.service.GrantingStageService;
 import ca.gc.tri_agency.granting_data.service.GrantingSystemService;
 
 @Controller
 public class GrantingCapabilityController {
 
 	private GrantingCapabilityService gcService;
-	private GrantingStageRepository gStageRepo; // TODO: REFACTOR
+	
+	private GrantingStageService gStageService;
+	
 	private GrantingSystemService gSystemService;
 
 	@Autowired
 	private MessageSource msgSource;
 
 	@Autowired
-	public GrantingCapabilityController(GrantingCapabilityService gcService, GrantingStageRepository gStageRepo,
+	public GrantingCapabilityController(GrantingCapabilityService gcService, GrantingStageService gStageService,
 			GrantingSystemService gSystemService) {
 		this.gcService = gcService;
-		this.gStageRepo = gStageRepo;
+		this.gStageService = gStageService;
 		this.gSystemService = gSystemService;
 	}
 
@@ -43,7 +45,7 @@ public class GrantingCapabilityController {
 	@GetMapping("/manage/editGC")
 	public String accessEditGC(@RequestParam("id") Long id, Model model) {
 		model.addAttribute("gc", gcService.findGrantingCapabilityById(id));
-		model.addAttribute("grantingStages", gStageRepo.findAll());
+		model.addAttribute("grantingStages", gStageService.findAllGrantingStages());
 		model.addAttribute("grantingSystems", gSystemService.findAllGrantingSystems());
 		return "manage/editGrantingCapability";
 	}
@@ -53,7 +55,7 @@ public class GrantingCapabilityController {
 	public String processEditGC(@Valid @ModelAttribute("gc") GrantingCapability gc, BindingResult bindingResult,
 			RedirectAttributes redirectAttributes, Model model) {
 		if (bindingResult.hasErrors()) {
-			model.addAttribute("grantingStages", gStageRepo.findAll());
+			model.addAttribute("grantingStages", gStageService.findAllGrantingStages());
 			model.addAttribute("grantingSystems", gSystemService.findAllGrantingSystems());
 			return "manage/editGrantingCapability";
 		}
@@ -86,14 +88,14 @@ public class GrantingCapabilityController {
 		model.addAttribute("foId", foId);
 		model.addAttribute("gc", new GrantingCapability());
 		model.addAttribute("grantingSystems", gSystemService.findAllGrantingSystems());
-		model.addAttribute("grantingStages", gStageRepo.findAll());
+		model.addAttribute("grantingStages", gStageService.findAllGrantingStages());
 		return "manage/addGrantingCapabilities";
 	}
 
 	@AdminOnly
 	@PostMapping("/manage/addGrantingCapabilities")
-	public String processCreateGC(@Valid @ModelAttribute("gc") GrantingCapability command,
-			BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+	public String processCreateGC(@Valid @ModelAttribute("gc") GrantingCapability command, BindingResult bindingResult,
+			RedirectAttributes redirectAttributes) {
 		if (bindingResult.hasErrors()) {
 			for (ObjectError br : bindingResult.getAllErrors()) {
 				System.out.println(br.toString());
@@ -105,5 +107,5 @@ public class GrantingCapabilityController {
 		redirectAttributes.addFlashAttribute("actionMsg", actionMsg);
 		return "redirect:/browse/viewFo?id=" + command.getFundingOpportunity().getId();
 	}
-	
+
 }

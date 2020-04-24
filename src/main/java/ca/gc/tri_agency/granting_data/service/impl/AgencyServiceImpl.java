@@ -2,6 +2,7 @@ package ca.gc.tri_agency.granting_data.service.impl;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,7 @@ public class AgencyServiceImpl implements AgencyService {
 
 	private AgencyRepository agencyRepo;
 
+	@Autowired
 	public AgencyServiceImpl(AgencyRepository agencyRepo) {
 		this.agencyRepo = agencyRepo;
 	}

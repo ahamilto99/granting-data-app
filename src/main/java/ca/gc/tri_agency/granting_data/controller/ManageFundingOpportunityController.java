@@ -23,7 +23,6 @@ import ca.gc.tri_agency.granting_data.model.Agency;
 import ca.gc.tri_agency.granting_data.model.FiscalYear;
 import ca.gc.tri_agency.granting_data.model.FundingCycle;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
-import ca.gc.tri_agency.granting_data.repo.GrantingStageRepository;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.AgencyService;
 import ca.gc.tri_agency.granting_data.service.DataAccessService;
@@ -50,9 +49,6 @@ public class ManageFundingOpportunityController {
 	@Autowired
 	GrantingSystemService gSystemService;
 
-	@Autowired
-	GrantingStageRepository grantingStageRepo;
-	
 	@Autowired
 	private GrantingCapabilityService gcService;
 

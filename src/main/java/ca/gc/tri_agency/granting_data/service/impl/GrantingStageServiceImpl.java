@@ -4,11 +4,13 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
+import org.springframework.stereotype.Service;
 
 import ca.gc.tri_agency.granting_data.model.GrantingStage;
 import ca.gc.tri_agency.granting_data.repo.GrantingStageRepository;
 import ca.gc.tri_agency.granting_data.service.GrantingStageService;
 
+@Service
 public class GrantingStageServiceImpl implements GrantingStageService {
 
 	private GrantingStageRepository gStageRepo;

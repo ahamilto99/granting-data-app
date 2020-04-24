@@ -2,6 +2,7 @@ package ca.gc.tri_agency.granting_data.service.impl;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ public class MemberRoleServiceImpl implements MemberRoleService {
 
 	private MemberRoleRepository memberRoleRepo;
 
+	@Autowired
 	public MemberRoleServiceImpl(MemberRoleRepository memberRoleRepo) {
 		this.memberRoleRepo = memberRoleRepo;
 	}
