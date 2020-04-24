@@ -18,4 +18,7 @@
 			<column name="granting_system_id" value="1" />
 		</insert>
 	</changeSet>
+    <changeSet author="dev_aha" id="populateTables" dbms="h2">
+        <sqlFile path="/db/h2-only-data.sql"/>
+    </changeSet>
 </databaseChangeLog>

@@ -5,12 +5,12 @@ import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
+import ca.gc.tri_agency.granting_data.ldap.ADUser;
+import ca.gc.tri_agency.granting_data.ldap.ADUserService;
 import ca.gc.tri_agency.granting_data.model.FundingCycle;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
-import ca.gc.tri_agency.granting_data.model.User;
 import ca.gc.tri_agency.granting_data.repo.FundingCycleRepository;
 import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
-import ca.gc.tri_agency.granting_data.repoLdap.UserRepo;
 import ca.gc.tri_agency.granting_data.security.SecurityUtils;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.RestrictedDataService;
@@ -23,7 +23,7 @@ public class RestrictedDataServiceImpl implements RestrictedDataService {
 	@Autowired
 	private FundingCycleRepository fcRepo;
 	@Autowired
-	private UserRepo userRepo;
+	private ADUserService adUserService;
 
 	@Override
 	@AdminOnly
@@ -40,18 +40,18 @@ public class RestrictedDataServiceImpl implements RestrictedDataService {
 		FundingOpportunity foToUpdate = foRepo.findById(foId)
 				.orElseThrow(() -> new DataRetrievalFailureException("That Funding Opportunity does not exist"));
 		;
-		User person = userRepo.findPerson(leadUserDn);
-		foToUpdate.setProgramLeadName(person.getUsername());
+		ADUser person = adUserService.findADUserByDn(leadUserDn);
+		foToUpdate.setProgramLeadName(person.getFullName());
 		foToUpdate.setProgramLeadDn(leadUserDn);
 		foRepo.save(foToUpdate);
 	}
 
 	@Override
-	public void setFoLeadContributor(long foId, User user) {
+	public void setFoLeadContributor(long foId, ADUser adUser) {
 		FundingOpportunity foToUpdate = foRepo.findById(foId)
 				.orElseThrow(() -> new DataRetrievalFailureException("That Funding Opportunity does not exist"));
-		foToUpdate.setProgramLeadDn(user.getDn());
-		foToUpdate.setProgramLeadName(user.getUsername());
+		foToUpdate.setProgramLeadDn(adUser.getDn().toString());
+		foToUpdate.setProgramLeadName(adUser.getFullName());
 		foRepo.save(foToUpdate);
 	}
 

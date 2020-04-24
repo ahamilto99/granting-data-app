@@ -18,25 +18,32 @@ import ca.gc.tri_agency.granting_data.model.BusinessUnit;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.AgencyService;
 import ca.gc.tri_agency.granting_data.service.BusinessUnitService;
+import ca.gc.tri_agency.granting_data.service.MemberRoleService;
 
 @Controller
 public class BusinessUnitController {
 
 	private BusinessUnitService buService;
-	private AgencyService agencyService; // TODO: refactor DataAccessService
+
+	private AgencyService agencyService; 
+
+	private MemberRoleService mrService;
 
 	@Autowired
 	private MessageSource msgSource;
 
 	@Autowired
-	public BusinessUnitController(BusinessUnitService buService, AgencyService agencyService) {
+	public BusinessUnitController(BusinessUnitService buService, AgencyService agencyService, MemberRoleService mrService) {
 		this.buService = buService;
 		this.agencyService = agencyService;
+		this.mrService = mrService;
+
 	}
 
 	@GetMapping("/browse/viewBU")
 	public String showViewBU(@RequestParam("id") Long id, Model model) {
 		model.addAttribute("bu", buService.findBusinessUnitById(id));
+		model.addAttribute("mrList", mrService.findMemberRolesByBusinessUnitId(id));
 		return "browse/viewBU";
 	}
 
