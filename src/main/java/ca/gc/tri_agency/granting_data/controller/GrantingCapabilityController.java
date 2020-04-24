@@ -8,6 +8,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,7 +41,7 @@ public class GrantingCapabilityController {
 
 	@AdminOnly
 	@GetMapping("/manage/editGC")
-	public String viewEditGC(@RequestParam("id") Long id, Model model) {
+	public String accessEditGC(@RequestParam("id") Long id, Model model) {
 		model.addAttribute("gc", gcService.findGrantingCapabilityById(id));
 		model.addAttribute("grantingStages", gStageRepo.findAll());
 		model.addAttribute("grantingSystems", gSystemService.findAllGrantingSystems());
@@ -64,7 +65,7 @@ public class GrantingCapabilityController {
 
 	@AdminOnly
 	@GetMapping("/manage/deleteGC")
-	public String viewDeleteGC(@RequestParam("id") Long id, Model model) {
+	public String accessDeleteGC(@RequestParam("id") Long id, Model model) {
 		model.addAttribute("gc", gcService.findGrantingCapabilityById(id));
 		return "manage/deleteGrantingCapability";
 	}
@@ -79,4 +80,30 @@ public class GrantingCapabilityController {
 		return "redirect:/manage/manageFo?id=" + foId;
 	}
 
+	@AdminOnly
+	@GetMapping("/manage/addGrantingCapabilities")
+	public String accessCreateGC(@RequestParam("foId") long foId, Model model) {
+		model.addAttribute("foId", foId);
+		model.addAttribute("gc", new GrantingCapability());
+		model.addAttribute("grantingSystems", gSystemService.findAllGrantingSystems());
+		model.addAttribute("grantingStages", gStageRepo.findAll());
+		return "manage/addGrantingCapabilities";
+	}
+
+	@AdminOnly
+	@PostMapping("/manage/addGrantingCapabilities")
+	public String processCreateGC(@Valid @ModelAttribute("gc") GrantingCapability command,
+			BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+		if (bindingResult.hasErrors()) {
+			for (ObjectError br : bindingResult.getAllErrors()) {
+				System.out.println(br.toString());
+			}
+			return "manage/addGrantingCapabilities";
+		}
+		gcService.saveGrantingCapability(command);
+		String actionMsg = msgSource.getMessage("h.createdGc", null, LocaleContextHolder.getLocale());
+		redirectAttributes.addFlashAttribute("actionMsg", actionMsg);
+		return "redirect:/browse/viewFo?id=" + command.getFundingOpportunity().getId();
+	}
+	
 }

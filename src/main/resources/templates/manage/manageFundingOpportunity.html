@@ -142,7 +142,7 @@
 				<div th:if="${actionMsg != null}"><h4 th:text="${actionMsg}"></h4></div>
 			</div>
 		</div>
-		<a style="margin-bottom: 50px" class="btn btn-primary" th:href="@{addGrantingCapabilities(id=${fo.id})}" role="button" th:text="#{link.addGc}"></a>
+		<a sec:authorize="hasRole('MDM ADMIN')" id="createGrantingCapabilityLink" style="margin-bottom: 50px" class="btn btn-primary" th:href="@{addGrantingCapabilities(foId=${param.id})}" role="button" th:text="#{link.addGc}"></a>
 		
 	</div>
    </body>

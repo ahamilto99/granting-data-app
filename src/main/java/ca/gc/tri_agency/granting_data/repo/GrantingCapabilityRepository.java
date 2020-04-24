@@ -10,7 +10,7 @@ import ca.gc.tri_agency.granting_data.model.GrantingCapability;
 @Repository
 public interface GrantingCapabilityRepository extends JpaRepository<GrantingCapability, Long> {
 
-	List<GrantingCapability> findByFundingOpportunityId(Long id); // TODO: refactor its implementation
+	List<GrantingCapability> findByFundingOpportunityId(Long id);
 
 	List<GrantingCapability> findByGrantingStageNameEn(String name);
 

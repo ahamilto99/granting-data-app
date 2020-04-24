@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import ca.gc.tri_agency.granting_data.model.FiscalYear;
 import ca.gc.tri_agency.granting_data.model.util.CalendarGrid;
 import ca.gc.tri_agency.granting_data.service.DataAccessService;
+import ca.gc.tri_agency.granting_data.service.GrantingCapabilityService;
 import ca.gc.tri_agency.granting_data.service.GrantingSystemService;
 
 @Controller
@@ -21,9 +22,12 @@ public class BrowseController {
 
 	private GrantingSystemService gsService;
 
-	public BrowseController(DataAccessService dataService, GrantingSystemService gsService) {
+	private GrantingCapabilityService gcService;
+
+	public BrowseController(DataAccessService dataService, GrantingSystemService gsService, GrantingCapabilityService gcService) {
 		this.dataService = dataService;
 		this.gsService = gsService;
+		this.gcService = gcService;
 	}
 
 	@GetMapping("/goldenList")
@@ -41,7 +45,7 @@ public class BrowseController {
 		model.addAttribute("fo", dataService.getFundingOpportunity(id));
 		// model.addAttribute("systemFoCycles",
 		// dataService.getSystemFundingCyclesByFoId(id));
-		model.addAttribute("grantingCapabilities", dataService.getGrantingCapabilitiesByFoId(id));
+		model.addAttribute("grantingCapabilities", gcService.findGrantingCapabilitiesByFoId(id));
 		model.addAttribute("fcDataMap", dataService.getFundingCycleDataMapByYear(id));
 		return "browse/viewFundingOpportunity";
 	}

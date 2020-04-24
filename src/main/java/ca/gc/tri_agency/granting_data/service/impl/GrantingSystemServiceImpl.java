@@ -5,14 +5,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
 
 import ca.gc.tri_agency.granting_data.model.GrantingCapability;
 import ca.gc.tri_agency.granting_data.model.GrantingSystem;
-import ca.gc.tri_agency.granting_data.repo.GrantingCapabilityRepository;
 import ca.gc.tri_agency.granting_data.repo.GrantingSystemRepository;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
+import ca.gc.tri_agency.granting_data.service.GrantingCapabilityService;
 import ca.gc.tri_agency.granting_data.service.GrantingSystemService;
 
 @Service
@@ -20,11 +21,12 @@ public class GrantingSystemServiceImpl implements GrantingSystemService {
 
 	private GrantingSystemRepository gsRepo;
 	
-	private GrantingCapabilityRepository grantingCapabilityRepo; // TODO: refactor GrantingCapability
+	private GrantingCapabilityService gcService;
 
-	public GrantingSystemServiceImpl(GrantingSystemRepository gsRepo, GrantingCapabilityRepository grantingCapabilityRepo) {
+	@Autowired
+	public GrantingSystemServiceImpl(GrantingSystemRepository gsRepo, GrantingCapabilityService gcService) {
 		this.gsRepo = gsRepo;
-		this.grantingCapabilityRepo = grantingCapabilityRepo;
+		this.gcService = gcService;
 	}
 
 	@Override
@@ -58,7 +60,7 @@ public class GrantingSystemServiceImpl implements GrantingSystemService {
 	@Override
 	public Map<Long, GrantingSystem> findApplySystemsByFundingOpportunityMap() {
 		Map<Long, GrantingSystem> retval = new HashMap<>();
-		List<GrantingCapability> applyCapabilities = grantingCapabilityRepo.findByGrantingStageNameEn("APPLY");
+		List<GrantingCapability> applyCapabilities = gcService.findGrantingCapabilitiesByGrantingStageNameEn("APPLY");
 		for (GrantingCapability c : applyCapabilities) {
 			retval.put(c.getFundingOpportunity().getId(), c.getGrantingSystem());
 		}
@@ -68,7 +70,7 @@ public class GrantingSystemServiceImpl implements GrantingSystemService {
 	@Override
 	public Map<Long, List<GrantingSystem>> findAwardSystemsByFundingOpportunityMap() {
 		Map<Long, List<GrantingSystem>> retval = new HashMap<Long, List<GrantingSystem>>();
-		List<GrantingCapability> applyCapabilities = grantingCapabilityRepo.findByGrantingStageNameEn("AWARD");
+		List<GrantingCapability> applyCapabilities = gcService.findGrantingCapabilitiesByGrantingStageNameEn("AWARD");
 		for (GrantingCapability c : applyCapabilities) {
 			if (retval.containsKey(c.getFundingOpportunity().getId()) == false) {
 				retval.put(c.getFundingOpportunity().getId(), new ArrayList<GrantingSystem>());

@@ -10,6 +10,7 @@ import javax.persistence.SequenceGenerator;
 
 @Entity
 public class GrantingCapability {
+
 	@Id
 	@SequenceGenerator(name = "SEQ_GRANTING_CAPABILITY", sequenceName = "SEQ_GRANTING_CAPABILITY", initialValue = 1, allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_GRANTING_CAPABILITY")
@@ -31,10 +32,22 @@ public class GrantingCapability {
 	@JoinColumn(name = "granting_system_id")
 	private GrantingSystem grantingSystem;
 
+	public GrantingCapability() {
+	}
+
+	public GrantingCapability(String description, String url, FundingOpportunity fundingOpportunity, GrantingStage grantingStage,
+			GrantingSystem grantingSystem) {
+		this.description = description;
+		this.url = url;
+		this.fundingOpportunity = fundingOpportunity;
+		this.grantingStage = grantingStage;
+		this.grantingSystem = grantingSystem;
+	}
+
 	public Long getId() {
 		return id;
 	}
-	
+
 	public void setId(Long id) {
 		this.id = id;
 	}
