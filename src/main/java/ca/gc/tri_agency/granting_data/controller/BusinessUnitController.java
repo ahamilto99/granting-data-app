@@ -16,25 +16,28 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import ca.gc.tri_agency.granting_data.model.BusinessUnit;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
+import ca.gc.tri_agency.granting_data.service.AgencyService;
 import ca.gc.tri_agency.granting_data.service.BusinessUnitService;
-import ca.gc.tri_agency.granting_data.service.DataAccessService;
 import ca.gc.tri_agency.granting_data.service.MemberRoleService;
 
 @Controller
 public class BusinessUnitController {
 
 	private BusinessUnitService buService;
+
+	private AgencyService agencyService; 
+
 	private MemberRoleService mrService;
-	private DataAccessService das; // TODO: refactor DataAccessService
 
 	@Autowired
 	private MessageSource msgSource;
 
 	@Autowired
-	public BusinessUnitController(BusinessUnitService buService, MemberRoleService mrService, DataAccessService das) {
+	public BusinessUnitController(BusinessUnitService buService, AgencyService agencyService, MemberRoleService mrService) {
 		this.buService = buService;
+		this.agencyService = agencyService;
 		this.mrService = mrService;
-		this.das = das;
+
 	}
 
 	@GetMapping("/browse/viewBU")
@@ -48,7 +51,7 @@ public class BusinessUnitController {
 	@GetMapping("/admin/createBU")
 	public String showCreateBU(@RequestParam("agencyId") Long agencyId, Model model) {
 		BusinessUnit bu = new BusinessUnit();
-		bu.setAgency(das.getAgency(agencyId));
+		bu.setAgency(agencyService.findAgencyById(agencyId));
 		model.addAttribute("bu", bu);
 		return "admin/createBU";
 	}
@@ -62,7 +65,7 @@ public class BusinessUnitController {
 		}
 		buService.saveBusinessUnit(bu);
 		String actionMsg = msgSource.getMessage("h.createdBu", null, LocaleContextHolder.getLocale());
-		redirectAttributes.addFlashAttribute("actionMsg", actionMsg + bu.getName());
+		redirectAttributes.addFlashAttribute("actionMsg", actionMsg + bu.getLocalizedAttribute("name"));
 		return "redirect:/browse/viewAgency?id=" + bu.getAgency().getId();
 	}
 
@@ -82,7 +85,7 @@ public class BusinessUnitController {
 		}
 		buService.saveBusinessUnit(bu);
 		String actionMsg = msgSource.getMessage("h.editedBu", null, LocaleContextHolder.getLocale());
-		redirectAttributes.addFlashAttribute("actionMsg", actionMsg + bu.getName());
+		redirectAttributes.addFlashAttribute("actionMsg", actionMsg + bu.getLocalizedAttribute("name"));
 		return "redirect:/browse/viewAgency?id=" + bu.getAgency().getId();
 	}
 

@@ -8,22 +8,22 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
-import ca.gc.tri_agency.granting_data.repo.GrantingCapabilityRepository;
-import ca.gc.tri_agency.granting_data.repo.GrantingStageRepository;
-import ca.gc.tri_agency.granting_data.repo.GrantingSystemRepository;
+import ca.gc.tri_agency.granting_data.service.GrantingCapabilityService;
+import ca.gc.tri_agency.granting_data.service.GrantingStageService;
+import ca.gc.tri_agency.granting_data.service.GrantingSystemService;
 
 @Component
 @Profile({ "local", "test" })
 public class GrantingCapabilityData implements CommandLineRunner {
 
 	@Autowired
-	private GrantingCapabilityRepository grantingCapabilityRepo;
+	private GrantingCapabilityService gcService;
 	@Autowired
 	private FundingOpportunityRepository foRepo;
 	@Autowired
-	private GrantingSystemRepository grantingSystemRepo;
+	private GrantingSystemService gSystemService;
 	@Autowired
-	private GrantingStageRepository grantingStageRepo;
+	private GrantingStageService gStageService;
 
 	private static final Logger LOG = LoggerFactory.getLogger(GrantingCapabilityData.class);
 
@@ -34,13 +34,13 @@ public class GrantingCapabilityData implements CommandLineRunner {
 	}
 	/*
 	 * private void populateWithDesiredStructure() { List<GrantingSystem>
-	 * grantingSystemList = grantingSystemRepo.findAll(); Map<String,
+	 * grantingSystemList = gSystemService.findAll(); Map<String,
 	 * GrantingSystem> grantingSystemMap = new HashMap<>(); grantingSystemList
 	 * .forEach(grantingSystem -> grantingSystemMap.put(grantingSystem.getAcronym(),
 	 * grantingSystem));
 	 * 
 	 * List<GrantingStage> grantingStageList = new ArrayList<>(); grantingStageList
-	 * = grantingStageRepo.findAll();
+	 * = gStageService.findAll();
 	 * 
 	 * List<FundingOpportunity> foList = foRepo.findAll();
 	 * 
@@ -53,58 +53,58 @@ public class GrantingCapabilityData implements CommandLineRunner {
 	 * grantingCapability.setFundingOpportunity(fo); String applyMethod =
 	 * fo.getApplyMethod(); if (null != fo.getDivision() &&
 	 * fo.getDivision().equals("MCT")) {
-	 * grantingCapability.setGrantingSystem(grantingSystemRepo.findByAcronym(
-	 * "ResearchNet")); grantingCapabilityRepo.save(grantingCapability); continue; }
+	 * grantingCapability.setGrantingSystem(gSystemService.findByAcronym(
+	 * "ResearchNet")); gcService.save(grantingCapability); continue; }
 	 * else if (null != fo.getProgramLeadName() &&
 	 * fo.getProgramLeadName().equals("Open")) {
-	 * grantingCapability.setGrantingSystem(grantingSystemRepo.
+	 * grantingCapability.setGrantingSystem(gSystemService.
 	 * findByAcronym("NSERC Online"));
-	 * grantingCapabilityRepo.save(grantingCapability); } else if ((applyMethod ==
+	 * gcService.save(grantingCapability); } else if ((applyMethod ==
 	 * null || applyMethod.equals("Offline") || applyMethod.equals("Not Applicable")
 	 * || applyMethod.equals("Email")) && null != fo.getAwardManagementSystem() &&
 	 * !fo.getAwardManagementSystem().equals("null") &&
 	 * !fo.getAwardManagementSystem().equals("Apears in NAMIS aka CSYN") &&
 	 * !fo.getAwardManagementSystem().equals("Apears in NAMIS aka SYN")) {
-	 * grantingCapability.setGrantingSystem(grantingSystemRepo.findByAcronym(fo.
+	 * grantingCapability.setGrantingSystem(gSystemService.findByAcronym(fo.
 	 * getAwardManagementSystem()));
-	 * grantingCapabilityRepo.save(grantingCapability); continue; } else if (null !=
+	 * gcService.save(grantingCapability); continue; } else if (null !=
 	 * fo.getProgramLeadName() && fo.getProgramLeadName().equals("Allanah Brown")) {
-	 * grantingCapability.setGrantingSystem(grantingSystemRepo.findByAcronym(
-	 * "ResearchNet")); grantingCapabilityRepo.save(grantingCapability); continue; }
+	 * grantingCapability.setGrantingSystem(gSystemService.findByAcronym(
+	 * "ResearchNet")); gcService.save(grantingCapability); continue; }
 	 * else if (null != fo.getNameEn() &&
 	 * fo.getNameEn().equals("Subatomic Physics - Individual (SAPIN) (5840)")) {
-	 * grantingCapability.setGrantingSystem(grantingSystemRepo.findByAcronym("RP1"))
-	 * ; grantingCapabilityRepo.save(grantingCapability); continue; } else if (null
+	 * grantingCapability.setGrantingSystem(gSystemService.findByAcronym("RP1"))
+	 * ; gcService.save(grantingCapability); continue; } else if (null
 	 * != fo.getNameEn() && fo.getNameEn().
 	 * equals("Thematic Resources Support in Mathematics and Statistics (CTRMS)")) {
-	 * grantingCapability.setGrantingSystem(grantingSystemRepo.
+	 * grantingCapability.setGrantingSystem(gSystemService.
 	 * findByAcronym("SP Secure Upload"));
-	 * grantingCapabilityRepo.save(grantingCapability); continue; } else if (null !=
+	 * gcService.save(grantingCapability); continue; } else if (null !=
 	 * fo.getNameEn() && fo.getNameEn().equals("Research Support Fund (RSF)")) {
-	 * grantingCapability.setGrantingSystem(grantingSystemRepo.findByAcronym("CIMS")
-	 * ); grantingCapabilityRepo.save(grantingCapability); continue; } else if (null
+	 * grantingCapability.setGrantingSystem(gSystemService.findByAcronym("CIMS")
+	 * ); gcService.save(grantingCapability); continue; } else if (null
 	 * != fo.getNameEn() && fo.getNameEn().equals("Digging into Data")) {
-	 * grantingCapability.setGrantingSystem(grantingSystemRepo.
+	 * grantingCapability.setGrantingSystem(gSystemService.
 	 * findByAcronym("SP Secure Upload"));
-	 * grantingCapabilityRepo.save(grantingCapability); continue; } else if (null !=
+	 * gcService.save(grantingCapability); continue; } else if (null !=
 	 * fo.getNameEn() && fo.getNameEn().
 	 * equals("Special Initiatives Fund For Research Support And Collaboration")) {
-	 * grantingCapability.setGrantingSystem(grantingSystemRepo.
+	 * grantingCapability.setGrantingSystem(gSystemService.
 	 * findByAcronym("SP Secure Upload"));
-	 * grantingCapabilityRepo.save(grantingCapability); continue; } else if (null !=
+	 * gcService.save(grantingCapability); continue; } else if (null !=
 	 * fo.getNameEn() && fo.getNameEn().contains("Synergy")) {
-	 * grantingCapability.setGrantingSystem(grantingSystemRepo.findByAcronym("NAMIS"
-	 * )); grantingCapabilityRepo.save(grantingCapability); continue; }
+	 * grantingCapability.setGrantingSystem(gSystemService.findByAcronym("NAMIS"
+	 * )); gcService.save(grantingCapability); continue; }
 	 * 
 	 * for (Map.Entry<String, GrantingSystem> entry : grantingSystemMap.entrySet())
 	 * { if (entry != null && entry.getKey() != null && fo.getApplyMethod() != null
 	 * && fo.getApplyMethod().equals(entry.getKey())) {
 	 * grantingCapability.setGrantingSystem(entry.getValue());
-	 * grantingCapabilityRepo.save(grantingCapability); break; } else if (null !=
+	 * gcService.save(grantingCapability); break; } else if (null !=
 	 * fo.getApplyMethod() && null != assignGrantingSystem(fo.getApplyMethod())) {
 	 * grantingCapability.setGrantingSystem(
-	 * grantingSystemRepo.findByAcronym(assignGrantingSystem(fo.getApplyMethod())));
-	 * grantingCapabilityRepo.save(grantingCapability); break; } } }
+	 * gSystemService.findByAcronym(assignGrantingSystem(fo.getApplyMethod())));
+	 * gcService.save(grantingCapability); break; } } }
 	 * 
 	 * // AWARD stage entries GrantingStage grantingStageAward = null; for
 	 * (GrantingStage grantingStage : grantingStageList) { if
@@ -121,30 +121,30 @@ public class GrantingCapabilityData implements CommandLineRunner {
 	 * grantingCapability.setFundingOpportunity(fo);
 	 * 
 	 * if (null != fo.getDivision() && fo.getDivision().equals("MCT")) {
-	 * grantingCapability.setGrantingSystem(grantingSystemRepo.findByAcronym("NAMIS"
-	 * )); grantingCapabilityRepo.save(grantingCapability); continue; } else if
+	 * grantingCapability.setGrantingSystem(gSystemService.findByAcronym("NAMIS"
+	 * )); gcService.save(grantingCapability); continue; } else if
 	 * (null != fo.getProgramLeadName() && fo.getProgramLeadName().equals("Open")) {
-	 * grantingCapability.setGrantingSystem(grantingSystemRepo.findByAcronym("NAMIS"
-	 * )); grantingCapabilityRepo.save(grantingCapability); } else if (null !=
+	 * grantingCapability.setGrantingSystem(gSystemService.findByAcronym("NAMIS"
+	 * )); gcService.save(grantingCapability); } else if (null !=
 	 * fo.getAwardManagementSystem() &&
 	 * fo.getAwardManagementSystem().equals("NAMIS/AMIS/CIHR System")) {
-	 * grantingCapability.setGrantingSystem(grantingSystemRepo.findByAcronym("NAMIS"
-	 * )); grantingCapabilityRepo.save(grantingCapability);
+	 * grantingCapability.setGrantingSystem(gSystemService.findByAcronym("NAMIS"
+	 * )); gcService.save(grantingCapability);
 	 * 
 	 * // Spring won't create a new entry in the granting_capability table if I only
 	 * // change the Granting System for the GrantingCapability object therefore I
 	 * have // to create a new GrantingCapability object.
 	 * 
 	 * grantingCapability = new GrantingCapability();
-	 * grantingCapability.setGrantingSystem(grantingSystemRepo.findByAcronym("AMIS")
+	 * grantingCapability.setGrantingSystem(gSystemService.findByAcronym("AMIS")
 	 * ); grantingCapability.setGrantingStage(grantingStageAward);
 	 * grantingCapability.setFundingOpportunity(fo);
-	 * grantingCapabilityRepo.save(grantingCapability); grantingCapability = new
+	 * gcService.save(grantingCapability); grantingCapability = new
 	 * GrantingCapability();
-	 * grantingCapability.setGrantingSystem(grantingSystemRepo.findByAcronym(
+	 * grantingCapability.setGrantingSystem(gSystemService.findByAcronym(
 	 * "ResearchNet")); grantingCapability.setGrantingStage(grantingStageAward);
 	 * grantingCapability.setFundingOpportunity(fo);
-	 * grantingCapabilityRepo.save(grantingCapability); continue; } else if
+	 * gcService.save(grantingCapability); continue; } else if
 	 * ((fo.getAwardManagementSystem() == null ||
 	 * fo.getAwardManagementSystem().equals("Via Research Offices") ||
 	 * fo.getAwardManagementSystem().equals("Partner")) && fo.getApplyMethod() !=
@@ -152,44 +152,44 @@ public class GrantingCapabilityData implements CommandLineRunner {
 	 * !fo.getApplyMethod().equals("NotApplicable") &&
 	 * !fo.getApplyMethod().equals("offline") &&
 	 * !fo.getApplyMethod().equals("CIMS/Extranet(SP)")) { grantingCapability
-	 * .setGrantingSystem(grantingSystemRepo.findByAcronym(assignGrantingSystem(fo.
-	 * getApplyMethod()))); grantingCapabilityRepo.save(grantingCapability);
+	 * .setGrantingSystem(gSystemService.findByAcronym(assignGrantingSystem(fo.
+	 * getApplyMethod()))); gcService.save(grantingCapability);
 	 * continue; } else if (null != fo.getProgramLeadName() &&
 	 * fo.getProgramLeadName().equals("Allanah Brown")) {
-	 * grantingCapability.setGrantingSystem(grantingSystemRepo.findByAcronym(
-	 * "ResearchNet")); grantingCapabilityRepo.save(grantingCapability); continue; }
+	 * grantingCapability.setGrantingSystem(gSystemService.findByAcronym(
+	 * "ResearchNet")); gcService.save(grantingCapability); continue; }
 	 * else if (null != fo.getNameEn() &&
 	 * fo.getNameEn().equals("Subatomic Physics - Individual (SAPIN) (5840)")) {
-	 * grantingCapability.setGrantingSystem(grantingSystemRepo.findByAcronym("RP1"))
-	 * ; grantingCapabilityRepo.save(grantingCapability); continue; } else if (null
+	 * grantingCapability.setGrantingSystem(gSystemService.findByAcronym("RP1"))
+	 * ; gcService.save(grantingCapability); continue; } else if (null
 	 * != fo.getNameEn() && fo.getNameEn().
 	 * equals("Thematic Resources Support in Mathematics and Statistics (CTRMS)")) {
-	 * grantingCapability.setGrantingSystem(grantingSystemRepo.findByAcronym("NAMIS"
-	 * )); grantingCapabilityRepo.save(grantingCapability); continue; } else if
+	 * grantingCapability.setGrantingSystem(gSystemService.findByAcronym("NAMIS"
+	 * )); gcService.save(grantingCapability); continue; } else if
 	 * (null != fo.getNameEn() &&
 	 * fo.getNameEn().equals("Research Support Fund (RSF)")) {
-	 * grantingCapability.setGrantingSystem(grantingSystemRepo.findByAcronym("CIMS")
-	 * ); grantingCapabilityRepo.save(grantingCapability); continue; } else if (null
+	 * grantingCapability.setGrantingSystem(gSystemService.findByAcronym("CIMS")
+	 * ); gcService.save(grantingCapability); continue; } else if (null
 	 * != fo.getNameEn() && fo.getNameEn().equals("Digging into Data")) {
-	 * grantingCapability.setGrantingSystem(grantingSystemRepo.findByAcronym("NAMIS"
-	 * )); grantingCapabilityRepo.save(grantingCapability); continue; } else if
+	 * grantingCapability.setGrantingSystem(gSystemService.findByAcronym("NAMIS"
+	 * )); gcService.save(grantingCapability); continue; } else if
 	 * (null != fo.getNameEn() && fo.getNameEn().
 	 * equals("Special Initiatives Fund For Research Support And Collaboration")) {
-	 * grantingCapability.setGrantingSystem(grantingSystemRepo.findByAcronym("AMIS")
-	 * ); grantingCapabilityRepo.save(grantingCapability); continue; }
+	 * grantingCapability.setGrantingSystem(gSystemService.findByAcronym("AMIS")
+	 * ); gcService.save(grantingCapability); continue; }
 	 * 
 	 * for (Map.Entry<String, GrantingSystem> entry : grantingSystemMap.entrySet())
 	 * { if (entry != null && entry.getKey() != null &&
 	 * fo.getAwardManagementSystem() != null &&
 	 * fo.getAwardManagementSystem().equals(entry.getKey())) {
 	 * grantingCapability.setGrantingSystem(entry.getValue());
-	 * grantingCapabilityRepo.save(grantingCapability); break; } else if (null !=
+	 * gcService.save(grantingCapability); break; } else if (null !=
 	 * fo.getAwardManagementSystem() && null !=
 	 * assignGrantingSystem(fo.getAwardManagementSystem())) {
 	 * grantingCapability.setGrantingSystem(
-	 * grantingSystemRepo.findByAcronym(assignGrantingSystem(fo.
+	 * gSystemService.findByAcronym(assignGrantingSystem(fo.
 	 * getAwardManagementSystem())));
-	 * grantingCapabilityRepo.save(grantingCapability); break; } }
+	 * gcService.save(grantingCapability); break; } }
 	 * 
 	 * } }
 	 * 

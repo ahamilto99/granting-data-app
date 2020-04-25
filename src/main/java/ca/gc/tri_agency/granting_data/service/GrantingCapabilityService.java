@@ -15,4 +15,9 @@ public interface GrantingCapabilityService {
 	List<GrantingCapability> findGrantingCapabilitiesByFoId(Long id);
 	
 	void deleteGrantingCapabilityById(Long id);
+	
+	List<GrantingCapability> findGrantingCapabilitiesByGrantingStageNameEn(String nameEn);
+	
+	long grantingCapabilityCount();
+	
 }

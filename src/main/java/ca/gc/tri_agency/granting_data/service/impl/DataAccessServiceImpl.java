@@ -13,20 +13,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
 
-import ca.gc.tri_agency.granting_data.model.Agency;
 import ca.gc.tri_agency.granting_data.model.FiscalYear;
 import ca.gc.tri_agency.granting_data.model.FundingCycle;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
-import ca.gc.tri_agency.granting_data.model.GrantingCapability;
-import ca.gc.tri_agency.granting_data.model.GrantingSystem;
 import ca.gc.tri_agency.granting_data.model.SystemFundingCycle;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.util.FundingCycleInfo;
-import ca.gc.tri_agency.granting_data.repo.AgencyRepository;
 import ca.gc.tri_agency.granting_data.repo.FiscalYearRepository;
 import ca.gc.tri_agency.granting_data.repo.FundingCycleRepository;
 import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
-import ca.gc.tri_agency.granting_data.repo.GrantingCapabilityRepository;
 import ca.gc.tri_agency.granting_data.repo.SystemFundingCycleRepository;
 import ca.gc.tri_agency.granting_data.repo.SystemFundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
@@ -42,11 +37,7 @@ public class DataAccessServiceImpl implements DataAccessService {
 	@Autowired
 	private FundingOpportunityRepository foRepo;
 	@Autowired
-	private AgencyRepository agencyRepo;
-	@Autowired
 	private FundingCycleRepository fundingCycleRepo;
-	@Autowired
-	private GrantingCapabilityRepository grantingCapabilityRepo;
 	@Autowired
 	private FundingCycleRepository fcRepo;
 	@Autowired
@@ -72,11 +63,6 @@ public class DataAccessServiceImpl implements DataAccessService {
 	public FundingOpportunity getFundingOpportunity(long id) {
 		return foRepo.findById(id)
 				.orElseThrow(() -> new DataRetrievalFailureException("That Funding Opportunity does not exist"));
-	}
-
-	@Override
-	public List<Agency> getAllAgencies() {
-		return agencyRepo.findAll();
 	}
 
 	@Override
@@ -120,12 +106,6 @@ public class DataAccessServiceImpl implements DataAccessService {
 	}
 
 	@Override
-	public List<GrantingCapability> getGrantingCapabilitiesByFoId(long id) {
-		return grantingCapabilityRepo.findByFundingOpportunityId(id);
-
-	}
-
-	@Override
 	public List<FundingOpportunity> getFoByNameEn(String nameEn) {
 		return foRepo.findAllByNameEn(nameEn);
 	}
@@ -138,12 +118,6 @@ public class DataAccessServiceImpl implements DataAccessService {
 			retval.put(fc.getFundingOpportunity().getId(), fc);
 		}
 		return retval;
-	}
-
-	@Override
-	public Agency getAgency(long id) {
-		return agencyRepo.findById(id)
-				.orElseThrow(() -> new DataRetrievalFailureException("That Agency does not exist"));
 	}
 
 	@Override
@@ -454,26 +428,4 @@ public class DataAccessServiceImpl implements DataAccessService {
 		return retval;
 	}
 
-	@Override
-	public Map<Long, GrantingSystem> getApplySystemsByFundingOpportunityMap() {
-		Map<Long, GrantingSystem> retval = new HashMap<Long, GrantingSystem>();
-		List<GrantingCapability> applyCapabilities = grantingCapabilityRepo.findByGrantingStageNameEn("APPLY");
-		for (GrantingCapability c : applyCapabilities) {
-			retval.put(c.getFundingOpportunity().getId(), c.getGrantingSystem());
-		}
-		return retval;
-	}
-
-	@Override
-	public Map<Long, List<GrantingSystem>> getAwardSystemsByFundingOpportunityMap() {
-		Map<Long, List<GrantingSystem>> retval = new HashMap<Long, List<GrantingSystem>>();
-		List<GrantingCapability> applyCapabilities = grantingCapabilityRepo.findByGrantingStageNameEn("AWARD");
-		for (GrantingCapability c : applyCapabilities) {
-			if (retval.containsKey(c.getFundingOpportunity().getId()) == false) {
-				retval.put(c.getFundingOpportunity().getId(), new ArrayList<GrantingSystem>());
-			}
-			retval.get(c.getFundingOpportunity().getId()).add(c.getGrantingSystem());
-		}
-		return retval;
-	}
 }

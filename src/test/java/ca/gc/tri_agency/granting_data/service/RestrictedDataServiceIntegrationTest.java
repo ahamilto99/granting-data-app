@@ -14,9 +14,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
 import ca.gc.tri_agency.granting_data.model.GrantingCapability;
 import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
-import ca.gc.tri_agency.granting_data.repo.GrantingCapabilityRepository;
-import ca.gc.tri_agency.granting_data.repo.GrantingStageRepository;
-import ca.gc.tri_agency.granting_data.repo.GrantingSystemRepository;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = GrantingDataApp.class)
@@ -24,15 +21,13 @@ import ca.gc.tri_agency.granting_data.repo.GrantingSystemRepository;
 public class RestrictedDataServiceIntegrationTest {
 
 	@Autowired
-	private RestrictedDataService restrictedDataService;
+	private GrantingSystemService gSystemService;
 	@Autowired
-	private GrantingCapabilityRepository gcRepo;
-	@Autowired
-	private GrantingSystemRepository gSystemRepo;
-	@Autowired
-	private GrantingStageRepository gStageRepo;
+	private GrantingStageService gStageService;
 	@Autowired
 	private FundingOpportunityRepository foRepo;
+	@Autowired
+	private GrantingCapabilityService gcService;
 
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
@@ -40,18 +35,18 @@ public class RestrictedDataServiceIntegrationTest {
 		GrantingCapability newGc = new GrantingCapability();
 		newGc.setDescription("TEST GRANTING CAPABILITY");
 		newGc.setUrl("www.testGrantingCapability.com");
-		newGc.setGrantingStage(gStageRepo.findAll().get(0));
-		newGc.setGrantingSystem(gSystemRepo.findAll().get(0));
+		newGc.setGrantingStage(gStageService.findAllGrantingStages().get(0));
+		newGc.setGrantingSystem(gSystemService.findAllGrantingSystems().get(0));
 		newGc.setFundingOpportunity(foRepo.findAll().get(0));
 
-		GrantingCapability addedGc = restrictedDataService.createGrantingCapability(newGc);
+		GrantingCapability addedGc = gcService.saveGrantingCapability(newGc);
 
 		assertNotNull(addedGc);
 
 		Long addedGcId = addedGc.getId();
-		assertEquals(gcRepo.findById(addedGcId).get().getFundingOpportunity().getNameEn(),
+		assertEquals(gcService.findGrantingCapabilityById(addedGcId).getFundingOpportunity().getNameEn(),
 				newGc.getFundingOpportunity().getNameEn());
-		assertEquals(gcRepo.findById(addedGcId).get().getDescription(), newGc.getDescription());
+		assertEquals(gcService.findGrantingCapabilityById(addedGcId).getDescription(), newGc.getDescription());
 	}
 
 }

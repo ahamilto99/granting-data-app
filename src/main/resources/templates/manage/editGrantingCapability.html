@@ -35,7 +35,7 @@
 				<div class="col-sm-2 col-form-label" th:text="#{form.gs}"></div>
 				<div>
 					<select th:class="col-sm-2" th:field="*{grantingStage}">
-						<option th:each="stage : ${grantingStages}" th:value="${stage.id}" th:text="${stage.getName()}"></option>
+						<option th:each="stage : ${grantingStages}" th:value="${stage.id}" th:text="${stage.getLocalizedAttribute('name')}"></option>
 					</select>
 				</div>
 			</div>

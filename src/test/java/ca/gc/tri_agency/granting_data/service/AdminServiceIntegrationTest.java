@@ -16,6 +16,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -31,10 +32,8 @@ import ca.gc.tri_agency.granting_data.model.GrantingSystem;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.file.FundingCycleDatasetRow;
 import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
-import ca.gc.tri_agency.granting_data.repo.GrantingSystemRepository;
 import ca.gc.tri_agency.granting_data.repo.SystemFundingCycleRepository;
 import ca.gc.tri_agency.granting_data.repo.SystemFundingOpportunityRepository;
-import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = GrantingDataApp.class)
@@ -48,7 +47,7 @@ public class AdminServiceIntegrationTest {
 	@Autowired
 	SystemFundingOpportunityRepository sfoRepo;
 	@Autowired
-	GrantingSystemRepository gsRepo;
+	GrantingSystemService gsSystem;
 	@Autowired
 	FundingOpportunityRepository foRepo;
 	@Autowired
@@ -90,7 +89,7 @@ public class AdminServiceIntegrationTest {
 	}
 
 	@Test
-	@AdminOnly
+	@WithMockUser(username = "admin", roles = "MDM ADMIN")
 	@Transactional
 	public void test_applyChangesFromFileByIds_regsiterSFCwhenSFOalreadyExists() {
 		String targetYear = "2009";
@@ -103,7 +102,7 @@ public class AdminServiceIntegrationTest {
 		newSfo.setExtId(sfoName);
 
 		// List<GrantingSystem> gsList = gsRepo.findAll();
-		newSfo.setGrantingSystem(gsRepo.findByAcronym("NAMIS"));
+		newSfo.setGrantingSystem(gsSystem.findGrantingSystemByAcronym("NAMIS"));
 		newSfo = sfoRepo.save(newSfo);
 		List<SystemFundingOpportunity> sfoMatchingNames = sfoRepo.findByNameEn(sfoName + " EN");
 		assertTrue("i think the process and test requires unique SFO names", sfoMatchingNames.size() == 1);
@@ -121,7 +120,7 @@ public class AdminServiceIntegrationTest {
 	}
 
 	@Test
-	@AdminOnly
+	@WithMockUser(username = "admin", roles = "MDM ADMIN")
 	public void test_applyChangesFromFileByIds_adminCanRegisterSFOandSFC() throws Exception {
 		List<FundingCycleDatasetRow> fundingCycles = adminService.getFundingCyclesFromFile(TEST_FILE);
 		String[] idsToAction = new String[] { fundingCycles.get(0).getFoCycle() };
@@ -153,7 +152,7 @@ public class AdminServiceIntegrationTest {
 	@Test
 	public void test_generateActionableFoCycleIds_actionDueToNewSfc() {
 		// register FO
-		GrantingSystem gs = gsRepo.findAll().get(0);
+		GrantingSystem gs = gsSystem.findAllGrantingSystems().get(0);
 		FundingCycleDatasetRow testRow = createFcDatasetRow(testFoName + "2", "2019");
 		adminService.registerSystemFundingOpportunity(testRow, gs);
 
@@ -167,7 +166,7 @@ public class AdminServiceIntegrationTest {
 
 	@Test
 	public void test_generateActionableFoCycleIds_noActionCauseSfcAndSfoExists() {
-		GrantingSystem gs = gsRepo.findAll().get(0);
+		GrantingSystem gs = gsSystem.findAllGrantingSystems().get(0);
 		FundingCycleDatasetRow testRow = createFcDatasetRow(testFoName + "3", "2019");
 		SystemFundingOpportunity sfo = adminService.registerSystemFundingOpportunity(testRow, gs);
 		adminService.registerSystemFundingCycle(testRow, sfo);

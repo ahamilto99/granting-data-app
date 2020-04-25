@@ -75,6 +75,10 @@
 			</div>
 		</div>
 		
+		<div th:if="${actionMsg != null}" class="form-group row">
+			<h4 th:text="#{h.createdGc}"></h4>
+		</div>
+		
 		<div class="form-group row">
 			<div><h3 th:text="#{h.fcs}"></h3></div>
 		</div>

@@ -23,11 +23,11 @@ import ca.gc.tri_agency.granting_data.model.Agency;
 import ca.gc.tri_agency.granting_data.model.FiscalYear;
 import ca.gc.tri_agency.granting_data.model.FundingCycle;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
-import ca.gc.tri_agency.granting_data.model.GrantingCapability;
-import ca.gc.tri_agency.granting_data.repo.GrantingStageRepository;
-import ca.gc.tri_agency.granting_data.repo.GrantingSystemRepository;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
+import ca.gc.tri_agency.granting_data.service.AgencyService;
 import ca.gc.tri_agency.granting_data.service.DataAccessService;
+import ca.gc.tri_agency.granting_data.service.GrantingCapabilityService;
+import ca.gc.tri_agency.granting_data.service.GrantingSystemService;
 import ca.gc.tri_agency.granting_data.service.RestrictedDataService;
 
 @Controller
@@ -44,10 +44,13 @@ public class ManageFundingOpportunityController {
 	DataAccessService dataService;
 	
 	@Autowired
-	GrantingSystemRepository grantingSystemRepo;
+	private AgencyService agencyService;
+	
+	@Autowired
+	GrantingSystemService gSystemService;
 
 	@Autowired
-	GrantingStageRepository grantingStageRepo;
+	private GrantingCapabilityService gcService;
 
 	@GetMapping(value = "/searchUser")
 	public String searchUserForm() {
@@ -59,7 +62,7 @@ public class ManageFundingOpportunityController {
 		model.addAttribute("fo", dataService.getFundingOpportunity(id));
 		model.addAttribute("fundingCycles", dataService.getFundingCyclesByFoId(id));
 		model.addAttribute("systemFundingCycles", dataService.getSystemFundingCyclesByFoId(id));
-		model.addAttribute("grantingCapabilities", dataService.getGrantingCapabilitiesByFoId(id));
+		model.addAttribute("grantingCapabilities", gcService.findGrantingCapabilitiesByFoId(id));
 		return "manage/manageFundingOpportunity";
 	}
 
@@ -76,7 +79,7 @@ public class ManageFundingOpportunityController {
 		FundingOpportunity fo = dataService.getFundingOpportunity(id);
 		model.addAttribute("programForm", fo);
 
-		List<Agency> allAgencies = dataService.getAllAgencies();
+		List<Agency> allAgencies = agencyService.findAllAgencies();
 		List<Agency> otherAgencies = new ArrayList<Agency>();
 		for (Agency a : allAgencies) {
 			if (fo.getParticipatingAgencies().contains(a) == false) {
@@ -178,31 +181,6 @@ public class ManageFundingOpportunityController {
 			return "manage/createFundingCycle";
 		}
 		restrictedDataService.createOrUpdateFundingCycle(command);
-
-		return "redirect:/browse/viewFo?id=" + command.getFundingOpportunity().getId();
-	}
-
-	@AdminOnly
-	@GetMapping(value = "/addGrantingCapabilities", params = "id")
-	public String addGrantingCapabilities(@RequestParam("id") long id, Model model) {
-		model.addAttribute("foId", id);
-		model.addAttribute("gc", new GrantingCapability());
-		model.addAttribute("grantingSystems", grantingSystemRepo.findAll());
-		model.addAttribute("grantingStages", grantingStageRepo.findAll());
-		return "manage/addGrantingCapabilities";
-	}
-
-	@AdminOnly
-	@PostMapping(value = "/addGrantingCapabilities")
-	public String addGrantingCapabilitiesPost(@Valid @ModelAttribute("gc") GrantingCapability command,
-			BindingResult bindingResult) {
-		if (bindingResult.hasErrors()) {
-			for (ObjectError br : bindingResult.getAllErrors()) {
-				System.out.println(br.toString());
-			}
-			return "manage/addGrantingCapabilities";
-		}
-		restrictedDataService.createGrantingCapability(command);
 
 		return "redirect:/browse/viewFo?id=" + command.getFundingOpportunity().getId();
 	}

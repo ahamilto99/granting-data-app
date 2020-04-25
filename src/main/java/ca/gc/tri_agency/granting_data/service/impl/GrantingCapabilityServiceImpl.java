@@ -50,4 +50,15 @@ public class GrantingCapabilityServiceImpl implements GrantingCapabilityService 
 	public void deleteGrantingCapabilityById(Long id) {
 		gcRepo.delete(findGrantingCapabilityById(id));
 	}
+
+	@Override
+	public List<GrantingCapability> findGrantingCapabilitiesByGrantingStageNameEn(String nameEn) {
+		return gcRepo.findByGrantingStageNameEn(nameEn);
+	}
+
+	@Override
+	public long grantingCapabilityCount() {
+		return gcRepo.count();
+	}
+
 }

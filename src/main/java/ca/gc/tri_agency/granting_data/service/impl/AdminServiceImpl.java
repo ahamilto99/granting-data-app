@@ -30,14 +30,13 @@ import ca.gc.tri_agency.granting_data.model.GrantingSystem;
 import ca.gc.tri_agency.granting_data.model.SystemFundingCycle;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.file.FundingCycleDatasetRow;
-import ca.gc.tri_agency.granting_data.repo.AgencyRepository;
 import ca.gc.tri_agency.granting_data.repo.BusinessUnitRepository;
 import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
-import ca.gc.tri_agency.granting_data.repo.GrantingSystemRepository;
 import ca.gc.tri_agency.granting_data.repo.SystemFundingCycleRepository;
 import ca.gc.tri_agency.granting_data.repo.SystemFundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.AdminService;
+import ca.gc.tri_agency.granting_data.service.GrantingSystemService;
 
 @Service
 public class AdminServiceImpl implements AdminService {
@@ -52,13 +51,10 @@ public class AdminServiceImpl implements AdminService {
 	private FundingOpportunityRepository foRepo;
 
 	@Autowired
-	private AgencyRepository agencyRepo;
-
-	@Autowired
 	private SystemFundingCycleRepository systemFundingCycleRepo;
 
 	@Autowired
-	private GrantingSystemRepository grantingSystemRepo;
+	private GrantingSystemService gsService;
 
 	@Autowired
 	private BusinessUnitRepository buRepo;
@@ -137,7 +133,7 @@ public class AdminServiceImpl implements AdminService {
 
 	@Override
 	public int applyChangesFromFileByIds(String filename, String[] idsToAction) {
-		GrantingSystem targetSystem = getGrantingSystemFromFilename(filename);
+		GrantingSystem targetSystem = gsService.findGrantingSystemFromFile(filename);
 
 		// transform into list for inspection capabilities
 		List<String> actionList = Arrays.asList(idsToAction);
@@ -171,17 +167,6 @@ public class AdminServiceImpl implements AdminService {
 		}
 		return newIdList.size();
 
-	}
-
-	public GrantingSystem getGrantingSystemFromFilename(String filename) {
-		List<GrantingSystem> grantingSystems = grantingSystemRepo.findAll();
-		GrantingSystem retval = null;
-		for (GrantingSystem system : grantingSystems) {
-			if (filename.contains(system.getAcronym())) {
-				retval = system;
-			}
-		}
-		return retval;
 	}
 
 	@Override

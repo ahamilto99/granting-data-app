@@ -10,20 +10,19 @@ import ca.gc.tri_agency.granting_data.model.util.LocalizedParametersModel;
 
 @Entity
 public class GrantingSystem implements LocalizedParametersModel {
+	
 	@Id
 	@SequenceGenerator(name = "SEQ_GRANTING_SYSTEM", sequenceName = "SEQ_GRANTING_SYSTEM", initialValue = 1, allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_GRANTING_SYSTEM")
 	private Long id;
 
-	protected String nameEn;
+	private String nameEn;
 
-	protected String nameFr;// awards management information system (AMIS)
-	// Système inform
-	// atisé de gestion des subventions et bourses (AMIS)
-	protected String acronym;
+	private String nameFr;
+
+	private String acronym;
 
 	public GrantingSystem() {
-
 	}
 
 	public GrantingSystem(String nameEn, String nameFr, String acronymEn, String acronymnFr) {
@@ -59,26 +58,9 @@ public class GrantingSystem implements LocalizedParametersModel {
 	public Long getId() {
 		return id;
 	}
-
-	// public String getName() {
-	// String retval = "";
-	// if (LocaleContextHolder.getLocale().toString().contains("en")) {
-	// retval = getNameEn();
-	// } else {
-	// retval = getNameFr();
-	// }
-	// return retval;
-	// }
-	//
-	// public String getAcronym() {
-	// String retval = "";
-	// if (LocaleContextHolder.getLocale().toString().contains("en")) {
-	// retval = getAcronymEn();
-	// } else {
-	// retval = getAcronymFr();
-	// }
-	// return retval;
-	// }
-	//
+	
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 }

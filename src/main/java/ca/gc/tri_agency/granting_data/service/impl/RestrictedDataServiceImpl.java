@@ -1,7 +1,5 @@
 package ca.gc.tri_agency.granting_data.service.impl;
 
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.security.access.AccessDeniedException;
@@ -11,10 +9,8 @@ import ca.gc.tri_agency.granting_data.ldap.ADUser;
 import ca.gc.tri_agency.granting_data.ldap.ADUserService;
 import ca.gc.tri_agency.granting_data.model.FundingCycle;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
-import ca.gc.tri_agency.granting_data.model.GrantingCapability;
 import ca.gc.tri_agency.granting_data.repo.FundingCycleRepository;
 import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
-import ca.gc.tri_agency.granting_data.repo.GrantingCapabilityRepository;
 import ca.gc.tri_agency.granting_data.security.SecurityUtils;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.RestrictedDataService;
@@ -28,8 +24,6 @@ public class RestrictedDataServiceImpl implements RestrictedDataService {
 	private FundingCycleRepository fcRepo;
 	@Autowired
 	private ADUserService adUserService;
-	@Autowired
-	private GrantingCapabilityRepository grantingCapabilityRepo;
 
 	@Override
 	@AdminOnly
@@ -56,7 +50,7 @@ public class RestrictedDataServiceImpl implements RestrictedDataService {
 	public void setFoLeadContributor(long foId, ADUser adUser) {
 		FundingOpportunity foToUpdate = foRepo.findById(foId)
 				.orElseThrow(() -> new DataRetrievalFailureException("That Funding Opportunity does not exist"));
-//		foToUpdate.setProgramLeadDn(adUser.getDn().toString());
+		foToUpdate.setProgramLeadDn(adUser.getDn().toString());
 		foToUpdate.setProgramLeadName(adUser.getFullName());
 		foRepo.save(foToUpdate);
 	}
@@ -82,13 +76,6 @@ public class RestrictedDataServiceImpl implements RestrictedDataService {
 		target.setStartDate(command.getStartDate());
 		return fcRepo.save(target);
 
-	}
-
-	@Override
-	@AdminOnly
-	public GrantingCapability createGrantingCapability(@Valid GrantingCapability command) {
-
-		return grantingCapabilityRepo.save(command);
 	}
 
 }
