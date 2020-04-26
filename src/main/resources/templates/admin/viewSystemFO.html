@@ -42,7 +42,7 @@
 					</thead>
 					<tbody>
 						<tr th:each="foForLink : ${fosForLink}">
-							<td><a th:href="@{'/browse/viewFO'(id=${foForLink.id})}" th:text="${foForLink.getLocalizedAttribute('name')}"></a></td>
+							<td><a th:href="@{'/browse/viewFo'(id=${foForLink.id})}" th:text="${foForLink.getLocalizedAttribute('name')}"></a></td>
 							<td><form method="post" th:action="registerFOLink"><input type="hidden" name="id" th:value="${systemFO.id}" /><input type="hidden" name="foId" th:value="${foForLink.id}" /><input class="btn" type="submit" th:value="#{input.link}"/></form></td>
 						</tr>
 					</tbody>

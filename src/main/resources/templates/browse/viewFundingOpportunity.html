@@ -51,23 +51,19 @@
 				<table id="grantingCapabilitiesTable" class="table table-bordered">
 				<thead>
 					<tr>
-						<td th:text="#{th.description}"></td>
-						<td th:text="#{th.url}"></td>
 						<td th:text="#{th.grantingStage}"></td>
 						<td th:text="#{th.gs}"></td>
-						<td></td>
+						<td th:text="#{th.description}"></td>
+						<td th:text="#{th.url}"></td>
 					</tr>
 
 				</thead>
 				<tbody th:if="${grantingCapabilities!=null}">
 					<tr th:each="gc : ${grantingCapabilities}">
-						<td th:text="${gc.description}" ></td>
-						<td th:text="${gc.url}" ></td>
-						
 						<td th:text="${gc.grantingStage.getLocalizedAttribute('name')}" ></td>
 						<td th:text="${gc.grantingSystem.getLocalizedAttribute('name')}" ></td>
-						<td><a></a></td>
-						
+						<td th:text="${gc.description}" ></td>
+						<td th:text="${gc.url}" ></td>
 					</tr>
 
 				</tbody>
@@ -80,13 +76,15 @@
 		</div>
 		
 		<div class="form-group row">
-			<div><h3 th:text="#{h.fcs}"></h3></div>
+			<div><h3 th:text="#{h.linkedSfcs}"></h3></div>
 		</div>
 		<div class="form-group row">
 			<div class="col-sm-10">
 				<table id="fundingCycles" class="table table-bordered">
 				<thead>
 					<tr>
+						<td th:text="#{th.grantingSystem}"></td>
+						<td th:text="#{th.systemFo}"></td>
 						<td th:text="#{th.yr}"></td>
 <!-- 						<td th:text="#{th.startDateSystemPlanned}"></td> -->
 <!-- 						<td th:text="#{th.endDateSystemPlanned}"></td> -->
@@ -94,13 +92,16 @@
 					</tr>
 
 				</thead>
+				<tbody th:if="${#lists.isEmpty(linkedSystemFundingCycles)}">
+					<tr><td colspan="4" th:text="#{msg.notLinked}"></td></tr>
+				</tbody>
 				
-				<tbody th:if="${fcDataMap!=null}">
-					<tr th:each="row : ${fcDataMap}">
-						<td th:text="${row.value.year}" ></td>
-<!-- 						<td><span th:text="${row.value.fc} ? ${row.value.fc.startDate} : 'N/A'"></span> / <span th:text="${row.value.sfc} ? ${row.value.sfc.fiscalYear} : 'N/A'"></span></td> -->
-<!-- 						<td><span th:if="${row.value.fc}"><span th:text="${row.value.fc.isOpen} ? 'Open' : ${row.value.fc.endDate}"></span></span> / <span th:text="${row.value.sfc} ? ${row.value.sfc.compYear} : 'N/A'"></span></td> -->
-						<td><span th:text="${row.value.fc} ? ${row.value.fc.expectedApplications} : 'N/A'"></span> / <span th:text="${row.value.sfc} ? ${row.value.sfc.numAppsReceived} : 'N/A'"></span></td>
+				<tbody th:unless="${#lists.isEmpty(linkedSystemFundingCycles)}">
+					<tr th:each="row : ${linkedSystemFundingCycles}">
+						<td th:text="${row.systemFundingOpportunity.grantingSystem.acronym}" ></td>
+						<td th:text="${row.systemFundingOpportunity.getLocalizedAttribute('name')}" ></td>
+						<td th:text="${row.fiscalYear}" ></td>
+						<td th:text="${row.numAppsReceived}"></td>
 					</tr>
 				</tbody>
 				</table>
