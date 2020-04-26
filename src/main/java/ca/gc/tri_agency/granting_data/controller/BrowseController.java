@@ -46,7 +46,7 @@ public class BrowseController {
 		// model.addAttribute("systemFoCycles",
 		// dataService.getSystemFundingCyclesByFoId(id));
 		model.addAttribute("grantingCapabilities", gcService.findGrantingCapabilitiesByFoId(id));
-		model.addAttribute("fcDataMap", dataService.getFundingCycleDataMapByYear(id));
+		model.addAttribute("linkedSystemFundingCycles", dataService.getSystemFundingCyclesByFoId(id));
 		return "browse/viewFundingOpportunity";
 	}
 

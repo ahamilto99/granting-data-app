@@ -8,7 +8,6 @@ import ca.gc.tri_agency.granting_data.model.FundingCycle;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.SystemFundingCycle;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
-import ca.gc.tri_agency.granting_data.model.util.FundingCycleInfo;
 
 public interface DataAccessService {
 	List<SystemFundingOpportunity> getAllSystemFOs();
@@ -26,8 +25,6 @@ public interface DataAccessService {
 	List<FundingOpportunity> getFoByNameEn(String nameEn);
 
 	Map<Long, FundingCycle> getFundingCycleByFundingOpportunityMap();
-
-	Map<String, FundingCycleInfo> getFundingCycleDataMapByYear(Long id);
 
 	List<FundingOpportunity> getAgencyFundingOpportunities(long id);
 

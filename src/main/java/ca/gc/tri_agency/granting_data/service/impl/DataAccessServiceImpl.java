@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
@@ -18,7 +17,6 @@ import ca.gc.tri_agency.granting_data.model.FundingCycle;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.SystemFundingCycle;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
-import ca.gc.tri_agency.granting_data.model.util.FundingCycleInfo;
 import ca.gc.tri_agency.granting_data.repo.FiscalYearRepository;
 import ca.gc.tri_agency.granting_data.repo.FundingCycleRepository;
 import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
@@ -50,8 +48,8 @@ public class DataAccessServiceImpl implements DataAccessService {
 
 	@Override
 	public SystemFundingOpportunity getSystemFO(long id) {
-		return systemFoRepo.findById(id)
-				.orElseThrow(() -> new DataRetrievalFailureException("That System Funding Opportunity does not exist"));
+		return systemFoRepo.findById(id).orElseThrow(
+				() -> new DataRetrievalFailureException("That System Funding Opportunity does not exist"));
 	}
 
 	@Override
@@ -70,39 +68,19 @@ public class DataAccessServiceImpl implements DataAccessService {
 		return fundingCycleRepo.findByFundingOpportunityId(id);
 	}
 
-	@Override
-	public Map<String, FundingCycleInfo> getFundingCycleDataMapByYear(Long id) {
-		Map<String, FundingCycleInfo> retval = new TreeMap<String, FundingCycleInfo>();
-		List<FundingCycle> fcList = fundingCycleRepo.findByFundingOpportunityId(id);
-		List<SystemFundingCycle> sfcList = getSystemFundingCyclesByFoId(id);
-		for (FundingCycle fc : fcList) {
-			FundingCycleInfo newItem = new FundingCycleInfo();
-			String year = fc.getFiscalYear().toString().substring(0, 4);
-			newItem.setYear(year);
-			newItem.setFc(fc);
-			retval.put(year, newItem);
-		}
-		for (SystemFundingCycle sfc : sfcList) {
-			String year = sfc.getFiscalYear().toString().substring(0, 4);
-			if (retval.containsKey(year)) {
-				retval.get(year).setSfc(sfc);
-			} else {
-				FundingCycleInfo newItem = new FundingCycleInfo();
-				newItem.setYear(year);
-				newItem.setSfc(sfc);
-				retval.put(year, newItem);
-			}
-		}
-		return retval;
-	}
-
+	/*
+	 * FIXME: CONCEPT OF `1 TO `MANY `ON `IS` DUE` TO `CGSM. `CHANGED `THIS FUNCTION `TO RETURN `LIST,
+	 * `BUT `THIS` NEEDS` MORE` REFACTORING AS IT DOES 3 DB CALLS or more. THIS NEEDS ANALYSIS
+	 */
 	@Override
 	public List<SystemFundingCycle> getSystemFundingCyclesByFoId(Long id) {
-		SystemFundingOpportunity sysFo = systemFoRepo.findByLinkedFundingOpportunityId(id);
-		if (sysFo == null) {
-			return new ArrayList<SystemFundingCycle>();
+		ArrayList<SystemFundingCycle> retval = new ArrayList<SystemFundingCycle>();
+		List<SystemFundingOpportunity> sysFos = systemFoRepo.findByLinkedFundingOpportunityId(id);
+		for (SystemFundingOpportunity sfo : sysFos) {
+			List<SystemFundingCycle> sfoFcs = systemFundingCycleRepo.findBySystemFundingOpportunityId(sfo.getId());
+			retval.addAll(sfoFcs);
 		}
-		return systemFundingCycleRepo.findBySystemFundingOpportunityId(sysFo.getId());
+		return retval;
 	}
 
 	@Override
@@ -163,8 +141,7 @@ public class DataAccessServiceImpl implements DataAccessService {
 
 	@Override
 	public FundingCycle getFundingCycle(long id) {
-		return fcRepo.findById(id)
-				.orElseThrow(() -> new DataRetrievalFailureException("That Funding Cycle does not exist"));
+		return fcRepo.findById(id).orElseThrow(() -> new DataRetrievalFailureException("That Funding Cycle does not exist"));
 	}
 
 	public List<FundingCycle> getAllFundingCycles() {

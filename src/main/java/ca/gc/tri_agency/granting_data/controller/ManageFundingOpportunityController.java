@@ -33,7 +33,7 @@ import ca.gc.tri_agency.granting_data.service.RestrictedDataService;
 @Controller
 @RequestMapping(value = "/manage", method = RequestMethod.GET)
 public class ManageFundingOpportunityController {
-	
+
 	@Autowired
 	ADUserService adUserService;
 
@@ -42,10 +42,10 @@ public class ManageFundingOpportunityController {
 
 	@Autowired
 	DataAccessService dataService;
-	
+
 	@Autowired
 	private AgencyService agencyService;
-	
+
 	@Autowired
 	GrantingSystemService gSystemService;
 
@@ -60,8 +60,8 @@ public class ManageFundingOpportunityController {
 	@GetMapping(value = "/manageFo")
 	public String viewFundingOpportunity(@RequestParam("id") long id, Model model) {
 		model.addAttribute("fo", dataService.getFundingOpportunity(id));
-		model.addAttribute("fundingCycles", dataService.getFundingCyclesByFoId(id));
-		model.addAttribute("systemFundingCycles", dataService.getSystemFundingCyclesByFoId(id));
+		// model.addAttribute("fundingCycles", dataService.getFundingCyclesByFoId(id));
+		model.addAttribute("linkedSystemFundingCycles", dataService.getSystemFundingCyclesByFoId(id));
 		model.addAttribute("grantingCapabilities", gcService.findGrantingCapabilitiesByFoId(id));
 		return "manage/manageFundingOpportunity";
 	}
@@ -93,8 +93,7 @@ public class ManageFundingOpportunityController {
 
 	@AdminOnly
 	@PostMapping(value = "/editFo")
-	public String editFoPost(@Valid @ModelAttribute("programForm") FundingOpportunity command,
-			BindingResult bindingResult) {
+	public String editFoPost(@Valid @ModelAttribute("programForm") FundingOpportunity command, BindingResult bindingResult) {
 		if (bindingResult.hasErrors()) {
 			// model.addAttribute("allAgencies", dataService.getAllAgencies());
 			for (ObjectError br : bindingResult.getAllErrors()) {
@@ -116,8 +115,7 @@ public class ManageFundingOpportunityController {
 	}
 
 	@PostMapping(value = "/editFc")
-	public String createFundingCyclePost2(@Valid @ModelAttribute("fc") FundingCycle command,
-			BindingResult bindingResult) {
+	public String createFundingCyclePost2(@Valid @ModelAttribute("fc") FundingCycle command, BindingResult bindingResult) {
 		FundingCycle target = dataService.getFundingCycle(command.getId());
 		if (bindingResult.hasErrors()) {
 			for (ObjectError br : bindingResult.getAllErrors()) {
@@ -143,8 +141,7 @@ public class ManageFundingOpportunityController {
 
 	@AdminOnly
 	@GetMapping(value = "/editProgramLead", params = { "id", "username" })
-	public String editProgramLeadSearchUser(@RequestParam("id") long id, @RequestParam("username") String username,
-			Model model) {
+	public String editProgramLeadSearchUser(@RequestParam("id") long id, @RequestParam("username") String username, Model model) {
 		List<ADUser> matchingUsers = adUserService.searchADUsers(username);
 		model.addAttribute("matchingUsers", matchingUsers);
 		model.addAttribute("originalId", id);
@@ -194,8 +191,8 @@ public class ManageFundingOpportunityController {
 
 	@AdminOnly
 	@PostMapping(value = "/addFiscalYears")
-	public String addFiscalYearsPost(@Valid @ModelAttribute("fy") FiscalYear command, BindingResult bindingResult,
-			Model model) throws Exception {
+	public String addFiscalYearsPost(@Valid @ModelAttribute("fy") FiscalYear command, BindingResult bindingResult, Model model)
+			throws Exception {
 		if (bindingResult.hasErrors()) {
 			System.out.println(bindingResult.getFieldError().toString());
 
