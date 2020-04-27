@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import ca.gc.tri_agency.granting_data.model.FiscalYear;
 import ca.gc.tri_agency.granting_data.model.util.CalendarGrid;
 import ca.gc.tri_agency.granting_data.service.DataAccessService;
 import ca.gc.tri_agency.granting_data.service.GrantingCapabilityService;
@@ -63,13 +62,6 @@ public class BrowseController {
 		model.addAttribute("datesNoiEnd", dataService.getAllDatesNOIEnd(plusMinusMonth));
 		model.addAttribute("datesLoiStart", dataService.getAllDatesLOIStart(plusMinusMonth));
 		return "browse/viewCalendar";
-	}
-
-	@GetMapping(value = "/viewFiscalYear")
-	public String viewFundingCycles(Model model) {
-		model.addAttribute("fiscalYears", dataService.findAllFiscalYears());
-		model.addAttribute("fy", new FiscalYear());
-		return "browse/viewFiscalYear";
 	}
 
 	@GetMapping(value = "/viewFcFromFy")

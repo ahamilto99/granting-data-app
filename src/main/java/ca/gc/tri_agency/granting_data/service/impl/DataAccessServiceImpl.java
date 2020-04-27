@@ -12,12 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
 
-import ca.gc.tri_agency.granting_data.model.FiscalYear;
 import ca.gc.tri_agency.granting_data.model.FundingCycle;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.SystemFundingCycle;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
-import ca.gc.tri_agency.granting_data.repo.FiscalYearRepository;
 import ca.gc.tri_agency.granting_data.repo.FundingCycleRepository;
 import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.repo.SystemFundingCycleRepository;
@@ -38,8 +36,6 @@ public class DataAccessServiceImpl implements DataAccessService {
 	private FundingCycleRepository fundingCycleRepo;
 	@Autowired
 	private FundingCycleRepository fcRepo;
-	@Autowired
-	private FiscalYearRepository fyRepo;
 
 	@Override
 	public List<SystemFundingOpportunity> getAllSystemFOs() {
@@ -148,19 +144,6 @@ public class DataAccessServiceImpl implements DataAccessService {
 		return fcRepo.findAll();
 	}
 
-	@Override
-	public List<FiscalYear> findAllFiscalYears() {
-		// TODO Auto-generated method stub
-		return fyRepo.findAll();
-	}
-
-	@SuppressWarnings("null")
-	@Override
-	public List<FiscalYear> fiscalYears() {
-		List<FiscalYear> fy = fyRepo.findAll();
-		return fy;
-	}
-
 	@SuppressWarnings("null")
 	@Override
 	public List<FundingCycle> fundingCyclesByFiscalYearId(Long Id) {
@@ -175,14 +158,6 @@ public class DataAccessServiceImpl implements DataAccessService {
 		}
 
 		return fcNew;
-	}
-
-	@Override
-	public void createFy(Long year) {
-		FiscalYear fy = new FiscalYear();
-		fy.setYear(year);
-		fyRepo.save(fy);
-
 	}
 
 	public String getEmail(String dn) {

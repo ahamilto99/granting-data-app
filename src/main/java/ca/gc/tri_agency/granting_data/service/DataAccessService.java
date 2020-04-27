@@ -3,7 +3,6 @@ package ca.gc.tri_agency.granting_data.service;
 import java.util.List;
 import java.util.Map;
 
-import ca.gc.tri_agency.granting_data.model.FiscalYear;
 import ca.gc.tri_agency.granting_data.model.FundingCycle;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.SystemFundingCycle;
@@ -34,13 +33,7 @@ public interface DataAccessService {
 
 	List<FundingCycle> getAllFundingCycles();
 
-	List<FiscalYear> findAllFiscalYears();
-
-	List<FiscalYear> fiscalYears();
-
 	List<FundingCycle> fundingCyclesByFiscalYearId(Long Id);
-
-	void createFy(Long year);
 
 	void createFo(FundingOpportunity fo);
 
