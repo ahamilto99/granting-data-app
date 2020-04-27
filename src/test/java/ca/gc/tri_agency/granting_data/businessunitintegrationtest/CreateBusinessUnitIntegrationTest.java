@@ -14,7 +14,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -25,11 +24,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
-import ca.gc.tri_agency.granting_data.model.Agency;
 import ca.gc.tri_agency.granting_data.model.BusinessUnit;
 import ca.gc.tri_agency.granting_data.repo.BusinessUnitRepository;
 import ca.gc.tri_agency.granting_data.service.AgencyService;
-import ca.gc.tri_agency.granting_data.service.BusinessUnitService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = GrantingDataApp.class)
@@ -40,9 +37,6 @@ public class CreateBusinessUnitIntegrationTest {
 	private BusinessUnitRepository buRepo;
 	@Autowired
 	private AgencyService agencyService;
-
-	@Autowired
-	private BusinessUnitService buService;
 
 	@Autowired
 	private WebApplicationContext context;
@@ -84,28 +78,6 @@ public class CreateBusinessUnitIntegrationTest {
 	public void test_nonAdmminCannotAccessCreateBUPage_Return403() throws Exception {
 		assertTrue(mvc.perform(get("/admin/createBU?agencyId=1")).andExpect(status().isForbidden()).andReturn().getResponse()
 				.getContentAsString().contains("id=\"forbiddenByRoleErrorPage\""));
-	}
-
-	// CREATE SERVICE TEST THAT VERIFIES THAT ONLY ADMIN USER CAN CREATE A BUSINESS UNIT
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
-	@Test
-	public void testSerivce_adminCanCreateBU() {
-		long initBuCount = buRepo.count();
-
-		Agency agency = agencyService.findAllAgencies().get(0);
-		BusinessUnit bu = new BusinessUnit("EN NAME TEST", "FR NAME TEST", "EN ACRONYM TEST", "FR ACRONYM TEST", agency);
-		buService.saveBusinessUnit(bu);
-
-		assertEquals(initBuCount + 1, buRepo.count());
-	}
-
-	// CREATE SERVICE TEST THAT VERIFIES THAT A NON-ADMIN USER CANNOT CREATE A BUSINESS UNIT
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
-	@Test(expected = AccessDeniedException.class)
-	public void testService_nonAdminCannotCreateBU_shouldthrowAccessDeniedException() {
-		Agency agency = agencyService.findAllAgencies().get(0);
-		BusinessUnit bu = new BusinessUnit("EN NAME TEST", "FR NAME TEST", "EN ACRONYM TEST", "FR ACRONYM TEST", agency);
-		buService.saveBusinessUnit(bu);
 	}
 
 	// CREATE POST ACTION CAN ONLY BE EXECUTED BY ADMIN

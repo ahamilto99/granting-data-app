@@ -10,7 +10,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.context.ActiveProfiles;
@@ -24,15 +23,12 @@ import org.springframework.web.context.WebApplicationContext;
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
 import ca.gc.tri_agency.granting_data.model.BusinessUnit;
 import ca.gc.tri_agency.granting_data.repo.BusinessUnitRepository;
-import ca.gc.tri_agency.granting_data.service.BusinessUnitService;
 
 @SpringBootTest(classes = GrantingDataApp.class)
 @RunWith(SpringRunner.class)
 @ActiveProfiles("local")
 public class EditBusinessUnitIntegrationTest {
 
-	@Autowired
-	private BusinessUnitService buService;
 	@Autowired
 	private BusinessUnitRepository buRepo;
 
@@ -76,38 +72,6 @@ public class EditBusinessUnitIntegrationTest {
 		mvc.perform(MockMvcRequestBuilders.get("/admin/editBU").param("id", "1"))
 				.andExpect(MockMvcResultMatchers.status().isForbidden()).andExpect(MockMvcResultMatchers.content()
 						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
-	}
-
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
-	@Test
-	public void testService_adminCanEditBU() {
-		long initBuRepoCount = buRepo.count();
-		BusinessUnit buBeforeUpate = buRepo.findById(1L).get();
-		BusinessUnit buAfterUpdate = buRepo.findById(1L).get();
-
-		assertEquals(buBeforeUpate, buAfterUpdate);
-
-		buAfterUpdate.setNameEn(RandomStringUtils.randomAlphabetic(20));
-		buAfterUpdate.setNameFr(RandomStringUtils.randomAlphabetic(20));
-		buAfterUpdate.setAcronymEn(RandomStringUtils.randomAlphabetic(5));
-		buAfterUpdate.setAcronymFr(RandomStringUtils.randomAlphabetic(5));
-
-		buService.saveBusinessUnit(buAfterUpdate);
-
-		assertEquals(initBuRepoCount, buRepo.count());
-		assertNotEquals(buBeforeUpate, buAfterUpdate);
-	}
-
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
-	@Test(expected = AccessDeniedException.class)
-	public void testService_nonAdminCannotEditBU() {
-		BusinessUnit bu = buRepo.findById(1L).get();
-		bu.setNameEn(RandomStringUtils.randomAlphabetic(20));
-		bu.setNameFr(RandomStringUtils.randomAlphabetic(20));
-		bu.setAcronymEn(RandomStringUtils.randomAlphabetic(5));
-		bu.setAcronymFr(RandomStringUtils.randomAlphabetic(5));
-
-		buService.saveBusinessUnit(bu);
 	}
 
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
