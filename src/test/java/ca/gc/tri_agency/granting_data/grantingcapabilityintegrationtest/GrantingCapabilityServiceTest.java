@@ -10,11 +10,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
 import ca.gc.tri_agency.granting_data.model.GrantingCapability;
+import ca.gc.tri_agency.granting_data.repo.GrantingCapabilityRepository;
 import ca.gc.tri_agency.granting_data.service.GrantingCapabilityService;
 
 @SpringBootTest(classes = GrantingDataApp.class)
@@ -23,16 +25,20 @@ import ca.gc.tri_agency.granting_data.service.GrantingCapabilityService;
 public class GrantingCapabilityServiceTest {
 
 	@Autowired
-	GrantingCapabilityService gcService;
+	private GrantingCapabilityService gcService;
+	
+	@Autowired
+	private GrantingCapabilityRepository gcRepo;
 
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@Rollback
 	@Test(expected = DataRetrievalFailureException.class)
 	public void testService_adminCanDeleteGC() {
-		long numGCs = gcService.grantingCapabilityCount();
+		long numGCs = gcRepo.count();
 
 		gcService.deleteGrantingCapabilityById(100L);
 
-		assertEquals(numGCs - 1, gcService.grantingCapabilityCount());
+		assertEquals(numGCs - 1, gcRepo.count());
 
 		gcService.findGrantingCapabilityById(100L);
 	}
@@ -46,7 +52,7 @@ public class GrantingCapabilityServiceTest {
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void testService_adminCanEditGC() {
-		long initGcRepoCount = gcService.grantingCapabilityCount();
+		long initGcRepoCount = gcRepo.count();
 
 		GrantingCapability gc = gcService.findGrantingCapabilityById(1L);
 		String editDescription = "TEST DESCRIPTION EDIT";
@@ -54,7 +60,7 @@ public class GrantingCapabilityServiceTest {
 		gcService.saveGrantingCapability(gc);
 
 		assertTrue(gcService.findGrantingCapabilityById(1L).getDescription().equals(editDescription));
-		assertEquals(initGcRepoCount, gcService.grantingCapabilityCount());
+		assertEquals(initGcRepoCount, gcRepo.count());
 	}
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })

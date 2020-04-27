@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -70,6 +71,7 @@ public class MemberRoleServiceTest {
 	}
 
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@Rollback
 	@Test
 	public void test_adminCanDeleteMR() {
 		long initMRCount = mrRepo.count();

@@ -56,9 +56,4 @@ public class GrantingCapabilityServiceImpl implements GrantingCapabilityService 
 		return gcRepo.findByGrantingStageNameEn(nameEn);
 	}
 
-	@Override
-	public long grantingCapabilityCount() {
-		return gcRepo.count();
-	}
-
 }
