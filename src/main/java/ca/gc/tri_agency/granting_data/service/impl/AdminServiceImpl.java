@@ -30,12 +30,12 @@ import ca.gc.tri_agency.granting_data.model.GrantingSystem;
 import ca.gc.tri_agency.granting_data.model.SystemFundingCycle;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.file.FundingCycleDatasetRow;
-import ca.gc.tri_agency.granting_data.repo.BusinessUnitRepository;
 import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.repo.SystemFundingCycleRepository;
 import ca.gc.tri_agency.granting_data.repo.SystemFundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.AdminService;
+import ca.gc.tri_agency.granting_data.service.BusinessUnitService;
 import ca.gc.tri_agency.granting_data.service.GrantingSystemService;
 
 @Service
@@ -55,9 +55,6 @@ public class AdminServiceImpl implements AdminService {
 
 	@Autowired
 	private GrantingSystemService gsService;
-
-	@Autowired
-	private BusinessUnitRepository buRepo;
 
 	@Value("${dataset.analysis.folder}")
 	private String datasetAnalysisFolder;
@@ -193,13 +190,6 @@ public class AdminServiceImpl implements AdminService {
 		systemFo.setLinkedFundingOpportunity(fo);
 		systemFoRepo.save(systemFo);
 		return 1;
-	}
-
-	@Override
-	@AdminOnly
-	@Transactional
-	public BusinessUnit createOrUpdateBusinessUnit(BusinessUnit bu) {
-		return buRepo.save(bu);
 	}
 
 }
