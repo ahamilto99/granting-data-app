@@ -30,7 +30,7 @@ import ca.gc.tri_agency.granting_data.service.AgencyService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = GrantingDataApp.class)
-@ActiveProfiles("local")
+@ActiveProfiles("test")
 public class CreateBusinessUnitIntegrationTest {
 
 	@Autowired

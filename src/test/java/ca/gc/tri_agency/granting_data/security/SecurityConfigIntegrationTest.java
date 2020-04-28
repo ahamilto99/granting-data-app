@@ -27,7 +27,7 @@ import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = GrantingDataApp.class)
-@ActiveProfiles("local")
+@ActiveProfiles("test")
 public class SecurityConfigIntegrationTest {
 
 	@Autowired

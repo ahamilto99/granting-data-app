@@ -42,7 +42,7 @@ import ca.gc.tri_agency.granting_data.service.DataAccessService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = GrantingDataApp.class)
-@ActiveProfiles("local")
+@ActiveProfiles("test")
 public class GoldenFundingOpportunityIntegrationTest {
 
 	@Autowired

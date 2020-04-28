@@ -24,7 +24,7 @@ import ca.gc.tri_agency.granting_data.service.BusinessUnitService;
 
 @SpringBootTest(classes = GrantingDataApp.class)
 @RunWith(SpringRunner.class)
-@ActiveProfiles("local")
+@ActiveProfiles("test")
 public class BusinessUnitServiceTest {
 
 	@Autowired

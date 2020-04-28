@@ -26,7 +26,7 @@ import ca.gc.tri_agency.granting_data.repo.BusinessUnitRepository;
 
 @SpringBootTest(classes = GrantingDataApp.class)
 @RunWith(SpringRunner.class)
-@ActiveProfiles("local")
+@ActiveProfiles("test")
 public class EditBusinessUnitIntegrationTest {
 
 	@Autowired

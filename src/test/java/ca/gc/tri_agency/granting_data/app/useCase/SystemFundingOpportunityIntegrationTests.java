@@ -27,7 +27,7 @@ import ca.gc.tri_agency.granting_data.repo.SystemFundingOpportunityRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = GrantingDataApp.class)
-@ActiveProfiles("local")
+@ActiveProfiles("test")
 public class SystemFundingOpportunityIntegrationTests {
 
 	@Autowired

@@ -29,7 +29,7 @@ import ca.gc.tri_agency.granting_data.service.GrantingCapabilityService;
 
 @SpringBootTest(classes = GrantingDataApp.class)
 @RunWith(SpringRunner.class)
-@ActiveProfiles("local")
+@ActiveProfiles("test")
 public class DeleteGrantingCapabilityIntegrationTest {
 
 	@Autowired

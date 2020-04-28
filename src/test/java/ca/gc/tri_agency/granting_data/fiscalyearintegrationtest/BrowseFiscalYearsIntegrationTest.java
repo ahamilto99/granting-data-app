@@ -20,7 +20,7 @@ import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
 
 @SpringBootTest(classes = GrantingDataApp.class)
 @RunWith(SpringRunner.class)
-@ActiveProfiles("local")
+@ActiveProfiles("test")
 public class BrowseFiscalYearsIntegrationTest {
 
 	@Autowired

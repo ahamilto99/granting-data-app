@@ -18,7 +18,7 @@ import ca.gc.tri_agency.granting_data.repo.ApplicationParticipationRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = GrantingDataApp.class)
-@ActiveProfiles("local")
+@ActiveProfiles("test")
 public class BrowseApplicationParticipationIntegrationTest {
 
     @Autowired

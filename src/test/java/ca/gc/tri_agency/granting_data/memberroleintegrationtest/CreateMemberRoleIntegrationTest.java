@@ -24,7 +24,7 @@ import ca.gc.tri_agency.granting_data.repo.MemberRoleRepository;
 
 @SpringBootTest(classes = GrantingDataApp.class)
 @RunWith(SpringRunner.class)
-@ActiveProfiles("local")
+@ActiveProfiles("test")
 public class CreateMemberRoleIntegrationTest {
 
 	@Autowired
