@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
 
+import ca.gc.tri_agency.granting_data.app.exception.UniqueColumnException;
 import ca.gc.tri_agency.granting_data.model.FiscalYear;
 import ca.gc.tri_agency.granting_data.repo.FiscalYearRepository;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
@@ -39,7 +40,10 @@ public class FiscalYearServiceImpl implements FiscalYearService {
 
 	@AdminOnly
 	@Override
-	public FiscalYear saveFiscalYear(FiscalYear fy) {
+	public FiscalYear saveFiscalYear(FiscalYear fy) throws UniqueColumnException {
+		if (findFiscalYearByYear(fy.getYear()).isPresent()) {
+			throw new UniqueColumnException("That Year already exists");
+		}
 		return fyRepo.save(fy);
 	}
 }

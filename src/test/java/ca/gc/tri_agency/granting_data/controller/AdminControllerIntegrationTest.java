@@ -25,7 +25,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
-import ca.gc.tri_agency.granting_data.repo.FiscalYearRepository;
 import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
 
 @RunWith(SpringRunner.class)
@@ -37,30 +36,12 @@ public class AdminControllerIntegrationTest {
 	private WebApplicationContext context;
 	@Autowired
 	private FundingOpportunityRepository foRepo;
-	@Autowired
-	private FiscalYearRepository fyRepo;
 
 	private MockMvc mvc;
 
 	@Before
 	public void setup() {
 		mvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
-	}
-
-	@WithMockUser(roles = { "MDM ADMIN" })
-	@Test
-	/*
-	 * Test passes however no error message is displayed when a user tries to add an
-	 * invalid fiscal year.
-	 */
-	public void test_onlyAdminCanAddFiscalYears_shouldSucceedWith200() throws Exception {
-		long numFys = fyRepo.count();
-
-		mvc.perform(post("/manage/addFiscalYears").param("year", "2030")).andExpect(status().is3xxRedirection())
-				.andExpect(MockMvcResultMatchers.redirectedUrl("/browse/viewFiscalYear"));
-
-		// verify that a fiscal year was added
-		assertEquals(numFys + 1, fyRepo.count());
 	}
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })

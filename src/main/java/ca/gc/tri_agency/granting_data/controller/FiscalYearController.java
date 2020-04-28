@@ -3,13 +3,18 @@ package ca.gc.tri_agency.granting_data.controller;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import ca.gc.tri_agency.granting_data.app.exception.UniqueColumnException;
 import ca.gc.tri_agency.granting_data.model.FiscalYear;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.FiscalYearService;
@@ -20,45 +25,43 @@ public class FiscalYearController {
 	private FiscalYearService fyService;
 
 	@Autowired
+	private MessageSource msgSrc;
+
+	@Autowired
 	public FiscalYearController(FiscalYearService fyService) {
 		this.fyService = fyService;
 	}
-	
-	@GetMapping(value = "/browse/viewFiscalYear")
-	public String viewFundingCycles(Model model) {
-		model.addAttribute("fiscalYears", fyService.findAllFiscalYears());
-		model.addAttribute("fy", new FiscalYear());	// TODO: figure out why this is here
-		return "browse/viewFiscalYear";
-	}
 
-	@GetMapping(value = "/manage/addFiscalYears", params = "id")
-	public String addFiscalYears(Model model) {
+	@GetMapping(value = "/browse/viewFYs")
+	public String accessViewFYs(Model model) {
 		model.addAttribute("fiscalYears", fyService.findAllFiscalYears());
-		model.addAttribute("fy", new FiscalYear());
-		return "manage/addFiscalYears";
+		return "browse/viewFiscalYears";
 	}
 
 	@AdminOnly
-	@PostMapping(value = "/manage/addFiscalYears")
-	public String addFiscalYearsPost(@Valid @ModelAttribute("fy") FiscalYear command, BindingResult bindingResult, Model model)
+	@GetMapping(value = "/manage/createFY")
+	public String accessCreateFY(Model model) {
+		model.addAttribute("fy", new FiscalYear());
+		model.addAttribute("fiscalYears", fyService.findAllFiscalYears());
+		return "manage/createFiscalYear";
+	}
+
+	@AdminOnly
+	@PostMapping(value = "/manage/createFY")
+	public String processCreateFY(@Valid @ModelAttribute("fy") FiscalYear fy, BindingResult bindingResult, Model model)
 			throws Exception {
 		if (bindingResult.hasErrors()) {
-			System.out.println(bindingResult.getFieldError().toString());
-
+			return "manage/createFiscalYear";
 		}
-
 		try {
-			fyService.saveFiscalYear(command);	// TODO: Refactor
+			fyService.saveFiscalYear(fy);
+		} catch (UniqueColumnException uce) {
+			bindingResult.addError(new FieldError("fy", "year",
+					msgSrc.getMessage("err.yrExists", null, LocaleContextHolder.getLocale())));
+			model.addAttribute("duplicateFiscalYr", fy);
+			return "manage/createFiscalYear";
 		}
-
-		catch (Exception e) {
-			model.addAttribute("error", "Your input is not valid!"
-					+ " Please make sure to input a year between 1999 and 2050 that was not created before");
-			return "manage/addFiscalYears";
-
-		}
-
-		return "redirect:/browse/viewFiscalYear";
+		return "redirect:/browse/viewFYs";
 	}
 
 }

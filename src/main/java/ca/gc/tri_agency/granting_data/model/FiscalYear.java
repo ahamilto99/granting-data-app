@@ -18,9 +18,9 @@ public class FiscalYear {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_FISCAL_YEAR")
 	private Long id;
 
-	@NotNull(message = "The year should not be Null")
-	@Min(1999)
-	@Max(2050)
+	@NotNull(message = "{year.NotNull}")
+	@Min(value = 1999, message = "{year.range}")
+	@Max(value = 2050, message = "{year.range}")
 	@Column(name = "year", unique = true)
 	private Long year;
 	

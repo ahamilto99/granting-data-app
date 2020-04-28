@@ -13,10 +13,12 @@ import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
+import ca.gc.tri_agency.granting_data.app.exception.UniqueColumnException;
 import ca.gc.tri_agency.granting_data.model.FiscalYear;
 import ca.gc.tri_agency.granting_data.repo.FiscalYearRepository;
 import ca.gc.tri_agency.granting_data.service.FiscalYearService;
@@ -54,29 +56,23 @@ public class FiscalYearServiceTest {
 	}
 
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
-	@Test
-	public void test_adminCanSaveFiscalYear() {
+	@Rollback
+	@Test(expected = UniqueColumnException.class)
+	public void test_adminCanCreateFiscalYear() {
 		long initFYCount = fyRepo.count();
 
 		FiscalYear newFy = new FiscalYear(2040L);
 		newFy = fyService.saveFiscalYear(newFy);
 
-		long updatedFYCount = fyRepo.count();
-
 		assertNotNull(newFy.getId());
-		assertEquals(initFYCount + 1, updatedFYCount);
-
-		FiscalYear updateFiscalYear = fyService.findFiscalYearById(1L);
-		updateFiscalYear.setYear(2031L);
-		updateFiscalYear = fyService.saveFiscalYear(updateFiscalYear);
-
-		assertEquals(2031L, (long) fyService.findFiscalYearById(1L).getYear());
-		assertEquals(updatedFYCount, fyRepo.count());
+		assertEquals(initFYCount + 1, fyRepo.count());
+		
+		fyService.saveFiscalYear(new FiscalYear(2040L));
 	}
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test(expected = AccessDeniedException.class)
-	public void test_nonAdminCannotSaveFiscalYear() {
+	public void test_nonAdminCannotCreateFiscalYear() {
 		fyService.saveFiscalYear(new FiscalYear(2041L));
 	}
 }
