@@ -135,15 +135,6 @@ public class DataAccessServiceImpl implements DataAccessService {
 		return retval;
 	}
 
-	@Override
-	public FundingCycle getFundingCycle(long id) {
-		return fcRepo.findById(id).orElseThrow(() -> new DataRetrievalFailureException("That Funding Cycle does not exist"));
-	}
-
-	public List<FundingCycle> getAllFundingCycles() {
-		return fcRepo.findAll();
-	}
-
 	@SuppressWarnings("null")
 	@Override
 	public List<FundingCycle> fundingCyclesByFiscalYearId(Long Id) {

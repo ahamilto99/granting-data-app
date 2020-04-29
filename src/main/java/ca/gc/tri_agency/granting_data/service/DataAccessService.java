@@ -29,10 +29,6 @@ public interface DataAccessService {
 
 	Map<String, List<FundingCycle>> getMonthlyFundingCyclesMapByDate(long plusMinusMonth);
 
-	FundingCycle getFundingCycle(long id);
-
-	List<FundingCycle> getAllFundingCycles();
-
 	List<FundingCycle> fundingCyclesByFiscalYearId(Long Id);
 
 	void createFo(FundingOpportunity fo);

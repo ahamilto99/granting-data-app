@@ -20,6 +20,7 @@ import ca.gc.tri_agency.granting_data.model.util.LocalizedParametersModel;
 
 @Entity
 public class FundingCycle implements LocalizedParametersModel {
+	
 	@Id
 	@SequenceGenerator(name = "SEQ_FUNDING_CYCLE", sequenceName = "SEQ_FUNDING_CYCLE", initialValue = 1, allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_FUNDING_CYCLE")
@@ -163,4 +164,34 @@ public class FundingCycle implements LocalizedParametersModel {
 		this.endDateLOI = endDateLOI;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("FundingCycle [id=");
+		builder.append(id);
+		builder.append(", fiscalYear=");
+		builder.append(fiscalYear.getYear());
+		builder.append(", isOpen=");
+		builder.append(isOpen);
+		builder.append(", startDate=");
+		builder.append(startDate);
+		builder.append(", startDateNOI=");
+		builder.append(startDateNOI);
+		builder.append(", startDateLOI=");
+		builder.append(startDateLOI);
+		builder.append(", endDateNOI=");
+		builder.append(endDateNOI);
+		builder.append(", endDateLOI=");
+		builder.append(endDateLOI);
+		builder.append(", endDate=");
+		builder.append(endDate);
+		builder.append(", expectedApplications=");
+		builder.append(expectedApplications);
+		builder.append(", fundingOpportunity=");
+		builder.append(fundingOpportunity.getLocalizedAttribute("name"));
+		builder.append("]");
+		return builder.toString();
+	}
+
+	
 }
