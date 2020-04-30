@@ -17,8 +17,6 @@ public interface DataAccessService {
 
 	FundingOpportunity getFundingOpportunity(long id);
 
-	List<FundingCycle> getFundingCyclesByFoId(Long id);
-
 	List<SystemFundingCycle> getSystemFundingCyclesByFoId(Long id);
 
 	List<FundingOpportunity> getFoByNameEn(String nameEn);
@@ -26,10 +24,6 @@ public interface DataAccessService {
 	Map<Long, FundingCycle> getFundingCycleByFundingOpportunityMap();
 
 	List<FundingOpportunity> getAgencyFundingOpportunities(long id);
-
-	Map<String, List<FundingCycle>> getMonthlyFundingCyclesMapByDate(long plusMinusMonth);
-
-	List<FundingCycle> fundingCyclesByFiscalYearId(Long Id);
 
 	void createFo(FundingOpportunity fo);
 

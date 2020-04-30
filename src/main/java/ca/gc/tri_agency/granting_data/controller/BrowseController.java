@@ -1,5 +1,6 @@
 package ca.gc.tri_agency.granting_data.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import ca.gc.tri_agency.granting_data.model.util.CalendarGrid;
 import ca.gc.tri_agency.granting_data.service.DataAccessService;
+import ca.gc.tri_agency.granting_data.service.FundingCycleService;
 import ca.gc.tri_agency.granting_data.service.GrantingCapabilityService;
 import ca.gc.tri_agency.granting_data.service.GrantingSystemService;
 
@@ -22,11 +24,15 @@ public class BrowseController {
 	private GrantingSystemService gsService;
 
 	private GrantingCapabilityService gcService;
-
-	public BrowseController(DataAccessService dataService, GrantingSystemService gsService, GrantingCapabilityService gcService) {
+	
+	private FundingCycleService fcService;
+	
+	@Autowired
+	public BrowseController(DataAccessService dataService, GrantingSystemService gsService, GrantingCapabilityService gcService, FundingCycleService fcService) {
 		this.dataService = dataService;
 		this.gsService = gsService;
 		this.gcService = gcService;
+		this.fcService = fcService;
 	}
 
 	@GetMapping("/goldenList")
@@ -54,7 +60,7 @@ public class BrowseController {
 		model.addAttribute("plusMonth", plusMinusMonth + 1);
 		model.addAttribute("minusMonth", plusMinusMonth - 1);
 		model.addAttribute("calGrid", new CalendarGrid(plusMinusMonth));
-		model.addAttribute("fcCalEvents", dataService.getMonthlyFundingCyclesMapByDate(plusMinusMonth));
+		model.addAttribute("fcCalEvents", fcService.findMonthlyFundingCyclesMapByDate(plusMinusMonth));
 		model.addAttribute("startingDates", dataService.getAllStartingDates(plusMinusMonth));
 		model.addAttribute("endDates", dataService.getAllEndingDates(plusMinusMonth));
 		model.addAttribute("datesNoiStart", dataService.getAllDatesNOIStart(plusMinusMonth));
@@ -62,12 +68,6 @@ public class BrowseController {
 		model.addAttribute("datesNoiEnd", dataService.getAllDatesNOIEnd(plusMinusMonth));
 		model.addAttribute("datesLoiStart", dataService.getAllDatesLOIStart(plusMinusMonth));
 		return "browse/viewCalendar";
-	}
-
-	@GetMapping(value = "/viewFcFromFy")
-	public String viewFundingCyclesFromFiscalYear(@RequestParam("id") long id, Model model) {
-		model.addAttribute("fc", dataService.fundingCyclesByFiscalYearId(id));
-		return "browse/viewFcFromFy";
 	}
 
 }
