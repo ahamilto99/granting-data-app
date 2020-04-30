@@ -47,8 +47,6 @@ public class FundingOpportunity implements LocalizedParametersModel {
 	@JoinTable
 	private Set<Agency> participatingAgencies;
 
-	private String division; // could be dropped
-
 	private String fundingType; // could be dropped
 
 	private String frequency;
@@ -60,7 +58,7 @@ public class FundingOpportunity implements LocalizedParametersModel {
 	private String programLeadName;
 
 	private String programLeadDn;
-	
+
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "business_unit_id")
 	private BusinessUnit businessUnit;
@@ -70,7 +68,6 @@ public class FundingOpportunity implements LocalizedParametersModel {
 	}
 
 	public void loadFromForm(FundingOpportunity f) {
-		this.setDivision(f.getDivision());
 		this.setFundingType(f.getFundingType());
 		this.setFrequency(f.getFrequency());
 		this.setLeadAgency(f.getLeadAgency());
@@ -132,14 +129,6 @@ public class FundingOpportunity implements LocalizedParametersModel {
 	public String toString() {
 		return "" + id + " : " + nameEn + " :: " + nameFr + " :: " + leadAgency;
 
-	}
-
-	public String getDivision() {
-		return division;
-	}
-
-	public void setDivision(String division) {
-		this.division = division;
 	}
 
 	public String getFundingType() {
@@ -227,5 +216,5 @@ public class FundingOpportunity implements LocalizedParametersModel {
 	public void setBusinessUnit(BusinessUnit businessUnit) {
 		this.businessUnit = businessUnit;
 	}
-	
+
 }
