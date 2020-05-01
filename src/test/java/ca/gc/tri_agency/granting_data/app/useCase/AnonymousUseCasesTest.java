@@ -51,7 +51,6 @@ public class AnonymousUseCasesTest {
 		mvc.perform(get("/browse/viewFo").param("id", foId)).andExpect(status().isOk())
 				.andExpect(content().string(containsString("id=\"nameRow\"")))
 				.andExpect(content().string(containsString("id=\"leadAgencyRow\"")))
-				.andExpect(content().string(containsString("id=\"divisionRow\"")))
 				.andExpect(content().string(containsString("id=\"fundingTypeRow\"")))
 				.andExpect(content().string(containsString("id=\"programLeadRow\"")));
 	}
@@ -67,8 +66,9 @@ public class AnonymousUseCasesTest {
 	@Test
 	public void test_anonUserCanViewFoPageInFrench_shouldSucceed200() throws Exception {
 		mvc.perform(get("/browse/viewFo").param("id", foId).param("lang", "fr")).andExpect(status().isOk())
-				.andExpect(content().string(containsString("id=\"/browse/viewFoPage\""))).andExpect(content()
-						.string(containsString("Octroi de Donn&#233;es - Afficher L'Opportunit&#233; de Financement")));
+				.andExpect(content().string(containsString("id=\"/browse/viewFoPage\"")))
+				.andExpect(content().string(containsString(
+						"Octroi de Donn&#233;es - Afficher L'Opportunit&#233; de Financement")));
 	}
 
 	@WithAnonymousUser

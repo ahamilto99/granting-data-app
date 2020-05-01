@@ -9,6 +9,7 @@ import javax.validation.constraints.Size;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 import ca.gc.tri_agency.granting_data.model.Agency;
+import ca.gc.tri_agency.granting_data.model.BusinessUnit;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
 
 public class ProgramForm {
@@ -22,8 +23,7 @@ public class ProgramForm {
 	private String nameFr;
 
 	@NotNull
-	@Size(min = 1)
-	private String division;
+	private BusinessUnit businessUnit;
 
 	@NotNull
 	@Size(min = 2)
@@ -46,7 +46,7 @@ public class ProgramForm {
 		nameEn = p.getNameEn();
 		nameFr = p.getNameFr();
 		this.setFundingType(p.getFundingType());
-		this.setDivision(p.getDivision());
+		this.setBusinessUnit(p.getBusinessUnit());
 		this.frequency = p.getFrequency();
 		this.programLeadName = p.getProgramLeadName();
 		this.leadAgency = p.getLeadAgency();
@@ -128,19 +128,19 @@ public class ProgramForm {
 		this.id = id;
 	}
 
-	public String getDivision() {
-		return division;
-	}
-
-	public void setDivision(String division) {
-		this.division = division;
-	}
-
 	public String getFundingType() {
 		return fundingType;
 	}
 
 	public void setFundingType(String fundingType) {
 		this.fundingType = fundingType;
+	}
+
+	public BusinessUnit getBusinessUnit() {
+		return businessUnit;
+	}
+
+	public void setBusinessUnit(BusinessUnit businessUnit) {
+		this.businessUnit = businessUnit;
 	}
 }

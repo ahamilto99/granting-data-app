@@ -33,11 +33,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
 import ca.gc.tri_agency.granting_data.controller.AdminController;
 import ca.gc.tri_agency.granting_data.model.Agency;
+import ca.gc.tri_agency.granting_data.model.BusinessUnit;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.repo.SystemFundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.service.AgencyService;
+import ca.gc.tri_agency.granting_data.service.BusinessUnitService;
 import ca.gc.tri_agency.granting_data.service.DataAccessService;
 
 @RunWith(SpringRunner.class)
@@ -53,6 +55,8 @@ public class GoldenFundingOpportunityIntegrationTest {
 	private FundingOpportunityRepository foRepo;
 	@Autowired
 	SystemFundingOpportunityRepository sfoRepo;
+	@Autowired
+	private BusinessUnitService businessUnitService;
 	@Autowired
 	private DataAccessService dataAccessService;
 	@Autowired
@@ -139,7 +143,6 @@ public class GoldenFundingOpportunityIntegrationTest {
 	@Transactional
 	public void test_AdminCanCreateGoldenFo_usingMvcPerform_shouldSucceed() throws Exception {
 		boolean cpx = true;
-		String div = RandomStringUtils.randomAlphabetic(10);
 		boolean edi = true;
 		String frequency = RandomStringUtils.randomAlphabetic(10);
 		String ft = RandomStringUtils.randomAlphabetic(10);
@@ -153,30 +156,32 @@ public class GoldenFundingOpportunityIntegrationTest {
 		String pln = RandomStringUtils.randomAlphabetic(25);
 		List<Agency> agencyList = agencyService.findAllAgencies();
 		Agency la = agencyList.size() > 0 ? agencyList.remove(0) : null;
+		List<BusinessUnit> businessUnitList = businessUnitService.findAllBusinessUnits();
+		BusinessUnit leadBu = businessUnitList.size() > 0 ? businessUnitList.remove(0) : null;
 
 		List<FundingOpportunity> fos = foRepo.findAll();
 		String idParam = String.valueOf(fos.get(fos.size() - 1).getId() + 1L);
 
 		mvc.perform(MockMvcRequestBuilders.post("/admin/createFo").param("id", idParam).param("nameEn", nameEn)
-				.param("nameFr", nameFr).param("leadAgency", Long.toString(la.getId())).param("division", div)
-				.param("isJointInitiative", Boolean.toString(ji)).param("fundingType", ft).param("partnerOrg", po)
-				.param("frequency", frequency).param("isComplex", Boolean.toString(cpx))
-				.param("isEdiRequired", Boolean.toString(edi)).param("isNOI", Boolean.toString(noi))
-				.param("isLOI", Boolean.toString(loi)).param("programLeadName", pln).param("programLeadDn", pld))
+				.param("nameFr", nameFr).param("leadAgency", Long.toString(la.getId()))
+				.param("businessUnit", Long.toString(leadBu.getId())).param("isJointInitiative", Boolean.toString(ji))
+				.param("fundingType", ft).param("partnerOrg", po).param("frequency", frequency)
+				.param("isComplex", Boolean.toString(cpx)).param("isEdiRequired", Boolean.toString(edi))
+				.param("isNOI", Boolean.toString(noi)).param("isLOI", Boolean.toString(loi))
+				.param("programLeadName", pln).param("programLeadDn", pld))
 				.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-				.andExpect(MockMvcResultMatchers.redirectedUrl("/admin/home"))
-				.andExpect(MockMvcResultMatchers.flash().attribute("actionMessage", "Created Funding Opportunity named: " + nameEn));
+				.andExpect(MockMvcResultMatchers.redirectedUrl("/admin/home")).andExpect(MockMvcResultMatchers.flash()
+						.attribute("actionMessage", "Created Funding Opportunity named: " + nameEn));
 
 		// when the page is refreshed, the flash attribute should disappear
-		mvc.perform(MockMvcRequestBuilders.get("/admin/home"))
-				.andExpect(MockMvcResultMatchers.flash().attributeCount(0));
+		mvc.perform(MockMvcRequestBuilders.get("/admin/home")).andExpect(MockMvcResultMatchers.flash().attributeCount(0));
 
 		fos = foRepo.findAll();
 		FundingOpportunity newGfo = fos.get(fos.size() - 1);
 
 		assertEquals(idParam, String.valueOf(newGfo.getId()));
 		assertEquals(cpx, newGfo.getIsComplex());
-		assertEquals(div, newGfo.getDivision());
+		assertEquals(leadBu, newGfo.getBusinessUnit());
 		assertEquals(edi, newGfo.getIsEdiRequired());
 		assertEquals(frequency, newGfo.getFrequency());
 		assertEquals(ft, newGfo.getFundingType());
@@ -214,7 +219,6 @@ public class GoldenFundingOpportunityIntegrationTest {
 
 		FundingOpportunity gfo = new FundingOpportunity();
 		gfo.setIsComplex(false);
-		gfo.setDivision(RandomStringUtils.randomAlphabetic(10));
 		gfo.setIsEdiRequired(false);
 		gfo.setFrequency(RandomStringUtils.randomAlphabetic(10));
 		gfo.setFundingType(RandomStringUtils.randomAlphabetic(10));
@@ -229,6 +233,8 @@ public class GoldenFundingOpportunityIntegrationTest {
 		List<Agency> agencyList = agencyService.findAllAgencies();
 		gfo.setLeadAgency(agencyList.size() > 0 ? agencyList.remove(0) : null);
 		gfo.setParticipatingAgencies(agencyList.size() > 0 ? new HashSet<Agency>(agencyList) : null);
+		List<BusinessUnit> businessUnitList = businessUnitService.findAllBusinessUnits();
+		BusinessUnit leadBu = businessUnitList.size() > 0 ? businessUnitList.remove(0) : null;
 
 		String successUrl = adminController.addFoPost(gfo, bindingResult, model, redirectAttributes);
 

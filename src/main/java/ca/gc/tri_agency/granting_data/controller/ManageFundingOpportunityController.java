@@ -25,6 +25,7 @@ import ca.gc.tri_agency.granting_data.model.FundingCycle;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.AgencyService;
+import ca.gc.tri_agency.granting_data.service.BusinessUnitService;
 import ca.gc.tri_agency.granting_data.service.DataAccessService;
 import ca.gc.tri_agency.granting_data.service.GrantingCapabilityService;
 import ca.gc.tri_agency.granting_data.service.GrantingSystemService;
@@ -51,6 +52,9 @@ public class ManageFundingOpportunityController {
 
 	@Autowired
 	private GrantingCapabilityService gcService;
+
+	@Autowired
+	private BusinessUnitService buService;
 
 	@GetMapping(value = "/searchUser")
 	public String searchUserForm() {
@@ -88,6 +92,7 @@ public class ManageFundingOpportunityController {
 		}
 		model.addAttribute("otherAgencies", otherAgencies);
 		model.addAttribute("allAgencies", allAgencies);
+		model.addAttribute("allBusinessUnits", buService.findAllBusinessUnits());
 		return "manage/editFundingOpportunity";
 	}
 
