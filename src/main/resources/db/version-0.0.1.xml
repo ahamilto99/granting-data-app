@@ -198,19 +198,19 @@
                 <constraints primaryKey="true" nullable="false" />
             </column>
             <column name="application_identifier" type="VARCHAR(255)"/>
-            <column name="application_id" type="BIGINT"/>
+            <column name="application_id" type="VARCHAR(255)"/>
             <column name="competition_year" type="BIGINT"/>
             <column name="program_id" type="VARCHAR(255)"/>
             <column name="program_en" type="VARCHAR(255)"/>
             <column name="program_fr" type="VARCHAR(255)"/>
             <column name="create_date" type="TIMESTAMP"/>
-            <column name="role_code" type="BIGINT"/>
+            <column name="role_code" type="VARCHAR(255)"/>
             <column name="role_en" type="VARCHAR(255)"/>
             <column name="role_fr" type="VARCHAR(255)"/>
             <column name="family_name" type="VARCHAR(255)"/>
             <column name="given_name" type="VARCHAR(255)"/>
             <column name="person_identifier" type="BIGINT"/>
-            <column name="organization_id" type="BIGINT"/>
+            <column name="organization_id" type="VARCHAR(255)"/>
             <column name="organization_name_en" type="VARCHAR(255)"/>
             <column name="organization_name_fr" type="VARCHAR(255)"/>
             <column name="freeform_address_1" type="VARCHAR(255)"/>

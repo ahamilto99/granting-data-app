@@ -17,21 +17,21 @@ public interface ApplicationParticipationService {
 	// namis -> 453365
 	// crm -> 430-2018-00001
 
-	String generateTestApplicationIdentifier(String appId, GrantingSystem system);
+	void generateTestApplicationIdentifier(String appId, GrantingSystem system);
 	// private String applicationIdentifier;
 	// amis -> 611-2018-0092
 	// namis -> 535982-2018
 	// crm -> 167551C3-6826-4664-8790-AB7A6A8A71F8
 
-	String fillInRandomRole(ApplicationParticipation app, GrantingSystem sys);
+	void fillInRandomRole(ApplicationParticipation app, GrantingSystem sys);
 	// private String roleCode;
 	// amis -> 147
 	// namis -> 64
 	// crm -> 8878CE1D-6020-E211-AF1A-005056AD024F
 
-	String fillInRandomOrg(ApplicationParticipation app, GrantingSystem sys);
+	void fillInRandomOrg(ApplicationParticipation app, GrantingSystem sys);
 
-	String fillInRandomPerson(ApplicationParticipation app, GrantingSystem sys);
+	void fillInRandomPerson(ApplicationParticipation app, GrantingSystem sys);
 
 	List<ApplicationParticipation> getAllowedRecords();
 

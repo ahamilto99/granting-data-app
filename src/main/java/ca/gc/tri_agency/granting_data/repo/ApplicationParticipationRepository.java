@@ -8,4 +8,6 @@ import ca.gc.tri_agency.granting_data.model.ApplicationParticipation;
 @Repository
 public interface ApplicationParticipationRepository extends JpaRepository<ApplicationParticipation, Long> {
 
+	ApplicationParticipation findByApplicationId(String applicationId);
+	
 }
