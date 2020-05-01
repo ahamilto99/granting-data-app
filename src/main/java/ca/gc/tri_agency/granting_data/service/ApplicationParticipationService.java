@@ -17,7 +17,7 @@ public interface ApplicationParticipationService {
 	// namis -> 453365
 	// crm -> 430-2018-00001
 
-	void generateTestApplicationIdentifier(String appId, GrantingSystem system);
+	String generateTestApplicationIdentifier(String appId, GrantingSystem system);
 	// private String applicationIdentifier;
 	// amis -> 611-2018-0092
 	// namis -> 535982-2018

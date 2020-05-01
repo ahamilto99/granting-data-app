@@ -2,31 +2,59 @@ package ca.gc.tri_agency.granting_data.service.impl;
 
 import java.security.SecureRandom;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.github.javafaker.Faker;
 
 import ca.gc.tri_agency.granting_data.model.ApplicationParticipation;
 import ca.gc.tri_agency.granting_data.model.GrantingSystem;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
-import ca.gc.tri_agency.granting_data.repo.ApplicationParticipationRepository;
 import ca.gc.tri_agency.granting_data.service.ApplicationParticipationService;
 
+@Service
 public class ApplicationParticipationServiceImpl implements ApplicationParticipationService {
 	Map<GrantingSystem, ReferenceBean[]> roleMap;
 
 	private SecureRandom sRand = new SecureRandom();
 
-	@Autowired
-	private ApplicationParticipationRepository apRepo;
-
 	@Override
 	public List<ApplicationParticipation> generateTestAppParticipations(SystemFundingOpportunity sfo, Instant createDate,
-			long maxApplications, long maxParticipants) {
-		return null;
+			long maxAnotepplications, long maxParticipants) {
+		GrantingSystem gs = sfo.getGrantingSystem();
+		List<ApplicationParticipation> appPartList = new ArrayList<>();
+		
+		int maxApps = sRand.nextInt((int) maxAnotepplications); // nextLong() does not take in a bounds
+		for (int i = 0; i < maxApps; i++) {
+			
+			String appId = generateTestAppId(gs);
+			String applicationIdentifier = generateTestApplicationIdentifier(appId, gs);
+			
+			int maxParts = sRand.nextInt((int) maxParticipants);
+			for (int j = 0; j < maxParts; j++) {
+				
+				ApplicationParticipation app = new ApplicationParticipation();
+				app.setApplicationId(appId);
+				app.setApplicationIdentifier(applicationIdentifier);
+				
+				app.setProgramId(sfo.getExtId());
+				app.setProgramEn(sfo.getNameEn());
+				app.setProgramFr(sfo.getNameFr());
+				
+				app.setCreateDate(createDate);
+				
+				fillInRandomRole(app, gs);
+				fillInRandomOrg(app, gs);
+				fillInRandomPerson(app, gs);
+				
+				appPartList.add(app);
+				
+			}
+		}
+		return appPartList;
 	}
 
 	@Override
@@ -43,19 +71,19 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 	}
 
 	@Override
-	public void generateTestApplicationIdentifier(String appId, GrantingSystem system) {
-		ApplicationParticipation appPart = apRepo.findByApplicationId(appId);
+	public String generateTestApplicationIdentifier(String appId, GrantingSystem system) {
 		String acronym = system.getAcronym();
 		if (acronym.equals("NAMIS")) {
-			appPart.setApplicationIdentifier(String.format("%s-%d", appId, sRand.nextInt(6) + 2017));
+			return String.format("%s-%d", appId, sRand.nextInt(6) + 2017);
 		} else if (acronym.equals("AMIS")) {
-			appPart.setApplicationIdentifier(String.format("%d-%d-%04d", sRand.nextInt(900) + 100, sRand.nextInt(6) + 2017,
-					sRand.nextInt(3_000)));
+			return String.format("%d-%d-%04d", sRand.nextInt(900) + 100, sRand.nextInt(6) + 2017,
+					sRand.nextInt(3_000));
 		} else if (acronym.equals("CRM")) {
-			appPart.setApplicationIdentifier(String.format("%04X%04X-%04X-4%03X-%04X-%06X%06X", sRand.nextInt(65_536),
+			return String.format("%04X%04X-%04X-4%03X-%04X-%06X%06X", sRand.nextInt(65_536),
 					sRand.nextInt(65_536), sRand.nextInt(65_536), sRand.nextInt(4_096), sRand.nextInt(65_536),
-					sRand.nextInt(16_777_216), sRand.nextInt(16_777_216)));
+					sRand.nextInt(16_777_216), sRand.nextInt(16_777_216));
 		}
+		return null;
 	}
 
 	@Override
