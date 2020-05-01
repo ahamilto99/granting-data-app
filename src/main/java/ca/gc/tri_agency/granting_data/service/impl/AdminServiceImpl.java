@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,10 +108,15 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	@Override
-	public SystemFundingOpportunity registerSystemFundingOpportunity(FundingCycleDatasetRow row,
-			GrantingSystem targetSystem) {
+	public SystemFundingOpportunity registerSystemFundingOpportunity(FundingCycleDatasetRow row, GrantingSystem targetSystem) {
 		SystemFundingOpportunity retval = new SystemFundingOpportunity();
-		retval.setExtId(row.getFoCycle());
+		String extId = row.getProgram_ID();
+		if (NumberUtils.isNumber(extId)) {// fixme: fix amis dataset, get rid of .0 on program id
+			if (extId.contains(".")) {
+				extId = extId.substring(0, extId.indexOf('.'));
+			}
+		}
+		retval.setExtId(extId);
 		retval.setNameEn(row.getProgramNameEn());
 		retval.setNameFr(row.getProgramNameFr());
 		retval.setGrantingSystem(targetSystem);
@@ -120,8 +126,7 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	@Override
-	public SystemFundingCycle registerSystemFundingCycle(FundingCycleDatasetRow row,
-			SystemFundingOpportunity targetSfo) {
+	public SystemFundingCycle registerSystemFundingCycle(FundingCycleDatasetRow row, SystemFundingOpportunity targetSfo) {
 		SystemFundingCycle retval = new SystemFundingCycle();
 		retval.setFiscalYear(row.getCompetitionYear());
 		retval.setExtId(row.getFoCycle());
@@ -171,8 +176,8 @@ public class AdminServiceImpl implements AdminService {
 
 	@Override
 	public int unlinkSystemFO(long systemFoId, long foId) {
-		SystemFundingOpportunity systemFo = systemFoRepo.findById(systemFoId)
-				.orElseThrow(() -> new DataRetrievalFailureException("That System Funding Opportunity does not exist"));
+		SystemFundingOpportunity systemFo = systemFoRepo.findById(systemFoId).orElseThrow(
+				() -> new DataRetrievalFailureException("That System Funding Opportunity does not exist"));
 		FundingOpportunity fo = foRepo.findById(foId)
 				.orElseThrow(() -> new DataRetrievalFailureException("That Funding Opportunity does not exist"));
 		if (systemFo.getLinkedFundingOpportunity() != fo) {
@@ -186,8 +191,8 @@ public class AdminServiceImpl implements AdminService {
 
 	@Override
 	public int linkSystemFO(long systemFoId, long foId) {
-		SystemFundingOpportunity systemFo = systemFoRepo.findById(systemFoId)
-				.orElseThrow(() -> new DataRetrievalFailureException("That System Funding Opportunity does not exist"));
+		SystemFundingOpportunity systemFo = systemFoRepo.findById(systemFoId).orElseThrow(
+				() -> new DataRetrievalFailureException("That System Funding Opportunity does not exist"));
 		FundingOpportunity fo = foRepo.findById(foId)
 				.orElseThrow(() -> new DataRetrievalFailureException("That Funding Opportunity does not exist"));
 		systemFo.setLinkedFundingOpportunity(fo);
