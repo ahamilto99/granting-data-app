@@ -45,14 +45,14 @@ public class BrowseApplicationParticipationIntegrationTest {
         ap.setMunicipality(RandomStringUtils.randomAlphabetic(10));
         ap.setOrganizationNameEn(RandomStringUtils.randomAlphabetic(10));
         ap.setOrganizationNameFr(RandomStringUtils.randomAlphabetic(10));
-        ap.setOrganizationId(1L);
+        ap.setOrganizationId("1");
         ap.setPersonIdentifier(99L);
         ap.setPostalZipCode(RandomStringUtils.randomAlphabetic(7));
         ap.setProgramEn(RandomStringUtils.randomAlphabetic(10));
         ap.setProgramFr(RandomStringUtils.randomAlphabetic(10));
         ap.setProgramId(RandomStringUtils.randomAlphabetic(10));
         ap.setProvinceStateCode(RandomStringUtils.randomAlphabetic(2));
-        ap.setRoleCode(1234L);
+        ap.setRoleCode("1234");
         ap.setRoleEn(RandomStringUtils.randomAlphabetic(10));
         ap.setRoleFr(RandomStringUtils.randomAlphabetic(10));
 

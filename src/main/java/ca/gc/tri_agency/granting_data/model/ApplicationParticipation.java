@@ -23,7 +23,7 @@ public class ApplicationParticipation {
 
     private String applicationIdentifier;
 
-    private Long applicationId;
+    private String applicationId;
 
     private Long competitionYear;
 
@@ -36,7 +36,7 @@ public class ApplicationParticipation {
     @CreatedDate
     private Instant createDate;
 
-    private Long roleCode;
+    private String roleCode;
 
     private String roleEn;
 
@@ -48,7 +48,7 @@ public class ApplicationParticipation {
 
     private Long personIdentifier;
 
-    private Long organizationId;
+    private String organizationId;
 
     private String organizationNameEn;
 
@@ -92,11 +92,11 @@ public class ApplicationParticipation {
         this.applicationIdentifier = applicationIdentifier;
     }
 
-    public Long getApplicationId() {
+    public String getApplicationId() {
         return applicationId;
     }
 
-    public void setApplicationId(Long applicationId) {
+    public void setApplicationId(String applicationId) {
         this.applicationId = applicationId;
     }
 
@@ -140,11 +140,11 @@ public class ApplicationParticipation {
         this.createDate = createDate;
     }
 
-    public Long getRoleCode() {
+    public String getRoleCode() {
         return roleCode;
     }
 
-    public void setRoleCode(Long roleCode) {
+    public void setRoleCode(String roleCode) {
         this.roleCode = roleCode;
     }
 
@@ -188,11 +188,11 @@ public class ApplicationParticipation {
         this.personIdentifier = personIdentifier;
     }
 
-    public Long getOrganizationId() {
+    public String getOrganizationId() {
         return organizationId;
     }
 
-    public void setOrganizationId(Long organizationId) {
+    public void setOrganizationId(String organizationId) {
         this.organizationId = organizationId;
     }
 
