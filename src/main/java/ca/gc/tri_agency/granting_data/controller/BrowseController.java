@@ -1,13 +1,22 @@
 package ca.gc.tri_agency.granting_data.controller;
 
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import ca.gc.tri_agency.granting_data.form.FundingOpportunityFilterForm;
 import ca.gc.tri_agency.granting_data.model.FiscalYear;
+import ca.gc.tri_agency.granting_data.model.GrantingSystem;
 import ca.gc.tri_agency.granting_data.model.util.CalendarGrid;
+import ca.gc.tri_agency.granting_data.service.AgencyService;
+import ca.gc.tri_agency.granting_data.service.BusinessUnitService;
 import ca.gc.tri_agency.granting_data.service.DataAccessService;
 import ca.gc.tri_agency.granting_data.service.GrantingCapabilityService;
 import ca.gc.tri_agency.granting_data.service.GrantingSystemService;
@@ -23,6 +32,10 @@ public class BrowseController {
 	private GrantingSystemService gsService;
 
 	private GrantingCapabilityService gcService;
+	@Autowired
+	private BusinessUnitService buService;
+	@Autowired
+	private AgencyService agencyService;
 
 	public BrowseController(DataAccessService dataService, GrantingSystemService gsService, GrantingCapabilityService gcService) {
 		this.dataService = dataService;
@@ -30,14 +43,18 @@ public class BrowseController {
 		this.gcService = gcService;
 	}
 
-	@GetMapping("/goldenList")
-	public String goldListDisplay(Model model) {
-		model.addAttribute("goldenList", dataService.getAllFundingOpportunities());
-		// model.addAttribute("fcByFoMap",
-		// dataService.getFundingCycleByFundingOpportunityMap());
-		model.addAttribute("applySystemByFoMap", gsService.findApplySystemsByFundingOpportunityMap());
-		model.addAttribute("awardSystemsByFoMap", gsService.findAwardSystemsByFundingOpportunityMap());
-		return "browse/goldenList";
+	@GetMapping("/fundingOpportunities")
+	public String goldListDisplay(@ModelAttribute("filter") FundingOpportunityFilterForm filter, Model model) {
+		Map<Long, GrantingSystem> applyMap = gsService.findApplySystemsByFundingOpportunityMap();
+		Map<Long, List<GrantingSystem>> awardMap = gsService.findAwardSystemsByFundingOpportunityMap();
+
+		model.addAttribute("fundingOpportunities", dataService.getFilteredFundingOpportunities(filter, applyMap, awardMap));
+		model.addAttribute("allAgencies", agencyService.findAllAgencies());
+		model.addAttribute("allDivisions", buService.findAllBusinessUnits());
+		model.addAttribute("allGrantingSystems", gsService.findAllGrantingSystems());
+		model.addAttribute("applySystemByFoMap", applyMap);
+		model.addAttribute("awardSystemsByFoMap", awardMap);
+		return "browse/fundingOpportunities";
 	}
 
 	@GetMapping(value = "/viewFo")

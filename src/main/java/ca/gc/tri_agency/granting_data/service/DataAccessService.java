@@ -3,9 +3,11 @@ package ca.gc.tri_agency.granting_data.service;
 import java.util.List;
 import java.util.Map;
 
+import ca.gc.tri_agency.granting_data.form.FundingOpportunityFilterForm;
 import ca.gc.tri_agency.granting_data.model.FiscalYear;
 import ca.gc.tri_agency.granting_data.model.FundingCycle;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
+import ca.gc.tri_agency.granting_data.model.GrantingSystem;
 import ca.gc.tri_agency.granting_data.model.SystemFundingCycle;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 
@@ -55,5 +57,8 @@ public interface DataAccessService {
 	Map<String, List<FundingCycle>> getAllDatesLOIStart(long plusMinusMonth);
 
 	Map<String, List<FundingCycle>> getAllDatesLOIEnd(long plusMinusMonth);
+
+	List<FundingOpportunity> getFilteredFundingOpportunities(FundingOpportunityFilterForm filter,
+			Map<Long, GrantingSystem> applyMap, Map<Long, List<GrantingSystem>> awardMap);
 
 }
