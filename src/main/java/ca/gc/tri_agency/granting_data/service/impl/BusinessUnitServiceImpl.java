@@ -16,23 +16,22 @@ import ca.gc.tri_agency.granting_data.service.BusinessUnitService;
 
 @Service
 public class BusinessUnitServiceImpl implements BusinessUnitService {
-	
-	@Autowired
+
 	private FundingOpportunityRepository foRepo;
-	
+
 	private BusinessUnitRepository buRepo;
-	
+
 	@Autowired
-	public BusinessUnitServiceImpl(BusinessUnitRepository buRepo) {
+	public BusinessUnitServiceImpl(BusinessUnitRepository buRepo, FundingOpportunityRepository foRepo) {
 		this.buRepo = buRepo;
+		this.foRepo = foRepo;
 	}
 
 	@Override
 	public BusinessUnit findBusinessUnitById(Long id) {
-		return buRepo.findById(id).
-				orElseThrow(() -> new DataRetrievalFailureException("That Business Unit does not exist"));
+		return buRepo.findById(id).orElseThrow(() -> new DataRetrievalFailureException("That Business Unit does not exist"));
 	}
-	
+
 	@Override
 	public List<BusinessUnit> findAllBusinessUnits() {
 		return buRepo.findAll();

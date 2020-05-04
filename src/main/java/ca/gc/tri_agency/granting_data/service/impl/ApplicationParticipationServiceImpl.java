@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.github.javafaker.Faker;
@@ -13,6 +14,9 @@ import com.github.javafaker.Faker;
 import ca.gc.tri_agency.granting_data.model.ApplicationParticipation;
 import ca.gc.tri_agency.granting_data.model.GrantingSystem;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
+import ca.gc.tri_agency.granting_data.repo.ApplicationParticipationRepository;
+import ca.gc.tri_agency.granting_data.repo.SystemFundingOpportunityRepository;
+import ca.gc.tri_agency.granting_data.security.SecurityUtils;
 import ca.gc.tri_agency.granting_data.service.ApplicationParticipationService;
 
 @Service
@@ -21,37 +25,47 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 
 	private SecureRandom sRand = new SecureRandom();
 
+	ApplicationParticipationRepository appParticipationRepo;
+	SystemFundingOpportunityRepository sfoRepo;
+
+	@Autowired
+	public ApplicationParticipationServiceImpl(ApplicationParticipationRepository appParticipationRepo,
+			SystemFundingOpportunityRepository sfoRepo) {
+		this.appParticipationRepo = appParticipationRepo;
+		this.sfoRepo = sfoRepo;
+	}
+
 	@Override
 	public List<ApplicationParticipation> generateTestAppParticipations(SystemFundingOpportunity sfo, Instant createDate,
 			long maxAnotepplications, long maxParticipants) {
 		GrantingSystem gs = sfo.getGrantingSystem();
 		List<ApplicationParticipation> appPartList = new ArrayList<>();
-		
+
 		int maxApps = sRand.nextInt((int) maxAnotepplications); // nextLong() does not take in a bounds
 		for (int i = 0; i < maxApps; i++) {
-			
+
 			String appId = generateTestAppId(gs);
 			String applicationIdentifier = generateTestApplicationIdentifier(appId, gs);
-			
+
 			int maxParts = sRand.nextInt((int) maxParticipants);
 			for (int j = 0; j < maxParts; j++) {
-				
+
 				ApplicationParticipation app = new ApplicationParticipation();
 				app.setApplicationId(appId);
 				app.setApplicationIdentifier(applicationIdentifier);
-				
+
 				app.setProgramId(sfo.getExtId());
 				app.setProgramEn(sfo.getNameEn());
 				app.setProgramFr(sfo.getNameFr());
-				
+
 				app.setCreateDate(createDate);
-				
+
 				fillInRandomRole(app, gs);
 				fillInRandomOrg(app, gs);
 				fillInRandomPerson(app, gs);
-				
+
 				appPartList.add(app);
-				
+
 			}
 		}
 		return appPartList;
@@ -76,12 +90,11 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		if (acronym.equals("NAMIS")) {
 			return String.format("%s-%d", appId, sRand.nextInt(6) + 2017);
 		} else if (acronym.equals("AMIS")) {
-			return String.format("%d-%d-%04d", sRand.nextInt(900) + 100, sRand.nextInt(6) + 2017,
-					sRand.nextInt(3_000));
+			return String.format("%d-%d-%04d", sRand.nextInt(900) + 100, sRand.nextInt(6) + 2017, sRand.nextInt(3_000));
 		} else if (acronym.equals("CRM")) {
-			return String.format("%04X%04X-%04X-4%03X-%04X-%06X%06X", sRand.nextInt(65_536),
-					sRand.nextInt(65_536), sRand.nextInt(65_536), sRand.nextInt(4_096), sRand.nextInt(65_536),
-					sRand.nextInt(16_777_216), sRand.nextInt(16_777_216));
+			return String.format("%04X%04X-%04X-4%03X-%04X-%06X%06X", sRand.nextInt(65_536), sRand.nextInt(65_536),
+					sRand.nextInt(65_536), sRand.nextInt(4_096), sRand.nextInt(65_536), sRand.nextInt(16_777_216),
+					sRand.nextInt(16_777_216));
 		}
 		return null;
 	}
@@ -163,8 +176,14 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 
 	@Override
 	public List<ApplicationParticipation> getAllowedRecords() {
-		// TODO Auto-generated method stub
-		return null;
+		List<ApplicationParticipation> retval = null;
+		if (SecurityUtils.hasRole("MDM ADMIN")) {
+			retval = appParticipationRepo.findAll();
+		} else {
+			String username = SecurityUtils.getCurrentUsername();
+			retval = appParticipationRepo.findAllowedRecords(SecurityUtils.getCurrentUsername());
+		}
+		return retval;
 	}
 
 	private class ReferenceBean {
@@ -172,6 +191,17 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		String nameEn;
 		String nameFr;
 
+	}
+
+	@Override
+	public long generateTestAppParicipationsForAllSystemFundingOpportunities() {
+		List<ApplicationParticipation> participations = new ArrayList<ApplicationParticipation>();
+		Instant inst = Instant.parse("2020-02-02T00:00:00.00Z");
+		for (SystemFundingOpportunity sfo : sfoRepo.findAll()) {
+			participations.addAll(generateTestAppParticipations(sfo, inst, 100, 5));
+		}
+		appParticipationRepo.saveAll(participations);
+		return participations.size();
 	}
 
 }

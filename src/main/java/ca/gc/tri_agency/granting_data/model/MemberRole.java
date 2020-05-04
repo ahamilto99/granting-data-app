@@ -8,7 +8,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 @Entity
 public class MemberRole {
@@ -18,7 +17,6 @@ public class MemberRole {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_MEMBER_ROLE")
 	private Long id;
 
-	@Size(min = 3, max = 3)
 	@NotNull(message = "{userLogin.NotNull}")
 	private String userLogin;
 
@@ -82,5 +80,4 @@ public class MemberRole {
 		return builder.toString();
 	}
 
-	
 }

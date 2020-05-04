@@ -29,14 +29,20 @@ public class SecurityUtils {
 
 	public static boolean hasRole(String role) {
 		LdapUserDetails principal = getLdapUser();
-		Collection<? extends GrantedAuthority> userAuthorities = principal.getAuthorities();
-		for (GrantedAuthority g : userAuthorities) {
-			if (g.getAuthority().equals("ROLE_" + role)) {
-				return true;
+		if (principal != null) {
+			Collection<? extends GrantedAuthority> userAuthorities = principal.getAuthorities();
+			for (GrantedAuthority g : userAuthorities) {
+				if (g.getAuthority().equals("ROLE_" + role)) {
+					return true;
+				}
 			}
 		}
 		return false;
 
+	}
+
+	public static String getCurrentUsername() {
+		return SecurityContextHolder.getContext().getAuthentication().getName();
 	}
 
 	// boolean validateUserRole(String role) {
