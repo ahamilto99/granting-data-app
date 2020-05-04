@@ -55,7 +55,7 @@
 					</thead>
 					<tbody>
 						<tr th:each="user : ${adUserList}">
-							<td><input type="radio" name="select" style="width: 65px;" th:value="${user.userLogin.substring(0, 3)}" th:field="*{userLogin}" /></td>
+							<td><input type="radio" name="select" style="width: 65px;" th:value="${user.userLogin}" th:field="*{userLogin}" /></td>
 							<td th:text="${user.fullName}"></td>
 							<td th:text="${user.userLogin}"></td>
 						</tr>

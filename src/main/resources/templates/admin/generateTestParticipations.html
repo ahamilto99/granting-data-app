@@ -1,0 +1,17 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/general.html :: common_header(~{::title},~{},~{})}">
+<title th:text="#{title.generateTestParticipations}"></title>
+</head>
+<body>
+	<div th:insert="~{fragments/general.html :: header_nav('home')}" />
+	<div class="container">
+		<div th:if="${actionMessage != null}" th:text="${actionMessage}"></div>
+		<h1 th:text="#{title.generateTestParticipations}"></h1>
+		<p th:text="#{intro.generateTestParticipations}"></p>
+		<form method="post" action="generateTestParticipations">
+			<input th:type="submit" class="btn btn-primary" role="button" th:value="#{input.generateTestAppParticipations}"  />			
+		</form>
+	</div>
+   </body>
+</html>

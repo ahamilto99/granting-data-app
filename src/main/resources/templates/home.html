@@ -21,11 +21,12 @@
 		</ol>
 		
 		<div sec:authorize="hasRole('MDM ADMIN')" >
-		<p th:text="#{p.home.adminZone}">
+		<p th:text="#{p.home.adminZone}"></p>
 		<ol>
 <!-- 			<li><a href="admin/home" th:text="#{link.admin.home}"></a></li> -->
 	        <li><a href="admin/selectFileForComparison" th:text="#{link.selectFileForComparison}"></a></li>
 	        <li><a href="admin/analyzeSystemFOs" th:text="#{link.analyzeSFos}"></a></li>
+	        <li><a style="color: grey" href="admin/generateTestParticipations" th:text="#{link.generateTestParticipations}"></a></li>
 <!-- 	        <li><a href="admin/viewSystemActivities" th:text="#{link.viewSystemActivities}"></a></li> -->
 		</ol>
 		</div>

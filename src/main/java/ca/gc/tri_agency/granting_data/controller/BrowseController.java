@@ -3,7 +3,6 @@ package ca.gc.tri_agency.granting_data.controller;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +15,7 @@ import ca.gc.tri_agency.granting_data.model.FiscalYear;
 import ca.gc.tri_agency.granting_data.model.GrantingSystem;
 import ca.gc.tri_agency.granting_data.model.util.CalendarGrid;
 import ca.gc.tri_agency.granting_data.service.AgencyService;
+import ca.gc.tri_agency.granting_data.service.ApplicationParticipationService;
 import ca.gc.tri_agency.granting_data.service.BusinessUnitService;
 import ca.gc.tri_agency.granting_data.service.DataAccessService;
 import ca.gc.tri_agency.granting_data.service.GrantingCapabilityService;
@@ -32,15 +32,22 @@ public class BrowseController {
 	private GrantingSystemService gsService;
 
 	private GrantingCapabilityService gcService;
-	@Autowired
+
 	private BusinessUnitService buService;
-	@Autowired
+
 	private AgencyService agencyService;
 
-	public BrowseController(DataAccessService dataService, GrantingSystemService gsService, GrantingCapabilityService gcService) {
+	private ApplicationParticipationService appParticipationService;
+
+	public BrowseController(DataAccessService dataService, GrantingSystemService gsService, GrantingCapabilityService gcService,
+			AgencyService agencyService, BusinessUnitService buService,
+			ApplicationParticipationService appParticipationService) {
 		this.dataService = dataService;
 		this.gsService = gsService;
 		this.gcService = gcService;
+		this.agencyService = agencyService;
+		this.buService = buService;
+		this.appParticipationService = appParticipationService;
 	}
 
 	@GetMapping("/fundingOpportunities")
@@ -55,6 +62,12 @@ public class BrowseController {
 		model.addAttribute("applySystemByFoMap", applyMap);
 		model.addAttribute("awardSystemsByFoMap", awardMap);
 		return "browse/fundingOpportunities";
+	}
+
+	@GetMapping("/appParticipations")
+	public String appParticipations(Model model) {
+		model.addAttribute("appParticipations", appParticipationService.getAllowedRecords());
+		return "browse/appParticipations";
 	}
 
 	@GetMapping(value = "/viewFo")

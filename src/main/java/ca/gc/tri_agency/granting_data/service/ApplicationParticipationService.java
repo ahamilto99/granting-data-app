@@ -8,6 +8,7 @@ import ca.gc.tri_agency.granting_data.model.GrantingSystem;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 
 public interface ApplicationParticipationService {
+
 	List<ApplicationParticipation> generateTestAppParticipations(SystemFundingOpportunity sfo, Instant createDate,
 			long maxApplications, long maxParticipants);
 
@@ -32,6 +33,8 @@ public interface ApplicationParticipationService {
 	void fillInRandomOrg(ApplicationParticipation app, GrantingSystem sys);
 
 	void fillInRandomPerson(ApplicationParticipation app, GrantingSystem sys);
+
+	long generateTestAppParicipationsForAllSystemFundingOpportunities();
 
 	List<ApplicationParticipation> getAllowedRecords();
 

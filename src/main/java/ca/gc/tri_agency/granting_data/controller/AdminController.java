@@ -29,6 +29,7 @@ import ca.gc.tri_agency.granting_data.model.file.FundingCycleDatasetRow;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.AdminService;
 import ca.gc.tri_agency.granting_data.service.AgencyService;
+import ca.gc.tri_agency.granting_data.service.ApplicationParticipationService;
 import ca.gc.tri_agency.granting_data.service.DataAccessService;
 
 @Controller
@@ -41,9 +42,12 @@ public class AdminController {
 
 	@Autowired
 	private DataAccessService dataSevice;
-	
+
 	@Autowired
 	private AgencyService agencyService;
+
+	@Autowired
+	private ApplicationParticipationService appParticipationService;
 
 	@Autowired
 	private MessageSource msgSource;
@@ -69,8 +73,7 @@ public class AdminController {
 
 		adminService.unlinkSystemFO(sfoId, fo.getId());
 
-		String wasUnlinkedFrom = msgSource.getMessage("msg.unlinkedPerformedMsg", null,
-				LocaleContextHolder.getLocale());
+		String wasUnlinkedFrom = msgSource.getMessage("msg.unlinkedPerformedMsg", null, LocaleContextHolder.getLocale());
 		redirectAttributes.addFlashAttribute("actionMessage",
 				sfo.getLocalizedAttribute("name") + wasUnlinkedFrom + fo.getLocalizedAttribute("name"));
 
@@ -78,6 +81,18 @@ public class AdminController {
 		model.addAttribute("fosForLink", dataSevice.getAllFundingOpportunities());
 
 		return "redirect:/admin/viewSystemFO?id=" + sfoId;
+	}
+
+	@GetMapping("/generateTestParticipations")
+	public String generateTestParticipations() {
+		return "admin/generateTestParticipations";
+	}
+
+	@PostMapping(value = "/generateTestParticipations")
+	public String post_generateTestParticipations(RedirectAttributes redirectAttrs) {
+		long numCreated = appParticipationService.generateTestAppParicipationsForAllSystemFundingOpportunities();
+		redirectAttrs.addFlashAttribute("actionMessage", "Successfully created" + numCreated + " Test app participatoins");
+		return "redirect:/admin/home";
 	}
 
 	@GetMapping("/selectFileForComparison")
@@ -149,8 +164,8 @@ public class AdminController {
 	}
 
 	@PostMapping(value = "/createFo", params = "id")
-	public String addFoPost(@Valid @ModelAttribute("fo") FundingOpportunity command, BindingResult bindingResult,
-			Model model, RedirectAttributes redirectAttributes) throws Exception {
+	public String addFoPost(@Valid @ModelAttribute("fo") FundingOpportunity command, BindingResult bindingResult, Model model,
+			RedirectAttributes redirectAttributes) throws Exception {
 		if (bindingResult.hasErrors()) {
 			// required in order to re-populate the drop-down list
 			List<Agency> allAgencies = agencyService.findAllAgencies();
@@ -162,34 +177,5 @@ public class AdminController {
 		redirectAttributes.addFlashAttribute("actionMessage", createdFo + command.getLocalizedAttribute("name"));
 		return "redirect:/admin/home";
 	}
-	
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
