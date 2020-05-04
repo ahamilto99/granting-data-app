@@ -12,9 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
 
+import ca.gc.tri_agency.granting_data.form.FundingOpportunityFilterForm;
 import ca.gc.tri_agency.granting_data.model.FiscalYear;
 import ca.gc.tri_agency.granting_data.model.FundingCycle;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
+import ca.gc.tri_agency.granting_data.model.GrantingSystem;
 import ca.gc.tri_agency.granting_data.model.SystemFundingCycle;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.repo.FiscalYearRepository;
@@ -401,6 +403,57 @@ public class DataAccessServiceImpl implements DataAccessService {
 				retval.put(endDateKey, new ArrayList<FundingCycle>());
 			}
 			retval.get(endDateKey).add(fc);
+		}
+		return retval;
+	}
+
+	@Override
+	public List<FundingOpportunity> getFilteredFundingOpportunities(FundingOpportunityFilterForm filter,
+			Map<Long, GrantingSystem> applyMap, Map<Long, List<GrantingSystem>> awardMap) {
+		// RELATIVELY SMALL DATASET (140), SO NO USE PERFORMING A QUERY FOR EACH FILTER. WILL SIMPLY WEED
+		// THEM OUT IN A LOOP.
+		List<FundingOpportunity> fullList = getAllFundingOpportunities();
+		List<FundingOpportunity> retval = new ArrayList<FundingOpportunity>();
+		GrantingSystem targetSystem = null;
+		for (FundingOpportunity fo : fullList) {
+			if (filter.getApplySystem() != null) {
+				targetSystem = applyMap.get(fo.getId());
+				if (targetSystem == null
+						|| targetSystem != null && targetSystem.getId() != filter.getApplySystem().getId()) {
+					continue;
+				}
+			}
+			if (filter.getAwardSystem() != null) {
+				boolean hasSystem = false;
+				if (awardMap.get(fo.getId()) != null) {
+					for (GrantingSystem sys : awardMap.get(fo.getId())) {
+						if (sys == null || sys != null && sys.getId() == filter.getAwardSystem().getId()) {
+							hasSystem = true;
+						}
+					}
+
+				}
+				if (hasSystem == false) {
+					continue;
+				}
+			}
+			if (filter.getDivision() != null) {
+				if (fo.getBusinessUnit() == null || fo.getBusinessUnit().getId() != filter.getDivision().getId()) {
+					continue;
+				}
+			}
+			if (filter.getLeadAgency() != null) {
+				if (fo.getBusinessUnit() == null || fo.getBusinessUnit() != null
+						&& fo.getBusinessUnit().getAgency().getId() != filter.getLeadAgency().getId()) {
+					continue;
+				}
+			}
+			if (filter.getType() != null && filter.getType().length() != 0) {
+				if (fo.getFundingType() == null || filter.getType().compareTo(fo.getFundingType()) != 0) {
+					continue;
+				}
+			}
+			retval.add(fo);
 		}
 		return retval;
 	}
