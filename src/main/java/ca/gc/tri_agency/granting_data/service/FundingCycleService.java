@@ -1,7 +1,6 @@
 package ca.gc.tri_agency.granting_data.service;
 
 import java.util.List;
-import java.util.Map;
 
 import ca.gc.tri_agency.granting_data.model.FundingCycle;
 
@@ -15,7 +14,7 @@ public interface FundingCycleService {
 	
 	List<FundingCycle> findFundingCyclesByFiscalYearId(Long fyId);
 	
-	Map<String, List<FundingCycle>> findMonthlyFundingCyclesMapByDate(long plusMinusMonth);
+//	Map<String, List<FundingCycle>> findMonthlyFundingCyclesMapByDate(long plusMinusMonth);
 	
 	List<FundingCycle> findMonthlyFundingCyclesByStartDate(int plusMinusMonth);
 	
@@ -29,4 +28,5 @@ public interface FundingCycleService {
 
 	List<FundingCycle> findMonthlyFundingCyclesByEndDateNOI(int plusMinusMonth);
 
+	FundingCycle saveFundingCycle(FundingCycle fc);
 }

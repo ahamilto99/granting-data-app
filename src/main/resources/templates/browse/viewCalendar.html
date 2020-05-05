@@ -1,21 +1,15 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/general.html :: common_header(~{::title},~{::link},~{::script})}">
-<title th:text="#{title.viewAgency}"></title>
-<link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" />
-<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-<script type="text/javascript">
+	<title th:text="#{title.fcCalendar}"></title>
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" />
+	<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+	<script type="text/javascript">
+		$(document).ready( function () {
+			var table = $('#dataTable').DataTable({});
+		});
+	</script>
 	
-		console.log('1');
-
-	function trackMonth() {
-		
-	};
-	
-	$(document).ready(function() {
-	        var table = $('#dataTable').DataTable({});
-        });
-</script>
 </head>
 <style type="text/css">
 .cal-weekday-header {
@@ -33,42 +27,6 @@
 	min-height: 100px;
 	box-sizing: content-box;
 	width: 150px;
-}
-
-.cal-day-event-nserc-startDates {
-	border: 1px solid #d8d8d8;
-	white-space: nowrap;
-	font-size: 12.2333px;
-	overflow: hidden;
-	font-color: white;
-	background: linear-gradient(-90deg, green 10%, orange 10%);
-}
-
-.cal-day-event-nserc-endDates {
-	border: 1px solid #d8d8d8;
-	white-space: nowrap;
-	font-size: 12.2333px;
-	overflow: hidden;
-	font-color: rgb(0, 0, 0);
-	background: linear-gradient(-90deg, red 10%, orange 10%);
-}
-
-.cal-day-event-sshrc-startDates {
-	border: 1px solid #d8d8d8;
-	white-space: nowrap;
-	font-size: 12.2333px;
-	overflow: hidden;
-	font-color: rgb(0, 0, 0);
-	background: linear-gradient(-90deg, green 10%, blue 10%);
-}
-
-.cal-day-event-sshrc-endDates {
-	border: 1px solid #d8d8d8;
-	white-space: nowrap;
-	font-size: 12.2333px;
-	overflow: hidden;
-	font-color: rgb(0, 0, 0);
-	background: linear-gradient(-90deg, red 10%, blue 10%);
 }
 
 .NOI-start {
@@ -166,7 +124,7 @@
 	font-weight: bold;
 }
 </style>
-<body th:onafterprint="trackMonth()">
+<body id="viewFundingCycleCalendarPage">
 	<div th:insert="~{fragments/general.html :: header_nav('entities')}"></div>
 	<div class="container" style="margin-bottom: 25px">
 		<h1 th:text="#{h.fcCal}"></h1>

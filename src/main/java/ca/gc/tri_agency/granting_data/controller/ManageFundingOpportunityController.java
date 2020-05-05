@@ -20,12 +20,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import ca.gc.tri_agency.granting_data.ldap.ADUser;
 import ca.gc.tri_agency.granting_data.ldap.ADUserService;
 import ca.gc.tri_agency.granting_data.model.Agency;
-import ca.gc.tri_agency.granting_data.model.FundingCycle;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.AgencyService;
 import ca.gc.tri_agency.granting_data.service.DataAccessService;
-import ca.gc.tri_agency.granting_data.service.FiscalYearService;
 import ca.gc.tri_agency.granting_data.service.GrantingCapabilityService;
 import ca.gc.tri_agency.granting_data.service.GrantingSystemService;
 import ca.gc.tri_agency.granting_data.service.RestrictedDataService;
@@ -52,8 +50,6 @@ public class ManageFundingOpportunityController {
 	@Autowired
 	private GrantingCapabilityService gcService;
 	
-	@Autowired
-	private FiscalYearService fyService;
 
 	@GetMapping(value = "/searchUser")
 	public String searchUserForm() {
@@ -135,29 +131,6 @@ public class ManageFundingOpportunityController {
 		// service.setFoLeadContributor(long foId, leadUserDn)
 		restrictedDataService.setFoLeadContributor(foId, leadUserDn);
 		return "redirect:/browse/viewFo?id=" + foId;
-	}
-
-	@GetMapping(value = "/createFundingCycle", params = "id")
-	public String createFundingCycle(@RequestParam("id") long id, Model model) {
-		model.addAttribute("foId", id);
-		model.addAttribute("fundingCycle", new FundingCycle());
-		model.addAttribute("fy", fyService.findAllFiscalYears());
-		model.addAttribute("fo", dataService.getFundingOpportunity(id));
-		return "manage/createFundingCycle";
-	}
-
-	@PostMapping(value = "/createFundingCycle")
-	public String createFundingCyclePost(@Valid @ModelAttribute("fundingCycle") FundingCycle command,
-			BindingResult bindingResult) {
-		if (bindingResult.hasErrors()) {
-			for (ObjectError br : bindingResult.getAllErrors()) {
-				System.out.println(br.toString());
-			}
-			return "manage/createFundingCycle";
-		}
-		restrictedDataService.createOrUpdateFundingCycle(command);
-
-		return "redirect:/browse/viewFo?id=" + command.getFundingOpportunity().getId();
 	}
 
 }

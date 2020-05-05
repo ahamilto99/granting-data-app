@@ -28,4 +28,6 @@ public interface FundingCycleRepository extends JpaRepository<FundingCycle, Long
 	
 	List<FundingCycle> findByEndDateNOIBetween(LocalDate endDateNOIStart, LocalDate endDateNOIEnd);
 	
+	List<FundingCycle> findByFiscalYearId(Long fyId);
+	
 }
