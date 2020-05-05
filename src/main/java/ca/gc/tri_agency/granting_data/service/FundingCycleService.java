@@ -16,4 +16,17 @@ public interface FundingCycleService {
 	List<FundingCycle> findFundingCyclesByFiscalYearId(Long fyId);
 	
 	Map<String, List<FundingCycle>> findMonthlyFundingCyclesMapByDate(long plusMinusMonth);
+	
+	List<FundingCycle> findMonthlyFundingCyclesByStartDate(int plusMinusMonth);
+	
+	List<FundingCycle> findMonthlyFundingCyclesByEndDate(int plusMinusMonth);
+	
+	List<FundingCycle> findMonthlyFundingCyclesByStartDateLOI(int plusMinusMonth);
+	
+	List<FundingCycle> findMonthlyFundingCyclesByEndDateLOI(int plusMinusMonth);
+	
+	List<FundingCycle> findMonthlyFundingCyclesByStartDateNOI(int plusMinusMonth);
+
+	List<FundingCycle> findMonthlyFundingCyclesByEndDateNOI(int plusMinusMonth);
+
 }

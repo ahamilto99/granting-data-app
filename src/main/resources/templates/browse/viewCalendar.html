@@ -1,136 +1,187 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/general.html :: common_header(~{::title},~{::link},~{::script})}">
-	<title th:text="#{title.viewAgency}"></title>
-	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" />
-	<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-	<script type="text/javascript">
-		$(document).ready( function () {
-			var table = $('#dataTable').DataTable({});
-		});
-	</script>
+<title th:text="#{title.viewAgency}"></title>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" />
+<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript">
+	
+		console.log('1');
 
+	function trackMonth() {
+		
+	};
+	
+	$(document).ready(function() {
+	        var table = $('#dataTable').DataTable({});
+        });
+</script>
 </head>
-<body>
-	<style type="text/css">
-		.cal-weekday-header {
-			text-align: center;
-			border: 1px solid #d8d8d8;
-			width: 150px;
-			border-spacing 0px 0px;
-			padding: 2px; 
-			box-sizing: content-box; 
-		}
-		.cal-day-cell {
-			border: 1px solid #d8d8d8; 
-			line-height: 2em; 
-			border-spacing 0px 0px;
-			padding: 2px; 
-			min-height: 100px;
-			box-sizing: content-box; 
-			width: 150px;
-		}
-		.cal-day-event-nserc-startDates {
-			border: 1px solid #d8d8d8; 
-			white-space: nowrap;
-			font-size: 12.2333px;
-			overflow: hidden;
-			font-color: white;
-			background: linear-gradient(-90deg, green 10%, orange 10%);
-		
-		}
-		
-		.cal-day-event-nserc-endDates {
-			border: 1px solid #d8d8d8; 
-			white-space: nowrap;
-			font-size: 12.2333px;
-			overflow: hidden;
-			font-color: rgb(0, 0, 0);
-			background: linear-gradient(-90deg, red 10%, orange 10%);
-		
-		}
-		
-		.cal-day-event-sshrc-startDates {
-			border: 1px solid #d8d8d8; 
-			white-space: nowrap;
-			font-size: 12.2333px;
-			overflow: hidden;
-			font-color: rgb(0, 0, 0);
-			background: linear-gradient(-90deg, green 10%, blue 10%);
-		
-		}
-		
-		.cal-day-event-sshrc-endDates {
-			border: 1px solid #d8d8d8; 
-			white-space: nowrap;
-			font-size: 12.2333px;
-			overflow: hidden;
-			font-color: rgb(0, 0, 0);
-			background: linear-gradient(-90deg, red 10%, blue 10%);
-		
-		}	
-		
-		.NOI-start{
-		
-			border: 1px solid #d8d8d8; 
-			white-space: nowrap;
-			font-size: 12.2333px;
-			overflow: hidden;
-			font-color: rgb(0, 0, 0);
-			background: linear-gradient(-90deg, green 10%, #B3E5FC 10%);
-		
-		
-		}
-		
-		.NOI-end{
-		
-			border: 1px solid #d8d8d8; 
-			white-space: nowrap;
-			font-size: 12.2333px;
-			overflow: hidden;
-			font-color: rgb(0, 0, 0);
-			background: linear-gradient(-90deg, red 10%, #B3E5FC 10%);
-		
-		
-		}
-		
-		
-		
-		.LOI-start{
-		
-			border: 1px solid #d8d8d8; 
-			white-space: nowrap;
-			font-size: 12.2333px;
-			overflow: hidden;
-			font-color: rgb(0, 0, 0);
-			background:  linear-gradient(-90deg, green 10%, #EFEBE9 10%);
-		
-		}
-		
-		.LOI-end{
-		
-			border: 1px solid #d8d8d8; 
-			white-space: nowrap;
-			font-size: 12.2333px;
-			overflow: hidden;
-			font-color: rgb(0, 0, 0);
-			background:  linear-gradient(-90deg, red 10%, #EFEBE9 10%);
-		
-		
-		}
-		
+<style type="text/css">
+.cal-weekday-header {
+	text-align: center;
+	border: 1px solid #d8d8d8;
+	width: 150px; border-spacing 0px 0px;
+	padding: 2px;
+	box-sizing: content-box;
+}
 
-					
-	</style>
-	<div th:insert="~{fragments/general.html :: header_nav('entities')}" />
-	<div class="container">
+.cal-day-cell {
+	border: 1px solid #d8d8d8;
+	line-height: 2em; border-spacing 0px 0px;
+	padding: 2px;
+	min-height: 100px;
+	box-sizing: content-box;
+	width: 150px;
+}
+
+.cal-day-event-nserc-startDates {
+	border: 1px solid #d8d8d8;
+	white-space: nowrap;
+	font-size: 12.2333px;
+	overflow: hidden;
+	font-color: white;
+	background: linear-gradient(-90deg, green 10%, orange 10%);
+}
+
+.cal-day-event-nserc-endDates {
+	border: 1px solid #d8d8d8;
+	white-space: nowrap;
+	font-size: 12.2333px;
+	overflow: hidden;
+	font-color: rgb(0, 0, 0);
+	background: linear-gradient(-90deg, red 10%, orange 10%);
+}
+
+.cal-day-event-sshrc-startDates {
+	border: 1px solid #d8d8d8;
+	white-space: nowrap;
+	font-size: 12.2333px;
+	overflow: hidden;
+	font-color: rgb(0, 0, 0);
+	background: linear-gradient(-90deg, green 10%, blue 10%);
+}
+
+.cal-day-event-sshrc-endDates {
+	border: 1px solid #d8d8d8;
+	white-space: nowrap;
+	font-size: 12.2333px;
+	overflow: hidden;
+	font-color: rgb(0, 0, 0);
+	background: linear-gradient(-90deg, red 10%, blue 10%);
+}
+
+.NOI-start {
+	border: 1px solid #d8d8d8;
+	white-space: nowrap;
+	font-size: 12.2333px;
+	overflow: hidden;
+	font-color: rgb(0, 0, 0);
+	background: linear-gradient(-90deg, green 10%, #B3E5FC 10%);
+}
+
+.NOI-end {
+	border: 1px solid #d8d8d8;
+	white-space: nowrap;
+	font-size: 12.2333px;
+	overflow: hidden;
+	font-color: rgb(0, 0, 0);
+	background: linear-gradient(-90deg, red 10%, #B3E5FC 10%);
+}
+
+.LOI-start {
+	border: 1px solid #d8d8d8;
+	white-space: nowrap;
+	font-size: 12.2333px;
+	overflow: hidden;
+	font-color: rgb(0, 0, 0);
+	background: linear-gradient(-90deg, green 10%, #EFEBE9 10%);
+}
+
+.LOI-end {
+	border: 1px solid #d8d8d8;
+	white-space: nowrap;
+	font-size: 12.2333px;
+	overflow: hidden;
+	font-color: rgb(0, 0, 0);
+	background: linear-gradient(-90deg, red 10%, #EFEBE9 10%);
+}
+
+.sshrc {
+	border: 1px solid dimgrey;
+	background: lightyellow;
+	font-size: 12px;
+	white-space: nowrap;
+	margin-bottom: 0px;
+}
+
+.nserc {
+	border: 1px solid dimgrey;
+	background: lightblue;
+	font-size: 12px;
+	white-space: nowrap;
+	margin-bottom: 0px;
+}
+
+.cihr {
+	border: 1px solid dimgrey;
+	background: lightgreen;
+	white-space: nowrap;
+	font-size: 12px;
+}
+
+.startDate {
+	color: red;
+	font-weight: bold;
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
+
+.endDate {
+	color: black;
+	font-weight: bold;
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
+
+.startDateLOI {
+	color: darkgreen;
+	font-weight: bold;
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
+
+.endDateLOI {
+	color: purple;
+	font-weight: bold;
+}
+
+.startDateNOI {
+	color: saddlebrown;
+	font-weight: bold;
+}
+
+.endDateNOI {
+	color: blue;
+	font-weight: bold;
+}
+</style>
+<body th:onafterprint="trackMonth()">
+	<div th:insert="~{fragments/general.html :: header_nav('entities')}"></div>
+	<div class="container" style="margin-bottom: 25px">
 		<h1 th:text="#{h.fcCal}"></h1>
 		<p th:text="#{p.browse.viewCal.upcoming}"></p>
 		<div class="col-md-12">
 			<div class="row">
-				<div class="col-md-1" style="text-align: center;"><a th:href="@{viewCalendar(plusMinusMonth=${minusMonth})}"> << </a></div>
-				<div class="col-md-5" style="text-align: center;"> <span th:utext="#{${'cal.' + calGrid.month.monthValue}}"></span> - <span th:text="${calGrid.month.year}"></span></div>
-				<div class="col-md-1" style="text-align: center;"><a th:href="@{viewCalendar(plusMinusMonth=${plusMonth})}">>></a></div>
+				<div class="col-md-1" style="text-align: center;">
+					<a th:href="@{viewCalendar(plusMinusMonth=${minusMonth})}"> << </a>
+				</div>
+				<div class="col-md-5" style="text-align: center;">
+					<span th:utext="#{${'cal.' + calGrid.month.monthValue}}"></span> <span th:text="${calGrid.month.year}"></span>
+				</div>
+				<div class="col-md-1" style="text-align: center;">
+					<a th:href="@{viewCalendar(plusMinusMonth=${plusMonth})}">>></a>
+				</div>
 			</div>
 			<div class="row">
 				<div class="col-md-1 cal-weekday-header" th:text="#{day.su}"></div>
@@ -141,58 +192,79 @@
 				<div class="col-md-1 cal-weekday-header" th:text="#{day.f}"></div>
 				<div class="col-md-1 cal-weekday-header" th:text="#{day.sa}"></div>
 			</div>
-			
-			
-	<div th:each="row : ${calGrid.dataGrid}" class="row">
-				<div class="col-md-1 cal-day-cell" th:each="col : ${row}">
-					<div style="text-align:right;" th:text="${col} ? ${col.dayOfMonth} : 'N/A'"></div>
+
+
+			<div th:each="row : ${calGrid.dataGrid}" class="row">
+				<div class="col-md-1 cal-day-cell" th:each="col : ${row}" style="overflow: hidden;" >
+					<div style="text-align: right;" th:text="${col} ? ${col.dayOfMonth} : 'N/A'"></div>
 					<div th:if="${col != null}">
-					
-					<div th:each="fc : ${startingDates.get(col.cellDate)}">
-						  <div th:if="${fc.fundingOpportunity.leadAgency.id == 2}" >
-							<div class="cal-day-event-nserc-startDates"><a style="color:white" th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}"  th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a></div>
+
+						<div hidden="true" th:text="(${col.dayOfMonth} == 1) ? ${++calGrid.currentMonth}"></div>
+
+						<div th:each="fc : ${startDates}" th:if="${fc.startDate.getDayOfMonth()} == ${col.dayOfMonth} and ${fc.startDate.getMonthValue()} == ${calGrid.month.plusMonths(calGrid.currentMonth).getMonthValue()}" style="max-height: 16px;">
+							<a th:if="${fc.fundingOpportunity.leadAgency.id} == 1" class="sshrc startDate" th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
+								th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a
+								th:if="${fc.fundingOpportunity.leadAgency.id} == 2" class="nserc startDate" th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
+								th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a
+								th:if="${fc.fundingOpportunity.leadAgency.id} == 3" class="cihr startDate" th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
+								th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a>
 						</div>
-						 <div th:if="${fc.fundingOpportunity.leadAgency.id == 1}" >
-							<div class="cal-day-event-sshrc-startDates"><a style="color:white" th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}"   th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a></div>
-							
-							</div>
-					</div>	
-					
-					<div th:each="fc : ${endDates.get(col.cellDate)}">
-						  <div th:if="${fc.fundingOpportunity.leadAgency.id == 2}" >
-							<div class="cal-day-event-nserc-endDates" ><a  style="color:white"  th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a></div>
+
+						<div th:each="fc : ${endDates}" th:if="${fc.endDate.getDayOfMonth()} == ${col.dayOfMonth} and ${fc.endDate.getMonthValue()} == ${calGrid.month.plusMonths(calGrid.currentMonth).getMonthValue()}" style="max-height: 16px;">
+							<a th:if="${fc.fundingOpportunity.leadAgency.id} == 1" class="sshrc endDate" th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
+								th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a
+								th:if="${fc.fundingOpportunity.leadAgency.id} == 2" class="nserc endDate" th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
+								th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a
+								th:if="${fc.fundingOpportunity.leadAgency.id} == 3" class="cihr endDate" th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
+								th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a>
 						</div>
-						 <div th:if="${fc.fundingOpportunity.leadAgency.id == 1}" >
-							<div class="cal-day-event-sshrc-endDates"><a style="color:white"   th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a></div>
-							
+
+						<div th:each="fc : ${startLOIDates}" th:if="${fc.startDateLOI.getDayOfMonth()} == ${col.dayOfMonth} and ${fc.startDateLOI.getMonthValue()} == ${calGrid.month.plusMonths(calGrid.currentMonth).getMonthValue()}" style="max-height: 16px;">
+							<a th:if="${fc.fundingOpportunity.leadAgency.id} == 1" class="sshrc startDateLOI" th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
+								th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a
+								th:if="${fc.fundingOpportunity.leadAgency.id} == 2" class="nserc startDateLOI" th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
+								th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a
+								th:if="${fc.fundingOpportunity.leadAgency.id} == 3" class="cihr startDateLOI" th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
+								th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a>
+						</div>
+
+						<div th:each="fc : ${endLOIDates}" th:if="${fc.endDateLOI.getDayOfMonth()} == ${col.dayOfMonth} and ${fc.endDateLOI.getMonthValue()} == ${calGrid.month.plusMonths(calGrid.currentMonth).getMonthValue()}" style="max-height: 16px;">
+							<a th:if="${fc.fundingOpportunity.leadAgency.id} == 1" class="sshrc endDateLOI" th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
+								th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a
+								th:if="${fc.fundingOpportunity.leadAgency.id} == 2" class="nserc endDateLOI" th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
+								th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a
+								th:if="${fc.fundingOpportunity.leadAgency.id} == 3" class="cihr endDateLOI" th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
+								th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a>
+						</div>
+
+						<div th:each="fc : ${startNOIDates}" th:if="${fc.startDateNOI.getDayOfMonth()} == ${col.dayOfMonth} and ${fc.startDateNOI.getMonthValue()} == ${calGrid.month.plusMonths(calGrid.currentMonth).getMonthValue()}" style="max-height: 16px;">
+							<a th:if="${fc.fundingOpportunity.leadAgency.id} == 1" class="sshrc startDateNOI" th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
+								th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a
+								th:if="${fc.fundingOpportunity.leadAgency.id} == 2" class="nserc startDateNOI" th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
+								th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a
+								th:if="${fc.fundingOpportunity.leadAgency.id} == 3" class="cihr startDateNOI" th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
+								th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a>
+						</div>
+
+						<div th:each="fc : ${endNOIDates}" th:if="${fc.endDateNOI.getDayOfMonth()} == ${col.dayOfMonth} and ${fc.endDateNOI.getMonthValue()} == ${calGrid.month.plusMonths(calGrid.currentMonth).getMonthValue()}" style="max-height: 16px;">
+							<a th:if="${fc.fundingOpportunity.leadAgency.id} == 1" class="sshrc endDateNOI" th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
+								th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a
+								th:if="${fc.fundingOpportunity.leadAgency.id} == 2" class="nserc endDateNOI" th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
+								th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a
+								th:if="${fc.fundingOpportunity.leadAgency.id} == 3" class="cihr endDateNOI" th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
+								th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a>
+						</div>
+
 					</div>
 				</div>
-					
-				
-				<div th:each="fc : ${datesNoiStart.get(col.cellDate)}">
-							<div class="NOI-start"><a th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}"  th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a></div>
-				</div>
-					
-					
-				<div th:each="fc : ${datesLoiEnd.get(col.cellDate)}">
-							<div class="NOI-end"><a th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}"   th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a></div>
-				</div>	
-				
-				<div th:each="fc : ${datesNoiEnd.get(col.cellDate)}">
-							<div class="LOI-start"><a th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}"  th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a></div>
-				</div>	
-				
-				
-				<div th:each="fc : ${datesLoiStart.get(col.cellDate)}">
-							<div class="LOI-end"><a th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}"  th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a></div>
-				</div>
-							
-   		</div>
+			</div>
+
+			<h3 style="margin-top: 25px" th:text="#{h.legend}"></h3>
+			<div class="form-group row"><div class="col-sm-1" th:text="#{msg.cihr}"></div><div class="col-sm-1 cihr">&nbsp;</div><div class="col-sm-1 startDate" th:text="#{msg.startDate}" style="width: 120px;"></div><div class="col-sm-2 endDate" th:text="#{msg.endDate}"></div></div>
+			<div class="form-group row"><div class="col-sm-1" th:text="#{msg.nserc}"></div><div class="col-sm-1 nserc">&nbsp;</div><div class="col-sm-1 startDateLOI" th:text="#{msg.startDateLOI}" style="width: 120px; padding-right: 0px;"></div><div class="col-sm-2 endDateLOI" th:text="#{msg.endDateLOI}"></div></div>
+			<div class="form-group row"><div class="col-sm-1" th:text="#{msg.SSHRC}"></div><div class="col-sm-1 sshrc">&nbsp;</div><div class="col-sm-1 startDateNOI" th:text="#{msg.startDateNOI}" style="width: 120px; padding-right: 0px;"></div><div class="col-sm-2 endDateNOI" th:text="#{msg.endDateNOI}"></div></div>
+		
+		</div>
 	</div>
-	</div>
-	
-	
-	</div>
-	</div>
-   </body>
+</body>
 </html>

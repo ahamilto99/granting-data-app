@@ -82,5 +82,61 @@ public class FundingCycleServiceImpl implements FundingCycleService {
 
 		return fcsByStartDateMap;
 	}
+	
+	private LocalDate[] getDayRange(int plusMinusMonth) {
+		LocalDate[] dates = new LocalDate[2];
+		dates[0] = dates[1] = LocalDate.now();
+		dates[0] = dates[0].withDayOfMonth(15);
+		dates[1] = dates[1].withDayOfMonth(15);
+		
+		if (plusMinusMonth == 0) {
+			dates[0] = dates[0].minusMonths(1);
+			dates[1] = dates[1].plusMonths(1);
+		} else if (plusMinusMonth < 0) {
+			dates[0] = dates[0].minusMonths(plusMinusMonth * -1 -1);
+			dates[1] = dates[1].minusMonths(plusMinusMonth * -1 + 1);
+		} else {
+			dates[0] = dates[0].plusMonths(plusMinusMonth - 1);
+			dates[1] = dates[1].plusMonths(plusMinusMonth + 1);
+		}
+		
+		return dates;
+	}
+
+	@Override
+	public List<FundingCycle> findMonthlyFundingCyclesByStartDate(int plusMinusMonth) {
+		LocalDate[] dates = getDayRange(plusMinusMonth);
+		return fcRepo.findByStartDateBetween(dates[0], dates[1]);
+	}
+
+	@Override
+	public List<FundingCycle> findMonthlyFundingCyclesByEndDate(int plusMinusMonth) {
+		LocalDate[] dates = getDayRange(plusMinusMonth);
+		return fcRepo.findByEndDateBetween(dates[0], dates[1]);
+	}
+
+	@Override
+	public List<FundingCycle> findMonthlyFundingCyclesByStartDateLOI(int plusMinusMonth) {
+		LocalDate[] dates = getDayRange(plusMinusMonth);
+		return fcRepo.findByStartDateLOIBetween(dates[0], dates[1]);
+	}
+
+	@Override
+	public List<FundingCycle> findMonthlyFundingCyclesByEndDateLOI(int plusMinusMonth) {
+		LocalDate[] dates = getDayRange(plusMinusMonth);
+		return fcRepo.findByEndDateLOIBetween(dates[0], dates[1]);
+	}
+
+	@Override
+	public List<FundingCycle> findMonthlyFundingCyclesByStartDateNOI(int plusMinusMonth) {
+		LocalDate[] dates = getDayRange(plusMinusMonth);
+		return fcRepo.findByStartDateNOIBetween(dates[0], dates[1]);
+	}
+
+	@Override
+	public List<FundingCycle> findMonthlyFundingCyclesByEndDateNOI(int plusMinusMonth) {
+		LocalDate[] dates = getDayRange(plusMinusMonth);
+		return fcRepo.findByEndDateNOIBetween(dates[0], dates[1]);
+	}
 
 }

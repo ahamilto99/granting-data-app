@@ -16,4 +16,16 @@ public interface FundingCycleRepository extends JpaRepository<FundingCycle, Long
 	List<FundingCycle> findByStartDateGreaterThanEqualAndStartDateLessThanOrEndDateGreaterThanEqualAndEndDateLessThan(
 			LocalDate startDate, LocalDate endDate, LocalDate startDate2, LocalDate endDate2);
 	
+	List<FundingCycle> findByStartDateBetween(LocalDate startDateStart, LocalDate startDateEnd);
+	
+	List<FundingCycle> findByEndDateBetween(LocalDate endDateStart, LocalDate endDateEnd);
+	
+	List<FundingCycle> findByStartDateLOIBetween(LocalDate startDateLOIStart, LocalDate startDateLOIEnd);
+	
+	List<FundingCycle> findByEndDateLOIBetween(LocalDate endDateLOIStart, LocalDate endDateLOIEnd);
+	
+	List<FundingCycle> findByStartDateNOIBetween(LocalDate startDateNOIStart, LocalDate startDateNOIEnd);
+	
+	List<FundingCycle> findByEndDateNOIBetween(LocalDate endDateNOIStart, LocalDate endDateNOIEnd);
+	
 }
