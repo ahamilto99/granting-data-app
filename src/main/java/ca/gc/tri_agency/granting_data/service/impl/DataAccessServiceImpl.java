@@ -7,9 +7,7 @@ import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
 
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
-import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
-import ca.gc.tri_agency.granting_data.repo.SystemFundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.DataAccessService;
 
@@ -17,20 +15,7 @@ import ca.gc.tri_agency.granting_data.service.DataAccessService;
 public class DataAccessServiceImpl implements DataAccessService {
 
 	@Autowired
-	private SystemFundingOpportunityRepository systemFoRepo;
-	@Autowired
 	private FundingOpportunityRepository foRepo;
-
-	@Override
-	public List<SystemFundingOpportunity> getAllSystemFOs() {
-		return systemFoRepo.findAll();
-	}
-
-	@Override
-	public SystemFundingOpportunity getSystemFO(long id) {
-		return systemFoRepo.findById(id).orElseThrow(
-				() -> new DataRetrievalFailureException("That System Funding Opportunity does not exist"));
-	}
 
 	@Override
 	public List<FundingOpportunity> getAllFundingOpportunities() {

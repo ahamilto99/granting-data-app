@@ -30,6 +30,7 @@ import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.AdminService;
 import ca.gc.tri_agency.granting_data.service.AgencyService;
 import ca.gc.tri_agency.granting_data.service.DataAccessService;
+import ca.gc.tri_agency.granting_data.service.SystemFundingOpportunityService;
 
 @Controller
 @RequestMapping("/admin")
@@ -44,13 +45,16 @@ public class AdminController {
 
 	@Autowired
 	private AgencyService agencyService;
+	
+	@Autowired
+	private SystemFundingOpportunityService sfoService;
 
 	@Autowired
 	private MessageSource msgSource;
 
 	@GetMapping(value = "/confirmUnlink")
-	public String unlinkSfoFromFo_get(@RequestParam long sfoId, Model model) {
-		SystemFundingOpportunity sfo = dataSevice.getSystemFO(sfoId);
+	public String unlinkSfoFromFo_get(@RequestParam Long sfoId, Model model) {
+		SystemFundingOpportunity sfo = sfoService.findSystemFundingOpportunityById(sfoId);
 		FundingOpportunity fo = sfo.getLinkedFundingOpportunity();
 		if (fo == null) {
 			throw new DataRetrievalFailureException(
@@ -64,8 +68,8 @@ public class AdminController {
 
 	@PostMapping(value = "/confirmUnlink")
 	public String unlinkSfoFromFo_post(@RequestParam long sfoId, Model model, RedirectAttributes redirectAttributes) {
-		SystemFundingOpportunity sfo = dataSevice.getSystemFO(sfoId);
-		FundingOpportunity fo = dataSevice.getSystemFO(sfoId).getLinkedFundingOpportunity();
+		SystemFundingOpportunity sfo = sfoService.findSystemFundingOpportunityById(sfoId);
+		FundingOpportunity fo = sfoService.findSystemFundingOpportunityById(sfoId).getLinkedFundingOpportunity();
 
 		adminService.unlinkSystemFO(sfoId, fo.getId());
 
@@ -111,7 +115,7 @@ public class AdminController {
 
 	@GetMapping("/analyzeSystemFOs")
 	public String analyzeSystemFOs(Model model) {
-		model.addAttribute("systemFOs", dataSevice.getAllSystemFOs());
+		model.addAttribute("systemFOs", sfoService.findAllSystemFundingOpportunities());
 		return "admin/analyzeSystemFOs";
 	}
 
@@ -122,7 +126,7 @@ public class AdminController {
 			model.addAttribute("unlinkedPerformedMsg", inFlashMap.get("actionMessage"));
 		}
 
-		model.addAttribute("systemFO", dataSevice.getSystemFO(id));
+		model.addAttribute("systemFO", sfoService.findSystemFundingOpportunityById(id));
 		model.addAttribute("fosForLink", dataSevice.getAllFundingOpportunities());
 		return "admin/viewSystemFO";
 	}
@@ -137,7 +141,7 @@ public class AdminController {
 	public String addFo(Model model, @RequestParam(name = "sfoId", required = false) Optional<Long> sfoId) {
 		FundingOpportunity fo = new FundingOpportunity();
 		if (sfoId.isPresent()) {
-			SystemFundingOpportunity sfo = dataSevice.getSystemFO(sfoId.get());
+			SystemFundingOpportunity sfo = sfoService.findSystemFundingOpportunityById(sfoId.get());
 			fo.setNameEn(sfo.getNameEn());
 			fo.setNameFr(sfo.getNameFr());
 		}

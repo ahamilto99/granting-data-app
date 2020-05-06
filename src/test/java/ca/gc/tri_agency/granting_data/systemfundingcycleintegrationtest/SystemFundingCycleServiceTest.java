@@ -25,13 +25,13 @@ public class SystemFundingCycleServiceTest {
 
 	@WithAnonymousUser
 	@Test
-	public void testFindSystemFundingCycleById_succeeds() {
+	public void testFindSystemFundingCycleById_shouldSucceed() {
 		assertNotNull(sfcService.findSystemFundingCycleById(1L));
 	}
 
 	@WithAnonymousUser
 	@Test(expected = DataRetrievalFailureException.class)
-	public void testFindSystemFundingCycleById_throwsException() {
+	public void testFindSystemFundingCycleById_shouldThrowDataRetrievalFailureException() {
 		sfcService.findSystemFundingCycleById(Long.MAX_VALUE);
 	}
 

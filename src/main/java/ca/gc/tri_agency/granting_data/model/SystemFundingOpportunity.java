@@ -12,6 +12,7 @@ import ca.gc.tri_agency.granting_data.model.util.LocalizedParametersModel;
 
 @Entity
 public class SystemFundingOpportunity implements LocalizedParametersModel {
+	
 	@Id
 	@SequenceGenerator(name = "SEQ_SYSTEM_FUNDING_OPPORTUNITY", sequenceName = "SEQ_SYSTEM_FUNDING_OPPORTUNITY", initialValue = 1, allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SYSTEM_FUNDING_OPPORTUNITY")
