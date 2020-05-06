@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import ca.gc.tri_agency.granting_data.service.DataAccessService;
 import ca.gc.tri_agency.granting_data.service.GrantingCapabilityService;
 import ca.gc.tri_agency.granting_data.service.GrantingSystemService;
+import ca.gc.tri_agency.granting_data.service.SystemFundingCycleService;
 
 @Controller
 @RequestMapping("/browse")
@@ -22,7 +23,10 @@ public class BrowseController {
 	private GrantingSystemService gsService;
 
 	private GrantingCapabilityService gcService;
-	
+
+	@Autowired
+	private SystemFundingCycleService sfcService;
+
 	@Autowired
 	public BrowseController(DataAccessService dataService, GrantingSystemService gsService, GrantingCapabilityService gcService) {
 		this.dataService = dataService;
@@ -34,7 +38,7 @@ public class BrowseController {
 	public String goldListDisplay(Model model) {
 		model.addAttribute("goldenList", dataService.getAllFundingOpportunities());
 		// model.addAttribute("fcByFoMap",
-		// dataService.getFundingCycleByFundingOpportunityMap());
+		// fcService.findFundingCyclesByFundingOpportunityMap());
 		model.addAttribute("applySystemByFoMap", gsService.findApplySystemsByFundingOpportunityMap());
 		model.addAttribute("awardSystemsByFoMap", gsService.findAwardSystemsByFundingOpportunityMap());
 		return "browse/goldenList";
@@ -46,7 +50,7 @@ public class BrowseController {
 		// model.addAttribute("systemFoCycles",
 		// dataService.getSystemFundingCyclesByFoId(id));
 		model.addAttribute("grantingCapabilities", gcService.findGrantingCapabilitiesByFoId(id));
-		model.addAttribute("linkedSystemFundingCycles", dataService.getSystemFundingCyclesByFoId(id));
+		model.addAttribute("linkedSystemFundingCycles", sfcService.findSFCsByFOid(id));
 		return "browse/viewFundingOpportunity";
 	}
 

@@ -9,7 +9,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import ca.gc.tri_agency.granting_data.app.exception.UniqueColumnException;
 import ca.gc.tri_agency.granting_data.model.FiscalYear;
@@ -29,14 +31,14 @@ public class FiscalYearController {
 		this.fyService = fyService;
 	}
 
-//	@GetMapping(value = "/browse/viewFYs")
+	@GetMapping(value = "/browse/viewFYs")
 	public String accessViewFYs(Model model) {
 		model.addAttribute("fiscalYears", fyService.findAllFiscalYears());
 		return "browse/viewFiscalYears";
 	}
 
 	@AdminOnly
-//	@GetMapping(value = "/manage/createFY")
+	@GetMapping(value = "/manage/createFY")
 	public String accessCreateFY(Model model) {
 		model.addAttribute("fy", new FiscalYear());
 		model.addAttribute("fiscalYears", fyService.findAllFiscalYears());
@@ -44,7 +46,7 @@ public class FiscalYearController {
 	}
 
 	@AdminOnly
-//	@PostMapping(value = "/manage/createFY")
+	@PostMapping(value = "/manage/createFY")
 	public String processCreateFY(@Valid @ModelAttribute("fy") FiscalYear fy, BindingResult bindingResult, Model model)
 			throws Exception {
 		if (bindingResult.hasErrors()) {
@@ -60,14 +62,5 @@ public class FiscalYearController {
 		}
 		return "redirect:/browse/viewFYs";
 	}
-	
-	/*
-	 * To add create FiscalYear feature back to the view layer, place the code below in
-	 * viewFiscalYear.html
-	 * 
-	 * <div sec:authorize="hasRole('MDM ADMIN')" class="form-group row"
-	 * style="margin: 25px 0px 50px 0px;"> <a id="createFiscalYearLink" th:href="@{/manage/createFY}"
-	 * th:text="#{link.createFy}" class="btn-primary btn"></a> </div>
-	 */
 
 }

@@ -41,7 +41,7 @@ public class AdminController {
 
 	@Autowired
 	private DataAccessService dataSevice;
-	
+
 	@Autowired
 	private AgencyService agencyService;
 
@@ -69,8 +69,7 @@ public class AdminController {
 
 		adminService.unlinkSystemFO(sfoId, fo.getId());
 
-		String wasUnlinkedFrom = msgSource.getMessage("msg.unlinkedPerformedMsg", null,
-				LocaleContextHolder.getLocale());
+		String wasUnlinkedFrom = msgSource.getMessage("msg.unlinkedPerformedMsg", null, LocaleContextHolder.getLocale());
 		redirectAttributes.addFlashAttribute("actionMessage",
 				sfo.getLocalizedAttribute("name") + wasUnlinkedFrom + fo.getLocalizedAttribute("name"));
 
@@ -149,8 +148,8 @@ public class AdminController {
 	}
 
 	@PostMapping(value = "/createFo", params = "id")
-	public String addFoPost(@Valid @ModelAttribute("fo") FundingOpportunity command, BindingResult bindingResult,
-			Model model, RedirectAttributes redirectAttributes) throws Exception {
+	public String addFoPost(@Valid @ModelAttribute("fo") FundingOpportunity command, BindingResult bindingResult, Model model,
+			RedirectAttributes redirectAttributes) throws Exception {
 		if (bindingResult.hasErrors()) {
 			// required in order to re-populate the drop-down list
 			List<Agency> allAgencies = agencyService.findAllAgencies();
@@ -162,34 +161,5 @@ public class AdminController {
 		redirectAttributes.addFlashAttribute("actionMessage", createdFo + command.getLocalizedAttribute("name"));
 		return "redirect:/admin/home";
 	}
-	
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

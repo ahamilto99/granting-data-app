@@ -18,25 +18,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.ebay.xcelite.Xcelite;
 import com.ebay.xcelite.reader.SheetReader;
 import com.ebay.xcelite.sheet.XceliteSheet;
 
-import ca.gc.tri_agency.granting_data.model.BusinessUnit;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.GrantingSystem;
 import ca.gc.tri_agency.granting_data.model.SystemFundingCycle;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.file.FundingCycleDatasetRow;
 import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
-import ca.gc.tri_agency.granting_data.repo.SystemFundingCycleRepository;
 import ca.gc.tri_agency.granting_data.repo.SystemFundingOpportunityRepository;
-import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.AdminService;
-import ca.gc.tri_agency.granting_data.service.BusinessUnitService;
 import ca.gc.tri_agency.granting_data.service.GrantingSystemService;
+import ca.gc.tri_agency.granting_data.service.SystemFundingCycleService;
 
 @Service
 public class AdminServiceImpl implements AdminService {
@@ -51,7 +47,7 @@ public class AdminServiceImpl implements AdminService {
 	private FundingOpportunityRepository foRepo;
 
 	@Autowired
-	private SystemFundingCycleRepository systemFundingCycleRepo;
+	private SystemFundingCycleService sfcService;
 
 	@Autowired
 	private GrantingSystemService gsService;
@@ -87,7 +83,7 @@ public class AdminServiceImpl implements AdminService {
 	public List<String> generateActionableFoCycleIds(List<FundingCycleDatasetRow> foCycles) {
 		// SYSTEM FCs HAVE UNIQUE IDENTIFIER THAT INCLUDES THE PROGRAM IDENTIFIER. USING
 		// THAT AS DETERMINATION FACTOR
-		List<SystemFundingCycle> dbFundingCycles = systemFundingCycleRepo.findAll();
+		List<SystemFundingCycle> dbFundingCycles = sfcService.findAllSystemFundingCycles();
 		List<String> retval = new ArrayList<String>();
 		for (FundingCycleDatasetRow row : foCycles) {
 			boolean rowFound = false;
@@ -114,18 +110,6 @@ public class AdminServiceImpl implements AdminService {
 		retval = systemFoRepo.save(retval);
 		return retval;
 
-	}
-
-	@Override
-	public SystemFundingCycle registerSystemFundingCycle(FundingCycleDatasetRow row,
-			SystemFundingOpportunity targetSfo) {
-		SystemFundingCycle retval = new SystemFundingCycle();
-		retval.setFiscalYear(row.getCompetitionYear());
-		retval.setExtId(row.getFoCycle());
-		retval.setSystemFundingOpportunity(targetSfo);
-		retval.setNumAppsReceived(row.getNumReceivedApps());
-		retval = systemFundingCycleRepo.save(retval);
-		return retval;
 	}
 
 	@Override
@@ -157,7 +141,7 @@ public class AdminServiceImpl implements AdminService {
 					map.put(row.getProgram_ID(), targetFo);
 
 				}
-				SystemFundingCycle newCycle = registerSystemFundingCycle(row, targetFo);
+				SystemFundingCycle newCycle = sfcService.registerSystemFundingCycle(row, targetFo);
 				newIdList.add(newCycle.getId());
 			}
 

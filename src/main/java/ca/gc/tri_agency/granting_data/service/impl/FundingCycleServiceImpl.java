@@ -2,7 +2,9 @@ package ca.gc.tri_agency.granting_data.service.impl;
 
 import java.time.LocalDate;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
@@ -52,6 +54,7 @@ public class FundingCycleServiceImpl implements FundingCycleService {
 		return fcList;
 	}
 
+	// This method is not used
 //	@Override
 //	public Map<String, List<FundingCycle>> findMonthlyFundingCyclesMapByDate(long plusMinusMonth) {
 //		Map<String, List<FundingCycle>> fcsByStartDateMap = new TreeMap<>();
@@ -144,5 +147,15 @@ public class FundingCycleServiceImpl implements FundingCycleService {
 	@Override
 	public FundingCycle saveFundingCycle(FundingCycle fc) {
 		return fcRepo.save(fc);
+	}
+
+	@Override
+	public Map<Long, FundingCycle> findFundingCyclesByFundingOpportunityMap() {
+		Map<Long, FundingCycle> retval = new HashMap<Long, FundingCycle>();
+		List<FundingCycle> fundingCycles = findAllFundingCycles();
+		for (FundingCycle fc : fundingCycles) {
+			retval.put(fc.getFundingOpportunity().getId(), fc);
+		}
+		return retval;
 	}
 }

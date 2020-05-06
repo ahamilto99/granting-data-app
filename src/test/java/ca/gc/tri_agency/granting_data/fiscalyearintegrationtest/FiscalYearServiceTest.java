@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +26,7 @@ import ca.gc.tri_agency.granting_data.service.FiscalYearService;
 @SpringBootTest(classes = GrantingDataApp.class)
 @RunWith(SpringRunner.class)
 @ActiveProfiles("test")
-@Ignore(value = "The FiscalYear functionality is not required for Version 1")
+//@Ignore(value = "The FiscalYear functionality is not required for Version 1")
 public class FiscalYearServiceTest {
 
 	@Autowired

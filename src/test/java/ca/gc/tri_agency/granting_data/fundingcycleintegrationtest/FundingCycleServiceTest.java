@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDate;
+import java.util.Map;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -136,6 +137,14 @@ public class FundingCycleServiceTest {
 	@Test(expected = AccessDeniedException.class)
 	public void test_nonAdminCannotCreateFundingCycle() {
 		fcService.saveFundingCycle(new FundingCycle());
+	}
+	
+	@WithAnonymousUser
+	@Test
+	public void testFindFundingCyclesByFundingOpportunityMap() {
+		Map<Long, FundingCycle> fcsByFosMap = fcService.findFundingCyclesByFundingOpportunityMap();
+		assertNotNull(fcsByFosMap);
+		assertTrue(0 < fcsByFosMap.size());
 	}
 
 }

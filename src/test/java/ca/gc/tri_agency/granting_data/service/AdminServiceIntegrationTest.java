@@ -42,14 +42,22 @@ public class AdminServiceIntegrationTest {
 
 	@Autowired
 	AdminService adminService;
+	
 	@Autowired
 	SystemFundingCycleRepository sfcRepo;
+	
 	@Autowired
 	SystemFundingOpportunityRepository sfoRepo;
+	
 	@Autowired
 	GrantingSystemService gsSystem;
+	
 	@Autowired
 	FundingOpportunityRepository foRepo;
+	
+	@Autowired
+	private SystemFundingCycleService sfcService;
+
 	@Autowired
 	private WebApplicationContext context;
 
@@ -169,7 +177,7 @@ public class AdminServiceIntegrationTest {
 		GrantingSystem gs = gsSystem.findAllGrantingSystems().get(0);
 		FundingCycleDatasetRow testRow = createFcDatasetRow(testFoName + "3", "2019");
 		SystemFundingOpportunity sfo = adminService.registerSystemFundingOpportunity(testRow, gs);
-		adminService.registerSystemFundingCycle(testRow, sfo);
+		sfcService.registerSystemFundingCycle(testRow, sfo);
 
 		List<FundingCycleDatasetRow> analyzeRows = new ArrayList<FundingCycleDatasetRow>();
 		analyzeRows.add(createFcDatasetRow(testFoName + "3", "2019"));

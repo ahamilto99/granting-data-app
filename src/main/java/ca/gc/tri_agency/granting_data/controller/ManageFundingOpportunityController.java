@@ -25,8 +25,8 @@ import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.AgencyService;
 import ca.gc.tri_agency.granting_data.service.DataAccessService;
 import ca.gc.tri_agency.granting_data.service.GrantingCapabilityService;
-import ca.gc.tri_agency.granting_data.service.GrantingSystemService;
 import ca.gc.tri_agency.granting_data.service.RestrictedDataService;
+import ca.gc.tri_agency.granting_data.service.SystemFundingCycleService;
 
 @Controller
 @RequestMapping(value = "/manage", method = RequestMethod.GET)
@@ -45,10 +45,13 @@ public class ManageFundingOpportunityController {
 	private AgencyService agencyService;
 
 	@Autowired
-	GrantingSystemService gSystemService;
-
-	@Autowired
 	private GrantingCapabilityService gcService;
+	
+//	@Autowired
+//	private FundingCycleService fcService;
+	
+	@Autowired
+	private SystemFundingCycleService sfcService;
 	
 
 	@GetMapping(value = "/searchUser")
@@ -59,8 +62,8 @@ public class ManageFundingOpportunityController {
 	@GetMapping(value = "/manageFo")
 	public String viewFundingOpportunity(@RequestParam("id") long id, Model model) {
 		model.addAttribute("fo", dataService.getFundingOpportunity(id));
-		// model.addAttribute("fundingCycles", dataService.getFundingCyclesByFoId(id));
-		model.addAttribute("linkedSystemFundingCycles", dataService.getSystemFundingCyclesByFoId(id));
+		// model.addAttribute("fundingCycles", fcService.findFundingCyclesByFundingOpportunityId(id));
+		model.addAttribute("linkedSystemFundingCycles", sfcService.findSFCsByFOid(id));
 		model.addAttribute("grantingCapabilities", gcService.findGrantingCapabilitiesByFoId(id));
 		return "manage/manageFundingOpportunity";
 	}
