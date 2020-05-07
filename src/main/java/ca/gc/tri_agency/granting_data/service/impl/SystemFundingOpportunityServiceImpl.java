@@ -2,6 +2,8 @@ package ca.gc.tri_agency.granting_data.service.impl;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
@@ -55,6 +57,7 @@ public class SystemFundingOpportunityServiceImpl implements SystemFundingOpportu
 	}
 
 	@AdminOnly
+	@Transactional
 	@Override
 	public int linkSystemFundingOpportunity(Long sfoId, Long foId) {
 		SystemFundingOpportunity systemFo = findSystemFundingOpportunityById(sfoId);
@@ -66,6 +69,7 @@ public class SystemFundingOpportunityServiceImpl implements SystemFundingOpportu
 	}
 
 	@AdminOnly
+	@Transactional
 	@Override
 	public int unlinkSystemFundingOpportunity(Long sfoId, Long foId) {
 		SystemFundingOpportunity systemFo = findSystemFundingOpportunityById(sfoId);
@@ -88,7 +92,7 @@ public class SystemFundingOpportunityServiceImpl implements SystemFundingOpportu
 		retval.setNameEn(row.getProgramNameEn());
 		retval.setNameFr(row.getProgramNameFr());
 		retval.setGrantingSystem(targetSystem);
-		retval = sfoRepo.save(retval);
+		retval = saveSystemFundingOpportunity(retval);
 		return retval;
 	}
 

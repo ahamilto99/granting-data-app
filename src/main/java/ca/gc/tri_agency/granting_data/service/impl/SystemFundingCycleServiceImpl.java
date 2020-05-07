@@ -11,20 +11,20 @@ import ca.gc.tri_agency.granting_data.model.SystemFundingCycle;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.file.FundingCycleDatasetRow;
 import ca.gc.tri_agency.granting_data.repo.SystemFundingCycleRepository;
-import ca.gc.tri_agency.granting_data.repo.SystemFundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.service.SystemFundingCycleService;
+import ca.gc.tri_agency.granting_data.service.SystemFundingOpportunityService;
 
 @Service
 public class SystemFundingCycleServiceImpl implements SystemFundingCycleService {
 
-	@Autowired
-	private SystemFundingOpportunityRepository sfoRepo; // TODO: REFACTOR SystemFundingOpportunity
-
 	private SystemFundingCycleRepository sfcRepo;
 
+	private SystemFundingOpportunityService sfoService; 
+
 	@Autowired
-	public SystemFundingCycleServiceImpl(SystemFundingCycleRepository sfcRepo) {
+	public SystemFundingCycleServiceImpl(SystemFundingCycleRepository sfcRepo, SystemFundingOpportunityService sfoService) {
 		this.sfcRepo = sfcRepo;
+		this.sfoService = sfoService;
 	}
 
 	@Override
@@ -45,7 +45,7 @@ public class SystemFundingCycleServiceImpl implements SystemFundingCycleService 
 	@Override
 	public List<SystemFundingCycle> findSFCsBySFOid(Long sfoId) {
 		ArrayList<SystemFundingCycle> retval = new ArrayList<SystemFundingCycle>();
-		List<SystemFundingOpportunity> sysFos = sfoRepo.findByLinkedFundingOpportunityId(sfoId);
+		List<SystemFundingOpportunity> sysFos = sfoService.findSystemFundingOpportunitiesByLinkedFOid(sfoId);
 		for (SystemFundingOpportunity sfo : sysFos) {
 			List<SystemFundingCycle> sfoFcs = sfcRepo.findBySystemFundingOpportunityId(sfo.getId());
 			retval.addAll(sfoFcs);

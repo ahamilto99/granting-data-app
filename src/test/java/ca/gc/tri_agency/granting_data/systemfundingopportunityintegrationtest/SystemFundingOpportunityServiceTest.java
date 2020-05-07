@@ -88,4 +88,9 @@ public class SystemFundingOpportunityServiceTest {
 		assertEquals(1L, (long) sfoService.findSystemFundingOpportunityById(sfoId).getLinkedFundingOpportunity().getId());
 	}
 
+	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@Test(expected = DataRetrievalFailureException.class)
+	public void testUnlinkSystemFundingOpportunity_shouldThrowDataRetrievalFailureException() {
+		sfoService.unlinkSystemFundingOpportunity(1L, 100L);
+	}
 }

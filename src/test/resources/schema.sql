@@ -1,9 +1,9 @@
 SET DB_CLOSE_DELAY -1;
-CREATE USER IF NOT EXISTS "SA" SALT 'd470ad1c96a6a7e6' HASH '854b24eaa659b1418ca85d86fb1815a9613e71d6673d392e068fc7f65972014e' ADMIN;
+CREATE USER IF NOT EXISTS "SA" SALT '84ebe146ec2ee777' HASH 'a54bf304415a6325be60fe77fa246a032584e3f19985f5b704c974661f604ec8' ADMIN;
 CREATE SEQUENCE "PUBLIC"."SEQ_FUNDING_OPPORTUNITY" START WITH 142;
 CREATE SEQUENCE "PUBLIC"."SEQ_AGENCY" START WITH 4;
 CREATE SEQUENCE "PUBLIC"."SEQ_APPLICATION_PARTICIPATION" START WITH 1;
-CREATE SEQUENCE "PUBLIC"."SEQ_SYSTEM_FUNDING_CYCLE" START WITH 3;
+CREATE SEQUENCE "PUBLIC"."SEQ_SYSTEM_FUNDING_CYCLE" START WITH 4;
 CREATE SEQUENCE "PUBLIC"."SEQ_FUNDING_CYCLE" START WITH 142;
 CREATE SEQUENCE "PUBLIC"."SEQ_GRANTING_SYSTEM" START WITH 12;
 CREATE SEQUENCE "PUBLIC"."SEQ_BUSINESS_UNIT" START WITH 31;
@@ -41,41 +41,41 @@ CREATE MEMORY TABLE "PUBLIC"."DATABASECHANGELOG"(
 );
 -- 34 +/- SELECT COUNT(*) FROM PUBLIC.DATABASECHANGELOG;
 INSERT INTO "PUBLIC"."DATABASECHANGELOG" VALUES
-('00000000000002', 'jfs', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-06 11:47:49.675', 1, 'EXECUTED', '8:70b10269a8fa8c113de67b28f8307629', 'createSequence sequenceName=seq_agency', '', NULL, '3.8.2', NULL, NULL, '8780069565'),
-('00000000000003', 'jfs', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-06 11:47:49.691', 2, 'EXECUTED', '8:5c4dc06cd2ec60736fbc4bab78c629a9', 'createTable tableName=agency', '', NULL, '3.8.2', NULL, NULL, '8780069565'),
-('00000000000004', 'jfs', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-06 11:47:49.691', 3, 'EXECUTED', '8:cf9f3c1d6e36d322121f9c0060d69bd6', 'createSequence sequenceName=seq_fiscal_year', '', NULL, '3.8.2', NULL, NULL, '8780069565'),
-('00000000000005', 'jfs', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-06 11:47:49.706', 4, 'EXECUTED', '8:e7502be12f15e498f2273af35d995c32', 'createTable tableName=fiscal_year', '', NULL, '3.8.2', NULL, NULL, '8780069565'),
-('00000000000006', 'jfs', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-06 11:47:49.706', 5, 'EXECUTED', '8:119481f9e657b8437d8a0eee61d69fb6', 'createSequence sequenceName=seq_funding_opportunity', '', NULL, '3.8.2', NULL, NULL, '8780069565'),
-('00000000000007', 'jfs', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-06 11:47:49.724', 6, 'EXECUTED', '8:a51c959956c8dd9795f6d3f099e1f32c', 'createTable tableName=funding_opportunity', '', NULL, '3.8.2', NULL, NULL, '8780069565'),
-('00000000000008', 'jfs', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-06 11:47:49.724', 7, 'EXECUTED', '8:9dd1ec4efa55f81cd257fb9c5e682837', 'createSequence sequenceName=seq_funding_cycle', '', NULL, '3.8.2', NULL, NULL, '8780069565'),
-('00000000000009', 'jfs', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-06 11:47:49.738', 8, 'EXECUTED', '8:61bbe753c75364a22980ea44cfc2dcb0', 'createTable tableName=funding_cycle', '', NULL, '3.8.2', NULL, NULL, '8780069565'),
-('00000000000010', 'jfs', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-06 11:47:49.738', 9, 'EXECUTED', '8:f2e1a7c2e9a78ad77d12ded9bd64779b', 'createTable tableName=funding_opportunity_participating_agencies', '', NULL, '3.8.2', NULL, NULL, '8780069565'),
-('00000000000011', 'jfs', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-06 11:47:49.738', 10, 'EXECUTED', '8:74b2e01e89cda9958f42388ff7ee5650', 'createSequence sequenceName=seq_granting_capability', '', NULL, '3.8.2', NULL, NULL, '8780069565'),
-('00000000000012', 'jfs', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-06 11:47:49.753', 11, 'EXECUTED', '8:20d35617686cb3167a51865e5e2be2b2', 'createTable tableName=granting_capability', '', NULL, '3.8.2', NULL, NULL, '8780069565'),
-('00000000000013', 'jfs', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-06 11:47:49.753', 12, 'EXECUTED', '8:592740663948998e505c1be4973d1246', 'createSequence sequenceName=seq_granting_stage', '', NULL, '3.8.2', NULL, NULL, '8780069565'),
-('00000000000014', 'jfs', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-06 11:47:49.76', 13, 'EXECUTED', '8:bb8c4f30bdaa6899f856b4b26a3949d9', 'createTable tableName=granting_stage', '', NULL, '3.8.2', NULL, NULL, '8780069565'),
-('00000000000015', 'jfs', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-06 11:47:49.76', 14, 'EXECUTED', '8:17bface9d2ae442f257889a753f645dc', 'createSequence sequenceName=seq_granting_system', '', NULL, '3.8.2', NULL, NULL, '8780069565'),
-('00000000000016', 'jfs', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-06 11:47:49.76', 15, 'EXECUTED', '8:f6908f6b01ea2017107ff32c88400d83', 'createTable tableName=granting_system', '', NULL, '3.8.2', NULL, NULL, '8780069565'),
-('00000000000017', 'jfs', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-06 11:47:49.76', 16, 'EXECUTED', '8:8de2c491481e48f5547eb0321a57af2d', 'createSequence sequenceName=seq_system_funding_opportunity', '', NULL, '3.8.2', NULL, NULL, '8780069565'),
-('00000000000018', 'jfs', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-06 11:47:49.776', 17, 'EXECUTED', '8:edbbf71dbc2597478c3153f5ef5cde49', 'createTable tableName=system_funding_opportunity', '', NULL, '3.8.2', NULL, NULL, '8780069565'),
-('00000000000019', 'jfs', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-06 11:47:49.776', 18, 'EXECUTED', '8:fb688e0f61d07dfb637d5ce8e75bf56d', 'createSequence sequenceName=seq_system_funding_cycle', '', NULL, '3.8.2', NULL, NULL, '8780069565');
+('00000000000002', 'jfs', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-07 14:48:41.174', 1, 'EXECUTED', '8:70b10269a8fa8c113de67b28f8307629', 'createSequence sequenceName=seq_agency', '', NULL, '3.8.2', NULL, NULL, '8877321135'),
+('00000000000003', 'jfs', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-07 14:48:41.19', 2, 'EXECUTED', '8:5c4dc06cd2ec60736fbc4bab78c629a9', 'createTable tableName=agency', '', NULL, '3.8.2', NULL, NULL, '8877321135'),
+('00000000000004', 'jfs', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-07 14:48:41.19', 3, 'EXECUTED', '8:cf9f3c1d6e36d322121f9c0060d69bd6', 'createSequence sequenceName=seq_fiscal_year', '', NULL, '3.8.2', NULL, NULL, '8877321135'),
+('00000000000005', 'jfs', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-07 14:48:41.19', 4, 'EXECUTED', '8:e7502be12f15e498f2273af35d995c32', 'createTable tableName=fiscal_year', '', NULL, '3.8.2', NULL, NULL, '8877321135'),
+('00000000000006', 'jfs', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-07 14:48:41.19', 5, 'EXECUTED', '8:119481f9e657b8437d8a0eee61d69fb6', 'createSequence sequenceName=seq_funding_opportunity', '', NULL, '3.8.2', NULL, NULL, '8877321135'),
+('00000000000007', 'jfs', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-07 14:48:41.19', 6, 'EXECUTED', '8:a51c959956c8dd9795f6d3f099e1f32c', 'createTable tableName=funding_opportunity', '', NULL, '3.8.2', NULL, NULL, '8877321135'),
+('00000000000008', 'jfs', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-07 14:48:41.19', 7, 'EXECUTED', '8:9dd1ec4efa55f81cd257fb9c5e682837', 'createSequence sequenceName=seq_funding_cycle', '', NULL, '3.8.2', NULL, NULL, '8877321135'),
+('00000000000009', 'jfs', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-07 14:48:41.19', 8, 'EXECUTED', '8:61bbe753c75364a22980ea44cfc2dcb0', 'createTable tableName=funding_cycle', '', NULL, '3.8.2', NULL, NULL, '8877321135'),
+('00000000000010', 'jfs', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-07 14:48:41.206', 9, 'EXECUTED', '8:f2e1a7c2e9a78ad77d12ded9bd64779b', 'createTable tableName=funding_opportunity_participating_agencies', '', NULL, '3.8.2', NULL, NULL, '8877321135'),
+('00000000000011', 'jfs', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-07 14:48:41.206', 10, 'EXECUTED', '8:74b2e01e89cda9958f42388ff7ee5650', 'createSequence sequenceName=seq_granting_capability', '', NULL, '3.8.2', NULL, NULL, '8877321135'),
+('00000000000012', 'jfs', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-07 14:48:41.206', 11, 'EXECUTED', '8:20d35617686cb3167a51865e5e2be2b2', 'createTable tableName=granting_capability', '', NULL, '3.8.2', NULL, NULL, '8877321135'),
+('00000000000013', 'jfs', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-07 14:48:41.206', 12, 'EXECUTED', '8:592740663948998e505c1be4973d1246', 'createSequence sequenceName=seq_granting_stage', '', NULL, '3.8.2', NULL, NULL, '8877321135'),
+('00000000000014', 'jfs', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-07 14:48:41.206', 13, 'EXECUTED', '8:bb8c4f30bdaa6899f856b4b26a3949d9', 'createTable tableName=granting_stage', '', NULL, '3.8.2', NULL, NULL, '8877321135'),
+('00000000000015', 'jfs', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-07 14:48:41.206', 14, 'EXECUTED', '8:17bface9d2ae442f257889a753f645dc', 'createSequence sequenceName=seq_granting_system', '', NULL, '3.8.2', NULL, NULL, '8877321135'),
+('00000000000016', 'jfs', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-07 14:48:41.206', 15, 'EXECUTED', '8:f6908f6b01ea2017107ff32c88400d83', 'createTable tableName=granting_system', '', NULL, '3.8.2', NULL, NULL, '8877321135'),
+('00000000000017', 'jfs', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-07 14:48:41.222', 16, 'EXECUTED', '8:8de2c491481e48f5547eb0321a57af2d', 'createSequence sequenceName=seq_system_funding_opportunity', '', NULL, '3.8.2', NULL, NULL, '8877321135'),
+('00000000000018', 'jfs', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-07 14:48:41.222', 17, 'EXECUTED', '8:edbbf71dbc2597478c3153f5ef5cde49', 'createTable tableName=system_funding_opportunity', '', NULL, '3.8.2', NULL, NULL, '8877321135'),
+('00000000000019', 'jfs', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-07 14:48:41.222', 18, 'EXECUTED', '8:fb688e0f61d07dfb637d5ce8e75bf56d', 'createSequence sequenceName=seq_system_funding_cycle', '', NULL, '3.8.2', NULL, NULL, '8877321135');
 INSERT INTO "PUBLIC"."DATABASECHANGELOG" VALUES
-('00000000000020', 'jfs', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-06 11:47:49.776', 19, 'EXECUTED', '8:f1507a959d2b1b8697c9e0258482fc32', 'createTable tableName=system_funding_cycle', '', NULL, '3.8.2', NULL, NULL, '8780069565'),
-('00000000000021', 'jfs', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-06 11:47:49.776', 20, 'EXECUTED', '8:05559de6b68811c33eeb162c1335f61b', 'addPrimaryKey constraintName=PRIMARY5, tableName=funding_opportunity_participating_agencies', '', NULL, '3.8.2', NULL, NULL, '8780069565'),
-('00000000000022', 'dev_aha', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-06 11:47:49.791', 21, 'EXECUTED', '8:361ed0b1751b17a8e77c7acd86bf093a', 'createSequence sequenceName=seq_application_participation', '', NULL, '3.8.2', NULL, NULL, '8780069565'),
-('000000000023', 'dev_aha', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-06 11:47:49.791', 22, 'EXECUTED', '8:bb7d3e0542db4173ecc04c7c0c2eabee', 'createTable tableName=application_participation', '', NULL, '3.8.2', NULL, NULL, '8780069565'),
-('00000000000023', 'dev_aha', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-06 11:47:49.791', 23, 'EXECUTED', '8:f530bf36267308548b42a25596b6c70f', 'createSequence sequenceName=seq_business_unit', '', NULL, '3.8.2', NULL, NULL, '8780069565'),
-('00000000000024', 'dev_aha', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-06 11:47:49.791', 24, 'EXECUTED', '8:53057a63d8dae3002c3e4848f721f02d', 'createTable tableName=business_unit', '', NULL, '3.8.2', NULL, NULL, '8780069565'),
-('00000000000025', 'dev_aha', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-06 11:47:49.823', 25, 'EXECUTED', '8:5673bbe8cf63892de07f13562becacd6', 'addColumn tableName=funding_opportunity', '', NULL, '3.8.2', NULL, NULL, '8780069565'),
-('00000000000026', 'dev_aha', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-06 11:47:49.823', 26, 'EXECUTED', '8:4366f73249fbbcbc2d33054d9d281c01', 'createSequence sequenceName=seq_role', '', NULL, '3.8.2', NULL, NULL, '8780069565'),
-('00000000000027', 'dev_aha', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-06 11:47:49.823', 27, 'EXECUTED', '8:e6b4981d2af7564a8d5aa84dbdd4ba02', 'createTable tableName=role', '', NULL, '3.8.2', NULL, NULL, '8780069565'),
-('00000000000028', 'dev_aha', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-06 11:47:49.823', 28, 'EXECUTED', '8:1335de18e4b3aba0c5241af1cc5a416a', 'createSequence sequenceName=seq_member_role', '', NULL, '3.8.2', NULL, NULL, '8780069565'),
-('00000000000029', 'dev_aha', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-06 11:47:49.823', 29, 'EXECUTED', '8:0a16aa27e5e044550679532ec2627743', 'createTable tableName=member_role', '', NULL, '3.8.2', NULL, NULL, '8780069565'),
-('populate_granting_systems', 'dev_dyd', 'db/populate_granting_systems-0.0.1.xml', TIMESTAMP '2020-05-06 11:47:49.854', 30, 'EXECUTED', '8:99a085a0b3b612424c591d186dd5c20a', 'insert tableName=granting_system; insert tableName=granting_system; insert tableName=granting_system; insert tableName=granting_system; insert tableName=granting_system; insert tableName=granting_system; insert tableName=granting_system; insert ta...', '', NULL, '3.8.2', NULL, NULL, '8780069565'),
-('populate_granting_systems', 'jfs', 'db/PopulateGoldenList.xml', TIMESTAMP '2020-05-06 11:47:50.026', 31, 'EXECUTED', '8:d9ec88db37a59ee15b2a699ff3ca4029', 'sqlFile; sqlFile', '', NULL, '3.8.2', NULL, NULL, '8780069565'),
-('fixSequences', 'jfs', 'db/PopulateGoldenList.xml', TIMESTAMP '2020-05-06 11:47:50.042', 32, 'EXECUTED', '8:934169245012a00cf85755fad8c4c7d4', 'sql; sql', '', NULL, '3.8.2', NULL, NULL, '8780069565'),
-('sample SFO data', 'dev_aha', 'db/h2-only-data.xml', TIMESTAMP '2020-05-06 11:47:50.042', 33, 'EXECUTED', '8:00f77159a756f9e647a820569af91710', 'insert tableName=system_funding_opportunity; insert tableName=system_funding_opportunity', '', NULL, '3.8.2', NULL, NULL, '8780069565'),
-('populateTables', 'dev_aha', 'db/h2-only-data.xml', TIMESTAMP '2020-05-06 11:47:50.126', 34, 'EXECUTED', '8:c9fc7fc1063cd5199153f4966430be26', 'sqlFile', '', NULL, '3.8.2', NULL, NULL, '8780069565');
+('00000000000020', 'jfs', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-07 14:48:41.222', 19, 'EXECUTED', '8:f1507a959d2b1b8697c9e0258482fc32', 'createTable tableName=system_funding_cycle', '', NULL, '3.8.2', NULL, NULL, '8877321135'),
+('00000000000021', 'jfs', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-07 14:48:41.222', 20, 'EXECUTED', '8:05559de6b68811c33eeb162c1335f61b', 'addPrimaryKey constraintName=PRIMARY5, tableName=funding_opportunity_participating_agencies', '', NULL, '3.8.2', NULL, NULL, '8877321135'),
+('00000000000022', 'dev_aha', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-07 14:48:41.237', 21, 'EXECUTED', '8:361ed0b1751b17a8e77c7acd86bf093a', 'createSequence sequenceName=seq_application_participation', '', NULL, '3.8.2', NULL, NULL, '8877321135'),
+('000000000023', 'dev_aha', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-07 14:48:41.237', 22, 'EXECUTED', '8:bb7d3e0542db4173ecc04c7c0c2eabee', 'createTable tableName=application_participation', '', NULL, '3.8.2', NULL, NULL, '8877321135'),
+('00000000000023', 'dev_aha', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-07 14:48:41.237', 23, 'EXECUTED', '8:f530bf36267308548b42a25596b6c70f', 'createSequence sequenceName=seq_business_unit', '', NULL, '3.8.2', NULL, NULL, '8877321135'),
+('00000000000024', 'dev_aha', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-07 14:48:41.252', 24, 'EXECUTED', '8:53057a63d8dae3002c3e4848f721f02d', 'createTable tableName=business_unit', '', NULL, '3.8.2', NULL, NULL, '8877321135'),
+('00000000000025', 'dev_aha', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-07 14:48:41.307', 25, 'EXECUTED', '8:5673bbe8cf63892de07f13562becacd6', 'addColumn tableName=funding_opportunity', '', NULL, '3.8.2', NULL, NULL, '8877321135'),
+('00000000000026', 'dev_aha', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-07 14:48:41.307', 26, 'EXECUTED', '8:4366f73249fbbcbc2d33054d9d281c01', 'createSequence sequenceName=seq_role', '', NULL, '3.8.2', NULL, NULL, '8877321135'),
+('00000000000027', 'dev_aha', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-07 14:48:41.307', 27, 'EXECUTED', '8:e6b4981d2af7564a8d5aa84dbdd4ba02', 'createTable tableName=role', '', NULL, '3.8.2', NULL, NULL, '8877321135'),
+('00000000000028', 'dev_aha', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-07 14:48:41.323', 28, 'EXECUTED', '8:1335de18e4b3aba0c5241af1cc5a416a', 'createSequence sequenceName=seq_member_role', '', NULL, '3.8.2', NULL, NULL, '8877321135'),
+('00000000000029', 'dev_aha', 'db/version-0.0.1.xml', TIMESTAMP '2020-05-07 14:48:41.323', 29, 'EXECUTED', '8:0a16aa27e5e044550679532ec2627743', 'createTable tableName=member_role', '', NULL, '3.8.2', NULL, NULL, '8877321135'),
+('populate_granting_systems', 'dev_dyd', 'db/populate_granting_systems-0.0.1.xml', TIMESTAMP '2020-05-07 14:48:41.323', 30, 'EXECUTED', '8:99a085a0b3b612424c591d186dd5c20a', 'insert tableName=granting_system; insert tableName=granting_system; insert tableName=granting_system; insert tableName=granting_system; insert tableName=granting_system; insert tableName=granting_system; insert tableName=granting_system; insert ta...', '', NULL, '3.8.2', NULL, NULL, '8877321135'),
+('populate_granting_systems', 'jfs', 'db/PopulateGoldenList.xml', TIMESTAMP '2020-05-07 14:48:41.425', 31, 'EXECUTED', '8:d9ec88db37a59ee15b2a699ff3ca4029', 'sqlFile; sqlFile', '', NULL, '3.8.2', NULL, NULL, '8877321135'),
+('fixSequences', 'jfs', 'db/PopulateGoldenList.xml', TIMESTAMP '2020-05-07 14:48:41.433', 32, 'EXECUTED', '8:934169245012a00cf85755fad8c4c7d4', 'sql; sql', '', NULL, '3.8.2', NULL, NULL, '8877321135'),
+('sample SFO data', 'dev_aha', 'db/h2-only-data.xml', TIMESTAMP '2020-05-07 14:48:41.435', 33, 'EXECUTED', '8:00f77159a756f9e647a820569af91710', 'insert tableName=system_funding_opportunity; insert tableName=system_funding_opportunity', '', NULL, '3.8.2', NULL, NULL, '8877321135'),
+('populateTables', 'dev_aha', 'db/h2-only-data.xml', TIMESTAMP '2020-05-07 14:48:41.474', 34, 'EXECUTED', '8:291fc19668809bf5cbadb26894913cb3', 'sqlFile', '', NULL, '3.8.2', NULL, NULL, '8877321135');
 CREATE MEMORY TABLE "PUBLIC"."AGENCY"(
     "ID" BIGINT NOT NULL,
     "ACRONYM_EN" VARCHAR(255),
@@ -640,10 +640,11 @@ CREATE MEMORY TABLE "PUBLIC"."SYSTEM_FUNDING_CYCLE"(
     "SYSTEM_FUNDING_OPPORTUNITY_ID" BIGINT NOT NULL
 );
 ALTER TABLE "PUBLIC"."SYSTEM_FUNDING_CYCLE" ADD CONSTRAINT "PUBLIC"."PK_SYSTEM_FUNDING_CYCLE" PRIMARY KEY("ID");
--- 2 +/- SELECT COUNT(*) FROM PUBLIC.SYSTEM_FUNDING_CYCLE;
+-- 3 +/- SELECT COUNT(*) FROM PUBLIC.SYSTEM_FUNDING_CYCLE;
 INSERT INTO "PUBLIC"."SYSTEM_FUNDING_CYCLE" VALUES
-(1, 2019, 'SAMPLE EXT ID', 123, 1),
-(2, 2020, 'SAMPLE EXT ID', 999, 1);
+(1, 2019, 'justo', 2469, 1),
+(2, 2018, 'semper', 1946, 1),
+(3, 2019, 'dictum', 3626, 1);
 CREATE MEMORY TABLE "PUBLIC"."APPLICATION_PARTICIPATION"(
     "ID" BIGINT NOT NULL,
     "APPLICATION_IDENTIFIER" VARCHAR(255),

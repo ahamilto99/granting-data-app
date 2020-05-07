@@ -12,12 +12,10 @@ public interface SystemFundingCycleService {
 	
 	List<SystemFundingCycle> findAllSystemFundingCycles();
 
-	List<SystemFundingCycle> findSFCsBySFOid(Long foId);
+	List<SystemFundingCycle> findSFCsBySFOid(Long sfoId);
 	
 //	List<SystemFundingCycle> findSFCsByExtIdAndSFOid(String extId, Long sfoId);
 	
 	SystemFundingCycle registerSystemFundingCycle(FundingCycleDatasetRow row, SystemFundingOpportunity targetSfo);
-	
-	
 	
 }
