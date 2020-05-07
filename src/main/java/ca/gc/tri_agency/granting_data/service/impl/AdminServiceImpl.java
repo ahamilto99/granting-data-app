@@ -16,23 +16,21 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
 
 import com.ebay.xcelite.Xcelite;
 import com.ebay.xcelite.reader.SheetReader;
 import com.ebay.xcelite.sheet.XceliteSheet;
 
-import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.GrantingSystem;
 import ca.gc.tri_agency.granting_data.model.SystemFundingCycle;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.file.FundingCycleDatasetRow;
-import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.repo.SystemFundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.service.AdminService;
 import ca.gc.tri_agency.granting_data.service.GrantingSystemService;
 import ca.gc.tri_agency.granting_data.service.SystemFundingCycleService;
+import ca.gc.tri_agency.granting_data.service.SystemFundingOpportunityService;
 
 @Service
 public class AdminServiceImpl implements AdminService {
@@ -44,10 +42,10 @@ public class AdminServiceImpl implements AdminService {
 	private SystemFundingOpportunityRepository systemFoRepo;
 
 	@Autowired
-	private FundingOpportunityRepository foRepo;
-
-	@Autowired
 	private SystemFundingCycleService sfcService;
+	
+	@Autowired
+	private SystemFundingOpportunityService sfoService;
 
 	@Autowired
 	private GrantingSystemService gsService;
@@ -100,19 +98,6 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	@Override
-	public SystemFundingOpportunity registerSystemFundingOpportunity(FundingCycleDatasetRow row,
-			GrantingSystem targetSystem) {
-		SystemFundingOpportunity retval = new SystemFundingOpportunity();
-		retval.setExtId(row.getFoCycle());
-		retval.setNameEn(row.getProgramNameEn());
-		retval.setNameFr(row.getProgramNameFr());
-		retval.setGrantingSystem(targetSystem);
-		retval = systemFoRepo.save(retval);
-		return retval;
-
-	}
-
-	@Override
 	public int applyChangesFromFileByIds(String filename, String[] idsToAction) {
 		GrantingSystem targetSystem = gsService.findGrantingSystemFromFile(filename);
 
@@ -137,7 +122,7 @@ public class AdminServiceImpl implements AdminService {
 				if (map.containsKey(row.getProgram_ID())) {
 					targetFo = map.get(row.getProgram_ID());
 				} else {
-					targetFo = registerSystemFundingOpportunity(row, targetSystem);
+					targetFo = sfoService.registerSystemFundingOpportunity(row, targetSystem);
 					map.put(row.getProgram_ID(), targetFo);
 
 				}
@@ -148,32 +133,6 @@ public class AdminServiceImpl implements AdminService {
 		}
 		return newIdList.size();
 
-	}
-
-	@Override
-	public int unlinkSystemFO(long systemFoId, long foId) {
-		SystemFundingOpportunity systemFo = systemFoRepo.findById(systemFoId)
-				.orElseThrow(() -> new DataRetrievalFailureException("That System Funding Opportunity does not exist"));
-		FundingOpportunity fo = foRepo.findById(foId)
-				.orElseThrow(() -> new DataRetrievalFailureException("That Funding Opportunity does not exist"));
-		if (systemFo.getLinkedFundingOpportunity() != fo) {
-			throw new DataRetrievalFailureException(
-					"System Funding Opportunity is not linked with that Funding Opportunity");
-		}
-		systemFo.setLinkedFundingOpportunity(null);
-		systemFoRepo.save(systemFo);
-		return 1;
-	}
-
-	@Override
-	public int linkSystemFO(long systemFoId, long foId) {
-		SystemFundingOpportunity systemFo = systemFoRepo.findById(systemFoId)
-				.orElseThrow(() -> new DataRetrievalFailureException("That System Funding Opportunity does not exist"));
-		FundingOpportunity fo = foRepo.findById(foId)
-				.orElseThrow(() -> new DataRetrievalFailureException("That Funding Opportunity does not exist"));
-		systemFo.setLinkedFundingOpportunity(fo);
-		systemFoRepo.save(systemFo);
-		return 1;
 	}
 
 }

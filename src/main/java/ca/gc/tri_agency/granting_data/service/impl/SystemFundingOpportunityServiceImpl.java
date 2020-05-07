@@ -6,14 +6,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
 
+import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
+import ca.gc.tri_agency.granting_data.model.GrantingSystem;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
+import ca.gc.tri_agency.granting_data.model.file.FundingCycleDatasetRow;
+import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.repo.SystemFundingOpportunityRepository;
+import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.SystemFundingOpportunityService;
 
 @Service
 public class SystemFundingOpportunityServiceImpl implements SystemFundingOpportunityService {
 
 	private SystemFundingOpportunityRepository sfoRepo;
+	
+	@Autowired
+	private FundingOpportunityRepository foRepo;	// TODO: REFACTOR FO
 
 	@Autowired
 	public SystemFundingOpportunityServiceImpl(SystemFundingOpportunityRepository sfoRepo) {
@@ -46,4 +54,48 @@ public class SystemFundingOpportunityServiceImpl implements SystemFundingOpportu
 		return sfoRepo.findByNameEn(nameEn);
 	}
 
+	@AdminOnly
+	@Override
+	public int linkSystemFundingOpportunity(Long sfoId, Long foId) {
+		SystemFundingOpportunity systemFo = findSystemFundingOpportunityById(sfoId);
+		FundingOpportunity fo = foRepo.findById(foId)
+				.orElseThrow(() -> new DataRetrievalFailureException("That Funding Opportunity does not exist"));
+		systemFo.setLinkedFundingOpportunity(fo);
+		saveSystemFundingOpportunity(systemFo);
+		return 1;
+	}
+
+	@AdminOnly
+	@Override
+	public int unlinkSystemFundingOpportunity(Long sfoId, Long foId) {
+		SystemFundingOpportunity systemFo = findSystemFundingOpportunityById(sfoId);
+		FundingOpportunity fo = foRepo.findById(foId)
+				.orElseThrow(() -> new DataRetrievalFailureException("That Funding Opportunity does not exist"));
+		if (systemFo.getLinkedFundingOpportunity() != fo) {
+			throw new DataRetrievalFailureException(
+					"System Funding Opportunity is not linked with that Funding Opportunity");
+		}
+		systemFo.setLinkedFundingOpportunity(null);
+		saveSystemFundingOpportunity(systemFo);
+		return 1;
+	}
+
+	@AdminOnly
+	@Override
+	public SystemFundingOpportunity registerSystemFundingOpportunity(FundingCycleDatasetRow row, GrantingSystem targetSystem) {
+		SystemFundingOpportunity retval = new SystemFundingOpportunity();
+		retval.setExtId(row.getFoCycle());
+		retval.setNameEn(row.getProgramNameEn());
+		retval.setNameFr(row.getProgramNameFr());
+		retval.setGrantingSystem(targetSystem);
+		retval = sfoRepo.save(retval);
+		return retval;
+	}
+
+	@AdminOnly
+	@Override
+	public SystemFundingOpportunity saveSystemFundingOpportunity(SystemFundingOpportunity sfo) {
+		return sfoRepo.save(sfo);
+	}
+	
 }

@@ -71,7 +71,7 @@ public class AdminController {
 		SystemFundingOpportunity sfo = sfoService.findSystemFundingOpportunityById(sfoId);
 		FundingOpportunity fo = sfoService.findSystemFundingOpportunityById(sfoId).getLinkedFundingOpportunity();
 
-		adminService.unlinkSystemFO(sfoId, fo.getId());
+		sfoService.unlinkSystemFundingOpportunity(sfoId, fo.getId());
 
 		String wasUnlinkedFrom = msgSource.getMessage("msg.unlinkedPerformedMsg", null, LocaleContextHolder.getLocale());
 		redirectAttributes.addFlashAttribute("actionMessage",
@@ -133,7 +133,7 @@ public class AdminController {
 
 	@PostMapping(value = "/registerFOLink")
 	public String registerProgramLinkPost(@ModelAttribute("id") Long id, @ModelAttribute("foId") Long foId) {
-		adminService.linkSystemFO(id, foId);
+		sfoService.linkSystemFundingOpportunity(id, foId);
 		return "redirect:analyzeSystemFOs";
 	}
 

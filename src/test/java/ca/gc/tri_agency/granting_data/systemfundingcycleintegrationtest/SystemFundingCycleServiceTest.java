@@ -44,7 +44,7 @@ public class SystemFundingCycleServiceTest {
 	@WithAnonymousUser
 	@Test
 	public void testFindSFCsByFOid() {
-		assertTrue(0 < sfcService.findSFCsByFOid(1L).size());
+		assertTrue(0 < sfcService.findSFCsBySFOid(1L).size());
 	}
 
 }

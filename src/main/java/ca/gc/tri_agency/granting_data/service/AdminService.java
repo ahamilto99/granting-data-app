@@ -3,8 +3,6 @@ package ca.gc.tri_agency.granting_data.service;
 import java.io.File;
 import java.util.List;
 
-import ca.gc.tri_agency.granting_data.model.GrantingSystem;
-import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.file.FundingCycleDatasetRow;
 
 public interface AdminService {
@@ -16,11 +14,5 @@ public interface AdminService {
 	public List<String> generateActionableFoCycleIds(List<FundingCycleDatasetRow> foCycles);
 
 	public int applyChangesFromFileByIds(String filename, String[] idsToAction);
-
-	public int linkSystemFO(long systemFoId, long foId);
-
-	public int unlinkSystemFO(long systemFoId, long foId);
-
-	SystemFundingOpportunity registerSystemFundingOpportunity(FundingCycleDatasetRow row, GrantingSystem targetSystem);
 
 }

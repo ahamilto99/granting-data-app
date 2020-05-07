@@ -63,7 +63,7 @@ public class ManageFundingOpportunityController {
 	public String viewFundingOpportunity(@RequestParam("id") long id, Model model) {
 		model.addAttribute("fo", dataService.getFundingOpportunity(id));
 		// model.addAttribute("fundingCycles", fcService.findFundingCyclesByFundingOpportunityId(id));
-		model.addAttribute("linkedSystemFundingCycles", sfcService.findSFCsByFOid(id));
+		model.addAttribute("linkedSystemFundingCycles", sfcService.findSFCsBySFOid(id));
 		model.addAttribute("grantingCapabilities", gcService.findGrantingCapabilitiesByFoId(id));
 		return "manage/manageFundingOpportunity";
 	}

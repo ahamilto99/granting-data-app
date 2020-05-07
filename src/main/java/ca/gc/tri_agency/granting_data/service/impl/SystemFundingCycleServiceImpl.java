@@ -43,9 +43,9 @@ public class SystemFundingCycleServiceImpl implements SystemFundingCycleService 
 	 * `BUT `THIS` NEEDS` MORE` REFACTORING AS IT DOES 3 DB CALLS or more. THIS NEEDS ANALYSIS
 	 */
 	@Override
-	public List<SystemFundingCycle> findSFCsByFOid(Long foId) {
+	public List<SystemFundingCycle> findSFCsBySFOid(Long sfoId) {
 		ArrayList<SystemFundingCycle> retval = new ArrayList<SystemFundingCycle>();
-		List<SystemFundingOpportunity> sysFos = sfoRepo.findByLinkedFundingOpportunityId(foId);
+		List<SystemFundingOpportunity> sysFos = sfoRepo.findByLinkedFundingOpportunityId(sfoId);
 		for (SystemFundingOpportunity sfo : sysFos) {
 			List<SystemFundingCycle> sfoFcs = sfcRepo.findBySystemFundingOpportunityId(sfo.getId());
 			retval.addAll(sfoFcs);
