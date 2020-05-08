@@ -273,6 +273,24 @@
             </column>
         </createTable>
     </changeSet>
+    <changeSet id="00000000000030" author="dev_aha">
+        <createSequence sequenceName="seq_award" startValue="1" incrementBy="1"/>
+    </changeSet>
+    <changeSet id="00000000000031" author="dev_aha">
+        <createTable tableName="award">
+            <column name="id" type="BIGINT" defaultValueSequenceNext="seq_award">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="awarded_amount" type="DOUBLE"/>
+            <column name="funding_year" type="BIGINT"/>
+            <column name="person_identifier" type="BIGINT"/>
+            <column name="family_name" type="VARCHAR(255)"/>
+            <column name="given_name" type="VARCHAR(255)"/>
+            <column name="role_code" type="BIGINT"/>
+            <column name="role_en" type="VARCHAR(255)"/>
+            <column name="role_fr" type="VARCHAR(255)"/>
+        </createTable>   
+    </changeSet>
     
     <!-- 
     <changeSet author="dev_yab (generated)" id="1574353543232-28">
