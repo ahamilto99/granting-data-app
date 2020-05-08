@@ -8,8 +8,6 @@ public interface DataAccessService {
 
 	List<FundingOpportunity> getAllFundingOpportunities();
 
-	FundingOpportunity getFundingOpportunity(long id);
-
 	List<FundingOpportunity> getFoByNameEn(String nameEn);
 
 	List<FundingOpportunity> getAgencyFundingOpportunities(long id);

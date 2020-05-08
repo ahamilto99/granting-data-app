@@ -3,7 +3,6 @@ package ca.gc.tri_agency.granting_data.service.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
 
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
@@ -23,19 +22,13 @@ public class DataAccessServiceImpl implements DataAccessService {
 	}
 
 	@Override
-	public FundingOpportunity getFundingOpportunity(long id) {
-		return foRepo.findById(id)
-				.orElseThrow(() -> new DataRetrievalFailureException("That Funding Opportunity does not exist"));
-	}
-
-	@Override
 	public List<FundingOpportunity> getFoByNameEn(String nameEn) {
-		return foRepo.findAllByNameEn(nameEn);
+		return foRepo.findByNameEn(nameEn);
 	}
 
 	@Override
 	public List<FundingOpportunity> getAgencyFundingOpportunities(long id) {
-		return foRepo.findAllByLeadAgencyId(id);
+		return foRepo.findByLeadAgencyId(id);
 	}
 
 	@AdminOnly

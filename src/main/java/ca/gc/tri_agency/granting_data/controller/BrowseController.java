@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import ca.gc.tri_agency.granting_data.service.DataAccessService;
+import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
 import ca.gc.tri_agency.granting_data.service.GrantingCapabilityService;
 import ca.gc.tri_agency.granting_data.service.GrantingSystemService;
 import ca.gc.tri_agency.granting_data.service.SystemFundingCycleService;
@@ -26,6 +27,9 @@ public class BrowseController {
 
 	@Autowired
 	private SystemFundingCycleService sfcService;
+	
+	@Autowired
+	private FundingOpportunityService foService;
 
 	@Autowired
 	public BrowseController(DataAccessService dataService, GrantingSystemService gsService, GrantingCapabilityService gcService) {
@@ -45,8 +49,8 @@ public class BrowseController {
 	}
 
 	@GetMapping(value = "/viewFo")
-	public String viewFundingOpportunity(@RequestParam("id") long id, Model model) {
-		model.addAttribute("fo", dataService.getFundingOpportunity(id));
+	public String viewFundingOpportunity(@RequestParam("id") Long id, Model model) {
+		model.addAttribute("fo", foService.findFundingOpportunityById(id));
 		// model.addAttribute("systemFoCycles",
 		// dataService.getSystemFundingCyclesByFoId(id));
 		model.addAttribute("grantingCapabilities", gcService.findGrantingCapabilitiesByFoId(id));

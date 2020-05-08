@@ -26,7 +26,7 @@ import ca.gc.tri_agency.granting_data.model.SystemFundingCycle;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.AgencyService;
-import ca.gc.tri_agency.granting_data.service.DataAccessService;
+import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
 import ca.gc.tri_agency.granting_data.service.GrantingCapabilityService;
 import ca.gc.tri_agency.granting_data.service.RestrictedDataService;
 import ca.gc.tri_agency.granting_data.service.SystemFundingCycleService;
@@ -43,9 +43,6 @@ public class ManageFundingOpportunityController {
 	private RestrictedDataService restrictedDataService;
 
 	@Autowired
-	private DataAccessService dataService;
-
-	@Autowired
 	private AgencyService agencyService;
 
 	@Autowired
@@ -57,6 +54,9 @@ public class ManageFundingOpportunityController {
 	@Autowired
 	private SystemFundingOpportunityService sfoService;
 	
+	@Autowired
+	private FundingOpportunityService foService;
+	
 
 	@GetMapping(value = "/searchUser")
 	public String searchUserForm() {
@@ -65,7 +65,7 @@ public class ManageFundingOpportunityController {
 
 	@GetMapping(value = "/manageFo")
 	public String viewFundingOpportunity(@RequestParam("id") Long id, Model model) {
-		FundingOpportunity fo = dataService.getFundingOpportunity(id);
+		FundingOpportunity fo = foService.findFundingOpportunityById(id);
 		model.addAttribute("fo", fo);
 		// model.addAttribute("fundingCycles", fcService.findFundingCyclesByFundingOpportunityId(id));
 		
@@ -88,8 +88,8 @@ public class ManageFundingOpportunityController {
 
 	@AdminOnly
 	@GetMapping(value = "/editFo", params = "id")
-	public String editFo(@RequestParam("id") long id, Model model) {
-		FundingOpportunity fo = dataService.getFundingOpportunity(id);
+	public String editFo(@RequestParam("id") Long id, Model model) {
+		FundingOpportunity fo = foService.findFundingOpportunityById(id);
 		model.addAttribute("programForm", fo);
 
 		List<Agency> allAgencies = agencyService.findAllAgencies();

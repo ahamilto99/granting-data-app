@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import ca.gc.tri_agency.granting_data.model.FundingCycle;
 import ca.gc.tri_agency.granting_data.model.util.CalendarGrid;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
-import ca.gc.tri_agency.granting_data.service.DataAccessService;
 import ca.gc.tri_agency.granting_data.service.FiscalYearService;
 import ca.gc.tri_agency.granting_data.service.FundingCycleService;
+import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
 
 @Controller
 public class FundingCycleController {
@@ -24,14 +24,14 @@ public class FundingCycleController {
 	private FundingCycleService fcService;
 
 	private FiscalYearService fyService;
+	
+	private FundingOpportunityService foService;
 
 	@Autowired
-	private DataAccessService dataService; // TODO: refactor FO
-
-	@Autowired
-	public FundingCycleController(FundingCycleService fcService, FiscalYearService fyService) {
+	public FundingCycleController(FundingCycleService fcService, FiscalYearService fyService, FundingOpportunityService foService) {
 		this.fcService = fcService;
 		this.fyService = fyService;
+		this.foService = foService;
 	}
 
 	@GetMapping(value = "/browse/viewFcFromFy")
@@ -62,7 +62,7 @@ public class FundingCycleController {
 		model.addAttribute("foId", foId);
 		model.addAttribute("fundingCycle", new FundingCycle());
 		model.addAttribute("fy", fyService.findAllFiscalYears());
-		model.addAttribute("fo", dataService.getFundingOpportunity(foId));
+		model.addAttribute("fo", foService.findFundingOpportunityById(foId));
 		return "manage/createFundingCycle";
 	}
 
@@ -72,7 +72,7 @@ public class FundingCycleController {
 			BindingResult bindingResult, Model model) {
 		if (bindingResult.hasErrors()) {
 			model.addAttribute("fy", fyService.findAllFiscalYears());
-			model.addAttribute("fo", dataService.getFundingOpportunity(foId));
+			model.addAttribute("fo", foService.findFundingOpportunityById(foId));
 			return "manage/createFundingCycle";
 		}
 		fcService.saveFundingCycle(fc);
