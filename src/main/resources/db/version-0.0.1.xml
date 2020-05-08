@@ -286,7 +286,7 @@
             <column name="person_identifier" type="BIGINT"/>
             <column name="family_name" type="VARCHAR(255)"/>
             <column name="given_name" type="VARCHAR(255)"/>
-            <column name="role_code" type="BIGINT"/>
+            <column name="role_code" type="VARCHAR(255)"/>
             <column name="role_en" type="VARCHAR(255)"/>
             <column name="role_fr" type="VARCHAR(255)"/>
         </createTable>   

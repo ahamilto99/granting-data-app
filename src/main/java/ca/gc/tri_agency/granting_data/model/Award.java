@@ -24,13 +24,25 @@ public class Award {
 	
 	private String givenName;
 	
-	private Long roleCode;
+	private String roleCode;
 	
 	private String roleEn;
 	
 	private String roleFr;
 	
 	public Award() {
+	}
+
+	public Award(Double awarded_amount, Long funding_year, Long personIdentifier, String familyName, String givenName,
+			String roleCode, String roleEn, String roleFr) {
+		this.awarded_amount = awarded_amount;
+		this.funding_year = funding_year;
+		this.personIdentifier = personIdentifier;
+		this.familyName = familyName;
+		this.givenName = givenName;
+		this.roleCode = roleCode;
+		this.roleEn = roleEn;
+		this.roleFr = roleFr;
 	}
 
 	public Long getId() {
@@ -81,11 +93,11 @@ public class Award {
 		this.givenName = givenName;
 	}
 
-	public Long getRoleCode() {
+	public String getRoleCode() {
 		return roleCode;
 	}
 
-	public void setRoleCode(Long roleCode) {
+	public void setRoleCode(String roleCode) {
 		this.roleCode = roleCode;
 	}
 
