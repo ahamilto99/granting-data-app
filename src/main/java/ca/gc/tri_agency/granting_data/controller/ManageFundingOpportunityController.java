@@ -28,7 +28,6 @@ import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.AgencyService;
 import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
 import ca.gc.tri_agency.granting_data.service.GrantingCapabilityService;
-import ca.gc.tri_agency.granting_data.service.RestrictedDataService;
 import ca.gc.tri_agency.granting_data.service.SystemFundingCycleService;
 import ca.gc.tri_agency.granting_data.service.SystemFundingOpportunityService;
 
@@ -38,9 +37,6 @@ public class ManageFundingOpportunityController {
 
 	@Autowired
 	private ADUserService adUserService;
-
-	@Autowired
-	private RestrictedDataService restrictedDataService;
 
 	@Autowired
 	private AgencyService agencyService;
@@ -114,13 +110,13 @@ public class ManageFundingOpportunityController {
 			}
 			return "redirect:/browse/goldenList";
 		}
-		restrictedDataService.saveFundingOpportunity(command);
+		foService.saveFundingOpportunity(command);
 		return "redirect:/browse/viewFo?id=" + command.getId();
 	}
 
 	@AdminOnly
 	@GetMapping(value = "/editProgramLead", params = "id")
-	public String editProgramLead(@RequestParam("id") long id, Model model) {
+	public String editProgramLead(@RequestParam("id") Long id, Model model) {
 		model.addAttribute("originalId", id);
 		List<ADUser> matchingUsers = adUserService.findAllADUsers();
 		model.addAttribute("matchingUsers", matchingUsers);
@@ -129,7 +125,7 @@ public class ManageFundingOpportunityController {
 
 	@AdminOnly
 	@GetMapping(value = "/editProgramLead", params = { "id", "username" })
-	public String editProgramLeadSearchUser(@RequestParam("id") long id, @RequestParam("username") String username, Model model) {
+	public String editProgramLeadSearchUser(@RequestParam("id") Long id, @RequestParam("username") String username, Model model) {
 		List<ADUser> matchingUsers = adUserService.searchADUsers(username);
 		model.addAttribute("matchingUsers", matchingUsers);
 		model.addAttribute("originalId", id);
@@ -138,12 +134,12 @@ public class ManageFundingOpportunityController {
 
 	@AdminOnly
 	@PostMapping(value = "/editProgramLead")
-	public String editProgramLeadPost(@RequestParam long foId, @RequestParam String leadUserDn) {
+	public String editProgramLeadPost(@RequestParam Long foId, @RequestParam String leadUserDn) {
 		// get the FO based on the ID
 		// get the AD person based on the leadUserDn
 		// in the FO, lead name and lead DN, save the FO
 		// service.setFoLeadContributor(long foId, leadUserDn)
-		restrictedDataService.setFoLeadContributor(foId, leadUserDn);
+		foService.setFundingOpportunityLeadContributor(foId, leadUserDn);
 		return "redirect:/browse/viewFo?id=" + foId;
 	}
 

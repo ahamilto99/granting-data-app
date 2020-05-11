@@ -124,6 +124,10 @@ public class FundingOpportunity implements LocalizedParametersModel {
 	public void setLeadAgency(Agency leadAgency) {
 		this.leadAgency = leadAgency;
 	}
+	
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	public Long getId() {
 		return id;

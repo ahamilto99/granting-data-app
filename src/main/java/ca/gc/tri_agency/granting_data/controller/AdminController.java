@@ -103,7 +103,7 @@ public class AdminController {
 		return "admin/createFo";
 	}
 
-	@PostMapping(value = "/createFo", params = "id")
+	@PostMapping(value = "/createFo")
 	public String addFoPost(@Valid @ModelAttribute("fo") FundingOpportunity command, BindingResult bindingResult, Model model,
 			RedirectAttributes redirectAttributes) throws Exception {
 		if (bindingResult.hasErrors()) {

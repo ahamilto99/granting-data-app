@@ -20,6 +20,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -49,7 +50,7 @@ public class AdminControllerIntegrationTest {
 	public void test_nonAdminUserCannotAddFundingOpportunities_shouldFailWith403() throws Exception {
 		long numFos = foRepo.count();
 
-		mvc.perform(post("/admin/createFo").param("id", "26").param("nameEn", "A").param("nameFr", "B")
+		mvc.perform(post("/admin/createFo").param("id", "26").param("nameEn", "ACE").param("nameFr", "BDF")
 				.param("leadAgency", "3").param("division", "Q").param("isJointIntiative", "false")
 				.param("_isJointIntiative", "on").param("partnerOrg", "Z").param("isComplex", "false")
 				.param("_isComplex", "on").param("isEdiRequired", "false").param("_isEdiRequired", "on")
@@ -83,12 +84,12 @@ public class AdminControllerIntegrationTest {
 	public void test_onlyAdminCanAddFundingOpportunities_shouldSucceedWith302() throws Exception {
 		long numFos = foRepo.count();
 
-		mvc.perform(post("/admin/createFo").param("id", "26").param("nameEn", "ABC").param("nameFr", "BCD")
-				.param("leadAgency", "3").param("division", "Q").param("isJointIntiative", "false")
-				.param("_isJointIntiative", "on").param("partnerOrg", "Z").param("isComplex", "false")
-				.param("_isComplex", "on").param("isEdiRequired", "false").param("_isEdiRequired", "on")
-				.param("fundingType", "E").param("frequency", "Once").param("isNOI", "false").param("_isNOI", "on")
-				.param("isLOI", "false").param("_isLOI", "on")).andExpect(status().is3xxRedirection())
+		mvc.perform(post("/admin/createFo").param("nameEn", "ABC").param("nameFr", "BCD").param("leadAgency", "3")
+				.param("division", "Q").param("isJointIntiative", "false").param("_isJointIntiative", "on")
+				.param("partnerOrg", "Z").param("isComplex", "false").param("_isComplex", "on")
+				.param("isEdiRequired", "false").param("_isEdiRequired", "on").param("fundingType", "E")
+				.param("frequency", "Once").param("isNOI", "false").param("_isNOI", "on").param("isLOI", "false")
+				.param("_isLOI", "on")).andDo(MockMvcResultHandlers.print()).andExpect(status().is3xxRedirection())
 				.andExpect(MockMvcResultMatchers.redirectedUrl("/admin/home"));
 
 		// verify that a FO was added
@@ -98,8 +99,7 @@ public class AdminControllerIntegrationTest {
 	@WithAnonymousUser
 	@Test
 	public void givenAnonymousRequestOnAdminUrl_shouldFailWith301() throws Exception {
-		mvc.perform(get("/admin/home").contentType(MediaType.APPLICATION_XHTML_XML))
-				.andExpect(status().is3xxRedirection());
+		mvc.perform(get("/admin/home").contentType(MediaType.APPLICATION_XHTML_XML)).andExpect(status().is3xxRedirection());
 	}
 
 	@WithMockUser(username = "sshrc-user", roles = { "SSHRC" })

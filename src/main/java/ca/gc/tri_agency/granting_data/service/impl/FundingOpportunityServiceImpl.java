@@ -5,8 +5,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import ca.gc.tri_agency.granting_data.model.BusinessUnit;
+import ca.gc.tri_agency.granting_data.ldap.ADUser;
+import ca.gc.tri_agency.granting_data.ldap.ADUserService;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
 import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
@@ -16,10 +18,13 @@ import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
 public class FundingOpportunityServiceImpl implements FundingOpportunityService {
 
 	private FundingOpportunityRepository foRepo;
+	
+	private ADUserService aduService;
 
 	@Autowired
-	public FundingOpportunityServiceImpl(FundingOpportunityRepository foRepo) {
+	public FundingOpportunityServiceImpl(FundingOpportunityRepository foRepo, ADUserService aduService) {
 		this.foRepo = foRepo;
+		this.aduService = aduService;
 	}
 
 	@Override
@@ -44,14 +49,25 @@ public class FundingOpportunityServiceImpl implements FundingOpportunityService 
 	}
 
 	@Override
-	public List<FundingOpportunity> findFundingOpportunitiesByBusinessUnit(BusinessUnit bu) {
-		return foRepo.findByBusinessUnit(bu);
+	public List<FundingOpportunity> findFundingOpportunitiesByBusinessUnitId(Long buId) {
+		return foRepo.findByBusinessUnitId(buId);
 	}
 
 	@AdminOnly
 	@Override
 	public FundingOpportunity saveFundingOpportunity(FundingOpportunity fo) {
 		return foRepo.save(fo);
+	}
+
+	@AdminOnly
+	@Transactional
+	@Override
+	public void setFundingOpportunityLeadContributor(Long foId, String dn) {
+		ADUser adUser = aduService.findADUserByDn(dn);
+		
+		FundingOpportunity fo = findFundingOpportunityById(foId);
+		fo.setProgramLeadDn(dn);
+		fo.setProgramLeadName(adUser.getFullName());
 	}
 
 }

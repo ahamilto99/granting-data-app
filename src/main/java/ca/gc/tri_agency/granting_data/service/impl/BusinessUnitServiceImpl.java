@@ -8,17 +8,12 @@ import org.springframework.stereotype.Service;
 
 import ca.gc.tri_agency.granting_data.model.Agency;
 import ca.gc.tri_agency.granting_data.model.BusinessUnit;
-import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
 import ca.gc.tri_agency.granting_data.repo.BusinessUnitRepository;
-import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.BusinessUnitService;
 
 @Service
 public class BusinessUnitServiceImpl implements BusinessUnitService {
-	
-	@Autowired
-	private FundingOpportunityRepository foRepo;
 	
 	private BusinessUnitRepository buRepo;
 	
@@ -36,11 +31,6 @@ public class BusinessUnitServiceImpl implements BusinessUnitService {
 	@Override
 	public List<BusinessUnit> findAllBusinessUnits() {
 		return buRepo.findAll();
-	}
-
-	@Override
-	public List<FundingOpportunity> findAllFundingOpportunitiesByBusinessUnit(BusinessUnit bu) {
-		return foRepo.findByBusinessUnit(bu);
 	}
 
 	@Override

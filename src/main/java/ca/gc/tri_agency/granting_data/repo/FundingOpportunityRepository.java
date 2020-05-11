@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import ca.gc.tri_agency.granting_data.model.BusinessUnit;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
 
 @Repository
@@ -15,6 +14,6 @@ public interface FundingOpportunityRepository extends JpaRepository<FundingOppor
 
 	List<FundingOpportunity> findByLeadAgencyId(Long leadAgencyId);
 
-	List<FundingOpportunity> findByBusinessUnit(BusinessUnit bu);
+	List<FundingOpportunity> findByBusinessUnitId(Long buId);
 	
 }

@@ -94,9 +94,4 @@ public class BusinessUnitServiceTest {
 		assertTrue(0 < buService.findAllBusinessUnits().size());
 	}
 
-	@WithAnonymousUser
-	@Test
-	public void test_findAllFOsByBU() {
-		assertTrue(0 < buService.findAllFundingOpportunitiesByBusinessUnit(buService.findBusinessUnitById(1L)).size());
-	}
 }
