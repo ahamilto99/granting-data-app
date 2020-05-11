@@ -12,8 +12,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -26,7 +24,6 @@ import ca.gc.tri_agency.granting_data.model.GrantingSystem;
 import ca.gc.tri_agency.granting_data.model.SystemFundingCycle;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.file.FundingCycleDatasetRow;
-import ca.gc.tri_agency.granting_data.repo.SystemFundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.service.AdminService;
 import ca.gc.tri_agency.granting_data.service.GrantingSystemService;
 import ca.gc.tri_agency.granting_data.service.SystemFundingCycleService;
@@ -35,23 +32,22 @@ import ca.gc.tri_agency.granting_data.service.SystemFundingOpportunityService;
 @Service
 public class AdminServiceImpl implements AdminService {
 
-	/** Logger */
-	private static final Logger LOG = LogManager.getLogger();
-
-	@Autowired
-	private SystemFundingOpportunityRepository systemFoRepo;
-
-	@Autowired
 	private SystemFundingCycleService sfcService;
-	
-	@Autowired
+
 	private SystemFundingOpportunityService sfoService;
 
-	@Autowired
 	private GrantingSystemService gsService;
 
 	@Value("${dataset.analysis.folder}")
 	private String datasetAnalysisFolder;
+
+	@Autowired
+	public AdminServiceImpl(SystemFundingCycleService sfcService, SystemFundingOpportunityService sfoService,
+			GrantingSystemService gsService) {
+		this.sfcService = sfcService;
+		this.sfoService = sfoService;
+		this.gsService = gsService;
+	}
 
 	@Override
 	public List<File> getDatasetFiles() {
@@ -105,7 +101,7 @@ public class AdminServiceImpl implements AdminService {
 		List<String> actionList = Arrays.asList(idsToAction);
 
 		// generate map for lookup
-		List<SystemFundingOpportunity> foList = systemFoRepo.findAll();
+		List<SystemFundingOpportunity> foList = sfoService.findAllSystemFundingOpportunities();
 		HashMap<String, SystemFundingOpportunity> map = new HashMap<String, SystemFundingOpportunity>();
 		for (SystemFundingOpportunity fo : foList) {
 			map.put(fo.getExtId(), fo);
