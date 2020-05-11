@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import ca.gc.tri_agency.granting_data.service.DataAccessService;
 import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
 import ca.gc.tri_agency.granting_data.service.GrantingCapabilityService;
 import ca.gc.tri_agency.granting_data.service.GrantingSystemService;
@@ -16,10 +15,6 @@ import ca.gc.tri_agency.granting_data.service.SystemFundingCycleService;
 @Controller
 @RequestMapping("/browse")
 public class BrowseController {
-
-	// private static final Logger LOG = LogManager.getLogger();
-
-	private DataAccessService dataService;
 
 	private GrantingSystemService gsService;
 
@@ -32,15 +27,14 @@ public class BrowseController {
 	private FundingOpportunityService foService;
 
 	@Autowired
-	public BrowseController(DataAccessService dataService, GrantingSystemService gsService, GrantingCapabilityService gcService) {
-		this.dataService = dataService;
+	public BrowseController(GrantingSystemService gsService, GrantingCapabilityService gcService) {
 		this.gsService = gsService;
 		this.gcService = gcService;
 	}
 
 	@GetMapping("/goldenList")
 	public String goldListDisplay(Model model) {
-		model.addAttribute("goldenList", dataService.getAllFundingOpportunities());
+		model.addAttribute("goldenList", foService.findAllFundingOpportunities());
 		// model.addAttribute("fcByFoMap",
 		// fcService.findFundingCyclesByFundingOpportunityMap());
 		model.addAttribute("applySystemByFoMap", gsService.findApplySystemsByFundingOpportunityMap());

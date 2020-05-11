@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import ca.gc.tri_agency.granting_data.model.BusinessUnit;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
 import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
+import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
 
 @Service
@@ -29,22 +30,28 @@ public class FundingOpportunityServiceImpl implements FundingOpportunityService 
 
 	@Override
 	public List<FundingOpportunity> findAllFundingOpportunities() {
-		return null;
+		return foRepo.findAll();
 	}
 
 	@Override
-	public FundingOpportunity findFundingOpportunityByNameEn(String nameEn) {
-		return null;
+	public List<FundingOpportunity> findFundingOpportunitiesByNameEn(String nameEn) {
+		return foRepo.findByNameEn(nameEn);
 	}
 
 	@Override
-	public FundingOpportunity findFundingOpportunityByLeadAgencyId(Long leadAgencyId) {
-		return null;
+	public List<FundingOpportunity> findFundingOpportunitiesByLeadAgencyId(Long leadAgencyId) {
+		return foRepo.findByLeadAgencyId(leadAgencyId);
 	}
 
 	@Override
-	public FundingOpportunity findFundingOpportunityByBusinessUnit(BusinessUnit bu) {
-		return null;
+	public List<FundingOpportunity> findFundingOpportunitiesByBusinessUnit(BusinessUnit bu) {
+		return foRepo.findByBusinessUnit(bu);
+	}
+
+	@AdminOnly
+	@Override
+	public FundingOpportunity saveFundingOpportunity(FundingOpportunity fo) {
+		return foRepo.save(fo);
 	}
 
 }

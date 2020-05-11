@@ -11,10 +11,12 @@ public interface FundingOpportunityService {
 	
 	List<FundingOpportunity> findAllFundingOpportunities();
 	
-	FundingOpportunity findFundingOpportunityByNameEn(String nameEn);
+	List<FundingOpportunity> findFundingOpportunitiesByNameEn(String nameEn);
 	
-	FundingOpportunity findFundingOpportunityByLeadAgencyId(Long leadAgencyId);
+	List<FundingOpportunity> findFundingOpportunitiesByLeadAgencyId(Long leadAgencyId);
 	
-	FundingOpportunity findFundingOpportunityByBusinessUnit(BusinessUnit bu);
+	List<FundingOpportunity> findFundingOpportunitiesByBusinessUnit(BusinessUnit bu);
+	
+	FundingOpportunity saveFundingOpportunity(FundingOpportunity fo);
 
 }

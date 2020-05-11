@@ -38,7 +38,7 @@ import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.repo.SystemFundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.service.AgencyService;
-import ca.gc.tri_agency.granting_data.service.DataAccessService;
+import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = GrantingDataApp.class)
@@ -47,14 +47,19 @@ public class GoldenFundingOpportunityIntegrationTest {
 
 	@Autowired
 	private AdminController adminController;
+	
 	@Autowired
 	private AgencyService agencyService;
+	
 	@Autowired
 	private FundingOpportunityRepository foRepo;
+	
 	@Autowired
 	SystemFundingOpportunityRepository sfoRepo;
+	
 	@Autowired
-	private DataAccessService dataAccessService;
+	private FundingOpportunityService foService;
+	
 	@Autowired
 	private WebApplicationContext ctx;
 
@@ -203,7 +208,7 @@ public class GoldenFundingOpportunityIntegrationTest {
 	@Test(expected = AccessDeniedException.class)
 	@Transactional
 	public void test_NonAdminCannotCreateGoldenFo_shouldThrowAccessDeniedException() {
-		dataAccessService.createFo(new FundingOpportunity());
+		foService.saveFundingOpportunity(new FundingOpportunity());
 	}
 
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })

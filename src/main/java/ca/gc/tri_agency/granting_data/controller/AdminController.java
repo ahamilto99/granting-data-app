@@ -25,7 +25,7 @@ import ca.gc.tri_agency.granting_data.model.file.FundingCycleDatasetRow;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.AdminService;
 import ca.gc.tri_agency.granting_data.service.AgencyService;
-import ca.gc.tri_agency.granting_data.service.DataAccessService;
+import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
 import ca.gc.tri_agency.granting_data.service.SystemFundingOpportunityService;
 
 @Controller
@@ -33,20 +33,25 @@ import ca.gc.tri_agency.granting_data.service.SystemFundingOpportunityService;
 @AdminOnly
 public class AdminController {
 
-	@Autowired
 	private AdminService adminService;
 
-	@Autowired
-	private DataAccessService dataSevice;
-
-	@Autowired
 	private AgencyService agencyService;
 	
-	@Autowired
 	private SystemFundingOpportunityService sfoService;
 
-	@Autowired
+	private FundingOpportunityService foService;
+
 	private MessageSource msgSource;
+
+	@Autowired
+	public AdminController(AdminService adminService, AgencyService agencyService, SystemFundingOpportunityService sfoService,
+			FundingOpportunityService foService, MessageSource msgSource) {
+		this.adminService = adminService;
+		this.agencyService = agencyService;
+		this.sfoService = sfoService;
+		this.foService = foService;
+		this.msgSource = msgSource;
+	}
 
 	@GetMapping("/selectFileForComparison")
 	public String compareData_selectDatasetUploadFile(Model model) {
@@ -107,7 +112,7 @@ public class AdminController {
 			model.addAttribute("allAgencies", allAgencies);
 			return "admin/createFo";
 		}
-		dataSevice.createFo(command);
+		foService.saveFundingOpportunity(command);
 		String createdFo = msgSource.getMessage("h.createdFo", null, LocaleContextHolder.getLocale());
 		redirectAttributes.addFlashAttribute("actionMessage", createdFo + command.getLocalizedAttribute("name"));
 		return "redirect:/admin/home";

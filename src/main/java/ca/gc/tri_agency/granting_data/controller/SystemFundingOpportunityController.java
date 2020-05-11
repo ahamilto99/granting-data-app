@@ -19,7 +19,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
-import ca.gc.tri_agency.granting_data.service.DataAccessService;
+import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
 import ca.gc.tri_agency.granting_data.service.SystemFundingOpportunityService;
 
 @AdminOnly
@@ -27,18 +27,19 @@ import ca.gc.tri_agency.granting_data.service.SystemFundingOpportunityService;
 public class SystemFundingOpportunityController {
 
 	private SystemFundingOpportunityService sfoService;
-	
+
+	private FundingOpportunityService foService;
+
 	private MessageSource msgSource;
-	
-	@Autowired
-	private DataAccessService dataService;
 
 	@Autowired
-	public SystemFundingOpportunityController(SystemFundingOpportunityService sfoService, MessageSource msgSource) {
+	public SystemFundingOpportunityController(SystemFundingOpportunityService sfoService, FundingOpportunityService foService,
+			MessageSource msgSource) {
 		this.sfoService = sfoService;
+		this.foService = foService;
 		this.msgSource = msgSource;
 	}
-	
+
 	@GetMapping("/admin/viewSFO")
 	public String accessViewSFO(@RequestParam Long id, Model model, HttpServletRequest request) {
 		Map<String, ?> inFlashMap = RequestContextUtils.getInputFlashMap(request);
@@ -47,17 +48,16 @@ public class SystemFundingOpportunityController {
 		}
 
 		model.addAttribute("systemFO", sfoService.findSystemFundingOpportunityById(id));
-		model.addAttribute("fosForLink", dataService.getAllFundingOpportunities());
+		model.addAttribute("fosForLink", foService.findAllFundingOpportunities());
 		return "admin/viewSystemFO";
 	}
-	
-	// TODO: WRITE TEST FOR THIS
+
 	@GetMapping("/admin/analyzeSFOs")
 	public String accessAnalyzeSystemFOs(Model model) {
 		model.addAttribute("systemFOs", sfoService.findAllSystemFundingOpportunities());
 		return "admin/analyzeSystemFOs";
 	}
-	
+
 	@GetMapping(value = "/admin/confirmUnlink")
 	public String accessUnlinkSFOFromFO(@RequestParam Long sfoId, Model model) {
 		SystemFundingOpportunity sfo = sfoService.findSystemFundingOpportunityById(sfoId);
@@ -71,7 +71,7 @@ public class SystemFundingOpportunityController {
 
 		return "/admin/confirmUnlink";
 	}
-	
+
 	@PostMapping(value = "/admin/confirmUnlink")
 	public String processUnlinkSFOFromFO(@RequestParam Long sfoId, Model model, RedirectAttributes redirectAttributes) {
 		SystemFundingOpportunity sfo = sfoService.findSystemFundingOpportunityById(sfoId);
@@ -84,7 +84,7 @@ public class SystemFundingOpportunityController {
 				sfo.getLocalizedAttribute("name") + wasUnlinkedFrom + fo.getLocalizedAttribute("name"));
 
 		model.addAttribute("systemFO", sfo);
-		model.addAttribute("fosForLink", dataService.getAllFundingOpportunities());
+		model.addAttribute("fosForLink", foService.findAllFundingOpportunities());
 
 		return "redirect:/admin/viewSFO?id=" + sfoId;
 	}
