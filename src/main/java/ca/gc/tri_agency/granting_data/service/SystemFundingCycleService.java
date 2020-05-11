@@ -18,4 +18,6 @@ public interface SystemFundingCycleService {
 	
 	SystemFundingCycle registerSystemFundingCycle(FundingCycleDatasetRow row, SystemFundingOpportunity targetSfo);
 	
+	List<SystemFundingCycle> findSystemFundingCyclesByLinkedFundingOpportunity(Long foId);
+	
 }

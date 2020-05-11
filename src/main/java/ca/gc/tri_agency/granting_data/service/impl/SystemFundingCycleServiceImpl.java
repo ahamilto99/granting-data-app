@@ -2,10 +2,12 @@ package ca.gc.tri_agency.granting_data.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.LongStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import ca.gc.tri_agency.granting_data.model.SystemFundingCycle;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
@@ -20,7 +22,7 @@ public class SystemFundingCycleServiceImpl implements SystemFundingCycleService 
 	private SystemFundingCycleRepository sfcRepo;
 
 	private SystemFundingOpportunityService sfoService; 
-
+	
 	@Autowired
 	public SystemFundingCycleServiceImpl(SystemFundingCycleRepository sfcRepo, SystemFundingOpportunityService sfoService) {
 		this.sfcRepo = sfcRepo;
@@ -38,10 +40,7 @@ public class SystemFundingCycleServiceImpl implements SystemFundingCycleService 
 		return sfcRepo.findAll();
 	}
 
-	/*
-	 * FIXME: CONCEPT OF `1 TO `MANY `ON `IS` DUE` TO `CGSM. `CHANGED `THIS FUNCTION `TO RETURN `LIST,
-	 * `BUT `THIS` NEEDS` MORE` REFACTORING AS IT DOES 3 DB CALLS or more. THIS NEEDS ANALYSIS
-	 */
+	@Transactional(readOnly = true)
 	@Override
 	public List<SystemFundingCycle> findSFCsBySFOid(Long sfoId) {
 		ArrayList<SystemFundingCycle> retval = new ArrayList<SystemFundingCycle>();
@@ -62,6 +61,17 @@ public class SystemFundingCycleServiceImpl implements SystemFundingCycleService 
 		retval.setNumAppsReceived(row.getNumReceivedApps());
 		retval = sfcRepo.save(retval);
 		return retval;
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public List<SystemFundingCycle> findSystemFundingCyclesByLinkedFundingOpportunity(Long foId) {
+		LongStream sfoIds = sfoService.findSystemFundingOpportunitiesByLinkedFOid(foId).stream().mapToLong(SystemFundingOpportunity::getId);
+		
+		List<SystemFundingCycle> linkedSFCs = new ArrayList<>();
+		sfoIds.forEach(sfoId -> linkedSFCs.addAll(findSFCsBySFOid(sfoId)));
+
+		return linkedSFCs;
 	}
 
 }
