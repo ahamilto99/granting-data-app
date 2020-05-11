@@ -1,31 +1,23 @@
 package ca.gc.tri_agency.granting_data.app.bootstrap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
-
-import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
-import ca.gc.tri_agency.granting_data.service.GrantingCapabilityService;
-import ca.gc.tri_agency.granting_data.service.GrantingStageService;
-import ca.gc.tri_agency.granting_data.service.GrantingSystemService;
 
 @Component
 @Profile({ "local", "test" })
 public class GrantingCapabilityData implements CommandLineRunner {
 
-	@Autowired
-	private GrantingCapabilityService gcService;
-	@Autowired
-	private FundingOpportunityRepository foRepo;
-	@Autowired
-	private GrantingSystemService gSystemService;
-	@Autowired
-	private GrantingStageService gStageService;
-
-	private static final Logger LOG = LoggerFactory.getLogger(GrantingCapabilityData.class);
+//	@Autowired
+//	private GrantingCapabilityService gcService;
+//	@Autowired
+//	private FundingOpportunityRepository foRepo;
+//	@Autowired
+//	private GrantingSystemService gSystemService;
+//	@Autowired
+//	private GrantingStageService gStageService;
+//
+//	private static final Logger LOG = LoggerFactory.getLogger(GrantingCapabilityData.class);
 
 	@Override
 	public void run(String... args) throws Exception {

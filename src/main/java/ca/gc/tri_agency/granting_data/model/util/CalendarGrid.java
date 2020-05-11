@@ -49,10 +49,7 @@ public class CalendarGrid {
 				}
 				dataGrid[row][col] = newCell;
 			}
-
 		}
-		this.month = month;
-
 	}
 
 	public CalendarCell[][] getDataGrid() {
