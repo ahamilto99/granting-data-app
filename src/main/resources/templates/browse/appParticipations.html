@@ -1,46 +1,59 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/general.html :: common_header(~{::title},~{::link},~{::script})}">
-	<meta charset="ISO-8859-1">
-	<title id="/browse/fundingOpportunitiesPage" th:text="#{title.fundingOpportunities}"></title>
-	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" />
-	<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-	<script type="text/javascript">
-		$(document).ready( function () {
-			var table = $('#appParticipationsTable').DataTable({});
-		});
-	</script>
+<meta charset="ISO-8859-1">
+<title th:text="#{title.appParticipations}"></title>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" />
+<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript">
+	$(document).ready(function() {
+	        var table = $('#appParticipationsTable').DataTable({});
+        });
+</script>
 </head>
 <body id="appParticipationsPage">
-	<div th:insert="~{fragments/general.html :: header_nav('home')}" />
+	<div th:insert="~{fragments/general.html :: header_nav('home')}"></div>
 	<div class="container">
 
-			<h1 th:text="#{title.appParticipations}"></h1>
-			<p th:text="#{intro.appParticipations}"></p>
-			
-			<table id="appParticipationsTable" class="display">
-				<thead>
-		            <tr>
-		                <th th:text="#{th.appId}"></th>
-		                <th th:text="#{th.programId}"></th>
-		                <th th:text="#{th.name}"></th>
-		                <th th:text="#{th.role}"></th>
-		                <th th:text="#{th.orgName}"></th>
-		            </tr>
-				</thead>
-				
-				<tbody>
-	       			<tr th:each="ap : ${appParticipations}">
-	           			<td><span th:text="${ap.applicationId}"></span></td>
-	           			<td><span th:text="${ap.programId}"></span></td>
-	           			<td><span th:text="${ap.familyName} + ', ' + ${ap.givenName}"></span></td>
-	           			<td><span th:text="${ap.getLocalizedAttribute('role')}"></span></td>
-	           			<td><span th:text="${ap.getLocalizedAttribute('organizationName')}"></span></td>
-	       			</tr>
-   				</tbody>
-			</table>
-		</div>
+		<h1 th:text="#{title.appParticipations}"></h1>
+		<p th:text="#{intro.appParticipations}"></p>
+
+		<table id="appParticipationsTable" class="display">
+			<thead>
+				<tr>
+					<th th:text="#{th.appId}"></th>
+					<th th:text="#{th.programId}"></th>
+					<th th:text="#{th.name}"></th>
+					<th th:text="#{th.role}"></th>
+					<th th:text="#{th.orgName}"></th>
+				</tr>
+			</thead>
+
+			<tbody>
+				<tr th:each="ap : ${appParticipations}">
+					<td><span th:text="${ap.applicationId}"></span></td>
+					<td><span th:text="${ap.programId}"></span></td>
+					<td><span th:text="${ap.familyName} + ', ' + ${ap.givenName}"></span></td>
+					<td><span th:text="${ap.getLocalizedAttribute('role')}"></span></td>
+					<td><span th:text="${ap.getLocalizedAttribute('organizationName')}"></span></td>
+				</tr>
+			</tbody>
+		</table>
+
 	</div>
 
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+

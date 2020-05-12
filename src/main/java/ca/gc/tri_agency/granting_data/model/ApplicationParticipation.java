@@ -84,6 +84,7 @@ public class ApplicationParticipation implements LocalizedParametersModel {
 	
 	private LocalDate dateOfBirth;
 	
+	@Column(name = "gender_selection_1")
 	private Long genderSelection1;
 	
 	private Long indIdentityResponse;
@@ -99,6 +100,7 @@ public class ApplicationParticipation implements LocalizedParametersModel {
 	@Column(name = "ind_identity_selection_3")
 	private Long indIdentitySelection3;
 	
+	@Column(name = "disability_selection_1")
 	private Long disabilitySelection1;
 	
 	private Boolean visibleMinPrefNotTo = false;

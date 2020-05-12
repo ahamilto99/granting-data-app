@@ -85,13 +85,13 @@ public class AdminController {
 
 	@GetMapping("/generateTestParticipations")
 	public String generateTestParticipations() {
-		return "admin/generateTestParticipations";
+		return "/admin/generateTestParticipations";
 	}
 
 	@PostMapping(value = "/generateTestParticipations")
 	public String post_generateTestParticipations(RedirectAttributes redirectAttrs) {
 		long numCreated = appParticipationService.generateTestAppParicipationsForAllSystemFundingOpportunities();
-		redirectAttrs.addFlashAttribute("actionMessage", "Successfully created" + numCreated + " Test app participatoins");
+		redirectAttrs.addFlashAttribute("actionMessage", "Successfully created " + numCreated + " Test App Participations");
 		return "redirect:/admin/home";
 	}
 

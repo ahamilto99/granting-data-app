@@ -37,8 +37,9 @@ public class AwardServiceImpl implements AwardService {
 		return awardRepo.findAll();
 	}
 
-	// The List<ApplicationParticipation> returned by ApplicationParticipationService's getAllowedRecords()
-	@Transactional
+	// The List<ApplicationParticipation> returned by ApplicationParticipationService's
+	// getAllowedRecords()
+	@Transactional(readOnly = true)
 	@Override
 	public List<Award> generateTestAwards(List<ApplicationParticipation> appParts, double percentageOfMainApplicants) {
 		if (percentageOfMainApplicants < 0) {
@@ -51,8 +52,9 @@ public class AwardServiceImpl implements AwardService {
 		SecureRandom sRand = new SecureRandom();
 
 		Collections.shuffle(appParts);
-		List<Award> testAwards = appParts.stream().limit(numOfAwards)
+		List<Award> testAwards = appParts.stream()
 				.filter((ApplicationParticipation appPart) -> appPart.getRoleEn().equals(MAIN_APPLICANT))
+				.limit(numOfAwards)
 				.map((ApplicationParticipation appPart) -> new Award(sRand.nextDouble() * 100_000,
 						appPart.getCompetitionYear() != null ? appPart.getCompetitionYear() + 1L
 								: sRand.nextInt(5) + 2017,
