@@ -38,8 +38,8 @@ public class AwardServiceImpl implements AwardService {
 	}
 
 	// The List<ApplicationParticipation> returned by ApplicationParticipationService's
-	// getAllowedRecords()
-	@Transactional(readOnly = true)
+	// getAllowedRecords() can be passed in
+	@Transactional
 	@Override
 	public List<Award> generateTestAwards(List<ApplicationParticipation> appParts, double percentageOfMainApplicants) {
 		if (percentageOfMainApplicants < 0) {
@@ -61,7 +61,9 @@ public class AwardServiceImpl implements AwardService {
 						appPart.getPersonIdentifier(), appPart.getFamilyName(), appPart.getGivenName(),
 						appPart.getRoleCode(), appPart.getRoleEn(), appPart.getRoleFr()))
 				.collect(Collectors.toList());
-
+		
+		awardRepo.saveAll(testAwards);
+		
 		return testAwards;
 	}
 

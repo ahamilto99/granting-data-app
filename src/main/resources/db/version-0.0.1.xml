@@ -327,6 +327,13 @@
             <column name="create_user_id" type="VARCHAR(3)"/>
         </addColumn>
     </changeSet>
+    <changeSet id="00000000000033" author="dev_aha">
+        <addColumn tableName="member_role">
+            <column name="edi_authorized" type="BIT(1)" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
     
     <!-- 
     <changeSet author="dev_yab (generated)" id="1574353543232-28">

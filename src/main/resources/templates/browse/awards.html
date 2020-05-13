@@ -33,12 +33,12 @@
 			</thead>
 			
 			<tbody>
-				<!-- <tr th:each="strArr : $awardStrArrs">
-					<td th:text="${strArr[0]}"></td>
-					<td th:text="${strArr[1]}"></td>
-					<td th:text="${strArr[2]}"></td>
-					<td th:text="${strArr[3]}"></td>
-				</tr> -->
+				<tr th:each="award : ${awardList}">
+					<td>Digging into Data</td>
+					<td th:text="${award.familyName} + ', ' + ${award.givenName}"></td>
+					<td th:text="'$' + ${#numbers.formatDecimal(award.awardedAmount, 0, 'DEFAULT', 2, 'DEFAULT')}"></td>
+					<td th:text="${award.fundingYear}"></td>
+				</tr>
 			</tbody>
 		
 		</table>

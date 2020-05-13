@@ -19,6 +19,9 @@ public class MemberRole {
 
 	@NotNull(message = "{userLogin.NotNull}")
 	private String userLogin;
+	
+	@NotNull
+	private Boolean ediAuthorized;
 
 	@ManyToOne
 	@JoinColumn(name = "role_id")
@@ -63,6 +66,14 @@ public class MemberRole {
 
 	public void setBusinessUnit(BusinessUnit businessUnit) {
 		this.businessUnit = businessUnit;
+	}
+
+	public Boolean getEdiAuthorized() {
+		return ediAuthorized;
+	}
+
+	public void setEdiAuthorized(Boolean ediAuthorized) {
+		this.ediAuthorized = ediAuthorized;
 	}
 
 	@Override

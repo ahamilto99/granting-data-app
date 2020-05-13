@@ -29,7 +29,6 @@ import ca.gc.tri_agency.granting_data.model.file.FundingCycleDatasetRow;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.AdminService;
 import ca.gc.tri_agency.granting_data.service.AgencyService;
-import ca.gc.tri_agency.granting_data.service.ApplicationParticipationService;
 import ca.gc.tri_agency.granting_data.service.DataAccessService;
 
 @Controller
@@ -45,9 +44,6 @@ public class AdminController {
 
 	@Autowired
 	private AgencyService agencyService;
-
-	@Autowired
-	private ApplicationParticipationService appParticipationService;
 
 	@Autowired
 	private MessageSource msgSource;
@@ -81,18 +77,6 @@ public class AdminController {
 		model.addAttribute("fosForLink", dataSevice.getAllFundingOpportunities());
 
 		return "redirect:/admin/viewSystemFO?id=" + sfoId;
-	}
-
-	@GetMapping("/generateTestParticipations")
-	public String generateTestParticipations() {
-		return "/admin/generateTestParticipations";
-	}
-
-	@PostMapping(value = "/generateTestParticipations")
-	public String post_generateTestParticipations(RedirectAttributes redirectAttrs) {
-		long numCreated = appParticipationService.generateTestAppParicipationsForAllSystemFundingOpportunities();
-		redirectAttrs.addFlashAttribute("actionMessage", "Successfully created " + numCreated + " Test App Participations");
-		return "redirect:/admin/home";
 	}
 
 	@GetMapping("/selectFileForComparison")

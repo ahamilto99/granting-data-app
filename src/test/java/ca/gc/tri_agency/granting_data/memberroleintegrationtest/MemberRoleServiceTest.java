@@ -11,7 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
@@ -51,6 +50,7 @@ public class MemberRoleServiceTest {
 		memberRole.setUserLogin(userLogin);
 		memberRole.setRole(role);
 		memberRole.setBusinessUnit(bu);
+		memberRole.setEdiAuthorized(true);
 
 		MemberRole mr = mrService.saveMemberRole(memberRole);
 
@@ -65,6 +65,7 @@ public class MemberRoleServiceTest {
 		mr.setUserLogin(RandomStringUtils.randomAlphabetic(3));
 		mr.setRole(rService.findRoleById(1L));
 		mr.setBusinessUnit(buService.findBusinessUnitById(1L));
+		mr.setEdiAuthorized(true);
 
 		mrService.saveMemberRole(mr);
 	}

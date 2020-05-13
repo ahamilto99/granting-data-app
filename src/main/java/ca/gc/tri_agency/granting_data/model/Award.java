@@ -14,9 +14,9 @@ public class Award {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_AWARD")
 	private Long id;
 	
-	private Double awarded_amount;
+	private Double awardedAmount;
 	
-	private Long funding_year;
+	private Long fundingYear;
 	
 	private Long personIdentifier;
 	
@@ -33,10 +33,10 @@ public class Award {
 	public Award() {
 	}
 
-	public Award(Double awarded_amount, Long funding_year, Long personIdentifier, String familyName, String givenName,
+	public Award(Double awardedAmount, Long fundingYear, Long personIdentifier, String familyName, String givenName,
 			String roleCode, String roleEn, String roleFr) {
-		this.awarded_amount = awarded_amount;
-		this.funding_year = funding_year;
+		this.awardedAmount = awardedAmount;
+		this.fundingYear = fundingYear;
 		this.personIdentifier = personIdentifier;
 		this.familyName = familyName;
 		this.givenName = givenName;
@@ -53,20 +53,20 @@ public class Award {
 		this.id = id;
 	}
 
-	public Double getAwarded_amount() {
-		return awarded_amount;
+	public Double getAwardedAmount() {
+		return awardedAmount;
 	}
 
-	public void setAwarded_amount(Double awarded_amount) {
-		this.awarded_amount = awarded_amount;
+	public void setAwardedAmount(Double awardedAmount) {
+		this.awardedAmount = awardedAmount;
 	}
 
-	public Long getFunding_year() {
-		return funding_year;
+	public Long getFundingYear() {
+		return fundingYear;
 	}
 
-	public void setFunding_year(Long funding_year) {
-		this.funding_year = funding_year;
+	public void setFundingYear(Long fundingYear) {
+		this.fundingYear = fundingYear;
 	}
 
 	public Long getPersonIdentifier() {
@@ -123,9 +123,9 @@ public class Award {
 		builder.append("Award [id=");
 		builder.append(id);
 		builder.append(", awarded_amount=");
-		builder.append(awarded_amount);
+		builder.append(awardedAmount);
 		builder.append(", funding_year=");
-		builder.append(funding_year);
+		builder.append(fundingYear);
 		builder.append(", personIdentifier=");
 		builder.append(personIdentifier);
 		builder.append(", familyName=");

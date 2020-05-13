@@ -41,6 +41,14 @@
 						<option th:each="role : ${@roleServiceImpl.findAllRoles()}" th:text="${role.getLocalizedAttribute('name')}" th:value="${role.id}">
 					</select>
 				</div>
+				
+				<div class="form-group row" style="margin-bottom: 25px">
+					<div th:text="#{form.ediAuthorized}" class="col-sm-2"></div>
+					<select id="ediAuthorizedDropDown" th:field="*{ediAuthorized}">
+						<option th:text="#{msg.no}" th:value="0">
+						<option th:text="#{msg.yes}" th:value="1">
+					</select>
+				</div>
 
 				<input type="hidden" th:value="${businessUnit}" th:field="*{businessUnit}" /> <input hidden="true" name="searchStr"
 					th:value="${param.searchStr}" />

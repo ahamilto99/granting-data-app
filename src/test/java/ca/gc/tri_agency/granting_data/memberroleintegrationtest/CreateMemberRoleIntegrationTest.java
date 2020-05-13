@@ -78,7 +78,7 @@ public class CreateMemberRoleIntegrationTest {
 		long initMRCount = mrRepo.count();
 
 		mvc.perform(MockMvcRequestBuilders.post("/admin/createMR").param("buId", "1").param("businessUnit", "1")
-				.param("searchStr", "user").param("role", "2").param("userLogin", "adm"))
+				.param("searchStr", "user").param("role", "2").param("userLogin", "adm").param("ediAuthorized", "1"))
 				.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
 				.andExpect(MockMvcResultMatchers.redirectedUrl("/browse/viewBU?id=1"))
 				.andExpect(MockMvcResultMatchers.flash().attribute("actionMsg",
@@ -96,7 +96,7 @@ public class CreateMemberRoleIntegrationTest {
 		long initMRCount = mrRepo.count();
 
 		mvc.perform(MockMvcRequestBuilders.post("/admin/createMR").param("buId", "1").param("businessUnit", "1")
-				.param("searchStr", "user").param("userLogin", "adm").param("role", "2"))
+				.param("searchStr", "user").param("userLogin", "adm").param("role", "2").param("ediAuthorized", "1"))
 				.andExpect(MockMvcResultMatchers.status().isForbidden()).andExpect(MockMvcResultMatchers.content()
 						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
 
