@@ -77,7 +77,7 @@ public class ManageFundingOpportunityController {
 
 	@GetMapping(value = "/searchUser", params = "username")
 	public String searchUserAction(@RequestParam("username") String username, Model model) {
-		String matchingUsers = adUserService.findDnByADUserLogin(username);
+		List<ADUser> matchingUsers = adUserService.searchADUsers(username);
 		model.addAttribute("matchingUsers", matchingUsers);
 		return "manage/searchUser";
 	}
