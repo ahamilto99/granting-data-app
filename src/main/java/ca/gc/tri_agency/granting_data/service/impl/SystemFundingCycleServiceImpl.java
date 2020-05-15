@@ -40,16 +40,9 @@ public class SystemFundingCycleServiceImpl implements SystemFundingCycleService 
 		return sfcRepo.findAll();
 	}
 
-	@Transactional(readOnly = true)
 	@Override
 	public List<SystemFundingCycle> findSFCsBySFOid(Long sfoId) {
-		ArrayList<SystemFundingCycle> retval = new ArrayList<SystemFundingCycle>();
-		List<SystemFundingOpportunity> sysFos = sfoService.findSystemFundingOpportunitiesByLinkedFOid(sfoId);
-		for (SystemFundingOpportunity sfo : sysFos) {
-			List<SystemFundingCycle> sfoFcs = sfcRepo.findBySystemFundingOpportunityId(sfo.getId());
-			retval.addAll(sfoFcs);
-		}
-		return retval;
+		return sfcRepo.findBySystemFundingOpportunityId(sfoId);
 	}
 
 	@Override

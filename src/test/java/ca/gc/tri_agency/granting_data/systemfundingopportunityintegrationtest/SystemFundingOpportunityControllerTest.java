@@ -25,6 +25,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
+import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.service.SystemFundingOpportunityService;
 
 @RunWith(SpringRunner.class)
@@ -90,8 +91,14 @@ public class SystemFundingOpportunityControllerTest {
 	}
 
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@Transactional
+	@Rollback
 	@Test
 	public void test_confirmUnlinkPageNotAccessibleWhenSfoHasNoLinkedFo_shouldReturn404() throws Exception {
+		SystemFundingOpportunity sfo = sfoService.findSystemFundingOpportunityById(2L);
+		sfo.setLinkedFundingOpportunity(null);
+		sfoService.saveSystemFundingOpportunity(sfo);
+		
 		assertNull(sfoService.findSystemFundingOpportunityById(2L).getLinkedFundingOpportunity());
 		assertTrue(mvc.perform(MockMvcRequestBuilders.get("/admin/confirmUnlink").param("sfoId", "2"))
 				.andExpect(MockMvcResultMatchers.status().isNotFound()).andReturn().getResponse().getContentAsString()
@@ -99,8 +106,14 @@ public class SystemFundingOpportunityControllerTest {
 	}
 
 	@WithMockUser(roles = { "MDM ADMIN" })
+	@Transactional
+	@Rollback
 	@Test
 	public void test_unlinkFoBtnNotVisibleToAdminWhenSfoHasNoLinkedFo() throws Exception {
+		SystemFundingOpportunity sfo = sfoService.findSystemFundingOpportunityById(2L);
+		sfo.setLinkedFundingOpportunity(null);
+		sfoService.saveSystemFundingOpportunity(sfo);
+		
 		assertNull(sfoService.findSystemFundingOpportunityById(2L).getLinkedFundingOpportunity());
 		assertFalse(mvc.perform(MockMvcRequestBuilders.get("/admin/viewSFO").param("id", "2"))
 				.andExpect(MockMvcResultMatchers.status().isOk()).andReturn().getResponse().getContentAsString()

@@ -93,10 +93,9 @@ public class GoldenFundingOpportunityIntegrationTest {
 	@Test
 	@Transactional
 	public void testNameFieldsAutoFilledOnAddFoPageWhenLinkingNewFoWithSfo() throws Exception {
-		SystemFundingOpportunity sfo = sfoRepo.findAll().get(0);
-		Long sfoId = sfo.getId();
+		SystemFundingOpportunity sfo = sfoRepo.findById(4L).get();
 
-		MvcResult result = mvc.perform(MockMvcRequestBuilders.get("/admin/createFo").param("sfoId", sfoId.toString()))
+		MvcResult result = mvc.perform(MockMvcRequestBuilders.get("/admin/createFo").param("sfoId", "4"))
 				.andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
 
 		assertTrue(result.getResponse().getContentAsString()

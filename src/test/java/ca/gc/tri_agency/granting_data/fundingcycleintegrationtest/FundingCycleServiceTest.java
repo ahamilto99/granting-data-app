@@ -37,7 +37,7 @@ public class FundingCycleServiceTest {
 	private FiscalYearService fyService;
 
 	@Autowired
-	private FundingOpportunityRepository foRepo; // TODO: refactor FO
+	private FundingOpportunityRepository foRepo;
 
 	@Autowired
 	private FundingCycleRepository fcRepo;

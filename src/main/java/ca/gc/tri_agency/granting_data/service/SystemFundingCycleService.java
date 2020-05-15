@@ -14,8 +14,6 @@ public interface SystemFundingCycleService {
 
 	List<SystemFundingCycle> findSFCsBySFOid(Long sfoId);
 	
-//	List<SystemFundingCycle> findSFCsByExtIdAndSFOid(String extId, Long sfoId);
-	
 	SystemFundingCycle registerSystemFundingCycle(FundingCycleDatasetRow row, SystemFundingOpportunity targetSfo);
 	
 	List<SystemFundingCycle> findSystemFundingCyclesByLinkedFundingOpportunity(Long foId);

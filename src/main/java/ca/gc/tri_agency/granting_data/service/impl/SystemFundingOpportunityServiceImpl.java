@@ -12,9 +12,9 @@ import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.GrantingSystem;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.file.FundingCycleDatasetRow;
-import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.repo.SystemFundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
+import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
 import ca.gc.tri_agency.granting_data.service.SystemFundingOpportunityService;
 
 @Service
@@ -22,12 +22,12 @@ public class SystemFundingOpportunityServiceImpl implements SystemFundingOpportu
 
 	private SystemFundingOpportunityRepository sfoRepo;
 	
-	@Autowired
-	private FundingOpportunityRepository foRepo;	// TODO: REFACTOR FO
+	private FundingOpportunityService foService;
 
 	@Autowired
-	public SystemFundingOpportunityServiceImpl(SystemFundingOpportunityRepository sfoRepo) {
+	public SystemFundingOpportunityServiceImpl(SystemFundingOpportunityRepository sfoRepo, FundingOpportunityService foService) {
 		this.sfoRepo = sfoRepo;
+		this.foService = foService;
 	}
 
 	@Override
@@ -61,8 +61,7 @@ public class SystemFundingOpportunityServiceImpl implements SystemFundingOpportu
 	@Override
 	public int linkSystemFundingOpportunity(Long sfoId, Long foId) {
 		SystemFundingOpportunity systemFo = findSystemFundingOpportunityById(sfoId);
-		FundingOpportunity fo = foRepo.findById(foId)
-				.orElseThrow(() -> new DataRetrievalFailureException("That Funding Opportunity does not exist"));
+		FundingOpportunity fo = foService.findFundingOpportunityById(foId);
 		systemFo.setLinkedFundingOpportunity(fo);
 		saveSystemFundingOpportunity(systemFo);
 		return 1;
@@ -73,8 +72,7 @@ public class SystemFundingOpportunityServiceImpl implements SystemFundingOpportu
 	@Override
 	public int unlinkSystemFundingOpportunity(Long sfoId, Long foId) {
 		SystemFundingOpportunity systemFo = findSystemFundingOpportunityById(sfoId);
-		FundingOpportunity fo = foRepo.findById(foId)
-				.orElseThrow(() -> new DataRetrievalFailureException("That Funding Opportunity does not exist"));
+		FundingOpportunity fo = foService.findFundingOpportunityById(foId);
 		if (systemFo.getLinkedFundingOpportunity() != fo) {
 			throw new DataRetrievalFailureException(
 					"System Funding Opportunity is not linked with that Funding Opportunity");

@@ -46,8 +46,8 @@ public class MemberRoleController {
 		MemberRole memberRole = new MemberRole();
 		memberRole.setBusinessUnit(buService.findBusinessUnitById(buId));
 		model.addAttribute("memberRole", memberRole);
-		if (null != searchStr) {
-			model.addAttribute("adUserList", adUserService.searchADUsers(searchStr));
+		if (null != searchStr && !searchStr.trim().isEmpty()) {
+			model.addAttribute("adUserList", adUserService.searchADUsers(searchStr.trim()));
 		}
 		return "admin/createMemberRole";
 	}

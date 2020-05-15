@@ -2,7 +2,6 @@ package ca.gc.tri_agency.granting_data.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.LongStream;
 
 import javax.validation.Valid;
 
@@ -22,21 +21,15 @@ import ca.gc.tri_agency.granting_data.ldap.ADUser;
 import ca.gc.tri_agency.granting_data.ldap.ADUserService;
 import ca.gc.tri_agency.granting_data.model.Agency;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
-import ca.gc.tri_agency.granting_data.model.SystemFundingCycle;
-import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.AgencyService;
 import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
 import ca.gc.tri_agency.granting_data.service.GrantingCapabilityService;
 import ca.gc.tri_agency.granting_data.service.SystemFundingCycleService;
-import ca.gc.tri_agency.granting_data.service.SystemFundingOpportunityService;
 
 @Controller
 @RequestMapping(value = "/manage", method = RequestMethod.GET)
 public class ManageFundingOpportunityController {
-
-	@Autowired
-	private ADUserService adUserService;
 
 	@Autowired
 	private AgencyService agencyService;
@@ -48,38 +41,19 @@ public class ManageFundingOpportunityController {
 	private SystemFundingCycleService sfcService;
 	
 	@Autowired
-	private SystemFundingOpportunityService sfoService;
-	
-	@Autowired
 	private FundingOpportunityService foService;
 	
-
-	@GetMapping(value = "/searchUser")
-	public String searchUserForm() {
-		return "manage/searchUser";
-	}
+	@Autowired
+	private ADUserService adUserService;
 
 	@GetMapping(value = "/manageFo")
 	public String viewFundingOpportunity(@RequestParam("id") Long id, Model model) {
 		FundingOpportunity fo = foService.findFundingOpportunityById(id);
 		model.addAttribute("fo", fo);
 		// model.addAttribute("fundingCycles", fcService.findFundingCyclesByFundingOpportunityId(id));
-		
-		// TODO: REFACTOR BELOW WITH FO
-		LongStream sfoIds = sfoService.findSystemFundingOpportunitiesByLinkedFOid(id).stream().mapToLong(SystemFundingOpportunity::getId);
-		List<SystemFundingCycle> linkedSFCs = new ArrayList<>();
-		
-		sfoIds.forEach(sfoId -> linkedSFCs.addAll(sfcService.findSFCsBySFOid(sfoId)));
-		model.addAttribute("linkedSystemFundingCycles", linkedSFCs);
+		model.addAttribute("linkedSystemFundingCycles", sfcService.findSystemFundingCyclesByLinkedFundingOpportunity(id));
 		model.addAttribute("grantingCapabilities", gcService.findGrantingCapabilitiesByFoId(id));
 		return "manage/manageFundingOpportunity";
-	}
-
-	@GetMapping(value = "/searchUser", params = "username")
-	public String searchUserAction(@RequestParam("username") String username, Model model) {
-		List<ADUser> matchingUsers = adUserService.searchADUsers(username);
-		model.addAttribute("matchingUsers", matchingUsers);
-		return "manage/searchUser";
 	}
 
 	@AdminOnly
