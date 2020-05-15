@@ -195,8 +195,8 @@
                 <constraints primaryKey="true" nullable="false" />
             </column>
             <column name="application_identifier" type="VARCHAR(255)"/>
-            <column name="application_id" type="VARCHAR(255)"/>
-            <column name="competition_year" type="BIGINT"/>
+            <column name="appl_id" type="VARCHAR(255)"/>
+            <!-- <column name="competition_year" type="BIGINT"/> -->
             <column name="program_id" type="VARCHAR(255)"/>
             <column name="program_en" type="VARCHAR(255)"/>
             <column name="program_fr" type="VARCHAR(255)"/>
@@ -210,14 +210,14 @@
             <column name="organization_id" type="VARCHAR(255)"/>
             <column name="organization_name_en" type="VARCHAR(255)"/>
             <column name="organization_name_fr" type="VARCHAR(255)"/>
-            <column name="freeform_address_1" type="VARCHAR(255)"/>
+            <!-- <column name="freeform_address_1" type="VARCHAR(255)"/>
             <column name="freeform_address_2" type="VARCHAR(255)"/>
             <column name="freeform_address_3" type="VARCHAR(255)"/>
             <column name="freeform_address_4" type="VARCHAR(255)"/>
             <column name="municipality" type="VARCHAR(255)"/>
             <column name="postal_zip_code" type="VARCHAR(255)"/>
             <column name="province_state_code" type="VARCHAR(255)"/>
-            <column name="country" type="VARCHAR(255)"/>
+            <column name="country" type="VARCHAR(255)"/> -->
         </createTable>
     </changeSet>
     <changeSet id="00000000000023" author="dev_aha">
@@ -283,7 +283,7 @@
             </column>
             <column name="awarded_amount" type="DOUBLE"/>
             <column name="funding_year" type="BIGINT"/>
-            <column name="person_identifier" type="BIGINT"/>
+            <column name="appl_id" type="VARCHAR(255)"/>
             <column name="family_name" type="VARCHAR(255)"/>
             <column name="given_name" type="VARCHAR(255)"/>
             <column name="role_code" type="VARCHAR(255)"/>
@@ -293,23 +293,23 @@
     </changeSet>
     <changeSet id="00000000000032" author="dev_aha">
         <addColumn tableName="application_participation">
-            <column name="edi_not_applicable" type="BIT(1)" defaultValueBoolean="false">
+            <!-- <column name="edi_not_applicable" type="BIT(1)" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
             <column name="date_of_birth_indicator" type="BIT(1)" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
-            <column name="date_of_birth" type="DATE"/>
-            <column name="gender_selection_1" type="BIGINT"/>
-            <column name="ind_identity_response" type="BIGINT"/>
-            <column name="ind_identity_pref_not_to" type="BIT(1)" defaultValueBoolean="false">
+            <column name="date_of_birth" type="DATE"/> -->
+            <column name="gender_selection" type="VARCHAR(255)"/>
+            <column name="ind_identity_response" type="VARCHAR(255)"/>
+            <!-- <column name="ind_identity_pref_not_to" type="BIT(1)" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
             <column name="ind_identity_selection_1" type="BIGINT"/>
             <column name="ind_identity_selection_2" type="BIGINT"/>
-            <column name="ind_identity_selection_3" type="BIGINT"/>
-            <column name="disability_selection_1" type="BIGINT"/>
-            <column name="visible_min_pref_not_to" type="BIT(1)" defaultValueBoolean="false">
+            <column name="ind_identity_selection_3" type="BIGINT"/> -->
+            <column name="disability_response" type="VARCHAR(255)"/>
+            <!-- <column name="visible_min_pref_not_to" type="BIT(1)" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
             <column name="visible_min_selection_1" type="BIGINT"/>
@@ -322,15 +322,24 @@
             <column name="visible_min_selection_8" type="BIGINT"/>
             <column name="visible_min_selection_9" type="BIGINT"/>
             <column name="visible_min_selection_10" type="BIGINT"/>
-            <column name="visible_min_selection_11" type="BIGINT"/>
-            <column name="visible_min_other" type="VARCHAR(255)"/>
-            <column name="create_user_id" type="VARCHAR(3)"/>
+            <column name="visible_min_selection_11" type="BIGINT"/> -->
+            <column name="visible_minority_response" type="VARCHAR(255)"/>
+            <!-- <column name="create_user_id" type="VARCHAR(3)"/> -->
         </addColumn>
     </changeSet>
     <changeSet id="00000000000033" author="dev_aha">
         <addColumn tableName="member_role">
             <column name="edi_authorized" type="BIT(1)" defaultValueBoolean="false">
                 <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    
+    <!-- Added for the demo; should be removed afterwards -->
+    <changeSet id="00000000000034" author="dev_aha">
+        <addColumn tableName="application_participation">
+            <column name="is_deadline_passed" type="BIT(1)" defaultValueBoolean="false">
+                <constraints nullable="false" />
             </column>
         </addColumn>
     </changeSet>

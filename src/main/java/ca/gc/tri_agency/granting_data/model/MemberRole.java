@@ -19,7 +19,7 @@ public class MemberRole {
 
 	@NotNull(message = "{userLogin.NotNull}")
 	private String userLogin;
-	
+
 	@NotNull
 	private Boolean ediAuthorized;
 

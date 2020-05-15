@@ -37,10 +37,13 @@ public interface ApplicationParticipationService {
 	long generateTestAppParicipationsForAllSystemFundingOpportunities();
 
 	List<ApplicationParticipation> getAllowedRecords();
+	
+	ApplicationParticipation findAppPartByApplId(String applId);
 
 	// private String programId; // from sfo extId
 	// amis -> 611
 	// namis -> BNCEG
 	// crm -> 5BC9640E-4421-E211-AEEA-005056AD550D
+	
 
 }

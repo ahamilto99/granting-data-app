@@ -18,7 +18,7 @@ public class Award {
 	
 	private Long fundingYear;
 	
-	private Long personIdentifier;
+	private String applId;
 	
 	private String familyName;
 	
@@ -33,11 +33,11 @@ public class Award {
 	public Award() {
 	}
 
-	public Award(Double awardedAmount, Long fundingYear, Long personIdentifier, String familyName, String givenName,
+	public Award(Double awardedAmount, Long fundingYear, String applId, String familyName, String givenName,
 			String roleCode, String roleEn, String roleFr) {
 		this.awardedAmount = awardedAmount;
 		this.fundingYear = fundingYear;
-		this.personIdentifier = personIdentifier;
+		this.applId = applId;
 		this.familyName = familyName;
 		this.givenName = givenName;
 		this.roleCode = roleCode;
@@ -69,12 +69,12 @@ public class Award {
 		this.fundingYear = fundingYear;
 	}
 
-	public Long getPersonIdentifier() {
-		return personIdentifier;
+	public String getApplId() {
+		return applId;
 	}
 
-	public void setPersonIdentifier(Long personIdentifier) {
-		this.personIdentifier = personIdentifier;
+	public void setPersonIdentifier(String applId) {
+		this.applId = applId;
 	}
 
 	public String getFamilyName() {
@@ -127,7 +127,7 @@ public class Award {
 		builder.append(", funding_year=");
 		builder.append(fundingYear);
 		builder.append(", personIdentifier=");
-		builder.append(personIdentifier);
+		builder.append(applId);
 		builder.append(", familyName=");
 		builder.append(familyName);
 		builder.append(", givenName=");

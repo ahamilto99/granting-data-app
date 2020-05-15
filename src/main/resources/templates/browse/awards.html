@@ -25,53 +25,27 @@
 			
 			<thead>
 				<tr>
-					<th th:text="#{th.program}"></th>
+					<th th:text="#{th.application}"></th>
+					<th th:text="#{th.programId}"></th>
 					<th th:text="#{th.recipient}"></th>
 					<th th:text="#{th.amt}"></th>
 					<th th:text="#{th.fundingYear}"></th>
 				</tr>
 			</thead>
-			
+
 			<tbody>
 				<tr th:each="award : ${awardList}">
-					<td>Digging into Data</td>
+					<td th:text="${award.applId}"></td>
+					<td th:text="${@applicationParticipationServiceImpl.findAppPartByApplId(award.applId).getProgramId()}"></td>
 					<td th:text="${award.familyName} + ', ' + ${award.givenName}"></td>
 					<td th:text="'$' + ${#numbers.formatDecimal(award.awardedAmount, 0, 'DEFAULT', 2, 'DEFAULT')}"></td>
 					<td th:text="${award.fundingYear}"></td>
 				</tr>
 			</tbody>
-		
+
 		</table>
 	
 	</div>
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

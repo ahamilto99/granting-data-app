@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ca.gc.tri_agency.granting_data.model.ApplicationParticipation;
 import ca.gc.tri_agency.granting_data.model.Award;
+import ca.gc.tri_agency.granting_data.repo.ApplicationParticipationRepository;
 import ca.gc.tri_agency.granting_data.repo.AwardRepository;
 import ca.gc.tri_agency.granting_data.service.AwardService;
 
@@ -21,6 +22,9 @@ public class AwardServiceImpl implements AwardService {
 	private static final String MAIN_APPLICANT = "Applicant";
 
 	private AwardRepository awardRepo;
+
+	@Autowired
+	private ApplicationParticipationRepository appPartRepo;
 
 	@Autowired
 	public AwardServiceImpl(AwardRepository awardRepo) {
@@ -48,23 +52,27 @@ public class AwardServiceImpl implements AwardService {
 			percentageOfMainApplicants = 100;
 		}
 
-		long numOfAwards = (long) (percentageOfMainApplicants / 100.0 * appParts.size());
-		SecureRandom sRand = new SecureRandom();
+		appParts = appParts.stream().filter((ApplicationParticipation appPart) -> !appPart.getIsDeadlinePassed())
+				.collect(Collectors.toList());
+		appParts.forEach(appPart -> appPart.setIsDeadlinePassed(new Boolean(true)));
 
 		Collections.shuffle(appParts);
+
+		SecureRandom sRand = new SecureRandom();
+
 		List<Award> testAwards = appParts.stream()
-				.filter((ApplicationParticipation appPart) -> appPart.getRoleEn().equals(MAIN_APPLICANT))
-				.limit(numOfAwards)
+				.filter((ApplicationParticipation appPart) -> appPart.getRoleEn() != null
+						&& appPart.getRoleEn().equals(MAIN_APPLICANT))
+				.limit((long) (percentageOfMainApplicants / 100.0 * appParts.size()))
 				.map((ApplicationParticipation appPart) -> new Award(sRand.nextDouble() * 100_000,
-						appPart.getCompetitionYear() != null ? appPart.getCompetitionYear() + 1L
-								: sRand.nextInt(5) + 2017,
-						appPart.getPersonIdentifier(), appPart.getFamilyName(), appPart.getGivenName(),
-						appPart.getRoleCode(), appPart.getRoleEn(), appPart.getRoleFr()))
+						sRand.nextInt(5) + 2017L, appPart.getApplId(), appPart.getFamilyName(),
+						appPart.getGivenName(), appPart.getRoleCode(), appPart.getRoleEn(),
+						appPart.getRoleFr()))
 				.collect(Collectors.toList());
-		
-		awardRepo.saveAll(testAwards);
-		
-		return testAwards;
+
+		appPartRepo.saveAll(appParts);
+
+		return awardRepo.saveAll(testAwards);
 	}
 
 }

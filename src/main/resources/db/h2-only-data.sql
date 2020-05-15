@@ -6,20 +6,3 @@ INSERT INTO MEMBER_ROLE (ID, USER_LOGIN, ROLE_ID, BUSINESS_UNIT_ID) VALUES (seq_
 INSERT INTO MEMBER_ROLE (ID, USER_LOGIN, ROLE_ID, BUSINESS_UNIT_ID) VALUES (seq_member_role.nextval, 'jfs', 2, 1);
 INSERT INTO MEMBER_ROLE (ID, USER_LOGIN, ROLE_ID, BUSINESS_UNIT_ID) VALUES (seq_member_role.nextval, 'rwi', 2, 1);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

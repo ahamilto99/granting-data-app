@@ -27,13 +27,13 @@ public class AwardController {
 	@AdminOnly
 	@GetMapping("/admin/generateTestAwards")
 	public String generateTestAwardsGet() {
-		return "/admin/generateTestAwards";
+		return "admin/generateTestAwards";
 	}
 
 	@AdminOnly
 	@PostMapping("/admin/generateTestAwards")
 	public String generateTestAwardsPost(RedirectAttributes redirectAttributes) {
-		int numAwards = awardService.generateTestAwards(appPartService.getAllowedRecords(), 33).size();
+		int numAwards = awardService.generateTestAwards(appPartService.getAllowedRecords(), 10).size();
 		redirectAttributes.addFlashAttribute("actionMessage",
 				"Successfully created Awards for " + numAwards + " of the Test App Participations");
 		return "redirect:/admin/home";
@@ -42,7 +42,7 @@ public class AwardController {
 	@GetMapping("/browse/awards")
 	public String browseAwardsGet(Model model) {
 		model.addAttribute("awardList", awardService.findAllAwards());
-		return "/browse/awards";
+		return "browse/awards";
 	}
 
 }

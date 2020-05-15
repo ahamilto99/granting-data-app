@@ -22,6 +22,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -92,10 +93,9 @@ public class GoldenFundingOpportunityIntegrationTest {
 	@Test
 	@Transactional
 	public void testNameFieldsAutoFilledOnAddFoPageWhenLinkingNewFoWithSfo() throws Exception {
-		SystemFundingOpportunity sfo = sfoRepo.findAll().get(0);
-		Long sfoId = sfo.getId();
+		SystemFundingOpportunity sfo = sfoRepo.findById(4L).get();
 
-		MvcResult result = mvc.perform(MockMvcRequestBuilders.get("/admin/createFo").param("sfoId", sfoId.toString()))
+		MvcResult result = mvc.perform(MockMvcRequestBuilders.get("/admin/createFo").param("sfoId", sfo.getId().toString()))
 				.andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
 
 		assertTrue(result.getResponse().getContentAsString()

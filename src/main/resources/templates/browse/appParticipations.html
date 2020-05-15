@@ -21,7 +21,7 @@
 		<table id="appParticipationsTable" class="display">
 			<thead>
 				<tr>
-					<th th:text="#{th.appId}"></th>
+					<th th:text="#{th.application}"></th>
 					<th th:text="#{th.programId}"></th>
 					<th th:text="#{th.name}"></th>
 					<th th:text="#{th.role}"></th>
@@ -31,7 +31,7 @@
 
 			<tbody>
 				<tr th:each="ap : ${appParticipations}">
-					<td><span th:text="${ap.applicationId}"></span></td>
+					<td><span th:text="${ap.applId}"></span></td>
 					<td><span th:text="${ap.programId}"></span></td>
 					<td><span th:text="${ap.familyName} + ', ' + ${ap.givenName}"></span></td>
 					<td><span th:text="${ap.getLocalizedAttribute('role')}"></span></td>

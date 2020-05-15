@@ -11,9 +11,9 @@ import ca.gc.tri_agency.granting_data.service.ApplicationParticipationService;
 
 @Controller
 public class ApplicationParticipationController {
-	
+
 	private ApplicationParticipationService appParticipationService;
-	
+
 	@Autowired
 	public ApplicationParticipationController(ApplicationParticipationService appParticipationService) {
 		this.appParticipationService = appParticipationService;
@@ -24,7 +24,7 @@ public class ApplicationParticipationController {
 		model.addAttribute("appParticipations", appParticipationService.getAllowedRecords());
 		return "browse/appParticipations";
 	}
-	
+
 	@GetMapping("/admin/generateTestParticipations")
 	public String generateTestParticipations() {
 		return "admin/generateTestParticipations";
