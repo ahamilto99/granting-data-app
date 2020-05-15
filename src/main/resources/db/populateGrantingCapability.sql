@@ -431,3 +431,5 @@ INSERT INTO "PUBLIC"."SYSTEM_FUNDING_OPPORTUNITY" VALUES
 (seq_system_funding_opportunity.nextval, '766', 'Joseph-Armand Bombardier Canada Graduate Scholarships - Master''s', STRINGDECODE('Bourses d''\u00e9tudes sup\u00e9rieures du Canada Joseph-Armand-Bombardier - Ma\u00eetrise'), 6, 107),
 (seq_system_funding_opportunity.nextval, '756', 'SSHRC Postdoctoral Fellowships', 'Bourses postdoctorales du CRSH', 4, 58),
 (seq_system_funding_opportunity.nextval, '862', 'Sport Participation Research Initiative', 'Initiative de recherche sur la participation au sport', 2, 104);
+
+UPDATE funding_opportunity SET business_unit_id = 1 WHERE business_unit_id IS NULL;
