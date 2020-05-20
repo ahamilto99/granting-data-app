@@ -330,4 +330,9 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		return appParts;
 	}
 
+	@Override
+	public void saveAllApplicationParticipations(List<ApplicationParticipation> appParticipations) {
+		appParticipationRepo.saveAll(appParticipations);
+	}
+
 }

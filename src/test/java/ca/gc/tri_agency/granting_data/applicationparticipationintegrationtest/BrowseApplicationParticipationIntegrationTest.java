@@ -32,28 +32,28 @@ public class BrowseApplicationParticipationIntegrationTest {
         
         String appIdentifier = RandomStringUtils.randomAlphabetic(10);
         ap.setApplicationIdentifier(appIdentifier);
-//        ap.setCompetitionYear(2022L);
-//        ap.setCountry(RandomStringUtils.randomAlphabetic(10));
+        ap.setCompetitionYear(2022L);
+        ap.setCountry(RandomStringUtils.randomAlphabetic(10));
         
         Instant currentTimestamp = Instant.now();
         ap.setCreateDate(currentTimestamp);
         
         ap.setFamilyName(RandomStringUtils.randomAlphabetic(10));
-//        ap.setFreeformAddress1(RandomStringUtils.randomAlphabetic(10));
-//        ap.setFreeformAddress2(RandomStringUtils.randomAlphabetic(10));
-//        ap.setFreeformAddress3(RandomStringUtils.randomAlphabetic(10));
-//        ap.setFreeformAddress4(RandomStringUtils.randomAlphabetic(10));
+        ap.setFreeformAddress1(RandomStringUtils.randomAlphabetic(10));
+        ap.setFreeformAddress2(RandomStringUtils.randomAlphabetic(10));
+        ap.setFreeformAddress3(RandomStringUtils.randomAlphabetic(10));
+        ap.setFreeformAddress4(RandomStringUtils.randomAlphabetic(10));
         ap.setGivenName(RandomStringUtils.randomAlphabetic(10));
-//        ap.setMunicipality(RandomStringUtils.randomAlphabetic(10));
+        ap.setMunicipality(RandomStringUtils.randomAlphabetic(10));
         ap.setOrganizationNameEn(RandomStringUtils.randomAlphabetic(10));
         ap.setOrganizationNameFr(RandomStringUtils.randomAlphabetic(10));
         ap.setOrganizationId("1");
         ap.setPersonIdentifier(99L);
-//        ap.setPostalZipCode(RandomStringUtils.randomAlphabetic(7));
+        ap.setPostalZipCode(RandomStringUtils.randomAlphabetic(7));
         ap.setProgramEn(RandomStringUtils.randomAlphabetic(10));
         ap.setProgramFr(RandomStringUtils.randomAlphabetic(10));
         ap.setProgramId(RandomStringUtils.randomAlphabetic(10));
-//        ap.setProvinceStateCode(RandomStringUtils.randomAlphabetic(2));
+        ap.setProvinceStateCode(RandomStringUtils.randomAlphabetic(2));
         ap.setRoleCode("1234");
         ap.setRoleEn(RandomStringUtils.randomAlphabetic(10));
         ap.setRoleFr(RandomStringUtils.randomAlphabetic(10));
@@ -63,4 +63,5 @@ public class BrowseApplicationParticipationIntegrationTest {
         assertEquals(appIdentifier, apRepo.findById((long) apRepo.count()).get().getApplicationIdentifier());
         assertEquals(currentTimestamp, apRepo.findById((long) apRepo.count()).get().getCreateDate());
     }
+    
 }

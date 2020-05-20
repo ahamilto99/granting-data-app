@@ -12,8 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ca.gc.tri_agency.granting_data.model.ApplicationParticipation;
 import ca.gc.tri_agency.granting_data.model.Award;
-import ca.gc.tri_agency.granting_data.repo.ApplicationParticipationRepository;
 import ca.gc.tri_agency.granting_data.repo.AwardRepository;
+import ca.gc.tri_agency.granting_data.security.SecurityUtils;
+import ca.gc.tri_agency.granting_data.service.ApplicationParticipationService;
 import ca.gc.tri_agency.granting_data.service.AwardService;
 
 @Service
@@ -22,13 +23,13 @@ public class AwardServiceImpl implements AwardService {
 	private static final String MAIN_APPLICANT = "Applicant";
 
 	private AwardRepository awardRepo;
+	
+	private ApplicationParticipationService appPartService;
 
 	@Autowired
-	private ApplicationParticipationRepository appPartRepo;
-
-	@Autowired
-	public AwardServiceImpl(AwardRepository awardRepo) {
+	public AwardServiceImpl(AwardRepository awardRepo, ApplicationParticipationService appPartService) {
 		this.awardRepo = awardRepo;
+		this.appPartService = appPartService;
 	}
 
 	@Override
@@ -70,9 +71,14 @@ public class AwardServiceImpl implements AwardService {
 						appPart.getRoleFr()))
 				.collect(Collectors.toList());
 
-		appPartRepo.saveAll(appParts);
+		appPartService.saveAllApplicationParticipations(appParts);
 
 		return awardRepo.saveAll(testAwards);
+	}
+
+	@Override
+	public List<Award> findAllAwardsForCurrentUser() {
+		return awardRepo.findForCurrentUser(SecurityUtils.getCurrentUsername());
 	}
 
 }

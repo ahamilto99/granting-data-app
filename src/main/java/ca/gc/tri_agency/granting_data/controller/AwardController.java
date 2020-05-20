@@ -17,7 +17,7 @@ public class AwardController {
 	private AwardService awardService;
 
 	private ApplicationParticipationService appPartService;
-
+	
 	@Autowired
 	public AwardController(AwardService awardService, ApplicationParticipationService appPartService) {
 		this.awardService = awardService;
@@ -41,7 +41,7 @@ public class AwardController {
 
 	@GetMapping("/browse/awards")
 	public String browseAwardsGet(Model model) {
-		model.addAttribute("awardList", awardService.findAllAwards());
+		model.addAttribute("awardList", awardService.findAllAwardsForCurrentUser());
 		return "browse/awards";
 	}
 

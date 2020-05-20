@@ -8,9 +8,11 @@ import ca.gc.tri_agency.granting_data.model.Award;
 public interface AwardService {
 
 	Award findAwardById(Long awardId);
-	
+
 	List<Award> findAllAwards();
-	
+
 	List<Award> generateTestAwards(List<ApplicationParticipation> appParts, double percentageOfMainApplicants);
-	
+
+	List<Award> findAllAwardsForCurrentUser();
+
 }
