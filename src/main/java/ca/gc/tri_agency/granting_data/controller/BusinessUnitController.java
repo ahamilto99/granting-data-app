@@ -29,19 +29,19 @@ public class BusinessUnitController {
 
 	private MemberRoleService mrService;
 
-	@Autowired
 	private MessageSource msgSource;
 
 	@Autowired
-	public BusinessUnitController(BusinessUnitService buService, AgencyService agencyService, MemberRoleService mrService) {
+	public BusinessUnitController(BusinessUnitService buService, AgencyService agencyService, MemberRoleService mrService, MessageSource msgSource) {
 		this.buService = buService;
 		this.agencyService = agencyService;
 		this.mrService = mrService;
+		this.msgSource = msgSource;
 
 	}
 
 	@GetMapping("/browse/viewBU")
-	public String showViewBU(@RequestParam("id") Long id, Model model) {
+	public String viewBusinessUnit(@RequestParam("id") Long id, Model model) {
 		model.addAttribute("bu", buService.findBusinessUnitById(id));
 		model.addAttribute("mrList", mrService.findMemberRolesByBusinessUnitId(id));
 		return "browse/viewBU";
@@ -49,7 +49,7 @@ public class BusinessUnitController {
 
 	@AdminOnly
 	@GetMapping("/admin/createBU")
-	public String showCreateBU(@RequestParam("agencyId") Long agencyId, Model model) {
+	public String createBusinessUnitGet(@RequestParam("agencyId") Long agencyId, Model model) {
 		BusinessUnit bu = new BusinessUnit();
 		bu.setAgency(agencyService.findAgencyById(agencyId));
 		model.addAttribute("bu", bu);
@@ -57,8 +57,8 @@ public class BusinessUnitController {
 	}
 
 	@AdminOnly
-	@PostMapping(value = "/admin/createBU")
-	public String processCreateBU(@Valid @ModelAttribute("bu") BusinessUnit bu, BindingResult bindingResult,
+	@PostMapping("/admin/createBU")
+	public String createBusinessUnitPost(@Valid @ModelAttribute("bu") BusinessUnit bu, BindingResult bindingResult,
 			RedirectAttributes redirectAttributes) {
 		if (bindingResult.hasErrors()) {
 			return "admin/createBU";
@@ -71,14 +71,14 @@ public class BusinessUnitController {
 
 	@AdminOnly
 	@GetMapping("/admin/editBU")
-	public String showEditBU(@RequestParam("id") Long id, Model model) {
+	public String editBusinessUnitGet(@RequestParam("id") Long id, Model model) {
 		model.addAttribute("bu", buService.findBusinessUnitById(id));
 		return "admin/editBU";
 	}
 
 	@AdminOnly
 	@PostMapping("/admin/editBU")
-	public String processEditBU(@Valid @ModelAttribute("bu") BusinessUnit bu, BindingResult bindingResult, Model model,
+	public String editBusinessUnitPost(@Valid @ModelAttribute("bu") BusinessUnit bu, BindingResult bindingResult, Model model,
 			RedirectAttributes redirectAttributes) {
 		if (bindingResult.hasErrors()) {
 			return "admin/editBU";

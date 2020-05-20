@@ -31,7 +31,7 @@ public class AgencyController {
 		this.foService = foService;
 	}
 
-	@GetMapping(value = "/browse/viewAgency")
+	@GetMapping("/browse/viewAgency")
 	public String viewAgency(@RequestParam("id") Long id, Model model) {
 		Agency agency = agencyService.findAgencyById(id);
 		model.addAttribute("agency", agency);

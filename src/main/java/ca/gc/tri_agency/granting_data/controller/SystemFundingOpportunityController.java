@@ -11,6 +11,7 @@ import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -41,7 +42,7 @@ public class SystemFundingOpportunityController {
 	}
 
 	@GetMapping("/admin/viewSFO")
-	public String accessViewSFO(@RequestParam Long id, Model model, HttpServletRequest request) {
+	public String viewSystemFundingOpportunity(@RequestParam Long id, Model model, HttpServletRequest request) {
 		Map<String, ?> inFlashMap = RequestContextUtils.getInputFlashMap(request);
 		if (inFlashMap != null) {
 			model.addAttribute("unlinkedPerformedMsg", inFlashMap.get("actionMessage"));
@@ -53,13 +54,13 @@ public class SystemFundingOpportunityController {
 	}
 
 	@GetMapping("/admin/analyzeSFOs")
-	public String accessAnalyzeSystemFOs(Model model) {
+	public String analyzeSystemFundingOpportunities(Model model) {
 		model.addAttribute("systemFOs", sfoService.findAllSystemFundingOpportunities());
 		return "admin/analyzeSystemFOs";
 	}
 
-	@GetMapping(value = "/admin/confirmUnlink")
-	public String accessUnlinkSFOFromFO(@RequestParam Long sfoId, Model model) {
+	@GetMapping("/admin/confirmUnlink")
+	public String unlinkSFOFromFOGet(@RequestParam Long sfoId, Model model) {
 		SystemFundingOpportunity sfo = sfoService.findSystemFundingOpportunityById(sfoId);
 		FundingOpportunity fo = sfo.getLinkedFundingOpportunity();
 		if (fo == null) {
@@ -72,8 +73,8 @@ public class SystemFundingOpportunityController {
 		return "/admin/confirmUnlink";
 	}
 
-	@PostMapping(value = "/admin/confirmUnlink")
-	public String processUnlinkSFOFromFO(@RequestParam Long sfoId, Model model, RedirectAttributes redirectAttributes) {
+	@PostMapping("/admin/confirmUnlink")
+	public String unlinkSFOFromFOPost(@RequestParam Long sfoId, Model model, RedirectAttributes redirectAttributes) {
 		SystemFundingOpportunity sfo = sfoService.findSystemFundingOpportunityById(sfoId);
 		FundingOpportunity fo = sfo.getLinkedFundingOpportunity();
 
@@ -87,6 +88,12 @@ public class SystemFundingOpportunityController {
 		model.addAttribute("fosForLink", foService.findAllFundingOpportunities());
 
 		return "redirect:/admin/viewSFO?id=" + sfoId;
+	}
+
+	@PostMapping("/registerFOLink")
+	public String registerProgramLinkPost(@ModelAttribute("id") Long id, @ModelAttribute("foId") Long foId) {
+		sfoService.linkSystemFundingOpportunity(id, foId);
+		return "redirect:analyzeSFOs";
 	}
 
 }

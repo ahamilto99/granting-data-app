@@ -31,7 +31,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
-import ca.gc.tri_agency.granting_data.controller.AdminController;
+import ca.gc.tri_agency.granting_data.controller.FundingOpportunityController;
 import ca.gc.tri_agency.granting_data.model.Agency;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
@@ -46,7 +46,7 @@ import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
 public class GoldenFundingOpportunityIntegrationTest {
 
 	@Autowired
-	private AdminController adminController;
+	private FundingOpportunityController foController;
 	
 	@Autowired
 	private AgencyService agencyService;
@@ -200,7 +200,7 @@ public class GoldenFundingOpportunityIntegrationTest {
 	@Test(expected = AccessDeniedException.class)
 	@Transactional
 	public void test_NonAdminCannotCreateGoldenFo_shouldThrowDataAccessException() throws Exception {
-		adminController.addFoPost(new FundingOpportunity(), bindingResult, model, redirectAttributes);
+		foController.createFundingOpportunityPost(new FundingOpportunity(), bindingResult, model, redirectAttributes);
 	}
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
@@ -234,7 +234,7 @@ public class GoldenFundingOpportunityIntegrationTest {
 		gfo.setLeadAgency(agencyList.size() > 0 ? agencyList.remove(0) : null);
 		gfo.setParticipatingAgencies(agencyList.size() > 0 ? new HashSet<Agency>(agencyList) : null);
 
-		String successUrl = adminController.addFoPost(gfo, bindingResult, model, redirectAttributes);
+		String successUrl = foController.createFundingOpportunityPost(gfo, bindingResult, model, redirectAttributes);
 
 		assertEquals("redirect:/admin/home", successUrl);
 		assertEquals(initFoRepoSize + 1, foRepo.count());

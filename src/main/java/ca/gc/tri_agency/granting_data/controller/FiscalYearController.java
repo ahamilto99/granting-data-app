@@ -23,31 +23,31 @@ public class FiscalYearController {
 
 	private FiscalYearService fyService;
 
-	@Autowired
 	private MessageSource msgSrc;
 
 	@Autowired
-	public FiscalYearController(FiscalYearService fyService) {
+	public FiscalYearController(FiscalYearService fyService, MessageSource msgSrc) {
 		this.fyService = fyService;
+		this.msgSrc = msgSrc;
 	}
 
-	@GetMapping(value = "/browse/viewFYs")
-	public String accessViewFYs(Model model) {
+	@GetMapping("/browse/viewFYs")
+	public String viewFiscalYears(Model model) {
 		model.addAttribute("fiscalYears", fyService.findAllFiscalYears());
 		return "browse/viewFiscalYears";
 	}
 
 	@AdminOnly
-	@GetMapping(value = "/manage/createFY")
-	public String accessCreateFY(Model model) {
+	@GetMapping("/manage/createFY")
+	public String createFiscalYearGet(Model model) {
 		model.addAttribute("fy", new FiscalYear());
 		model.addAttribute("fiscalYears", fyService.findAllFiscalYears());
 		return "manage/createFiscalYear";
 	}
 
 	@AdminOnly
-	@PostMapping(value = "/manage/createFY")
-	public String processCreateFY(@Valid @ModelAttribute("fy") FiscalYear fy, BindingResult bindingResult, Model model)
+	@PostMapping("/manage/createFY")
+	public String createFiscalYearPost(@Valid @ModelAttribute("fy") FiscalYear fy, BindingResult bindingResult, Model model)
 			throws Exception {
 		if (bindingResult.hasErrors()) {
 			return "manage/createFiscalYear";

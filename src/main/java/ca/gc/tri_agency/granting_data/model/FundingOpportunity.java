@@ -18,7 +18,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import ca.gc.tri_agency.granting_data.model.util.LocalizedParametersModel;
 
@@ -31,11 +30,9 @@ public class FundingOpportunity implements LocalizedParametersModel {
 	private Long id;
 
 	@NotBlank
-	@Size(min = 3)
 	private String nameEn;
 
 	@NotBlank
-	@Size(min = 3)
 	private String nameFr;
 
 	@ManyToOne(fetch = FetchType.EAGER)

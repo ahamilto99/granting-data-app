@@ -34,13 +34,13 @@ public class FundingCycleController {
 		this.foService = foService;
 	}
 
-	@GetMapping(value = "/browse/viewFcFromFy")
+	@GetMapping("/browse/viewFcFromFy")
 	public String viewFundingCyclesFromFiscalYear(@RequestParam("fyId") long fyId, Model model) {
 		model.addAttribute("fc", fcService.findFundingCyclesByFiscalYearId(fyId));
 		return "browse/viewFcFromFy";
 	}
 
-	@GetMapping(value = "/browse/viewCalendar")
+	@GetMapping("/browse/viewCalendar")
 	public String viewCalendar(@RequestParam(name = "plusMinusMonth", defaultValue = "0") Integer plusMinusMonth, Model model) {
 		model.addAttribute("plusMonth", plusMinusMonth + 1);
 		model.addAttribute("minusMonth", plusMinusMonth - 1);
@@ -58,7 +58,7 @@ public class FundingCycleController {
 
 	@AdminOnly
 	@GetMapping("/manage/createFundingCycle")
-	public String createFundingCycle(@RequestParam("foId") Long foId, Model model) {
+	public String createFundingCycleGet(@RequestParam("foId") Long foId, Model model) {
 		model.addAttribute("foId", foId);
 		model.addAttribute("fundingCycle", new FundingCycle());
 		model.addAttribute("fy", fyService.findAllFiscalYears());
@@ -67,7 +67,7 @@ public class FundingCycleController {
 	}
 
 	@AdminOnly
-	@PostMapping(value = "/manage/createFundingCycle")
+	@PostMapping("/manage/createFundingCycle")
 	public String createFundingCyclePost(@RequestParam("foId") Long foId, @Valid @ModelAttribute("fundingCycle") FundingCycle fc,
 			BindingResult bindingResult, Model model) {
 		if (bindingResult.hasErrors()) {

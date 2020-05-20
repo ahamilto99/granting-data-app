@@ -69,7 +69,6 @@ public class AdminUseCasesTest {
 				.andExpect(status().isOk());
 	}
 	
-	@Ignore
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void testSelectFileForCopmarisonFilePageLinkRequests() throws Exception {
