@@ -7,7 +7,7 @@
 			<column name="ext_id" value="SAMPLE EXT ID" />
 			<column name="name_en" value="NAME EN" />
 			<column name="name_fr" value="NAME FR" />
-			<column name="granting_system_id" value="1" />
+			<column name="granting_system_id" value="2" /> <!-- had to change it for generating ApplicationParticipation data  -->
 			<column name="linked_funding_opportunity_id" value="1" />
 		</insert>
 		<insert tableName="system_funding_opportunity">
@@ -15,7 +15,7 @@
 			<column name="ext_id" value="SAMPLE EXT ID 2" />
 			<column name="name_en" value="NAME EN 2" />
 			<column name="name_fr" value="NAME FR 2" />
-			<column name="granting_system_id" value="1" />
+			<column name="granting_system_id" value="6" /> <!-- had to change it for generating ApplicationParticipation data  -->
 		</insert>
 	</changeSet>
     <changeSet author="dev_aha" id="populateTables" dbms="h2">

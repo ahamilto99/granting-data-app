@@ -2,6 +2,7 @@ package ca.gc.tri_agency.granting_data.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -18,13 +19,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import ca.gc.tri_agency.granting_data.form.FundingOpportunityFilterForm;
 import ca.gc.tri_agency.granting_data.ldap.ADUser;
 import ca.gc.tri_agency.granting_data.ldap.ADUserService;
 import ca.gc.tri_agency.granting_data.model.Agency;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
+import ca.gc.tri_agency.granting_data.model.GrantingSystem;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.AgencyService;
+import ca.gc.tri_agency.granting_data.service.BusinessUnitService;
 import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
 import ca.gc.tri_agency.granting_data.service.GrantingCapabilityService;
 import ca.gc.tri_agency.granting_data.service.GrantingSystemService;
@@ -45,6 +49,8 @@ public class FundingOpportunityController {
 	private AgencyService agencyService;
 
 	private SystemFundingOpportunityService sfoService;
+	
+	private BusinessUnitService buService;
 
 	private MessageSource msgSource;
 
@@ -53,7 +59,7 @@ public class FundingOpportunityController {
 	@Autowired
 	public FundingOpportunityController(FundingOpportunityService foService, GrantingSystemService gSystemService,
 			GrantingCapabilityService gcService, SystemFundingCycleService sfcService, AgencyService agencyService,
-			SystemFundingOpportunityService sfoService, MessageSource msgSource, ADUserService adUserService) {
+			SystemFundingOpportunityService sfoService, BusinessUnitService buService, MessageSource msgSource, ADUserService adUserService) {
 		this.foService = foService;
 		this.gSystemService = gSystemService;
 		this.gcService = gcService;
@@ -61,15 +67,22 @@ public class FundingOpportunityController {
 		this.adUserService = adUserService;
 		this.agencyService = agencyService;
 		this.sfoService = sfoService;
+		this.buService = buService;
 		this.msgSource = msgSource;
 	}
 
-	@GetMapping("/browse/goldenList")
-	public String viewGoldenList(Model model) {
-		model.addAttribute("goldenList", foService.findAllFundingOpportunities());
-		model.addAttribute("applySystemByFoMap", gSystemService.findApplySystemsByFundingOpportunityMap());
-		model.addAttribute("awardSystemsByFoMap", gSystemService.findAwardSystemsByFundingOpportunityMap());
-		return "browse/goldenList";
+	@GetMapping("/browse/fundingOpportunities")
+	public String viewGoldenList(@ModelAttribute("filter") FundingOpportunityFilterForm filter, Model model) {
+		Map<Long, GrantingSystem> applyMap = gSystemService.findApplySystemsByFundingOpportunityMap();
+		Map<Long, List<GrantingSystem>> awardMap = gSystemService.findAwardSystemsByFundingOpportunityMap();
+
+		model.addAttribute("fundingOpportunities", foService.getFilteredFundingOpportunities(filter, applyMap, awardMap));
+		model.addAttribute("allAgencies", agencyService.findAllAgencies());
+		model.addAttribute("allDivisions", buService.findAllBusinessUnits());
+		model.addAttribute("allGrantingSystems", gSystemService.findAllGrantingSystems());
+		model.addAttribute("applySystemByFoMap", applyMap);
+		model.addAttribute("awardSystemsByFoMap", awardMap);
+		return "browse/fundingOpportunities";
 	}
 
 	@GetMapping("/browse/viewFo")
