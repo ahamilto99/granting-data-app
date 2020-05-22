@@ -3,11 +3,13 @@ package ca.gc.tri_agency.granting_data.service.impl;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.github.javafaker.Faker;
 
@@ -25,8 +27,11 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 
 	private SecureRandom sRand = new SecureRandom();
 
-	ApplicationParticipationRepository appParticipationRepo;
-	SystemFundingOpportunityRepository sfoRepo;
+	private ApplicationParticipationRepository appParticipationRepo;
+
+	private SystemFundingOpportunityRepository sfoRepo;
+
+	private static int applIdIncrementer = 0;
 
 	@Autowired
 	public ApplicationParticipationServiceImpl(ApplicationParticipationRepository appParticipationRepo,
@@ -37,11 +42,11 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 
 	@Override
 	public List<ApplicationParticipation> generateTestAppParticipations(SystemFundingOpportunity sfo, Instant createDate,
-			long maxAnotepplications, long maxParticipants) {
+			long maxApplications, long maxParticipants) {
 		GrantingSystem gs = sfo.getGrantingSystem();
 		List<ApplicationParticipation> appPartList = new ArrayList<>();
 
-		int maxApps = sRand.nextInt((int) maxAnotepplications); // nextLong() does not take in a bounds
+		int maxApps = sRand.nextInt((int) maxApplications); // nextLong() does not take in a bounds
 		for (int i = 0; i < maxApps; i++) {
 
 			String appId = generateTestAppId(gs);
@@ -51,12 +56,14 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 			for (int j = 0; j < maxParts; j++) {
 
 				ApplicationParticipation app = new ApplicationParticipation();
-				app.setApplicationId(appId);
+				app.setApplId(appId + String.format("%04d", ++applIdIncrementer));
 				app.setApplicationIdentifier(applicationIdentifier);
 
 				app.setProgramId(sfo.getExtId());
 				app.setProgramEn(sfo.getNameEn());
 				app.setProgramFr(sfo.getNameFr());
+
+				app.setPersonIdentifier(sRand.nextInt(900_000_000) + 100_000_000L);
 
 				app.setCreateDate(createDate);
 
@@ -65,8 +72,8 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 				fillInRandomPerson(app, gs);
 
 				appPartList.add(app);
-
 			}
+
 		}
 		return appPartList;
 	}
@@ -75,11 +82,11 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 	public String generateTestAppId(GrantingSystem system) {
 		String acronym = system.getAcronym();
 		if (acronym.equals("NAMIS")) {
-			return Integer.toString(sRand.nextInt(103_000) + 434_000);
+			return String.format("%d", sRand.nextInt(10) + 40);
 		} else if (acronym.equals("AMIS")) {
-			return Integer.toString(sRand.nextInt(34_000) + 444_000);
+			return Integer.toString(sRand.nextInt(10) + 40);
 		} else if (acronym.equals("CRM")) {
-			return String.format("%d-%d-%05d", sRand.nextInt(500) + 100, sRand.nextInt(6) + 2017, sRand.nextInt(1_000));
+			return String.format("%d-%d-%02d", sRand.nextInt(500) + 100, sRand.nextInt(6) + 2017, sRand.nextInt(100));
 		}
 		return null;
 	}
@@ -133,7 +140,8 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		int idx = sRand.nextInt(6);
 		if (acronym.equals("NAMIS")) {
 			String[] idArr = { "27", "28", "24", "89", "43", "9" };
-			String[] nameArr = { "McMaster", "Ottawa", "Guelph", "Memorial Univ. of Nfld", "Ryerson", "Alberta" };
+			String[] nameArr = { "McMaster University", "University of Ottawa", "Guelph University",
+					"Memorial Univ. of Nfld", "Ryerson University", "University of Alberta" };
 			app.setOrganizationId(idArr[idx]);
 			app.setOrganizationNameEn(nameArr[idx]);
 			app.setOrganizationNameFr(nameArr[idx]);
@@ -157,7 +165,7 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 			String[] nameArr = { "University of Calgary: Psychology", "McMaster University: School of Social Work",
 					"Wilfrid Laurier University: School of International Policy and Governance",
 					"Sheridan College Institute of Technology and Advanced Learning: International Centre",
-					"University of Ottawa: criminologie", "University of Saskatchewan: Philosophy" };
+					"University of Ottawa: Criminologie", "University of Saskatchewan: Philosophy" };
 			app.setOrganizationId(idArr[idx]);
 			app.setOrganizationNameEn(nameArr[idx]);
 			app.setOrganizationNameFr(nameArr[idx]);
@@ -174,6 +182,7 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		}
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public List<ApplicationParticipation> getAllowedRecords() {
 		List<ApplicationParticipation> retval = null;
@@ -193,15 +202,137 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 
 	}
 
+	@Transactional
 	@Override
 	public long generateTestAppParicipationsForAllSystemFundingOpportunities() {
 		List<ApplicationParticipation> participations = new ArrayList<ApplicationParticipation>();
 		Instant inst = Instant.parse("2020-02-02T00:00:00.00Z");
+
 		for (SystemFundingOpportunity sfo : sfoRepo.findAll()) {
-			participations.addAll(generateTestAppParticipations(sfo, inst, 100, 5));
+			participations.addAll(generateTestAppParticipations(sfo, inst, 3, 5));
 		}
-		appParticipationRepo.saveAll(participations);
+
+		generateEdiData(participations);
+
+		participations = appParticipationRepo.saveAll(participations);
+
 		return participations.size();
+	}
+
+	@Override
+	public ApplicationParticipation findAppPartByApplId(String applId) {
+		return appParticipationRepo.findByApplId(applId);
+	}
+
+	private List<ApplicationParticipation> generateEdiData(List<ApplicationParticipation> appParts) {
+		setAppPartGender(appParts);
+		setAppPartDisability(appParts);
+		setAppPartEthnicity(appParts);
+		setAppPartIndiginous(appParts);
+
+		return appParts;
+	}
+
+	private List<ApplicationParticipation> setAppPartGender(List<ApplicationParticipation> appParts) {
+		Collections.shuffle(appParts);
+
+		int i = 0;
+		for (; i < (int) (appParts.size() * 0.5); i++) {
+			appParts.get(i).setGenderSelection("female");
+		}
+		for (; i < (int) (appParts.size() * 0.93); i++) {
+			appParts.get(i).setGenderSelection("male");
+		}
+		for (; i < (int) appParts.size(); i++) {
+			appParts.get(i).setGenderSelection("non-binary");
+		}
+
+		return appParts;
+	}
+
+	private List<ApplicationParticipation> setAppPartDisability(List<ApplicationParticipation> appParts) {
+		Collections.shuffle(appParts);
+
+		int i = 0;
+		for (; i < (int) (appParts.size() * 0.04); i++) {
+			appParts.get(i).setDisabilityResponse("physical");
+		}
+		for (; i < (int) (appParts.size() * 0.06); i++) {
+			appParts.get(i).setDisabilityResponse("deaf");
+		}
+		for (; i < (int) (appParts.size() * 0.08); i++) {
+			appParts.get(i).setDisabilityResponse("other");
+		}
+		for (; i < (int) (appParts.size() * 0.09); i++) {
+			appParts.get(i).setDisabilityResponse("blind");
+		}
+		return appParts;
+	}
+
+	private List<ApplicationParticipation> setAppPartIndiginous(List<ApplicationParticipation> appParts) {
+		Collections.shuffle(appParts);
+
+		int i = 0;
+		for (; i < (int) (appParts.size() * 0.05); i++) {
+			appParts.get(i).setIndIdentityResponse("Métis");
+		}
+		for (; i < (int) (appParts.size() * 0.08); i++) {
+			appParts.get(i).setIndIdentityResponse("Inuit");
+		}
+		for (; i < (int) (appParts.size() * 0.10); i++) {
+			appParts.get(i).setIndIdentityResponse("Mi'kmaq");
+		}
+		for (; i < (int) (appParts.size() * 0.11); i++) {
+			appParts.get(i).setIndIdentityResponse("Iroquois");
+		}
+		for (; i < (int) (appParts.size() * 0.12); i++) {
+			appParts.get(i).setIndIdentityResponse("Haida");
+		}
+		for (; i < (int) (appParts.size() * 0.13); i++) {
+			appParts.get(i).setIndIdentityResponse("Dalelh");
+		}
+
+		return appParts;
+	}
+
+	private List<ApplicationParticipation> setAppPartEthnicity(List<ApplicationParticipation> appParts) {
+		Collections.shuffle(appParts);
+
+		int i = 0;
+		for (; i < (int) (appParts.size() * 0.06); i++) {
+			appParts.get(i).setVisibleMinorityResponse("Latin American");
+		}
+		for (; i < (int) (appParts.size() * 0.12); i++) {
+			appParts.get(i).setVisibleMinorityResponse("Caribbean");
+		}
+		for (; i < (int) (appParts.size() * 0.20); i++) {
+			appParts.get(i).setVisibleMinorityResponse("Middle Eastern");
+		}
+		for (; i < (int) (appParts.size() * 0.24); i++) {
+			appParts.get(i).setVisibleMinorityResponse("Central Asian");
+		}
+		for (; i < (int) (appParts.size() * 0.39); i++) {
+			appParts.get(i).setVisibleMinorityResponse("East Asian");
+		}
+		for (; i < (int) (appParts.size() * 0.46); i++) {
+			appParts.get(i).setVisibleMinorityResponse("South Asian");
+		}
+		for (; i < (int) (appParts.size() * 0.49); i++) {
+			appParts.get(i).setVisibleMinorityResponse("South East Asian");
+		}
+		for (; i < (int) (appParts.size() * 0.50); i++) {
+			appParts.get(i).setVisibleMinorityResponse("West Asian");
+		}
+		for (; i < (int) (appParts.size() * 0.60); i++) {
+			appParts.get(i).setVisibleMinorityResponse("African");
+		}
+
+		return appParts;
+	}
+
+	@Override
+	public void saveAllApplicationParticipations(List<ApplicationParticipation> appParticipations) {
+		appParticipationRepo.saveAll(appParticipations);
 	}
 
 }

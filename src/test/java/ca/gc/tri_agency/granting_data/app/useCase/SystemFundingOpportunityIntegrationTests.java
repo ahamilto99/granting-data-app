@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
+import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.repo.SystemFundingOpportunityRepository;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -89,9 +91,14 @@ public class SystemFundingOpportunityIntegrationTests {
 	}
 
 	@Test
-	@Transactional(readOnly = true)
+	@Transactional
+	@Rollback
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	public void test_confirmUnlinkPageNotAccessibleWhenSfoHasNoLinkedFo_shouldReturn404() throws Exception {
+		SystemFundingOpportunity unlinkedSfo = sfoRepo.findById(2L).get();
+		unlinkedSfo.setLinkedFundingOpportunity(null);
+		sfoRepo.save(unlinkedSfo);
+		
 		assertNull(sfoRepo.getOne(2L).getLinkedFundingOpportunity());
 		assertTrue(mvc.perform(MockMvcRequestBuilders.get("/admin/confirmUnlink").param("sfoId", "2"))
 				.andExpect(MockMvcResultMatchers.status().isNotFound()).andReturn().getResponse().getContentAsString()
@@ -99,9 +106,14 @@ public class SystemFundingOpportunityIntegrationTests {
 	}
 
 	@Test
-	@Transactional(readOnly = true)
+	@Transactional
+	@Rollback
 	@WithMockUser(roles = { "MDM ADMIN" })
 	public void test_unlinkFoBtnNotVisibleToAdminWhenSfoHasNoLinkedFo() throws Exception {
+		SystemFundingOpportunity unlinkedSfo = sfoRepo.findById(2L).get();
+		unlinkedSfo.setLinkedFundingOpportunity(null);
+		sfoRepo.save(unlinkedSfo);
+		
 		assertNull(sfoRepo.getOne(2L).getLinkedFundingOpportunity());
 		assertFalse(mvc.perform(MockMvcRequestBuilders.get("/admin/viewSystemFO").param("id", "2"))
 				.andExpect(MockMvcResultMatchers.status().isOk()).andReturn().getResponse().getContentAsString()

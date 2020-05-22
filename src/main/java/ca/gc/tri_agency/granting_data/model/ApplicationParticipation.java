@@ -1,7 +1,7 @@
 package ca.gc.tri_agency.granting_data.model;
 
 import java.time.Instant;
-import java.util.Objects;
+import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -20,12 +21,14 @@ public class ApplicationParticipation implements LocalizedParametersModel {
 
 	@Id
 	@SequenceGenerator(name = "SEQ_APPLICATION_PARTICIPATION", sequenceName = "SEQ_APPLICATION_PARTICIPATION", initialValue = 1, allocationSize = 1)
-	@GeneratedValue(strategy = GenerationType.IDENTITY, generator = "SEQ_APPLICATION_PARTICIPATION")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_APPLICATION_PARTICIPATION")
 	private Long id;
 
+	@Column(name = "application_identifier")
 	private String applicationIdentifier;
 
-	private String applicationId;
+	@Column(name = "appl_id")
+	private String applId;
 
 	private Long competitionYear;
 
@@ -77,6 +80,74 @@ public class ApplicationParticipation implements LocalizedParametersModel {
 	private String provinceStateCode;
 
 	private String country;
+	
+	private Boolean ediNotApplicable = false;
+	
+	private Boolean dateOfBirthIndicator = false;
+	
+	private LocalDate dateOfBirth;
+	
+	@Column(name = "gender_selection")
+	private String genderSelection;
+	
+	private String indIdentityResponse;
+	
+	private Boolean indIdentityPrefNotTo = false;
+	
+	@Column(name = "ind_identity_selection_1")
+	private Long indIdentitySelection1;
+
+	@Column(name = "ind_identity_selection_2")
+	private Long indIdentitySelection2;
+
+	@Column(name = "ind_identity_selection_3")
+	private Long indIdentitySelection3;
+	
+	private String disabilityResponse;
+	
+	private Boolean visibleMinPrefNotTo = false;
+	
+	@Column(name = "visible_min_selection_1")
+	private Long visibleMinSelection1;
+	
+	@Column(name = "visible_min_selection_2")
+	private Long visibleMinSelection2;
+	
+	@Column(name = "visible_min_selection_3")
+	private Long visibleMinSelection3;
+	
+	@Column(name = "visible_min_selection_4")
+	private Long visibleMinSelection4;
+	
+	@Column(name = "visible_min_selection_5")
+	private Long visibleMinSelection5;
+	
+	@Column(name = "visible_min_selection_6")
+	private Long visibleMinSelection6;
+	
+	@Column(name = "visible_min_selection_7")
+	private Long visibleMinSelection7;
+	
+	@Column(name = "visible_min_selection_8")
+	private Long visibleMinSelection8;
+	
+	@Column(name = "visible_min_selection_9")
+	private Long visibleMinSelection9;
+	
+	@Column(name = "visible_min_selection_10")
+	private Long visibleMinSelection10;
+	
+	@Column(name = "visible_min_selection_11")
+	private Long visibleMinSelection11;
+	
+	private String visibleMinorityResponse;
+	
+	@Size(max = 3)
+	private String createUserId;
+	
+	// TODO: REMOVE AFTER DEMO
+	@NotNull
+	private Boolean isDeadlinePassed = false;
 
 	public Long getId() {
 		return id;
@@ -94,12 +165,12 @@ public class ApplicationParticipation implements LocalizedParametersModel {
 		this.applicationIdentifier = applicationIdentifier;
 	}
 
-	public String getApplicationId() {
-		return applicationId;
+	public String getApplId() {
+		return applId;
 	}
 
-	public void setApplicationId(String applicationId) {
-		this.applicationId = applicationId;
+	public void setApplId(String applId) {
+		this.applId = applId;
 	}
 
 	public Long getCompetitionYear() {
@@ -278,31 +349,204 @@ public class ApplicationParticipation implements LocalizedParametersModel {
 		this.country = country;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!(obj instanceof ApplicationParticipation))
-			return false;
-		ApplicationParticipation other = (ApplicationParticipation) obj;
-		return Objects.equals(applicationId, other.applicationId)
-				&& Objects.equals(applicationIdentifier, other.applicationIdentifier)
-				&& Objects.equals(competitionYear, other.competitionYear) && Objects.equals(country, other.country)
-				&& Objects.equals(createDate, other.createDate) && Objects.equals(familyName, other.familyName)
-				&& Objects.equals(freeformAddress1, other.freeformAddress1)
-				&& Objects.equals(freeformAddress2, other.freeformAddress2)
-				&& Objects.equals(freeformAddress3, other.freeformAddress3)
-				&& Objects.equals(freeformAddress4, other.freeformAddress4)
-				&& Objects.equals(givenName, other.givenName) && Objects.equals(municipality, other.municipality)
-				&& Objects.equals(organizationNameEn, other.organizationNameEn)
-				&& Objects.equals(organizationId, other.organizationId)
-				&& Objects.equals(organizationNameFr, other.organizationNameFr)
-				&& Objects.equals(personIdentifier, other.personIdentifier)
-				&& Objects.equals(postalZipCode, other.postalZipCode) && Objects.equals(programEn, other.programEn)
-				&& Objects.equals(programFr, other.programFr) && Objects.equals(programId, other.programId)
-				&& Objects.equals(provinceStateCode, other.provinceStateCode)
-				&& Objects.equals(roleCode, other.roleCode) && Objects.equals(roleEn, other.roleEn)
-				&& Objects.equals(roleFr, other.roleFr);
+	public Boolean getEdiNotApplicable() {
+		return ediNotApplicable;
+	}
+
+	public void setEdiNotApplicable(Boolean ediNotApplicable) {
+		this.ediNotApplicable = ediNotApplicable;
+	}
+
+	public Boolean getDateOfBirthIndicator() {
+		return dateOfBirthIndicator;
+	}
+
+	public void setDateOfBirthIndicator(Boolean dateOfBirthIndicator) {
+		this.dateOfBirthIndicator = dateOfBirthIndicator;
+	}
+
+	public LocalDate getDateOfBirth() {
+		return dateOfBirth;
+	}
+
+	public void setDateOfBirth(LocalDate dateOfBirth) {
+		this.dateOfBirth = dateOfBirth;
+	}
+
+	public String getGenderSelection() {
+		return genderSelection;
+	}
+
+	public void setGenderSelection(String genderSelection) {
+		this.genderSelection = genderSelection;
+	}
+
+	public String getIndIdentityResponse() {
+		return indIdentityResponse;
+	}
+
+	public void setIndIdentityResponse(String indIdentityResponse) {
+		this.indIdentityResponse = indIdentityResponse;
+	}
+
+	public Boolean getIndIdentityPrefNotTo() {
+		return indIdentityPrefNotTo;
+	}
+
+	public void setIndIdentityPrefNotTo(Boolean indIdentityPrefNotTo) {
+		this.indIdentityPrefNotTo = indIdentityPrefNotTo;
+	}
+
+	public Long getIndIdentitySelection1() {
+		return indIdentitySelection1;
+	}
+
+	public void setIndIdentitySelection1(Long indIdentitySelection1) {
+		this.indIdentitySelection1 = indIdentitySelection1;
+	}
+
+	public Long getIndIdentitySelection2() {
+		return indIdentitySelection2;
+	}
+
+	public void setIndIdentitySelection2(Long indIdentitySelection2) {
+		this.indIdentitySelection2 = indIdentitySelection2;
+	}
+
+	public Long getIndIdentitySelection3() {
+		return indIdentitySelection3;
+	}
+
+	public void setIndIdentitySelection3(Long indIdentitySelection3) {
+		this.indIdentitySelection3 = indIdentitySelection3;
+	}
+
+	public String getDisabilityResponse() {
+		return disabilityResponse;
+	}
+
+	public void setDisabilityResponse(String disabilityResponse) {
+		this.disabilityResponse = disabilityResponse;
+	}
+
+	public Boolean getVisibleMinPrefNotTo() {
+		return visibleMinPrefNotTo;
+	}
+
+	public void setVisibleMinPrefNotTo(Boolean visibleMinPrefNotTo) {
+		this.visibleMinPrefNotTo = visibleMinPrefNotTo;
+	}
+
+	public Long getVisibleMinSelection1() {
+		return visibleMinSelection1;
+	}
+
+	public void setVisibleMinSelection1(Long visibleMinSelection1) {
+		this.visibleMinSelection1 = visibleMinSelection1;
+	}
+
+	public Long getVisibleMinSelection2() {
+		return visibleMinSelection2;
+	}
+
+	public void setVisibleMinSelection2(Long visibleMinSelection2) {
+		this.visibleMinSelection2 = visibleMinSelection2;
+	}
+
+	public Long getVisibleMinSelection3() {
+		return visibleMinSelection3;
+	}
+
+	public void setVisibleMinSelection3(Long visibleMinSelection3) {
+		this.visibleMinSelection3 = visibleMinSelection3;
+	}
+
+	public Long getVisibleMinSelection4() {
+		return visibleMinSelection4;
+	}
+
+	public void setVisibleMinSelection4(Long visibleMinSelection4) {
+		this.visibleMinSelection4 = visibleMinSelection4;
+	}
+
+	public Long getVisibleMinSelection5() {
+		return visibleMinSelection5;
+	}
+
+	public void setVisibleMinSelection5(Long visibleMinSelection5) {
+		this.visibleMinSelection5 = visibleMinSelection5;
+	}
+
+	public Long getVisibleMinSelection6() {
+		return visibleMinSelection6;
+	}
+
+	public void setVisibleMinSelection6(Long visibleMinSelection6) {
+		this.visibleMinSelection6 = visibleMinSelection6;
+	}
+
+	public Long getVisibleMinSelection7() {
+		return visibleMinSelection7;
+	}
+
+	public void setVisibleMinSelection7(Long visibleMinSelection7) {
+		this.visibleMinSelection7 = visibleMinSelection7;
+	}
+
+	public Long getVisibleMinSelection8() {
+		return visibleMinSelection8;
+	}
+
+	public void setVisibleMinSelection8(Long visibleMinSelection8) {
+		this.visibleMinSelection8 = visibleMinSelection8;
+	}
+
+	public Long getVisibleMinSelection9() {
+		return visibleMinSelection9;
+	}
+
+	public void setVisibleMinSelection9(Long visibleMinSelection9) {
+		this.visibleMinSelection9 = visibleMinSelection9;
+	}
+
+	public Long getVisibleMinSelection10() {
+		return visibleMinSelection10;
+	}
+
+	public void setVisibleMinSelection10(Long visibleMinSelection10) {
+		this.visibleMinSelection10 = visibleMinSelection10;
+	}
+
+	public Long getVisibleMinSelection11() {
+		return visibleMinSelection11;
+	}
+
+	public void setVisibleMinSelection11(Long visibleMinSelection11) {
+		this.visibleMinSelection11 = visibleMinSelection11;
+	}
+
+	public String getVisibleMinorityResponse() {
+		return visibleMinorityResponse;
+	}
+
+	public void setVisibleMinorityResponse(String visibleMinorityResponse) {
+		this.visibleMinorityResponse = visibleMinorityResponse;
+	}
+
+	public String getCreateUserId() {
+		return createUserId;
+	}
+
+	public void setCreateUserId(String createUserId) {
+		this.createUserId = createUserId;
+	}
+
+	public Boolean getIsDeadlinePassed() {
+		return isDeadlinePassed;
+	}
+
+	public void setIsDeadlinePassed(Boolean isDeadlinePassed) {
+		this.isDeadlinePassed = isDeadlinePassed;
 	}
 
 }
