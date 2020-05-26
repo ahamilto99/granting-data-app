@@ -9,6 +9,11 @@ public class CalendarGrid {
 	final int COLS = 7;
 	final int ROWS = 6;
 	private YearMonth month;
+	
+	// This is used in /browse/viewCalendar.html in order to ensure that a FundingOpportunity 
+	// is not duplicated. E.g. without this, if a FundingOpportunity's startDate was on the
+	// 30th of the queried month, then it would be appear twice since the grid contains 35 cells
+	public long currentMonth = -1;
 
 	public CalendarGrid(long plusMinusMonth) {
 		LocalDate startDate;
@@ -44,10 +49,7 @@ public class CalendarGrid {
 				}
 				dataGrid[row][col] = newCell;
 			}
-
 		}
-		this.month = month;
-
 	}
 
 	public CalendarCell[][] getDataGrid() {

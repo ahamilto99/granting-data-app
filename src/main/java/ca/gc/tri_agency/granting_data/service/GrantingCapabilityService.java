@@ -18,6 +18,4 @@ public interface GrantingCapabilityService {
 	
 	List<GrantingCapability> findGrantingCapabilitiesByGrantingStageNameEn(String nameEn);
 	
-	long grantingCapabilityCount();
-	
 }

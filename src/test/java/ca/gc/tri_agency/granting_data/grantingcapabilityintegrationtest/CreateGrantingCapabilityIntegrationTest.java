@@ -21,15 +21,19 @@ import org.springframework.web.context.WebApplicationContext;
 
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
 import ca.gc.tri_agency.granting_data.model.GrantingCapability;
+import ca.gc.tri_agency.granting_data.repo.GrantingCapabilityRepository;
 import ca.gc.tri_agency.granting_data.service.GrantingCapabilityService;
 
 @SpringBootTest(classes = GrantingDataApp.class)
 @RunWith(SpringRunner.class)
-@ActiveProfiles("local")
+@ActiveProfiles("test")
 public class CreateGrantingCapabilityIntegrationTest {
 
 	@Autowired
 	private GrantingCapabilityService gcService;
+	
+	@Autowired
+	private GrantingCapabilityRepository gcRepo;
 
 	@Autowired
 	private WebApplicationContext ctx;
@@ -76,7 +80,7 @@ public class CreateGrantingCapabilityIntegrationTest {
 	@WithMockUser(username = "admin", roles = "MDM ADMIN")
 	@Test
 	public void test_adminCanCreateGC_shouldSucceedWith302() throws Exception {
-		long initGCCount = gcService.grantingCapabilityCount();
+		long initGCCount = gcRepo.count();
 
 		String description = RandomStringUtils.randomAlphabetic(50);
 		String url = RandomStringUtils.randomAlphabetic(25);
@@ -91,7 +95,7 @@ public class CreateGrantingCapabilityIntegrationTest {
 		mvc.perform(MockMvcRequestBuilders.get("/browse/viewFo").param("id", "1"))
 				.andExpect(MockMvcResultMatchers.flash().attributeCount(0));
 
-		long newGCCount = gcService.grantingCapabilityCount();
+		long newGCCount = gcRepo.count();
 		assertEquals(initGCCount + 1, newGCCount);
 
 		GrantingCapability newGc = gcService.findAllGrantingCapabilities().get((int) newGCCount - 1);
@@ -102,14 +106,14 @@ public class CreateGrantingCapabilityIntegrationTest {
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotCreateGC_shouldReturn403() throws Exception {
-		long initGCCount = gcService.grantingCapabilityCount();
+		long initGCCount = gcRepo.count();
 
 		mvc.perform(MockMvcRequestBuilders.post("/manage/addGrantingCapabilities").param("foId", "1")
 				.param("description", "test").param("url", "www.test.com").param("fundingOpportunity", "1")
 				.param("grantingStage", "1").param("grantinSystem", "1"))
 				.andExpect(MockMvcResultMatchers.status().isForbidden());
 
-		assertEquals(initGCCount, gcService.grantingCapabilityCount());
+		assertEquals(initGCCount, gcRepo.count());
 	}
 
 }

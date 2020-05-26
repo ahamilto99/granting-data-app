@@ -18,7 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -31,31 +31,34 @@ import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
 import ca.gc.tri_agency.granting_data.model.GrantingSystem;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.file.FundingCycleDatasetRow;
-import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.repo.SystemFundingCycleRepository;
-import ca.gc.tri_agency.granting_data.repo.SystemFundingOpportunityRepository;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @SpringBootTest(classes = GrantingDataApp.class)
 @ActiveProfiles("test")
 public class AdminServiceIntegrationTest {
 
 	@Autowired
-	AdminService adminService;
+	private AdminService adminService;
+	
 	@Autowired
-	SystemFundingCycleRepository sfcRepo;
+	private GrantingSystemService gsSystem;
+	
 	@Autowired
-	SystemFundingOpportunityRepository sfoRepo;
+	private SystemFundingCycleService sfcService;
+
 	@Autowired
-	GrantingSystemService gsSystem;
+	private SystemFundingCycleRepository sfcRepo;
+	
 	@Autowired
-	FundingOpportunityRepository foRepo;
+	private SystemFundingOpportunityService sfoService;
+	
 	@Autowired
 	private WebApplicationContext context;
 
 	private MockMvc mvc;
 
-	static String testFoName = "TESTFO";
+	private static String testFoName = "TESTFO";
 
 	private static final String TEST_FILE = "NAMIS-TestFile.xlsx";
 
@@ -103,8 +106,8 @@ public class AdminServiceIntegrationTest {
 
 		// List<GrantingSystem> gsList = gsRepo.findAll();
 		newSfo.setGrantingSystem(gsSystem.findGrantingSystemByAcronym("NAMIS"));
-		newSfo = sfoRepo.save(newSfo);
-		List<SystemFundingOpportunity> sfoMatchingNames = sfoRepo.findByNameEn(sfoName + " EN");
+		newSfo = sfoService.saveSystemFundingOpportunity(newSfo);
+		List<SystemFundingOpportunity> sfoMatchingNames = sfoService.findSystemFundingOpportunitiesByNameEn(sfoName + " EN");
 		assertTrue("i think the process and test requires unique SFO names", sfoMatchingNames.size() == 1);
 
 		int origCountOfSFCsLinkedToSFO = sfcRepo.findBySystemFundingOpportunityId(newSfo.getId()).size();
@@ -116,7 +119,7 @@ public class AdminServiceIntegrationTest {
 
 		int newCountOfSFCsLinkedToSFO = sfcRepo.findBySystemFundingOpportunityId(newSfo.getId()).size();
 
-		assertTrue("new count of SFCs linked ot SFO shoudl now be 1", newCountOfSFCsLinkedToSFO == 1);
+		assertTrue("new count of SFCs linked to SFO should now be 1", newCountOfSFCsLinkedToSFO == 1);
 	}
 
 	@Test
@@ -149,12 +152,13 @@ public class AdminServiceIntegrationTest {
 
 	}
 
+	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_generateActionableFoCycleIds_actionDueToNewSfc() {
 		// register FO
 		GrantingSystem gs = gsSystem.findAllGrantingSystems().get(0);
 		FundingCycleDatasetRow testRow = createFcDatasetRow(testFoName + "2", "2019");
-		adminService.registerSystemFundingOpportunity(testRow, gs);
+		sfoService.registerSystemFundingOpportunity(testRow, gs);
 
 		// test
 		List<FundingCycleDatasetRow> analyzeRows = new ArrayList<FundingCycleDatasetRow>();
@@ -164,12 +168,13 @@ public class AdminServiceIntegrationTest {
 
 	}
 
+	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_generateActionableFoCycleIds_noActionCauseSfcAndSfoExists() {
 		GrantingSystem gs = gsSystem.findAllGrantingSystems().get(0);
 		FundingCycleDatasetRow testRow = createFcDatasetRow(testFoName + "3", "2019");
-		SystemFundingOpportunity sfo = adminService.registerSystemFundingOpportunity(testRow, gs);
-		adminService.registerSystemFundingCycle(testRow, sfo);
+		SystemFundingOpportunity sfo = sfoService.registerSystemFundingOpportunity(testRow, gs);
+		sfcService.registerSystemFundingCycle(testRow, sfo);
 
 		List<FundingCycleDatasetRow> analyzeRows = new ArrayList<FundingCycleDatasetRow>();
 		analyzeRows.add(createFcDatasetRow(testFoName + "3", "2019"));

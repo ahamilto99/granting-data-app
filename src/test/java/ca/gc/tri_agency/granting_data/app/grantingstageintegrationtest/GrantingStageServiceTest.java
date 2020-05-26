@@ -16,7 +16,7 @@ import ca.gc.tri_agency.granting_data.service.GrantingStageService;
 
 @SpringBootTest(classes = GrantingDataApp.class)
 @RunWith(SpringRunner.class)
-@ActiveProfiles("local")
+@ActiveProfiles("test")
 public class GrantingStageServiceTest {
 	
 	@Autowired

@@ -8,7 +8,6 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,20 +29,20 @@ public class GrantingCapabilityController {
 	
 	private GrantingSystemService gSystemService;
 
-	@Autowired
 	private MessageSource msgSource;
 
 	@Autowired
 	public GrantingCapabilityController(GrantingCapabilityService gcService, GrantingStageService gStageService,
-			GrantingSystemService gSystemService) {
+			GrantingSystemService gSystemService, MessageSource msgSource) {
 		this.gcService = gcService;
 		this.gStageService = gStageService;
 		this.gSystemService = gSystemService;
+		this.msgSource = msgSource;
 	}
 
 	@AdminOnly
 	@GetMapping("/manage/editGC")
-	public String accessEditGC(@RequestParam("id") Long id, Model model) {
+	public String editGrantingCapabilityGet(@RequestParam("id") Long id, Model model) {
 		model.addAttribute("gc", gcService.findGrantingCapabilityById(id));
 		model.addAttribute("grantingStages", gStageService.findAllGrantingStages());
 		model.addAttribute("grantingSystems", gSystemService.findAllGrantingSystems());
@@ -52,7 +51,7 @@ public class GrantingCapabilityController {
 
 	@AdminOnly
 	@PostMapping("/manage/editGC")
-	public String processEditGC(@Valid @ModelAttribute("gc") GrantingCapability gc, BindingResult bindingResult,
+	public String editGrantingCapabilityPost(@Valid @ModelAttribute("gc") GrantingCapability gc, BindingResult bindingResult,
 			RedirectAttributes redirectAttributes, Model model) {
 		if (bindingResult.hasErrors()) {
 			model.addAttribute("grantingStages", gStageService.findAllGrantingStages());
@@ -67,14 +66,14 @@ public class GrantingCapabilityController {
 
 	@AdminOnly
 	@GetMapping("/manage/deleteGC")
-	public String accessDeleteGC(@RequestParam("id") Long id, Model model) {
+	public String deleteGrantingCapabilityGet(@RequestParam("id") Long id, Model model) {
 		model.addAttribute("gc", gcService.findGrantingCapabilityById(id));
 		return "manage/deleteGrantingCapability";
 	}
 
 	@AdminOnly
 	@PostMapping("/manage/deleteGC")
-	public String processDeleteGC(@RequestParam("id") Long id, RedirectAttributes redirectAttributes) {
+	public String deleteGrantingCapabilityPost(@RequestParam("id") Long id, RedirectAttributes redirectAttributes) {
 		String foId = gcService.findGrantingCapabilityById(id).getFundingOpportunity().getId().toString();
 		gcService.deleteGrantingCapabilityById(id);
 		String actionMsg = msgSource.getMessage("h.deletedGC", null, LocaleContextHolder.getLocale());
@@ -84,7 +83,7 @@ public class GrantingCapabilityController {
 
 	@AdminOnly
 	@GetMapping("/manage/addGrantingCapabilities")
-	public String accessCreateGC(@RequestParam("foId") long foId, Model model) {
+	public String createGrantingCapabilityGet(@RequestParam("foId") long foId, Model model) {
 		model.addAttribute("foId", foId);
 		model.addAttribute("gc", new GrantingCapability());
 		model.addAttribute("grantingSystems", gSystemService.findAllGrantingSystems());
@@ -94,12 +93,9 @@ public class GrantingCapabilityController {
 
 	@AdminOnly
 	@PostMapping("/manage/addGrantingCapabilities")
-	public String processCreateGC(@Valid @ModelAttribute("gc") GrantingCapability command, BindingResult bindingResult,
+	public String createGrantingCapabilityPost(@Valid @ModelAttribute("gc") GrantingCapability command, BindingResult bindingResult,
 			RedirectAttributes redirectAttributes) {
 		if (bindingResult.hasErrors()) {
-			for (ObjectError br : bindingResult.getAllErrors()) {
-				System.out.println(br.toString());
-			}
 			return "manage/addGrantingCapabilities";
 		}
 		gcService.saveGrantingCapability(command);

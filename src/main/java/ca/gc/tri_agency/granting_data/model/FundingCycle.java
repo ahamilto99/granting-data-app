@@ -1,6 +1,6 @@
 package ca.gc.tri_agency.granting_data.model;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,8 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
@@ -20,6 +18,7 @@ import ca.gc.tri_agency.granting_data.model.util.LocalizedParametersModel;
 
 @Entity
 public class FundingCycle implements LocalizedParametersModel {
+	
 	@Id
 	@SequenceGenerator(name = "SEQ_FUNDING_CYCLE", sequenceName = "SEQ_FUNDING_CYCLE", initialValue = 1, allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_FUNDING_CYCLE")
@@ -39,29 +38,23 @@ public class FundingCycle implements LocalizedParametersModel {
 
 	private boolean isOpen;
 
-	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	private Date startDate;
+	private LocalDate startDate;
 
-	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	private Date startDateNOI;
+	private LocalDate startDateNOI;
 
-	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	private Date startDateLOI;
+	private LocalDate startDateLOI;
 
-	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	private Date endDateNOI;
+	private LocalDate endDateNOI;
 
-	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	private Date endDateLOI;
+	private LocalDate endDateLOI;
 
-	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	private Date endDate;
+	private LocalDate endDate;
 
 	@Min(1)
 	@NotNull
@@ -87,19 +80,19 @@ public class FundingCycle implements LocalizedParametersModel {
 		this.fundingOpportunity = program;
 	}
 
-	public Date getStartDate() {
+	public LocalDate getStartDate() {
 		return startDate;
 	}
 
-	public void setStartDate(Date startDate) {
+	public void setStartDate(LocalDate startDate) {
 		this.startDate = startDate;
 	}
 
-	public Date getEndDate() {
+	public LocalDate getEndDate() {
 		return endDate;
 	}
 
-	public void setEndDate(Date endDate) {
+	public void setEndDate(LocalDate endDate) {
 		this.endDate = endDate;
 	}
 
@@ -119,10 +112,6 @@ public class FundingCycle implements LocalizedParametersModel {
 		return isOpen;
 	}
 
-	public void setOpen(boolean isOpen) {
-		this.isOpen = isOpen;
-	}
-
 	public void setIsOpen(boolean isOpen) {
 		this.isOpen = isOpen;
 	}
@@ -131,36 +120,66 @@ public class FundingCycle implements LocalizedParametersModel {
 		this.id = id;
 	}
 
-	public Date getStartDateNOI() {
+	public LocalDate getStartDateNOI() {
 		return startDateNOI;
 	}
 
-	public void setStartDateNOI(Date startDateNOI) {
+	public void setStartDateNOI(LocalDate startDateNOI) {
 		this.startDateNOI = startDateNOI;
 	}
 
-	public Date getStartDateLOI() {
+	public LocalDate getStartDateLOI() {
 		return startDateLOI;
 	}
 
-	public void setStartDateLOI(Date startDateLOI) {
+	public void setStartDateLOI(LocalDate startDateLOI) {
 		this.startDateLOI = startDateLOI;
 	}
 
-	public Date getEndDateNOI() {
+	public LocalDate getEndDateNOI() {
 		return endDateNOI;
 	}
 
-	public void setEndDateNOI(Date endDateNOI) {
+	public void setEndDateNOI(LocalDate endDateNOI) {
 		this.endDateNOI = endDateNOI;
 	}
 
-	public Date getEndDateLOI() {
+	public LocalDate getEndDateLOI() {
 		return endDateLOI;
 	}
 
-	public void setEndDateLOI(Date endDateLOI) {
+	public void setEndDateLOI(LocalDate endDateLOI) {
 		this.endDateLOI = endDateLOI;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("FundingCycle [id=");
+		builder.append(id);
+		builder.append(", fiscalYear=");
+		builder.append(fiscalYear.getYear());
+		builder.append(", isOpen=");
+		builder.append(isOpen);
+		builder.append(", startDate=");
+		builder.append(startDate);
+		builder.append(", startDateNOI=");
+		builder.append(startDateNOI);
+		builder.append(", startDateLOI=");
+		builder.append(startDateLOI);
+		builder.append(", endDateNOI=");
+		builder.append(endDateNOI);
+		builder.append(", endDateLOI=");
+		builder.append(endDateLOI);
+		builder.append(", endDate=");
+		builder.append(endDate);
+		builder.append(", expectedApplications=");
+		builder.append(expectedApplications);
+		builder.append(", fundingOpportunity=");
+		builder.append(fundingOpportunity.getLocalizedAttribute("name"));
+		builder.append("]");
+		return builder.toString();
+	}
+
+	
 }

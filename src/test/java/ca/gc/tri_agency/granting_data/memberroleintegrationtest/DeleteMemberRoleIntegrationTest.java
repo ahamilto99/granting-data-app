@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -23,7 +24,7 @@ import ca.gc.tri_agency.granting_data.repo.MemberRoleRepository;
 
 @SpringBootTest(classes = GrantingDataApp.class)
 @RunWith(SpringRunner.class)
-@ActiveProfiles("local")
+@ActiveProfiles("test")
 public class DeleteMemberRoleIntegrationTest {
 
 	@Autowired
@@ -56,6 +57,7 @@ public class DeleteMemberRoleIntegrationTest {
 	}
 
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@Rollback
 	@Test
 	public void testController_adminCanDeleteMR_shouldSucceedWith302() throws Exception {
 		long initMRCount = mrRepo.count();

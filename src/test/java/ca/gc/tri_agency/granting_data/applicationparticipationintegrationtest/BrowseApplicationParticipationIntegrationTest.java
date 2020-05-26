@@ -18,7 +18,7 @@ import ca.gc.tri_agency.granting_data.repo.ApplicationParticipationRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = GrantingDataApp.class)
-@ActiveProfiles("local")
+@ActiveProfiles("test")
 public class BrowseApplicationParticipationIntegrationTest {
 
     @Autowired
@@ -59,6 +59,7 @@ public class BrowseApplicationParticipationIntegrationTest {
         ap.setRoleFr(RandomStringUtils.randomAlphabetic(10));
 
         apRepo.save(ap);
+        
         assertEquals(initApRepoCount + 1, apRepo.count());
         assertEquals(appIdentifier, apRepo.findById((long) apRepo.count()).get().getApplicationIdentifier());
         assertEquals(currentTimestamp, apRepo.findById((long) apRepo.count()).get().getCreateDate());

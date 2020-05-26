@@ -22,7 +22,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +31,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
-import ca.gc.tri_agency.granting_data.controller.AdminController;
+import ca.gc.tri_agency.granting_data.controller.FundingOpportunityController;
 import ca.gc.tri_agency.granting_data.model.Agency;
 import ca.gc.tri_agency.granting_data.model.BusinessUnit;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
@@ -41,25 +40,30 @@ import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.repo.SystemFundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.service.AgencyService;
 import ca.gc.tri_agency.granting_data.service.BusinessUnitService;
-import ca.gc.tri_agency.granting_data.service.DataAccessService;
+import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = GrantingDataApp.class)
-@ActiveProfiles("local")
+@ActiveProfiles("test")
 public class GoldenFundingOpportunityIntegrationTest {
 
 	@Autowired
-	private AdminController adminController;
+	private FundingOpportunityController foController;
+
 	@Autowired
 	private AgencyService agencyService;
+
 	@Autowired
 	private FundingOpportunityRepository foRepo;
+
 	@Autowired
 	SystemFundingOpportunityRepository sfoRepo;
+
 	@Autowired
 	private BusinessUnitService businessUnitService;
 	@Autowired
-	private DataAccessService dataAccessService;
+	private FundingOpportunityService foService;
+
 	@Autowired
 	private WebApplicationContext ctx;
 
@@ -95,7 +99,7 @@ public class GoldenFundingOpportunityIntegrationTest {
 	public void testNameFieldsAutoFilledOnAddFoPageWhenLinkingNewFoWithSfo() throws Exception {
 		SystemFundingOpportunity sfo = sfoRepo.findById(4L).get();
 
-		MvcResult result = mvc.perform(MockMvcRequestBuilders.get("/admin/createFo").param("sfoId", sfo.getId().toString()))
+		MvcResult result = mvc.perform(MockMvcRequestBuilders.get("/admin/createFo").param("sfoId", "4"))
 				.andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
 
 		assertTrue(result.getResponse().getContentAsString()
@@ -201,14 +205,14 @@ public class GoldenFundingOpportunityIntegrationTest {
 	@Test(expected = AccessDeniedException.class)
 	@Transactional
 	public void test_NonAdminCannotCreateGoldenFo_shouldThrowDataAccessException() throws Exception {
-		adminController.addFoPost(new FundingOpportunity(), bindingResult, model, redirectAttributes);
+		foController.createFundingOpportunityPost(new FundingOpportunity(), bindingResult, model, redirectAttributes);
 	}
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test(expected = AccessDeniedException.class)
 	@Transactional
 	public void test_NonAdminCannotCreateGoldenFo_shouldThrowAccessDeniedException() {
-		dataAccessService.createFo(new FundingOpportunity());
+		foService.saveFundingOpportunity(new FundingOpportunity());
 	}
 
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
@@ -233,10 +237,8 @@ public class GoldenFundingOpportunityIntegrationTest {
 		List<Agency> agencyList = agencyService.findAllAgencies();
 		gfo.setLeadAgency(agencyList.size() > 0 ? agencyList.remove(0) : null);
 		gfo.setParticipatingAgencies(agencyList.size() > 0 ? new HashSet<Agency>(agencyList) : null);
-		List<BusinessUnit> businessUnitList = businessUnitService.findAllBusinessUnits();
-		BusinessUnit leadBu = businessUnitList.size() > 0 ? businessUnitList.remove(0) : null;
 
-		String successUrl = adminController.addFoPost(gfo, bindingResult, model, redirectAttributes);
+		String successUrl = foController.createFundingOpportunityPost(gfo, bindingResult, model, redirectAttributes);
 
 		assertEquals("redirect:/admin/home", successUrl);
 		assertEquals(initFoRepoSize + 1, foRepo.count());

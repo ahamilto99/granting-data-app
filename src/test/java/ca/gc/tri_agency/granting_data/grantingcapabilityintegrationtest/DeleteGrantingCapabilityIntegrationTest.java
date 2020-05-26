@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -23,15 +24,19 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
+import ca.gc.tri_agency.granting_data.repo.GrantingCapabilityRepository;
 import ca.gc.tri_agency.granting_data.service.GrantingCapabilityService;
 
 @SpringBootTest(classes = GrantingDataApp.class)
 @RunWith(SpringRunner.class)
-@ActiveProfiles("local")
+@ActiveProfiles("test")
 public class DeleteGrantingCapabilityIntegrationTest {
 
 	@Autowired
 	private GrantingCapabilityService gcService;
+	
+	@Autowired
+	private GrantingCapabilityRepository gcRepo;
 
 	@Autowired
 	private WebApplicationContext ctx;
@@ -91,9 +96,10 @@ public class DeleteGrantingCapabilityIntegrationTest {
 	}
 
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@Rollback
 	@Test
 	public void test_adminCanDeleteGC_shouldSucceedWith302() throws Exception {
-		long numGCs = gcService.grantingCapabilityCount();
+		long numGCs = gcRepo.count();
 
 		String foId = String.valueOf(gcService.findGrantingCapabilityById(103L).getFundingOpportunity().getId());
 
@@ -106,19 +112,19 @@ public class DeleteGrantingCapabilityIntegrationTest {
 		mvc.perform(MockMvcRequestBuilders.get("manage/manageFo").param("id", foId))
 				.andExpect(MockMvcResultMatchers.flash().attributeCount(0));
 
-		assertEquals(numGCs - 1, gcService.grantingCapabilityCount());
+		assertEquals(numGCs - 1, gcRepo.count());
 	}
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotDeleteGC_shouldReturn403() throws Exception {
-		long numGCs = gcService.grantingCapabilityCount();
+		long numGCs = gcRepo.count();
 
 		mvc.perform(MockMvcRequestBuilders.post("/manage/deleteGC").param("id", "104"))
 				.andExpect(MockMvcResultMatchers.status().isForbidden()).andExpect(MockMvcResultMatchers.content()
 						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
 
-		assertEquals(numGCs, gcService.grantingCapabilityCount());
+		assertEquals(numGCs, gcRepo.count());
 	}
 
 }

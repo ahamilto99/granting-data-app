@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -24,7 +25,7 @@ import ca.gc.tri_agency.granting_data.service.RoleService;
 
 @SpringBootTest(classes = GrantingDataApp.class)
 @RunWith(SpringRunner.class)
-@ActiveProfiles("local")
+@ActiveProfiles("test")
 public class MemberRoleServiceTest {
 
 	@Autowired
@@ -71,6 +72,7 @@ public class MemberRoleServiceTest {
 	}
 
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@Rollback
 	@Test
 	public void test_adminCanDeleteMR() {
 		long initMRCount = mrRepo.count();

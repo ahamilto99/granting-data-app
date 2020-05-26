@@ -82,21 +82,21 @@ author="dev_dyd">
 			<column name="acronym_en" value="SSHRC" />
 			<column name="acronym_fr" value="CRSN" />
 			<column name="name_en" value="Social Sciences and Humanities Research Council" />
-			<column name="name_fr" value="Conseil de recherches en sciences humaines" />
+			<column name="name_fr" value="Conseil de Recherches en Sciences Humaines" />
 		</insert>
 		<insert tableName="agency">
 			<column name="id" valueSequenceNext="seq_agency" />
 			<column name="acronym_en" value="NSERC" />
 			<column name="acronym_fr" value="CRSNG" />
 			<column name="name_en" value="Natural Sciences and Engineering Research Council" />
-			<column name="name_fr" value="Conseil de recherches en sciences naturelles et en génie" />
+			<column name="name_fr" value="Conseil de Recherches en Sciences Naturelles et en Génie" />
 		</insert>
 		<insert tableName="agency">
 			<column name="id" valueSequenceNext="seq_agency" />
 			<column name="acronym_en" value="CIHR" />
 			<column name="acronym_fr" value="IRSC" />
 			<column name="name_en" value="Canadian Institutes of Health Research" />
-			<column name="name_fr" value="Instituts de recherche en santé" />
+			<column name="name_fr" value="Instituts de Recherche en Santé" />
 		</insert>
 		<insert tableName="granting_stage">
 			<column name="id" valueSequenceNext="seq_granting_stage" />

@@ -25,16 +25,20 @@ import org.springframework.web.context.WebApplicationContext;
 
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
 import ca.gc.tri_agency.granting_data.model.GrantingCapability;
+import ca.gc.tri_agency.granting_data.repo.GrantingCapabilityRepository;
 import ca.gc.tri_agency.granting_data.service.GrantingCapabilityService;
 
 @SpringBootTest(classes = GrantingDataApp.class)
 @RunWith(SpringRunner.class)
-@ActiveProfiles("local")
+@ActiveProfiles("test")
 public class EditGrantingCapabilityIntegrationTest {
 
 	@Autowired
 	private WebApplicationContext ctx;
 
+	@Autowired
+	private GrantingCapabilityRepository gcRepo;
+	
 	@Autowired
 	private GrantingCapabilityService gcService;
 
@@ -93,7 +97,7 @@ public class EditGrantingCapabilityIntegrationTest {
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_adminCanEditGC_shouldSucceedWith302() throws Exception {
-		long initGcRepoCount = gcService.grantingCapabilityCount();
+		long initGcRepoCount = gcRepo.count();
 
 		String description = RandomStringUtils.randomAlphabetic(10);
 		String url = "www" + RandomStringUtils.randomAlphabetic(10) + ".ca";
@@ -122,13 +126,13 @@ public class EditGrantingCapabilityIntegrationTest {
 		assertEquals(gStageId, String.valueOf(gcAfterUpdate.getGrantingStage().getId()));
 		assertEquals(gSystemId, String.valueOf(gcAfterUpdate.getGrantingSystem().getId()));
 
-		assertEquals(initGcRepoCount, gcService.grantingCapabilityCount());
+		assertEquals(initGcRepoCount, gcRepo.count());
 	}
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotEditGC_shouldReturn403() throws Exception {
-		long initGcRepoCount = gcService.grantingCapabilityCount();
+		long initGcRepoCount = gcRepo.count();
 
 		String description = RandomStringUtils.randomAlphabetic(10);
 		String url = "www" + RandomStringUtils.randomAlphabetic(10) + ".ca";
@@ -150,7 +154,7 @@ public class EditGrantingCapabilityIntegrationTest {
 		assertNotEquals(gStageId, String.valueOf(gcAfterFailedUpdate.getGrantingStage().getId()));
 		assertNotEquals(gSystemId, String.valueOf(gcAfterFailedUpdate.getGrantingSystem().getId()));
 
-		assertEquals(initGcRepoCount, gcService.grantingCapabilityCount());
+		assertEquals(initGcRepoCount, gcRepo.count());
 	}
 
 }

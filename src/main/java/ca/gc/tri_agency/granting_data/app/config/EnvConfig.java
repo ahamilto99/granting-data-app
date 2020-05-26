@@ -62,7 +62,6 @@ public class EnvConfig {
 			nsercDS.startListening();
 
 		} catch (LDAPException | IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		try {
@@ -77,7 +76,6 @@ public class EnvConfig {
 			sshrcDS.startListening();
 
 		} catch (LDAPException | IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return 1;

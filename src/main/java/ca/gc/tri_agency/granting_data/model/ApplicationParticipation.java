@@ -548,5 +548,26 @@ public class ApplicationParticipation implements LocalizedParametersModel {
 	public void setIsDeadlinePassed(Boolean isDeadlinePassed) {
 		this.isDeadlinePassed = isDeadlinePassed;
 	}
+	
+	@Override
+	public int hashCode() {
+		return 2020;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		
+		if (obj == null || getClass() != obj.getClass()) {
+			return false;
+		}
+		
+		ApplicationParticipation other = (ApplicationParticipation) obj;
+		
+		return id != null && id.equals(other.getId());
+		
+	}
 
 }

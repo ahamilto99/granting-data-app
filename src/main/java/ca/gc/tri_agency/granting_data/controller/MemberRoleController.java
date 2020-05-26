@@ -30,30 +30,30 @@ public class MemberRoleController {
 
 	private ADUserService adUserService;
 
-	@Autowired
 	private MessageSource msgSrc;
 
-
-	public MemberRoleController(MemberRoleService memberRoleService, BusinessUnitService buService, ADUserService adUserService) {
+	@Autowired
+	public MemberRoleController(MemberRoleService memberRoleService, BusinessUnitService buService, ADUserService adUserService, MessageSource msgSrc) {
 		this.memberRoleService = memberRoleService;
 		this.buService = buService;
 		this.adUserService = adUserService;
+		this.msgSrc = msgSrc;
 	}
 
 	@GetMapping("/admin/createMR")
-	public String showCreateMR(@RequestParam("buId") Long buId,
-			@RequestParam(value = "searchStr", required = false) String searchStr, Model model) {
+	public String createMemberRoleGet(@RequestParam("buId") Long buId,
+			@RequestParam(value = "searchStr", defaultValue = "") String searchStr, Model model) {
 		MemberRole memberRole = new MemberRole();
 		memberRole.setBusinessUnit(buService.findBusinessUnitById(buId));
 		model.addAttribute("memberRole", memberRole);
-		if (null != searchStr) {
-			model.addAttribute("adUserList", adUserService.searchADUsers(searchStr));
+		if (!searchStr.trim().isEmpty()) {
+			model.addAttribute("adUserList", adUserService.searchADUsers(searchStr.trim()));
 		}
 		return "admin/createMemberRole";
 	}
 
 	@PostMapping("/admin/createMR")
-	public String processCreateMRUserSearch(@RequestParam("buId") Long buId, @RequestParam(value = "searchStr") String searchStr,
+	public String createMemeberRolePost(@RequestParam("buId") Long buId, @RequestParam("searchStr") String searchStr,
 			@Valid @ModelAttribute("memberRole") MemberRole mr, BindingResult bindingResult, Model model,
 			RedirectAttributes redirectAttributes) {
 		if (bindingResult.hasErrors()) {
@@ -61,13 +61,15 @@ public class MemberRoleController {
 			return "admin/createMemberRole";
 		}
 		mr = memberRoleService.saveMemberRole(mr);
+		
 		String actionMsg = msgSrc.getMessage("h.createdMR", null, LocaleContextHolder.getLocale());
 		redirectAttributes.addFlashAttribute("actionMsg", actionMsg + mr.getUserLogin());
+		
 		return "redirect:/browse/viewBU?id=" + buId;
 	}
 
 	@GetMapping(value = "/browse/viewBU", params = "mrId")
-	public String processDeleteMR(@RequestParam("mrId") Long mrId, RedirectAttributes redirectAttributes) {
+	public String deleteMemberRolePost(@RequestParam("mrId") Long mrId, RedirectAttributes redirectAttributes) {
 		MemberRole mr = memberRoleService.findMemberRoleById(mrId);
 		Long buId = mr.getBusinessUnit().getId();
 		String mrLogin = mr.getUserLogin();

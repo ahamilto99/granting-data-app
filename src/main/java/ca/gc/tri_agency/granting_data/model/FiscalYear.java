@@ -10,21 +10,26 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-import ca.gc.tri_agency.granting_data.model.util.LocalizedParametersModel;
-
 @Entity
-public class FiscalYear implements LocalizedParametersModel {
+public class FiscalYear {
 
 	@Id
 	@SequenceGenerator(name = "SEQ_FISCAL_YEAR", sequenceName = "SEQ_FISCAL_YEAR", initialValue = 1, allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_FISCAL_YEAR")
 	private Long id;
 
-	@NotNull(message = "The year should not be Null")
-	@Min(1999)
-	@Max(2050)
+	@NotNull(message = "{year.NotNull}")
+	@Min(value = 1999, message = "{year.range}")
+	@Max(value = 2050, message = "{year.range}")
 	@Column(name = "year", unique = true)
-	private Long Year;
+	private Long year;
+	
+	public FiscalYear() {
+	}
+
+	public FiscalYear(Long year) {
+		this.year = year;
+	}
 
 	public Long getId() {
 		return id;
@@ -35,11 +40,11 @@ public class FiscalYear implements LocalizedParametersModel {
 	}
 
 	public Long getYear() {
-		return Year;
+		return year;
 	}
 
 	public void setYear(Long year) {
-		Year = year;
+		this.year = year;
 	}
 
 }

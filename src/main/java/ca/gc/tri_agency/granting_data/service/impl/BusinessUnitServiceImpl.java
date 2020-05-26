@@ -8,38 +8,29 @@ import org.springframework.stereotype.Service;
 
 import ca.gc.tri_agency.granting_data.model.Agency;
 import ca.gc.tri_agency.granting_data.model.BusinessUnit;
-import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
 import ca.gc.tri_agency.granting_data.repo.BusinessUnitRepository;
-import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.BusinessUnitService;
 
 @Service
 public class BusinessUnitServiceImpl implements BusinessUnitService {
-
-	private FundingOpportunityRepository foRepo;
-
+	
 	private BusinessUnitRepository buRepo;
-
+	
 	@Autowired
-	public BusinessUnitServiceImpl(BusinessUnitRepository buRepo, FundingOpportunityRepository foRepo) {
+	public BusinessUnitServiceImpl(BusinessUnitRepository buRepo) {
 		this.buRepo = buRepo;
-		this.foRepo = foRepo;
 	}
 
 	@Override
 	public BusinessUnit findBusinessUnitById(Long id) {
-		return buRepo.findById(id).orElseThrow(() -> new DataRetrievalFailureException("That Business Unit does not exist"));
+		return buRepo.findById(id).
+				orElseThrow(() -> new DataRetrievalFailureException("That Business Unit does not exist"));
 	}
-
+	
 	@Override
 	public List<BusinessUnit> findAllBusinessUnits() {
 		return buRepo.findAll();
-	}
-
-	@Override
-	public List<FundingOpportunity> findAllFundingOpportunitiesByBusinessUnit(BusinessUnit bu) {
-		return foRepo.findAllByBusinessUnit(bu);
 	}
 
 	@Override

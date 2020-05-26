@@ -67,7 +67,7 @@ public class AdminUseCasesTest {
 		mvc.perform(get("/admin/selectFileForComparison").contentType(MediaType.APPLICATION_XHTML_XML))
 				.andExpect(status().isOk());
 	}
-
+	
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void testSelectFileForCopmarisonFilePageLinkRequests() throws Exception {

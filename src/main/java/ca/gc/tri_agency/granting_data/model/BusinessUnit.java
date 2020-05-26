@@ -21,7 +21,7 @@ public class BusinessUnit implements LocalizedParametersModel {
 	@SequenceGenerator(name = "SEQ_BUSINESS_UNIT", sequenceName = "SEQ_BUSINESS_UNIT", initialValue = 1, allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_BUSINESS_UNIT")
 	private Long id;
-	
+
 	@NotBlank
 	private String nameEn;
 
@@ -41,9 +41,8 @@ public class BusinessUnit implements LocalizedParametersModel {
 
 	public BusinessUnit() {
 	}
-	
-	public BusinessUnit(@NotBlank String nameEn, @NotBlank String nameFr,
-			@NotBlank String acronymEn, @NotBlank String acronymFr, @NotNull Agency agency) {
+
+	public BusinessUnit(String nameEn, String nameFr, String acronymEn, String acronymFr, Agency agency) {
 		this.nameEn = nameEn;
 		this.nameFr = nameFr;
 		this.acronymEn = acronymEn;
@@ -90,7 +89,7 @@ public class BusinessUnit implements LocalizedParametersModel {
 	public void setAgency(Agency agency) {
 		this.agency = agency;
 	}
-	
+
 	public void setId(Long id) {
 		this.id = id;
 	}

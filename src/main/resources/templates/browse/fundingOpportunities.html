@@ -30,7 +30,6 @@
 			<div class="form-group row">
 				<div class="col-sm-2 col-form-label" th:text="#{form.leadAgency}"></div>
 					<div><select class="col-sm-2" th:field="*{leadAgency}">
-						<option value=""/>
 						<option th:each="agency : ${allAgencies}"
 							th:value="${agency.id}"
 							th:text="${agency.getLocalizedAttribute('acronym')}">

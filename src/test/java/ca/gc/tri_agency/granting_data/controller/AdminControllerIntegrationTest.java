@@ -20,25 +20,23 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
-import ca.gc.tri_agency.granting_data.repo.FiscalYearRepository;
 import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = GrantingDataApp.class)
-@ActiveProfiles("local")
+@ActiveProfiles("test")
 public class AdminControllerIntegrationTest {
 
 	@Autowired
 	private WebApplicationContext context;
 	@Autowired
 	private FundingOpportunityRepository foRepo;
-	@Autowired
-	private FiscalYearRepository fyRepo;
 
 	private MockMvc mvc;
 
@@ -47,28 +45,12 @@ public class AdminControllerIntegrationTest {
 		mvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
 	}
 
-	@WithMockUser(roles = { "MDM ADMIN" })
-	@Test
-	/*
-	 * Test passes however no error message is displayed when a user tries to add an
-	 * invalid fiscal year.
-	 */
-	public void test_onlyAdminCanAddFiscalYears_shouldSucceedWith200() throws Exception {
-		long numFys = fyRepo.count();
-
-		mvc.perform(post("/manage/addFiscalYears").param("year", "2030")).andExpect(status().is3xxRedirection())
-				.andExpect(MockMvcResultMatchers.redirectedUrl("/browse/viewFiscalYear"));
-
-		// verify that a fiscal year was added
-		assertEquals(numFys + 1, fyRepo.count());
-	}
-
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminUserCannotAddFundingOpportunities_shouldFailWith403() throws Exception {
 		long numFos = foRepo.count();
 
-		mvc.perform(post("/admin/createFo").param("id", "26").param("nameEn", "A").param("nameFr", "B")
+		mvc.perform(post("/admin/createFo").param("id", "26").param("nameEn", "ACE").param("nameFr", "BDF")
 				.param("leadAgency", "3").param("division", "Q").param("isJointIntiative", "false")
 				.param("_isJointIntiative", "on").param("partnerOrg", "Z").param("isComplex", "false")
 				.param("_isComplex", "on").param("isEdiRequired", "false").param("_isEdiRequired", "on")
@@ -102,12 +84,12 @@ public class AdminControllerIntegrationTest {
 	public void test_onlyAdminCanAddFundingOpportunities_shouldSucceedWith302() throws Exception {
 		long numFos = foRepo.count();
 
-		mvc.perform(post("/admin/createFo").param("id", "26").param("nameEn", "ABC").param("nameFr", "BCD")
-				.param("leadAgency", "3").param("division", "Q").param("isJointIntiative", "false")
-				.param("_isJointIntiative", "on").param("partnerOrg", "Z").param("isComplex", "false")
-				.param("_isComplex", "on").param("isEdiRequired", "false").param("_isEdiRequired", "on")
-				.param("fundingType", "E").param("frequency", "Once").param("isNOI", "false").param("_isNOI", "on")
-				.param("isLOI", "false").param("_isLOI", "on")).andExpect(status().is3xxRedirection())
+		mvc.perform(post("/admin/createFo").param("nameEn", "ABC").param("nameFr", "BCD").param("leadAgency", "3")
+				.param("division", "Q").param("isJointIntiative", "false").param("_isJointIntiative", "on")
+				.param("partnerOrg", "Z").param("isComplex", "false").param("_isComplex", "on")
+				.param("isEdiRequired", "false").param("_isEdiRequired", "on").param("fundingType", "E")
+				.param("frequency", "Once").param("isNOI", "false").param("_isNOI", "on").param("isLOI", "false")
+				.param("_isLOI", "on")).andDo(MockMvcResultHandlers.print()).andExpect(status().is3xxRedirection())
 				.andExpect(MockMvcResultMatchers.redirectedUrl("/admin/home"));
 
 		// verify that a FO was added
@@ -117,8 +99,7 @@ public class AdminControllerIntegrationTest {
 	@WithAnonymousUser
 	@Test
 	public void givenAnonymousRequestOnAdminUrl_shouldFailWith301() throws Exception {
-		mvc.perform(get("/admin/home").contentType(MediaType.APPLICATION_XHTML_XML))
-				.andExpect(status().is3xxRedirection());
+		mvc.perform(get("/admin/home").contentType(MediaType.APPLICATION_XHTML_XML)).andExpect(status().is3xxRedirection());
 	}
 
 	@WithMockUser(username = "sshrc-user", roles = { "SSHRC" })

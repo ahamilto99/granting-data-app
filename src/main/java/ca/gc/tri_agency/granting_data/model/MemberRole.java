@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -17,7 +18,7 @@ public class MemberRole {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_MEMBER_ROLE")
 	private Long id;
 
-	@NotNull(message = "{userLogin.NotNull}")
+	@NotEmpty(message = "{userLogin.NotNull}")
 	private String userLogin;
 
 	@NotNull
@@ -75,20 +76,5 @@ public class MemberRole {
 	public void setEdiAuthorized(Boolean ediAuthorized) {
 		this.ediAuthorized = ediAuthorized;
 	}
-
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("MemberRole [id=");
-		builder.append(id);
-//		builder.append(", userLogin=");
-//		builder.append(userLogin);
-		builder.append(", role=");
-		builder.append(role);
-//		builder.append(", businessUnit=");
-//		builder.append(businessUnit.getName());
-		builder.append("]");
-		return builder.toString();
-	}
-
+	
 }

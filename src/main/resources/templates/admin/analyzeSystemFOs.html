@@ -10,7 +10,7 @@
 		});
 	</script>
 </head>
-<body>
+<body id="analyzeSystemFundingOpportunitiesPage">
 	<div th:insert="~{fragments/general.html :: header_nav('programs')}" ></div>
 	<div class="section">
 			<div class="col-sm-2"></div>
@@ -28,7 +28,7 @@
 			        </thead>
 			        <tbody>
 						<tr th:each="fo : ${systemFOs}">
-							<td><a th:href="@{viewSystemFO(id=${fo.id})}" th:text="${fo.extId}"></a></td>
+							<td><a th:href="@{viewSFO(id=${fo.id})}" th:text="${fo.extId}"></a></td>
 							<td th:text="${fo.nameEn}"></td>
 							<td th:text="${fo.grantingSystem.nameEn}"></td>
 							<th>

@@ -19,7 +19,7 @@ import ca.gc.tri_agency.granting_data.ldap.ADUserService;
 
 @SpringBootTest(classes = GrantingDataApp.class)
 @RunWith(SpringRunner.class)
-@ActiveProfiles("local")
+@ActiveProfiles("test")
 public class SpringLdapIntegrationTest {
 
 	@Autowired
