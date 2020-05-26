@@ -26,6 +26,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
+import ca.gc.tri_agency.granting_data.repo.SystemFundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.service.SystemFundingOpportunityService;
 
 @RunWith(SpringRunner.class)
@@ -35,6 +36,9 @@ public class SystemFundingOpportunityControllerTest {
 
 	@Autowired
 	private SystemFundingOpportunityService sfoService;
+	
+	@Autowired
+	private SystemFundingOpportunityRepository sfoRepo;
 
 	@Autowired
 	private WebApplicationContext ctx;
@@ -100,6 +104,11 @@ public class SystemFundingOpportunityControllerTest {
 		sfoService.saveSystemFundingOpportunity(sfo);
 		
 		assertNull(sfoService.findSystemFundingOpportunityById(2L).getLinkedFundingOpportunity());
+		SystemFundingOpportunity unlinkedSfo = sfoRepo.findById(2L).get();
+		unlinkedSfo.setLinkedFundingOpportunity(null);
+		sfoRepo.save(unlinkedSfo);
+		
+		assertNull(sfoRepo.getOne(2L).getLinkedFundingOpportunity());
 		assertTrue(mvc.perform(MockMvcRequestBuilders.get("/admin/confirmUnlink").param("sfoId", "2"))
 				.andExpect(MockMvcResultMatchers.status().isNotFound()).andReturn().getResponse().getContentAsString()
 				.contains("id=\"generalErrorPage\""));
@@ -110,11 +119,11 @@ public class SystemFundingOpportunityControllerTest {
 	@Rollback
 	@Test
 	public void test_unlinkFoBtnNotVisibleToAdminWhenSfoHasNoLinkedFo() throws Exception {
-		SystemFundingOpportunity sfo = sfoService.findSystemFundingOpportunityById(2L);
-		sfo.setLinkedFundingOpportunity(null);
-		sfoService.saveSystemFundingOpportunity(sfo);
+		SystemFundingOpportunity unlinkedSfo = sfoRepo.findById(2L).get();
+		unlinkedSfo.setLinkedFundingOpportunity(null);
+		sfoRepo.save(unlinkedSfo);
 		
-		assertNull(sfoService.findSystemFundingOpportunityById(2L).getLinkedFundingOpportunity());
+		assertNull(sfoRepo.getOne(2L).getLinkedFundingOpportunity());
 		assertFalse(mvc.perform(MockMvcRequestBuilders.get("/admin/viewSFO").param("id", "2"))
 				.andExpect(MockMvcResultMatchers.status().isOk()).andReturn().getResponse().getContentAsString()
 				.contains("id=\"unlinkSfoBtn\""));

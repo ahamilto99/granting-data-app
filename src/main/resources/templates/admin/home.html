@@ -4,7 +4,7 @@
 <title th:text="#{title.adminHome}"></title>
 </head>
 <body>
-	<div th:insert="~{fragments/general.html :: header_nav('home')}" />
+	<div th:insert="~{fragments/general.html :: header_nav('home')}"></div>
 	<div class="container">
 		<h1 th:text="#{link.admin.home}"></h1>
 		<div th:if="${actionMessage != null}" th:text="${actionMessage}"></div>
@@ -12,7 +12,8 @@
         <ol>
 	        <li><a href="selectFileForComparison" th:text="#{link.selectFileForComparison}"></a></li>
 	        <li><a href="analyzeSystemFOs" th:text="#{link.analyzeSFos}"></a></li>
-	        <li><a style="color: grey" href="admin/generateTestParticipations" th:text="#{link.generateTestParticipations}"></a></li>
+	        <li><a style="color: grey" th:href="@{/admin/generateTestParticipations}" th:text="#{link.generateTestParticipations}"></a></li>
+	        <li><a style="color: grey" th:href="@{/admin/generateTestAwards}" th:text="#{link.generateTestAwards}"></a></li>
         </ol>
 	</div>
    </body>

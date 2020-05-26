@@ -21,6 +21,9 @@ public class MemberRole {
 	@NotEmpty(message = "{userLogin.NotNull}")
 	private String userLogin;
 
+	@NotNull
+	private Boolean ediAuthorized;
+
 	@ManyToOne
 	@JoinColumn(name = "role_id")
 	@NotNull
@@ -66,20 +69,12 @@ public class MemberRole {
 		this.businessUnit = businessUnit;
 	}
 
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("MemberRole [id=");
-		builder.append(id);
-//		builder.append(", userLogin=");
-//		builder.append(userLogin);
-		builder.append(", role=");
-		builder.append(role);
-//		builder.append(", businessUnit=");
-//		builder.append(businessUnit.getName());
-		builder.append("]");
-		return builder.toString();
+	public Boolean getEdiAuthorized() {
+		return ediAuthorized;
 	}
 
+	public void setEdiAuthorized(Boolean ediAuthorized) {
+		this.ediAuthorized = ediAuthorized;
+	}
 	
 }

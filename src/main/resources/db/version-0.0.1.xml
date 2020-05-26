@@ -195,7 +195,7 @@
                 <constraints primaryKey="true" nullable="false" />
             </column>
             <column name="application_identifier" type="VARCHAR(255)"/>
-            <column name="application_id" type="VARCHAR(255)"/>
+            <column name="appl_id" type="VARCHAR(255)"/>
             <column name="competition_year" type="BIGINT"/>
             <column name="program_id" type="VARCHAR(255)"/>
             <column name="program_en" type="VARCHAR(255)"/>
@@ -272,6 +272,76 @@
                 <constraints foreignKeyName="fk_member_role_business_unit" nullable="false" references="business_unit(id)"/>
             </column>
         </createTable>
+    </changeSet>
+    <changeSet id="00000000000030" author="dev_aha">
+        <createSequence sequenceName="seq_award" startValue="1" incrementBy="1"/>
+    </changeSet>
+    <changeSet id="00000000000031" author="dev_aha">
+        <createTable tableName="award">
+            <column name="id" type="BIGINT" defaultValueSequenceNext="seq_award">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="awarded_amount" type="DOUBLE"/>
+            <column name="funding_year" type="BIGINT"/>
+            <column name="appl_id" type="VARCHAR(255)"/>
+            <column name="family_name" type="VARCHAR(255)"/>
+            <column name="given_name" type="VARCHAR(255)"/>
+            <column name="role_code" type="VARCHAR(255)"/>
+            <column name="role_en" type="VARCHAR(255)"/>
+            <column name="role_fr" type="VARCHAR(255)"/>
+        </createTable>   
+    </changeSet>
+    <changeSet id="00000000000032" author="dev_aha">
+        <addColumn tableName="application_participation">
+            <column name="edi_not_applicable" type="BIT(1)" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_of_birth_indicator" type="BIT(1)" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_of_birth" type="DATE"/>
+            <column name="gender_selection" type="VARCHAR(255)"/>
+            <column name="ind_identity_response" type="VARCHAR(255)"/>
+            <column name="ind_identity_pref_not_to" type="BIT(1)" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ind_identity_selection_1" type="BIGINT"/>
+            <column name="ind_identity_selection_2" type="BIGINT"/>
+            <column name="ind_identity_selection_3" type="BIGINT"/>
+            <column name="disability_response" type="VARCHAR(255)"/>
+            <column name="visible_min_pref_not_to" type="BIT(1)" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="visible_min_selection_1" type="BIGINT"/>
+            <column name="visible_min_selection_2" type="BIGINT"/>
+            <column name="visible_min_selection_3" type="BIGINT"/>
+            <column name="visible_min_selection_4" type="BIGINT"/>
+            <column name="visible_min_selection_5" type="BIGINT"/>
+            <column name="visible_min_selection_6" type="BIGINT"/>
+            <column name="visible_min_selection_7" type="BIGINT"/>
+            <column name="visible_min_selection_8" type="BIGINT"/>
+            <column name="visible_min_selection_9" type="BIGINT"/>
+            <column name="visible_min_selection_10" type="BIGINT"/>
+            <column name="visible_min_selection_11" type="BIGINT"/>
+            <column name="visible_minority_response" type="VARCHAR(255)"/>
+            <column name="create_user_id" type="VARCHAR(3)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet id="00000000000033" author="dev_aha">
+        <addColumn tableName="member_role">
+            <column name="edi_authorized" type="BIT(1)" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    
+    <!-- Added for the demo; should be removed afterwards -->
+    <changeSet id="00000000000034" author="dev_aha">
+        <addColumn tableName="application_participation">
+            <column name="is_deadline_passed" type="BIT(1)" defaultValueBoolean="false">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
     </changeSet>
     
     <!-- 

@@ -29,7 +29,9 @@ public class BrowseApplicationParticipationIntegrationTest {
         long initApRepoCount = apRepo.count();
         
         ApplicationParticipation ap = new ApplicationParticipation();
-        ap.setApplicationIdentifier(RandomStringUtils.randomAlphabetic(10));
+        
+        String appIdentifier = RandomStringUtils.randomAlphabetic(10);
+        ap.setApplicationIdentifier(appIdentifier);
         ap.setCompetitionYear(2022L);
         ap.setCountry(RandomStringUtils.randomAlphabetic(10));
         
@@ -59,7 +61,8 @@ public class BrowseApplicationParticipationIntegrationTest {
         apRepo.save(ap);
         
         assertEquals(initApRepoCount + 1, apRepo.count());
-        assertEquals(ap, apRepo.findById((long) apRepo.count()).get());
+        assertEquals(appIdentifier, apRepo.findById((long) apRepo.count()).get().getApplicationIdentifier());
         assertEquals(currentTimestamp, apRepo.findById((long) apRepo.count()).get().getCreateDate());
     }
+    
 }

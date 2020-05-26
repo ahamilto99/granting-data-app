@@ -59,13 +59,13 @@ public class SystemFundingOpportunityServiceTest {
 	@WithAnonymousUser
 	@Test
 	public void testFindSystemFundingOpportunitiesByExtId() {
-		assertTrue(0 < sfoService.findSystemFundingOpportunitiesByExtId("SAMPLE EXT ID").size());
+		assertTrue(0 < sfoService.findSystemFundingOpportunitiesByExtId("CTAC").size());
 	}
 
 	@WithAnonymousUser
 	@Test
 	public void testFindSystemFundingOpportunitiesByNameEn() {
-		assertTrue(0 < sfoService.findSystemFundingOpportunitiesByNameEn("NAME EN").size());
+		assertTrue(0 < sfoService.findSystemFundingOpportunitiesByNameEn("Technology Access Centre").size());
 	}
 
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })

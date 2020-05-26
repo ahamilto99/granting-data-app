@@ -51,6 +51,7 @@ public class MemberRoleServiceTest {
 		memberRole.setUserLogin(userLogin);
 		memberRole.setRole(role);
 		memberRole.setBusinessUnit(bu);
+		memberRole.setEdiAuthorized(true);
 
 		MemberRole mr = mrService.saveMemberRole(memberRole);
 
@@ -65,6 +66,7 @@ public class MemberRoleServiceTest {
 		mr.setUserLogin(RandomStringUtils.randomAlphabetic(3));
 		mr.setRole(rService.findRoleById(1L));
 		mr.setBusinessUnit(buService.findBusinessUnitById(1L));
+		mr.setEdiAuthorized(true);
 
 		mrService.saveMemberRole(mr);
 	}

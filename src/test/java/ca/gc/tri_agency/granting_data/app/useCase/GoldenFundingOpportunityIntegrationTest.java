@@ -49,21 +49,21 @@ public class GoldenFundingOpportunityIntegrationTest {
 
 	@Autowired
 	private FundingOpportunityController foController;
-	
+
 	@Autowired
 	private AgencyService agencyService;
-	
+
 	@Autowired
 	private FundingOpportunityRepository foRepo;
-	
+
 	@Autowired
 	SystemFundingOpportunityRepository sfoRepo;
-	
+
 	@Autowired
 	private BusinessUnitService businessUnitService;
 	@Autowired
 	private FundingOpportunityService foService;
-	
+
 	@Autowired
 	private WebApplicationContext ctx;
 
