@@ -25,14 +25,15 @@ public class BusinessUnitController {
 
 	private BusinessUnitService buService;
 
-	private AgencyService agencyService; 
+	private AgencyService agencyService;
 
 	private MemberRoleService mrService;
 
 	private MessageSource msgSource;
 
 	@Autowired
-	public BusinessUnitController(BusinessUnitService buService, AgencyService agencyService, MemberRoleService mrService, MessageSource msgSource) {
+	public BusinessUnitController(BusinessUnitService buService, AgencyService agencyService, MemberRoleService mrService,
+			MessageSource msgSource) {
 		this.buService = buService;
 		this.agencyService = agencyService;
 		this.mrService = mrService;
@@ -44,6 +45,7 @@ public class BusinessUnitController {
 	public String viewBusinessUnit(@RequestParam("id") Long id, Model model) {
 		model.addAttribute("bu", buService.findBusinessUnitById(id));
 		model.addAttribute("mrList", mrService.findMemberRolesByBusinessUnitId(id));
+		model.addAttribute("revisionList", buService.findBusinessUnitRevisionsById(id));
 		return "browse/viewBU";
 	}
 

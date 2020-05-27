@@ -29,8 +29,39 @@
 				<a th:href="@{/browse/viewAgency(id=${bu.agency.id})}" th:text="${bu.agency.getName()}"></a>
 			</div>
 		</div>
-		<div sec:authorize="hasRole('MDM ADMIN')" style="margin-top: 35px">
-			<a th:href="@{/admin/editBU(id=${bu.id})}" id="editBULink" class="btn btn-primary" th:text="#{link.editBU}"></a>
+		<div sec:authorize="hasRole('MDM ADMIN')">
+			<div style="margin-top: 35px">
+				<a th:href="@{/admin/editBU(id=${bu.id})}" id="editBULink" class="btn btn-primary" th:text="#{link.editBU}"></a>
+			</div>
+			<div class="form-group row">
+				<h2 th:text="#{h.auditLog}"></h2>
+			</div>
+			<div class="col-md-12">
+				<table id="auditLogTable" class="table table-bordered">
+					<thead>
+						<tr>
+							<th th:text="#{th.user}" />
+							<th th:text="#{th.type}" />
+							<th th:text="#{form.nameEn}" />
+							<th th:text="#{form.nameFr}" />
+							<th th:text="#{form.acronymEn}" />
+							<th th:text="#{form.acronymFr}" />
+							<th th:text="#{th.date}" />
+						</tr>
+					</thead>
+					<tbody th:if="${!revisionList.isEmpty()}">
+						<tr th:each="revision : ${revisionList}">
+							<td th:text="${revision[0]}"/>
+							<td th:text="${revision[1]}"/>
+							<td th:text="${revision[2]}"/>
+							<td th:text="${revision[3]}"/>
+							<td th:text="${revision[4]}"/>
+							<td th:text="${revision[5]}"/>
+							<td th:text="${revision[6]}"/>
+						</tr>
+					</tbody>
+				</table>
+			</div>
 		</div>
 		<div class="form-group row">
 			<h2 th:text="#{h.memberRoles}"></h2>
@@ -42,7 +73,7 @@
 						<!-- <th th:text="#{th.name}" /> -->
 						<th th:text="#{th.userLogin}" />
 						<th th:text="#{form.role}" />
-						<th th:text="#{form.ediAuthorized}"/>
+						<th th:text="#{form.ediAuthorized}" />
 						<th sec:authorize="hasRole('MDM ADMIN')" th:text="#{form.delete}" />
 					</tr>
 				</thead>
@@ -51,7 +82,7 @@
 						<!-- <td th:text="${mr.fullName}" /> -->
 						<td th:text="${mr.userLogin}" />
 						<td th:text="${mr.role.getLocalizedAttribute('name')}" />
-						<td th:text="${mr.ediAuthorized} == true ? #{msg.yes} : #{msg.no}"/>
+						<td th:text="${mr.ediAuthorized} == true ? #{msg.yes} : #{msg.no}" />
 						<td sec:authorize="hasRole('MDM ADMIN')"><a th:text="#{form.delete}" class="btn btn-primary" th:id="deleteMemberRole"
 							th:href="@{/browse/viewBU(mrId=${mr.id})}"></a></td>
 					</tr>

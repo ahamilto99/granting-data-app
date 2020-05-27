@@ -12,9 +12,13 @@ import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+
 import ca.gc.tri_agency.granting_data.model.util.LocalizedParametersModel;
 
 @Entity
+@Audited
 public class BusinessUnit implements LocalizedParametersModel {
 
 	@Id
@@ -34,6 +38,7 @@ public class BusinessUnit implements LocalizedParametersModel {
 	@NotBlank
 	private String acronymFr;
 
+	@NotAudited
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "agency_id")
 	@NotNull
