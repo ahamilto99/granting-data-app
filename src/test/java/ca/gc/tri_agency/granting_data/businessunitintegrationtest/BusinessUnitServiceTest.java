@@ -101,8 +101,8 @@ public class BusinessUnitServiceTest {
 	@WithMockUser(username = "admin", roles = "MDM ADMIN")
 	@Test
 	public void test_adminCanFindBusinessUnitRevisionsById() {
-		final long buId = 1L;
-		int initNumRevisions = buService.findBusinessUnitRevisionsById(buId).size();
+		final Long buId = 1L;
+		int startNumRevisions = buService.findBusinessUnitRevisionsById(buId).size();
 
 		BusinessUnit bu = buService.findBusinessUnitById(buId);
 		String nameEn = RandomStringUtils.randomAlphabetic(5);
@@ -112,7 +112,7 @@ public class BusinessUnitServiceTest {
 		List<String[]> buRevisions = buService.findBusinessUnitRevisionsById(buId);
 		int endNumRevisions = buRevisions.size();
 
-		assertEquals(initNumRevisions + 1, endNumRevisions);
+		assertEquals(startNumRevisions + 1, endNumRevisions);
 		assertEquals(nameEn, buRevisions.get(endNumRevisions - 1)[2]);
 	}
 

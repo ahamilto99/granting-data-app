@@ -18,7 +18,7 @@ public class UsernameRevisionEntityListener implements RevisionListener {
 			// this is only required for testing purposes since tests are executed with mock users
 			usernameRevEntity.setUsername(SecurityUtils.getCurrentUsername());
 		}
-		usernameRevEntity.setRevtstmp(Date.from(Instant.now()));
+		usernameRevEntity.setRevTimestamp(Date.from(Instant.now()));
 	}
 
 }

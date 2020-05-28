@@ -2,6 +2,7 @@ package ca.gc.tri_agency.granting_data.model.auditing;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -28,7 +29,8 @@ public class UsernameRevisionEntity {
 
 	@RevisionTimestamp
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date revtstmp;
+	@Column(name = "revtstmp")
+	private Date revTimestamp;
 	
 	private String username;
 
@@ -40,12 +42,12 @@ public class UsernameRevisionEntity {
 		this.revision = revision;
 	}
 
-	public Date getRevtstmp() {
-		return revtstmp;
+	public Date getRevTimestamp() {
+		return revTimestamp;
 	}
 
-	public void setRevtstmp(Date revtstmp) {
-		this.revtstmp = revtstmp;
+	public void setRevTimestamp(Date revTimestamp) {
+		this.revTimestamp = revTimestamp;
 	}
 
 	public String getUsername() {
@@ -61,8 +63,8 @@ public class UsernameRevisionEntity {
 		StringBuilder builder = new StringBuilder();
 		builder.append("UsernameRevisionEntity [revision=");
 		builder.append(revision);
-		builder.append(", revtstmp=");
-		builder.append(revtstmp);
+		builder.append(", revTimestamp=");
+		builder.append(revTimestamp);
 		builder.append(", username=");
 		builder.append(username);
 		builder.append("]");

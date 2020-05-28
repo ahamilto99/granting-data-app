@@ -37,14 +37,6 @@ public class FundingOpportunityServiceTest {
 	@WithAnonymousUser
 	@Test
 	public void test_findFundingOpportunitiesByBusinessUnit() {
-		
-		System.out.println();
-		System.out.println(foService.findFundingOpportunitiesByBusinessUnitId(null).size());
-		System.out.println(foService.findFundingOpportunitiesByBusinessUnitId(null));
-		System.out.println();
-		buService.findAllBusinessUnits().forEach(System.out::println);
-		System.out.println();
-		
 		assertTrue(0 == foService.findFundingOpportunitiesByBusinessUnitId(Long.MAX_VALUE).size());
 
 		assertTrue(8 == foService.findFundingOpportunitiesByBusinessUnitId(1L).size());

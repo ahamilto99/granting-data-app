@@ -71,7 +71,7 @@ public class BusinessUnitServiceImpl implements BusinessUnitService {
 		}
 		
 		return new String[] { revEntity.getUsername(), revType, bu.getNameEn(), bu.getNameFr(), bu.getAcronymEn(),
-				bu.getAcronymFr(), revEntity.getRevtstmp().toString() };
+				bu.getAcronymFr(), revEntity.getRevTimestamp().toString() };
 	}
 
 	@AdminOnly

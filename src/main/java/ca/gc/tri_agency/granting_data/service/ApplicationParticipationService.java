@@ -46,5 +46,9 @@ public interface ApplicationParticipationService {
 	// crm -> 5BC9640E-4421-E211-AEEA-005056AD550D
 	
 	void saveAllApplicationParticipations(List<ApplicationParticipation> appParticipations);
+	
+	List<String[]> findApplicationParticipationRevisionsById(Long apId);
+	
+	List<String[]> findAllApplicationParticipationRevisions();
 
 }

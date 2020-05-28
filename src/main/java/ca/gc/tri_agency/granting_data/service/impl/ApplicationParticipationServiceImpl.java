@@ -4,10 +4,19 @@ import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.hibernate.envers.AuditReader;
+import org.hibernate.envers.AuditReaderFactory;
+import org.hibernate.envers.RevisionType;
+import org.hibernate.envers.query.AuditQuery;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.history.Revision;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,9 +25,11 @@ import com.github.javafaker.Faker;
 import ca.gc.tri_agency.granting_data.model.ApplicationParticipation;
 import ca.gc.tri_agency.granting_data.model.GrantingSystem;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
+import ca.gc.tri_agency.granting_data.model.auditing.UsernameRevisionEntity;
 import ca.gc.tri_agency.granting_data.repo.ApplicationParticipationRepository;
 import ca.gc.tri_agency.granting_data.repo.SystemFundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.security.SecurityUtils;
+import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.ApplicationParticipationService;
 
 @Service
@@ -32,6 +43,9 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 	private SystemFundingOpportunityRepository sfoRepo;
 
 	private static int applIdIncrementer = 0;
+
+	@PersistenceContext
+	private EntityManager em;
 
 	@Autowired
 	public ApplicationParticipationServiceImpl(ApplicationParticipationRepository appParticipationRepo,
@@ -147,8 +161,8 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 			app.setOrganizationNameFr(nameArr[idx]);
 		} else if (acronym.equals("AMIS")) {
 			String[] idArr = { "1240613", "3248462", "1591011", "1351411", "1350711", "1350511" };
-			String[] nameEnArr = { "Université du Québec à Montréal",
-					"Regroupement des centres d'amitié autochtones du Québec",
+			String[] nameEnArr = { "University of Quebec at Montreal",
+					"Consolidation of Native Friendship Centers in Quebec",
 					"University of Northern British Columbia", "York University", "University of Ottawa",
 					"Laurentian University" };
 			String[] nameFrArr = { "Université du Québec à Montréal",
@@ -165,7 +179,7 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 			String[] nameArr = { "University of Calgary: Psychology", "McMaster University: School of Social Work",
 					"Wilfrid Laurier University: School of International Policy and Governance",
 					"Sheridan College Institute of Technology and Advanced Learning: International Centre",
-					"University of Ottawa: Criminologie", "University of Saskatchewan: Philosophy" };
+					"University of Ottawa: Criminology", "University of Saskatchewan: Philosophy" };
 			app.setOrganizationId(idArr[idx]);
 			app.setOrganizationNameEn(nameArr[idx]);
 			app.setOrganizationNameFr(nameArr[idx]);
@@ -333,6 +347,90 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 	@Override
 	public void saveAllApplicationParticipations(List<ApplicationParticipation> appParticipations) {
 		appParticipationRepo.saveAll(appParticipations);
+	}
+
+	private String[] createAuditedApplicationParticipationStrArr(ApplicationParticipation ap, String revType,
+			UsernameRevisionEntity revEntity) {
+		switch (revType) {
+		case "ADD":
+			revType = "INSERT";
+			break;
+		case "MOD":
+			revType = "UPDATE";
+			break;
+		case "DEL":
+			revType = "DELETE";
+		}
+
+		return new String[] { revEntity.getUsername(), revType, ap.getApplicationIdentifier(), ap.getApplId(),
+				(ap.getCompetitionYear() != null) ? ap.getCompetitionYear().toString() : null, ap.getCountry(),
+				(ap.getCreateDate() != null) ? ap.getCreateDate().toString() : null, ap.getCreateUserId(),
+				(ap.getDateOfBirth() != null) ? ap.getDateOfBirth().toString() : null,
+				ap.getDateOfBirthIndicator().toString(), ap.getDisabilityResponse(),
+				ap.getEdiNotApplicable().toString(), ap.getFamilyName(), ap.getFreeformAddress1(),
+				ap.getFreeformAddress2(), ap.getFreeformAddress3(), ap.getFreeformAddress4(), ap.getGenderSelection(),
+				ap.getGivenName(), ap.getIndIdentityPrefNotTo().toString(), ap.getIndIdentityResponse(),
+				(ap.getIndIdentitySelection1() != null) ? ap.getIndIdentitySelection1().toString() : null,
+				(ap.getIndIdentitySelection2() != null) ? ap.getIndIdentitySelection2().toString() : null,
+				(ap.getIndIdentitySelection3() != null) ? ap.getIndIdentitySelection3().toString() : null,
+				ap.getMunicipality(), ap.getOrganizationId(), ap.getOrganizationNameEn(), ap.getOrganizationNameFr(),
+				(ap.getPersonIdentifier() != null) ? ap.getPersonIdentifier().toString() : null, ap.getPostalZipCode(),
+				ap.getProgramEn(), ap.getProgramFr(), ap.getProgramId(), ap.getProvinceStateCode(), ap.getRoleCode(),
+				ap.getRoleEn(), ap.getRoleEn(), ap.getRoleFr(), ap.getVisibleMinorityResponse(),
+				ap.getVisibleMinPrefNotTo().toString(),
+				(ap.getVisibleMinSelection1() != null) ? ap.getVisibleMinSelection1().toString() : null,
+				(ap.getVisibleMinSelection2() != null) ? ap.getVisibleMinSelection2().toString() : null,
+				(ap.getVisibleMinSelection3() != null) ? ap.getVisibleMinSelection3().toString() : null,
+				(ap.getVisibleMinSelection4() != null) ? ap.getVisibleMinSelection4().toString() : null,
+				(ap.getVisibleMinSelection5() != null) ? ap.getVisibleMinSelection5().toString() : null,
+				(ap.getVisibleMinSelection6() != null) ? ap.getVisibleMinSelection6().toString() : null,
+				(ap.getVisibleMinSelection7() != null) ? ap.getVisibleMinSelection7().toString() : null,
+				(ap.getVisibleMinSelection8() != null) ? ap.getVisibleMinSelection8().toString() : null,
+				(ap.getVisibleMinSelection9() != null) ? ap.getVisibleMinSelection9().toString() : null,
+				(ap.getVisibleMinSelection10() != null) ? ap.getVisibleMinSelection10().toString() : null,
+				(ap.getVisibleMinSelection11() != null) ? ap.getVisibleMinSelection11().toString() : null,
+				revEntity.getRevTimestamp().toString() };
+	}
+
+	@AdminOnly
+	@Override
+	public List<String[]> findApplicationParticipationRevisionsById(Long apId) {
+		List<String[]> auditedArrList = new ArrayList<>();
+
+		List<Revision<Long, ApplicationParticipation>> revisionList = appParticipationRepo.findRevisions(apId).getContent();
+		if (!revisionList.isEmpty()) {
+			revisionList.forEach(rev -> {
+				ApplicationParticipation ap = rev.getEntity();
+				UsernameRevisionEntity revEntity = (UsernameRevisionEntity) rev.getMetadata().getDelegate();
+				auditedArrList.add(createAuditedApplicationParticipationStrArr(ap,
+						rev.getMetadata().getRevisionType().toString(), revEntity));
+			});
+		}
+
+		auditedArrList.sort(Comparator.comparing(strArr -> strArr[51]));
+		return auditedArrList;
+	}
+
+	@AdminOnly
+	@Transactional(readOnly = true)
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String[]> findAllApplicationParticipationRevisions() {
+		AuditReader auditReader = AuditReaderFactory.get(em);
+		AuditQuery auditQuery = auditReader.createQuery().forRevisionsOfEntity(ApplicationParticipation.class, false, true);
+
+		List<String[]> auditedArrList = new ArrayList<>();
+
+		List<Object[]> revisionList = auditQuery.getResultList();
+		revisionList.forEach(objArr -> {
+			ApplicationParticipation ap = (ApplicationParticipation) objArr[0];
+			UsernameRevisionEntity revEntity = (UsernameRevisionEntity) objArr[1];
+			RevisionType revType = (RevisionType) objArr[2];
+			auditedArrList.add(createAuditedApplicationParticipationStrArr(ap, revType.toString(), revEntity));
+		});
+
+		auditedArrList.sort(Comparator.comparing(strArr -> strArr[51]));
+		return auditedArrList;
 	}
 
 }

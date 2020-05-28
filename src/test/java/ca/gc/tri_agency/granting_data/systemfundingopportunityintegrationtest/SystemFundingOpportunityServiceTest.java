@@ -83,8 +83,6 @@ public class SystemFundingOpportunityServiceTest {
 
 		sfoService.linkSystemFundingOpportunity(sfoId, 1L);
 		
-		System.out.println(sfoService.findSystemFundingOpportunityById(sfoId));
-
 		assertEquals(1L, (long) sfoService.findSystemFundingOpportunityById(sfoId).getLinkedFundingOpportunity().getId());
 	}
 
