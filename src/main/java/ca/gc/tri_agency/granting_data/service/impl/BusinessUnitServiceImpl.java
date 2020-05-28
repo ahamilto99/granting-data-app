@@ -47,7 +47,6 @@ public class BusinessUnitServiceImpl implements BusinessUnitService {
 		return buRepo.save(bu);
 	}
 
-	@AdminOnly
 	@Override
 	public List<String[]> findBusinessUnitRevisionsById(Long buId) {
 		List<String[]> auditArrList = new ArrayList<>();

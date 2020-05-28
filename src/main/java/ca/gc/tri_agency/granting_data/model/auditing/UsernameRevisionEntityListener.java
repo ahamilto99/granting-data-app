@@ -12,7 +12,12 @@ public class UsernameRevisionEntityListener implements RevisionListener {
 	@Override
 	public void newRevision(Object revEntity) {
 		UsernameRevisionEntity usernameRevEntity = (UsernameRevisionEntity) revEntity;
-		usernameRevEntity.setUsername(SecurityUtils.getLdapUserDn());
+		try {
+			usernameRevEntity.setUsername(SecurityUtils.getLdapUserDn());
+		} catch (ClassCastException cce) {
+			// this is only required for testing purposes since tests are executed with mock users
+			usernameRevEntity.setUsername(SecurityUtils.getCurrentUsername());
+		}
 		usernameRevEntity.setRevtstmp(Date.from(Instant.now()));
 	}
 
