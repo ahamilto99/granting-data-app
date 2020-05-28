@@ -49,7 +49,7 @@
 							<th th:text="#{th.date}" />
 						</tr>
 					</thead>
-					<tbody th:if="${!revisionList.isEmpty()}">
+					<tbody>
 						<tr th:each="revision : ${revisionList}">
 							<td th:text="${revision[0]}"/>
 							<td th:text="${revision[1]}"/>

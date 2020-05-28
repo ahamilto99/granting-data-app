@@ -17,4 +17,5 @@ public interface BusinessUnitService {
 
 	List<String[]> findBusinessUnitRevisionsById(Long buId);
 	
+	List<String[]> findAllBusinessUnitRevisions();
 }

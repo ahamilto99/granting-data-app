@@ -2,13 +2,17 @@ package ca.gc.tri_agency.granting_data.businessunitintegrationtest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
+import java.util.List;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -94,4 +98,45 @@ public class BusinessUnitServiceTest {
 		assertTrue(0 < buService.findAllBusinessUnits().size());
 	}
 
+	@WithMockUser(username = "admin", roles = "MDM ADMIN")
+	@Test
+	public void test_adminCanFindBusinessUnitRevisionsById() {
+		final long buId = 1L;
+		int initNumRevisions = buService.findBusinessUnitRevisionsById(buId).size();
+
+		BusinessUnit bu = buService.findBusinessUnitById(buId);
+		String nameEn = RandomStringUtils.randomAlphabetic(5);
+		bu.setNameEn(nameEn);
+		buService.saveBusinessUnit(bu);
+
+		List<String[]> buRevisions = buService.findBusinessUnitRevisionsById(buId);
+		int endNumRevisions = buRevisions.size();
+
+		assertEquals(initNumRevisions + 1, endNumRevisions);
+		assertEquals(nameEn, buRevisions.get(endNumRevisions - 1)[2]);
+	}
+
+	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@Test(expected = AccessDeniedException.class)
+	public void test_nonAdminCannotFindBusinessUnitRevisionsById() {
+		buService.findBusinessUnitRevisionsById(1L);
+	}
+
+	@WithAnonymousUser
+	@Test(expected = DataRetrievalFailureException.class)
+	public void test_findBusinessUnitById_shouldThrowException() {
+		buService.findBusinessUnitById(Long.MAX_VALUE);
+	}
+
+	@WithMockUser(username = "admin", roles = "MDM ADMIN")
+	@Test
+	public void test_adminCanFindAllBusinessUnitRevisions() {
+		assertNotNull(buService.findAllBusinessUnitRevisions());
+	}
+
+	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@Test(expected = AccessDeniedException.class)
+	public void test_nonAdminCannotFindAllBusinessUnitRevisions() {
+		buService.findAllBusinessUnitRevisions();
+	}
 }
