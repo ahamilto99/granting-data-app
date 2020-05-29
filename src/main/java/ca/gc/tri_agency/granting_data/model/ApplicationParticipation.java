@@ -12,12 +12,9 @@ import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.hibernate.envers.Audited;
-
 import ca.gc.tri_agency.granting_data.model.util.LocalizedParametersModel;
 
 @Entity
-@Audited
 public class ApplicationParticipation implements LocalizedParametersModel {
 
 	@Id
