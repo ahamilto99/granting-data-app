@@ -14,4 +14,7 @@ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd">
   	<sql>ALTER SEQUENCE seq_granting_capability restart with 285</sql>
   	<sql>ALTER SEQUENCE seq_business_unit restart with 15</sql>
   </changeSet>
+  <changeSet id="fixRevisionInfoSequence" author="dev_aha">
+    <sql>ALTER SEQUENCE seq_revision_info RESTART WITH 8</sql>
+   </changeSet>
 </databaseChangeLog>

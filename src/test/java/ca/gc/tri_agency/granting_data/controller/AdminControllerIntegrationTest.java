@@ -20,7 +20,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -89,7 +88,7 @@ public class AdminControllerIntegrationTest {
 				.param("partnerOrg", "Z").param("isComplex", "false").param("_isComplex", "on")
 				.param("isEdiRequired", "false").param("_isEdiRequired", "on").param("fundingType", "E")
 				.param("frequency", "Once").param("isNOI", "false").param("_isNOI", "on").param("isLOI", "false")
-				.param("_isLOI", "on")).andDo(MockMvcResultHandlers.print()).andExpect(status().is3xxRedirection())
+				.param("_isLOI", "on")).andExpect(status().is3xxRedirection())
 				.andExpect(MockMvcResultMatchers.redirectedUrl("/admin/home"));
 
 		// verify that a FO was added

@@ -2,7 +2,6 @@ package ca.gc.tri_agency.granting_data.businessunitintegrationtest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -131,7 +130,13 @@ public class BusinessUnitServiceTest {
 	@WithMockUser(username = "admin", roles = "MDM ADMIN")
 	@Test
 	public void test_adminCanFindAllBusinessUnitRevisions() {
-		assertNotNull(buService.findAllBusinessUnitRevisions());
+		List<String[]> auditedArrList = buService.findAllBusinessUnitRevisions();
+		assertEquals("N/A (PREPOPULATED)", auditedArrList.get(0)[0]);
+		assertEquals("INSERT", auditedArrList.get(0)[1]);
+		assertEquals("MCT", auditedArrList.get(0)[2]);
+		assertEquals("FR MCT", auditedArrList.get(0)[3]);
+		assertEquals("MCT", auditedArrList.get(0)[4]);
+		assertEquals("MCT", auditedArrList.get(0)[5]);
 	}
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })

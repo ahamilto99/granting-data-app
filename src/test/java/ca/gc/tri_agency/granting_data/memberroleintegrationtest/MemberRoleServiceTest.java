@@ -3,6 +3,8 @@ package ca.gc.tri_agency.granting_data.memberroleintegrationtest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.List;
+
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -88,4 +90,46 @@ public class MemberRoleServiceTest {
 		mrService.deleteMemberRole(mrService.findAllMemberRoles().get(0).getId());
 	}
 
+	@WithMockUser(username = "admin", roles = "MDM ADMIN")
+	@Test
+	public void test_adminCanFindMemberRoleRevisionsById() {
+		final Long mrId = 1L;
+		int startNumRevisions = mrService.findMemberRoleRevisionsById(mrId).size();
+
+		MemberRole mr = mrService.findMemberRoleById(mrId);
+		String revisedUserLogin = RandomStringUtils.randomAlphabetic(3);
+		mr.setUserLogin(revisedUserLogin);
+		mrService.saveMemberRole(mr);
+
+		List<String[]> mrRevisions = mrService.findMemberRoleRevisionsById(mrId);
+		int endNumRevisions = mrRevisions.size();
+
+		assertEquals(startNumRevisions + 1, endNumRevisions);
+		assertEquals(revisedUserLogin, mrRevisions.get(endNumRevisions - 1)[2]);
+	}
+
+	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@Test(expected = AccessDeniedException.class)
+	public void test_nonAdminCannotFindMemberRoleRevisionsById() {
+		mrService.findMemberRoleRevisionsById(1L);
+	}
+
+	@WithMockUser(username = "admin", roles = "MDM ADMIN")
+	@Test
+	public void test_adminCanFindAllMemberRoleRevisions() {
+		List<String[]> auditedArrList = mrService.findAllMemberRoleRevisions();
+		assertNotNull(auditedArrList);
+		assertEquals("N/A (PREPOPULATED)", auditedArrList.get(0)[0]);
+		assertEquals("INSERT", auditedArrList.get(0)[1]);
+ 		assertEquals("aha", auditedArrList.get(0)[2]);
+ 		assertEquals("FALSE", auditedArrList.get(0)[3]);
+ 		assertEquals("Program Lead", auditedArrList.get(0)[4]);
+ 		assertEquals("MCT", auditedArrList.get(0)[5]);
+	}
+
+	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@Test(expected = AccessDeniedException.class)
+	public void test_nonAdminCannotFindAllMemberRoleRevisions() {
+		mrService.findAllMemberRoleRevisions();
+	}
 }

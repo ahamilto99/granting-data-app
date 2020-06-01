@@ -13,7 +13,6 @@ import org.springframework.test.context.ActiveProfiles;
 
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
-import ca.gc.tri_agency.granting_data.service.BusinessUnitService;
 import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
 
 @SpringBootTest(classes = GrantingDataApp.class)
@@ -22,9 +21,6 @@ public class FundingOpportunityServiceTest {
 
 	@Autowired
 	private FundingOpportunityService foService;
-
-	@Autowired
-	private BusinessUnitService buService;
 
 	@WithAnonymousUser
 	@Test
