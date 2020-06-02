@@ -2,6 +2,8 @@ package ca.gc.tri_agency.granting_data.controller;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -9,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,6 +23,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -112,6 +116,53 @@ public class AdminControllerIntegrationTest {
 	@Test
 	public void givenAdminAuthRequestOnAdminUrl_shouldSucceedWith200() throws Exception {
 		mvc.perform(get("/admin/home").contentType(MediaType.APPLICATION_XHTML_XML)).andExpect(status().isOk());
+	}
+
+	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@Test
+	public void test_adminCanAccessAuditLogForAllMemberRoles_shouldSucceedWith200() throws Exception {
+		String response = mvc.perform(MockMvcRequestBuilders.get("/admin/auditLogMR"))
+				.andExpect(MockMvcResultMatchers.status().isOk()).andReturn().getResponse().getContentAsString();
+
+		assertTrue(response.contains("id=\"memberRoleAuditLogPage\""));
+		assertTrue(response.contains("Audit Log - All Member Roles"));
+		assertTrue(response.contains("<td>N/A (PREPOPULATED)</td>\r\n" + "\t\t\t\t\t<td>INSERT</td>\r\n"
+				+ "\t\t\t\t\t<td>aha</td>\r\n" + "\t\t\t\t\t<td>FALSE</td>\r\n" + "\t\t\t\t\t<td>Program Lead</td>\r\n"
+				+ "\t\t\t\t\t<td>MCT</td>\r\n" + "\t\t\t\t\t<td>2020-01-01 00:00:00.0</td>"));
+		assertTrue(response.contains("href=\"/admin/auditLogs\""));
+	}
+
+	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@Test
+	public void test_nonAdminCannotAccessAuditLogForAllMemberRoles_shouldReturn403() throws Exception {
+		mvc.perform(MockMvcRequestBuilders.get("/admin/auditLogMR")).andExpect(MockMvcResultMatchers.status().isForbidden())
+				.andExpect(MockMvcResultMatchers.content()
+						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
+	}
+
+	@WithMockUser(username = "admin", roles = "MDM ADMIN")
+	@Test
+	public void test_adminCanAccessAuditLogForOneMemberRole_shouldSucceedWith200() throws Exception {
+		String response = mvc.perform(MockMvcRequestBuilders.get("/admin/auditLogMR").param("id", "2"))
+				.andExpect(MockMvcResultMatchers.status().isOk()).andReturn().getResponse().getContentAsString();
+
+		assertTrue(response.contains("id=\"memberRoleAuditLogPage\""));
+		assertTrue(response.contains("Audit Log - Member Role"));
+		assertTrue(response.contains(
+				"<td>N/A (PREPOPULATED)</td>\r\n" + "\t\t\t\t\t<td>INSERT</td>\r\n" + "\t\t\t\t\t<td>jfs</td>\r\n"
+						+ "\t\t\t\t\t<td>FALSE</td>\r\n" + "\t\t\t\t\t<td>Program Officer</td>\r\n"
+						+ "\t\t\t\t\t<td>MCT</td>\r\n" + "\t\t\t\t\t<td>2020-01-01 00:00:00.0</td>"));
+		assertFalse(response.contains("<td>N/A (PREPOPULATED)</td>\r\n" + "\t\t\t\t\t<td>INSERT</td>\r\n"
+				+ "\t\t\t\t\t<td>aha</td>\r\n" + "\t\t\t\t\t<td>FALSE</td>\r\n" + "\t\t\t\t\t<td>Program Lead</td>\r\n"
+				+ "\t\t\t\t\t<td>MCT</td>\r\n" + "\t\t\t\t\t<td>2020-01-01 00:00:00.0</td>"));
+		assertTrue(response.contains("href=\"/browse/viewBU?id=1\""));
+	}
+
+	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@Test
+	public void test_nonAdminCannotAccessAuditLogForOneMemberRole_shouldReturn403() throws Exception {
+		mvc.perform(MockMvcRequestBuilders.get("/admin/auditLogMR").param("id", "2")).andExpect(
+				MockMvcResultMatchers.content().string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
 	}
 
 }

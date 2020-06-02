@@ -74,6 +74,7 @@
 						<th th:text="#{th.userLogin}" />
 						<th th:text="#{form.role}" />
 						<th th:text="#{form.ediAuthorized}" />
+						<th sec:authorize="hasRole('MDM ADMIN')" th:text="#{th.auditLog}"></th>
 						<th sec:authorize="hasRole('MDM ADMIN')" th:text="#{form.delete}" />
 					</tr>
 				</thead>
@@ -83,6 +84,8 @@
 						<td th:text="${mr.userLogin}" />
 						<td th:text="${mr.role.getLocalizedAttribute('name')}" />
 						<td th:text="${mr.ediAuthorized} == true ? #{msg.yes} : #{msg.no}" />
+						<td sec:authorize="hasRole('MDM ADMIN')"><a th:text="#{msg.view}" class="btn btn-primary"
+							th:href="@{/admin/auditLogMR(id=${mr.id})}"></a></td>
 						<td sec:authorize="hasRole('MDM ADMIN')"><a th:text="#{form.delete}" class="btn btn-primary" th:id="deleteMemberRole"
 							th:href="@{/browse/viewBU(mrId=${mr.id})}"></a></td>
 					</tr>

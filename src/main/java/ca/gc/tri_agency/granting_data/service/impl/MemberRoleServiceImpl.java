@@ -64,7 +64,7 @@ public class MemberRoleServiceImpl implements MemberRoleService {
 	}
 
 	private String[] createAuditedMemberRoleStrArr(MemberRole mr, String revType, UsernameRevisionEntity revEntity,
-			String roleName, String buName) {
+			String roleName, String buName, String buId) {
 		switch (revType) {
 		case "ADD":
 			revType = "INSERT";
@@ -78,7 +78,7 @@ public class MemberRoleServiceImpl implements MemberRoleService {
 
 		return new String[] { revEntity.getUsername(), revType, mr.getUserLogin(),
 				(mr.getEdiAuthorized() != null) ? mr.getEdiAuthorized().toString().toUpperCase() : null, roleName,
-				buName, revEntity.getRevTimestamp().toString() };
+				buName, buId, revEntity.getRevTimestamp().toString() };
 	}
 
 	@Override
@@ -106,8 +106,15 @@ public class MemberRoleServiceImpl implements MemberRoleService {
 			} catch (NullPointerException npe) {
 				buName = null;
 			}
+			
+			String buId;
+			try {
+				buId = mr.getBusinessUnit().getId().toString();
+			} catch (NullPointerException npe) {
+				buId = null;
+			}
 
-			auditedArrList.add(createAuditedMemberRoleStrArr(mr, revType, revEntity, roleName, buName));
+			auditedArrList.add(createAuditedMemberRoleStrArr(mr, revType, revEntity, roleName, buName, buId));
 		});
 
 		auditedArrList.sort(Comparator.comparing(strArr -> strArr[strArr.length - 1]));
@@ -144,7 +151,14 @@ public class MemberRoleServiceImpl implements MemberRoleService {
 				buName = null;
 			}
 
-			auditedArrList.add(createAuditedMemberRoleStrArr(mr, revType.toString(), revEntity, roleName, buName));
+			String buId;
+			try {
+				buId = mr.getBusinessUnit().getId().toString();
+			} catch (NullPointerException npe) {
+				buId = null;
+			}
+			
+			auditedArrList.add(createAuditedMemberRoleStrArr(mr, revType.toString(), revEntity, roleName, buName, buId));
 		});
 
 		auditedArrList.sort(Comparator.comparing(strArr -> strArr[strArr.length - 1]));

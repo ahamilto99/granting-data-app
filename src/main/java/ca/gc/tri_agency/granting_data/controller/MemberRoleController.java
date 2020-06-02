@@ -1,5 +1,7 @@
 package ca.gc.tri_agency.granting_data.controller;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -24,7 +27,7 @@ import ca.gc.tri_agency.granting_data.service.MemberRoleService;
 @Controller
 public class MemberRoleController {
 
-	private MemberRoleService memberRoleService;
+	private MemberRoleService mrService;
 
 	private BusinessUnitService buService;
 
@@ -33,8 +36,9 @@ public class MemberRoleController {
 	private MessageSource msgSrc;
 
 	@Autowired
-	public MemberRoleController(MemberRoleService memberRoleService, BusinessUnitService buService, ADUserService adUserService, MessageSource msgSrc) {
-		this.memberRoleService = memberRoleService;
+	public MemberRoleController(MemberRoleService memberRoleService, BusinessUnitService buService, ADUserService adUserService,
+			MessageSource msgSrc) {
+		this.mrService = memberRoleService;
 		this.buService = buService;
 		this.adUserService = adUserService;
 		this.msgSrc = msgSrc;
@@ -60,26 +64,35 @@ public class MemberRoleController {
 			model.addAttribute("adUserList", adUserService.searchADUsers(searchStr));
 			return "admin/createMemberRole";
 		}
-		mr = memberRoleService.saveMemberRole(mr);
-		
+		mr = mrService.saveMemberRole(mr);
+
 		String actionMsg = msgSrc.getMessage("h.createdMR", null, LocaleContextHolder.getLocale());
 		redirectAttributes.addFlashAttribute("actionMsg", actionMsg + mr.getUserLogin());
-		
+
 		return "redirect:/browse/viewBU?id=" + buId;
 	}
 
 	@GetMapping(value = "/browse/viewBU", params = "mrId")
 	public String deleteMemberRolePost(@RequestParam("mrId") Long mrId, RedirectAttributes redirectAttributes) {
-		MemberRole mr = memberRoleService.findMemberRoleById(mrId);
+		MemberRole mr = mrService.findMemberRoleById(mrId);
 		Long buId = mr.getBusinessUnit().getId();
 		String mrLogin = mr.getUserLogin();
-		
-		memberRoleService.deleteMemberRole(mrId);
-		
+
+		mrService.deleteMemberRole(mrId);
+
 		String actionMsg = msgSrc.getMessage("h.deletedMR", null, LocaleContextHolder.getLocale());
 		redirectAttributes.addFlashAttribute("actionMsg", actionMsg + mrLogin);
-		
+
 		return "redirect:/browse/viewBU?id=" + buId;
+	}
+
+	@GetMapping("/admin/auditLogMR")
+	public String memberRoleAuditLog(@RequestParam(value = "id", defaultValue = "0") Long id,
+			@RequestHeader(value = "referer", required = false) String referer, Model model) {
+		List<String[]> revisionList = (id > 0L) ? mrService.findMemberRoleRevisionsById(id)
+				: mrService.findAllMemberRoleRevisions();
+		model.addAttribute("revisionList", revisionList);
+		return "admin/memberRoleAuditLog";
 	}
 
 }
