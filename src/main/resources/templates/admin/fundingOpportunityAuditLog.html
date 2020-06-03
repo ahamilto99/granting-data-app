@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/general.html :: common_header(~{::title},~{::link},~{::script})}">
+<title th:text="#{title.foAuditLog}"></title>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" />
+<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript">
+	$(document).ready(function() {
+	        var table = $('#goldenListTable').DataTable({});
+        });
+</script>
+</head>
+<body id="fundingOpportunityAuditLogPage">
+	<div th:insert="~{fragments/general.html :: header_nav('home')}"></div>
+	
+	<div class="container">
+
+		<h1 th:text="#{h.foAllAuditLogs}"></h1>
+
+	</div>
+
+	<table class="table table-bordered" style="margin: 25px 0px;">
+
+		<thead>
+
+			<tr>
+				<th th:text="#{th.id}"></th>
+				<th th:text="#{th.user}"></th>
+				<th th:text="#{th.type}"></th>
+				<th th:text="#{form.nameEn}"></th>
+				<th th:text="#{form.nameFr}"></th>
+				<th th:text="#{form.frequency}"></th>
+				<th th:text="#{form.fundingType}"></th>
+				<th th:text="#{th.complex}"></th>
+				<th th:text="#{th.edi}"></th>
+				<th th:text="#{th.jointInitiative}"></th>
+				<th th:text="#{form.loi}"></th>
+				<th th:text="#{form.noi}"></th>
+				<th th:text="#{th.partnerOrg}"></th>
+				<th th:text="#{th.leadName}"></th>
+				<th th:text="#{th.leadDn}"></th>
+				<th th:text="#{form.agency}"></th>
+				<th th:text="#{th.bu}"></th>
+				<th th:text="#{th.date}"></th>
+			</tr>
+
+		</thead>
+
+		<tbody>
+
+			<tr th:each="revision : ${revisionList}">
+				<td><a th:text="${revision[0]}" th:href="@{/browse/viewFo(id=${revision[0]})}"></a></td>
+				<td th:text="${revision[1]}"></td>
+				<td th:text="${revision[2]}"></td>
+				<td th:text="${revision[3]}"></td>
+				<td th:text="${revision[4]}"></td>
+				<td th:text="${revision[5]}"></td>
+				<td th:text="${revision[6]}"></td>
+				<td th:text="${revision[7]}"></td>
+				<td th:text="${revision[8]}"></td>
+				<td th:text="${revision[9]}"></td>
+				<td th:text="${revision[10]}"></td>
+				<td th:text="${revision[11]}"></td>
+				<td th:text="${revision[12]}"></td>
+				<td th:text="${revision[13]}"></td>
+				<td th:text="${revision[14]}"></td>
+				<td><a th:text="${revision[15]}" th:href="@{/browse/viewAgency(id=${revision[15]})}"></a></td>
+				<td><a th:text="${revision[16]}" th:href="@{/browse/viewBU(id=${revision[16]})}"></a></td>
+				<td th:text="${revision[17]}"></td>
+			</tr>
+
+		</tbody>
+	</table>
+
+	<div class="container" style="margin-bottom: 25px;">
+	
+		<a class="btn btn-primary" th:text="#{link.goBack}" href="/admin/auditLogs"></a>
+	
+	</div>
+
+</body>
+</html>

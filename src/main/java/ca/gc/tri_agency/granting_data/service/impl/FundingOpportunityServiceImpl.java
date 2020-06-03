@@ -146,14 +146,14 @@ public class FundingOpportunityServiceImpl implements FundingOpportunityService 
 			UsernameRevisionEntity revEntity = (UsernameRevisionEntity) objArr[1];
 			RevisionType revType = (RevisionType) objArr[2];
 
-			auditArrList.add(new String[] { revEntity.getUsername(), revType.toString(), fo.getNameEn(), fo.getNameFr(),
+			auditArrList.add(new String[] { fo.getId().toString(), revEntity.getUsername(), revType.toString(), fo.getNameEn(), fo.getNameFr(),
 					fo.getFrequency(), fo.getFundingType(),
 					(fo.getIsComplex() != null) ? fo.getIsComplex().toString() : null,
 					(fo.getIsEdiRequired() != null) ? fo.getIsEdiRequired().toString() : null,
 					(fo.getIsJointInitiative() != null) ? fo.getIsJointInitiative().toString() : null,
 					(fo.getIsLOI() != null) ? fo.getIsLOI().toString() : null,
 					(fo.getIsNOI() != null) ? fo.getIsNOI().toString() : null, fo.getPartnerOrg(),
-					fo.getProgramLeadDn(), fo.getProgramLeadName(),
+					fo.getProgramLeadName(), fo.getProgramLeadDn(),
 					(fo.getLeadAgency() != null) ? fo.getLeadAgency().getId().toString() : null,
 					(fo.getBusinessUnit() != null) ? fo.getBusinessUnit().getId().toString() : null,
 					revEntity.getRevTimestamp().toString()

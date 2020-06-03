@@ -84,13 +84,13 @@ public class FundingOpportunityServiceTest {
 		int endNumRevs = foRevs.size();
 
 		assertEquals(startNumRevs + 1, endNumRevs);
-		assertEquals("MOD", foRevs.get(endNumRevs - 1)[1]);
-		assertEquals(newNameEn, foRevs.get(endNumRevs - 1)[2]);
-		assertEquals(newNameFr, foRevs.get(endNumRevs - 1)[3]);
+		assertEquals("MOD", foRevs.get(endNumRevs - 1)[2]);
+		assertEquals(newNameEn, foRevs.get(endNumRevs - 1)[3]);
+		assertEquals(newNameFr, foRevs.get(endNumRevs - 1)[4]);
 
 		int numAdds = 0;
 		for (String[] arr : foRevs) {
-			if (arr[1].equals("ADD")) {
+			if (arr[2].equals("ADD")) {
 				++numAdds;
 			}
 		}

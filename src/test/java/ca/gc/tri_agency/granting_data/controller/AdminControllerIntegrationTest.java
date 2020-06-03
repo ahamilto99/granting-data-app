@@ -11,6 +11,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -165,4 +168,65 @@ public class AdminControllerIntegrationTest {
 				MockMvcResultMatchers.content().string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
 	}
 
+	@WithMockUser(username = "admin", roles = "MDM ADMIN")
+	@Test
+	public void test_adminCanAccessAuditLogForAllFundingOpportunites_shouldSucceedWith200() throws Exception {
+		String response = mvc.perform(MockMvcRequestBuilders.get("/admin/auditLogFO"))
+				.andExpect(MockMvcResultMatchers.status().isOk()).andReturn().getResponse().getContentAsString();
+
+		int numAdds = 0;
+
+		Pattern regex = Pattern.compile("<td>ADD</td>");
+		Matcher regexMatcher = regex.matcher(response);
+		while (regexMatcher.find()) {
+			++numAdds;
+		}
+
+		assertTrue(response.contains("id=\"fundingOpportunityAuditLogPage\""));
+		assertTrue(numAdds >= 141);
+	}
+
+	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@Test
+	public void test_nonAdminCannotAccessAuditLogForAllFundingOpportunities_shouldReturn403() throws Exception {
+		mvc.perform(MockMvcRequestBuilders.get("/admin/auditLogFO")).andExpect(MockMvcResultMatchers.status().isForbidden())
+				.andExpect(MockMvcResultMatchers.content()
+						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
+	}
+
+	@WithMockUser(username = "admin", roles = "MDM ADMIN")
+	@Test
+	public void test_adminCanAccessAuditLogForOneFundingOpportunity_shouldSucceedWith200() throws Exception {
+		String response = mvc.perform(MockMvcRequestBuilders.get("/browse/viewFo").param("id", "1"))
+				.andExpect(MockMvcResultMatchers.status().isOk()).andReturn().getResponse().getContentAsString();
+
+		int numAdds = 0;
+
+		Pattern regex = Pattern.compile("<td>ADD</td>");
+		Matcher regexMatcher = regex.matcher(response);
+		while (regexMatcher.find()) {
+			++numAdds;
+		}
+
+		assertTrue(response.contains("<h3>Audit Log</h3>"));
+		assertEquals(1, numAdds);
+	}
+
+	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@Test
+	public void test_nonAdminCannotAccessAuditLogForOneFundingOpportunity_shouldReturn200() throws Exception {
+		String response = mvc.perform(MockMvcRequestBuilders.get("/browse/viewFo").param("id", "1"))
+				.andExpect(MockMvcResultMatchers.status().isOk()).andReturn().getResponse().getContentAsString();
+
+		int numAdds = 0;
+
+		Pattern regex = Pattern.compile("<td>ADD</td>");
+		Matcher regexMatcher = regex.matcher(response);
+		while (regexMatcher.find()) {
+			++numAdds;
+		}
+
+		assertFalse(response.contains("<h3>Audit Log</h3>"));
+		assertEquals(0, numAdds);
+	}
 }

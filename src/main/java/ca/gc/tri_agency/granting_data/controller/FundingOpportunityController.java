@@ -10,6 +10,8 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -92,6 +94,14 @@ public class FundingOpportunityController {
 		model.addAttribute("fo", foService.findFundingOpportunityById(id));
 		model.addAttribute("grantingCapabilities", gcService.findGrantingCapabilitiesByFoId(id));
 		model.addAttribute("linkedSystemFundingCycles", sfcService.findSystemFundingCyclesByLinkedFundingOpportunity(id));
+
+//		Can't use SecurityUtils' hasRole(...) b/c tests don't mock an LDAP user, i.e. tests fail when
+//		using that method b/c we can't cast a User object to a LdapUserDetails object.
+		if (SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+				.contains(new SimpleGrantedAuthority("ROLE_MDM ADMIN"))) {
+			model.addAttribute("revisionList", foService.findFundingOpportunityRevisionsById(id));
+		}
+
 		return "browse/viewFundingOpportunity";
 	}
 
@@ -190,4 +200,12 @@ public class FundingOpportunityController {
 		model.addAttribute("allAgencies", allAgencies);
 		return model;
 	}
+
+	@AdminOnly
+	@GetMapping("/admin/auditLogFO")
+	public String fundingOpportunityAuditLog(Model model) {
+		model.addAttribute("revisionList", foService.findAllFundingOpportunitiesRevisions());
+		return "admin/fundingOpportunityAuditLog";
+	}
+
 }
