@@ -49,7 +49,7 @@ public class FundingOpportunityController {
 	private AgencyService agencyService;
 
 	private SystemFundingOpportunityService sfoService;
-	
+
 	private BusinessUnitService buService;
 
 	private MessageSource msgSource;
@@ -59,7 +59,8 @@ public class FundingOpportunityController {
 	@Autowired
 	public FundingOpportunityController(FundingOpportunityService foService, GrantingSystemService gSystemService,
 			GrantingCapabilityService gcService, SystemFundingCycleService sfcService, AgencyService agencyService,
-			SystemFundingOpportunityService sfoService, BusinessUnitService buService, MessageSource msgSource, ADUserService adUserService) {
+			SystemFundingOpportunityService sfoService, BusinessUnitService buService, MessageSource msgSource,
+			ADUserService adUserService) {
 		this.foService = foService;
 		this.gSystemService = gSystemService;
 		this.gcService = gcService;
@@ -82,6 +83,7 @@ public class FundingOpportunityController {
 		model.addAttribute("allGrantingSystems", gSystemService.findAllGrantingSystems());
 		model.addAttribute("applySystemByFoMap", applyMap);
 		model.addAttribute("awardSystemsByFoMap", awardMap);
+
 		return "browse/fundingOpportunities";
 	}
 

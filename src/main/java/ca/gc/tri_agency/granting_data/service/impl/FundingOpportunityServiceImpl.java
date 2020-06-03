@@ -4,6 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
+
+import org.hibernate.envers.AuditReader;
+import org.hibernate.envers.AuditReaderFactory;
+import org.hibernate.envers.RevisionType;
+import org.hibernate.envers.query.AuditEntity;
+import org.hibernate.envers.query.AuditQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
@@ -14,6 +23,7 @@ import ca.gc.tri_agency.granting_data.ldap.ADUser;
 import ca.gc.tri_agency.granting_data.ldap.ADUserService;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.GrantingSystem;
+import ca.gc.tri_agency.granting_data.model.auditing.UsernameRevisionEntity;
 import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
@@ -22,8 +32,11 @@ import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
 public class FundingOpportunityServiceImpl implements FundingOpportunityService {
 
 	private FundingOpportunityRepository foRepo;
-	
+
 	private ADUserService aduService;
+
+	@PersistenceUnit
+	private EntityManagerFactory emf;
 
 	@Autowired
 	public FundingOpportunityServiceImpl(FundingOpportunityRepository foRepo, ADUserService aduService) {
@@ -68,7 +81,7 @@ public class FundingOpportunityServiceImpl implements FundingOpportunityService 
 	@Override
 	public void setFundingOpportunityLeadContributor(Long foId, String dn) {
 		ADUser adUser = aduService.findADUserByDn(dn);
-		
+
 		FundingOpportunity fo = findFundingOpportunityById(foId);
 		fo.setProgramLeadDn(dn);
 		fo.setProgramLeadName(adUser.getFullName());
@@ -123,6 +136,71 @@ public class FundingOpportunityServiceImpl implements FundingOpportunityService 
 			retval.add(fo);
 		}
 		return retval;
+	}
+
+	private List<String[]> convertAuditResults(List<Object[]> revisionList) {
+		List<String[]> auditArrList = new ArrayList<>();
+
+		revisionList.forEach(objArr -> {
+			FundingOpportunity fo = (FundingOpportunity) objArr[0];
+			UsernameRevisionEntity revEntity = (UsernameRevisionEntity) objArr[1];
+			RevisionType revType = (RevisionType) objArr[2];
+
+			auditArrList.add(new String[] { revEntity.getUsername(), revType.toString(), fo.getNameEn(), fo.getNameFr(),
+					fo.getFrequency(), fo.getFundingType(),
+					(fo.getIsComplex() != null) ? fo.getIsComplex().toString() : null,
+					(fo.getIsEdiRequired() != null) ? fo.getIsEdiRequired().toString() : null,
+					(fo.getIsJointInitiative() != null) ? fo.getIsJointInitiative().toString() : null,
+					(fo.getIsLOI() != null) ? fo.getIsLOI().toString() : null,
+					(fo.getIsNOI() != null) ? fo.getIsNOI().toString() : null, fo.getPartnerOrg(),
+					fo.getProgramLeadDn(), fo.getProgramLeadName(),
+					(fo.getLeadAgency() != null) ? fo.getLeadAgency().getId().toString() : null,
+					(fo.getBusinessUnit() != null) ? fo.getBusinessUnit().getId().toString() : null,
+					revEntity.getRevTimestamp().toString()
+
+			});
+		});
+
+		return auditArrList;
+	}
+
+	@AdminOnly
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String[]> findFundingOpportunityRevisionsById(Long foId) {
+		EntityManager em = emf.createEntityManager();
+		em.getTransaction().begin();
+
+		AuditReader auditReader = AuditReaderFactory.get(em);
+
+		AuditQuery auditQuery = auditReader.createQuery().forRevisionsOfEntity(FundingOpportunity.class, false, true);
+		auditQuery.add(AuditEntity.id().eq(foId));
+		auditQuery.addOrder(AuditEntity.revisionProperty("id").asc());
+		List<Object[]> revisionList = auditQuery.getResultList();
+
+		em.getTransaction().commit();
+		em.close();
+
+		return convertAuditResults(revisionList);
+	}
+
+	@AdminOnly
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String[]> findAllFundingOpportunitiesRevisions() {
+		EntityManager em = emf.createEntityManager();
+		em.getTransaction().begin();
+
+		AuditReader auditReader = AuditReaderFactory.get(em);
+
+		AuditQuery auditQuery = auditReader.createQuery().forRevisionsOfEntity(FundingOpportunity.class, false, true);
+		auditQuery.addOrder(AuditEntity.revisionProperty("id").asc());
+		List<Object[]> revisionList = auditQuery.getResultList();
+
+		em.getTransaction().commit();
+		em.close();
+
+		return convertAuditResults(revisionList);
 	}
 
 }

@@ -116,8 +116,6 @@ public class BusinessUnit implements LocalizedParametersModel {
 		builder.append(acronymEn);
 		builder.append(", acronymFr=");
 		builder.append(acronymFr);
-		builder.append(", agency=");
-		builder.append(agency.getAcronym());
 		builder.append("]");
 		return builder.toString();
 	}

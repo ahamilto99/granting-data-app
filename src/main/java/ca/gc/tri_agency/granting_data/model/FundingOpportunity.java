@@ -1,7 +1,5 @@
 package ca.gc.tri_agency.granting_data.model;
 
-//import java.util.Date; 
-//or import java.sql.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,9 +17,12 @@ import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.envers.Audited;
+
 import ca.gc.tri_agency.granting_data.model.util.LocalizedParametersModel;
 
 @Entity
+@Audited
 public class FundingOpportunity implements LocalizedParametersModel {
 
 	@Id
@@ -47,10 +48,18 @@ public class FundingOpportunity implements LocalizedParametersModel {
 	private String fundingType; // could be dropped
 
 	private String frequency;
+	
+	private Boolean isJointInitiative = false;
 
-	public boolean isNOI;
+	public Boolean isNOI = false;
 
-	private boolean isLOI;
+	private Boolean isLOI = false;
+	
+	private String partnerOrg;
+
+	private Boolean isEdiRequired = false;
+
+	private Boolean isComplex = false;
 
 	private String programLeadName;
 
@@ -97,12 +106,6 @@ public class FundingOpportunity implements LocalizedParametersModel {
 		this.frequency = frequency;
 	}
 
-	private String partnerOrg;
-
-	private boolean isEdiRequired;
-
-	private boolean isComplex;
-
 	public String getProgramLeadName() {
 		return programLeadName;
 	}
@@ -125,11 +128,6 @@ public class FundingOpportunity implements LocalizedParametersModel {
 
 	public Long getId() {
 		return id;
-	}
-
-	public String toString() {
-		return "" + id + " : " + nameEn + " :: " + nameFr + " :: " + leadAgency;
-
 	}
 
 	public String getFundingType() {
@@ -156,17 +154,15 @@ public class FundingOpportunity implements LocalizedParametersModel {
 		this.programLeadDn = programLeadDn;
 	}
 
-	private boolean isJointInitiative;
-
-	public boolean isJointInitiative() {
+	public Boolean isJointInitiative() {
 		return isJointInitiative;
 	}
 
-	public boolean getIsJointInitiative() {
+	public Boolean getIsJointInitiative() {
 		return isJointInitiative;
 	}
 
-	public void setIsJointInitiative(boolean isJointInitiative) {
+	public void setIsJointInitiative(Boolean isJointInitiative) {
 		this.isJointInitiative = isJointInitiative;
 	}
 
@@ -178,35 +174,35 @@ public class FundingOpportunity implements LocalizedParametersModel {
 		this.partnerOrg = partnerOrg;
 	}
 
-	public boolean getIsEdiRequired() {
+	public Boolean getIsEdiRequired() {
 		return isEdiRequired;
 	}
 
-	public void setIsEdiRequired(boolean isEdiRequired) {
+	public void setIsEdiRequired(Boolean isEdiRequired) {
 		this.isEdiRequired = isEdiRequired;
 	}
 
-	public boolean getIsComplex() {
+	public Boolean getIsComplex() {
 		return isComplex;
 	}
 
-	public void setIsComplex(boolean isComplex) {
+	public void setIsComplex(Boolean isComplex) {
 		this.isComplex = isComplex;
 	}
 
-	public boolean getIsNOI() {
+	public Boolean getIsNOI() {
 		return isNOI;
 	}
 
-	public void setIsNOI(boolean nOI) {
+	public void setIsNOI(Boolean nOI) {
 		isNOI = nOI;
 	}
 
-	public boolean getIsLOI() {
+	public Boolean getIsLOI() {
 		return isLOI;
 	}
 
-	public void setIsLOI(boolean islOI) {
+	public void setIsLOI(Boolean islOI) {
 		isLOI = islOI;
 	}
 

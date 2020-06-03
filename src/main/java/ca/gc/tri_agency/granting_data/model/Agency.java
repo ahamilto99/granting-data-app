@@ -6,11 +6,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 
-import org.springframework.context.i18n.LocaleContextHolder;
+import org.hibernate.envers.Audited;
 
 import ca.gc.tri_agency.granting_data.model.util.LocalizedParametersModel;
 
 @Entity
+@Audited
 public class Agency implements LocalizedParametersModel {
 	
 	@Id
@@ -18,13 +19,13 @@ public class Agency implements LocalizedParametersModel {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_AGENCY")
 	private Long id;
 
-	protected String nameEn;
+	private String nameEn;
 
-	protected String nameFr;
+	private String nameFr;
 
-	protected String acronymFr;
+	private String acronymFr;
 
-	protected String acronymEn;
+	private String acronymEn;
 
 	public Agency() {
 
@@ -35,26 +36,6 @@ public class Agency implements LocalizedParametersModel {
 		this.setNameFr(nameFr);
 		this.setAcronymEn(acronymEn);
 		this.setAcronymFr(acronymnFr);
-	}
-
-	public String getName() {
-		String retval = "";
-		if (LocaleContextHolder.getLocale().toString().contains("en")) {
-			retval = getNameEn();
-		} else {
-			retval = getNameFr();
-		}
-		return retval;
-	}
-
-	public String getAcronym() {
-		String retval = "";
-		if (LocaleContextHolder.getLocale().toString().contains("en")) {
-			retval = getAcronymEn();
-		} else {
-			retval = getAcronymFr();
-		}
-		return retval;
 	}
 
 	public String getNameEn() {
