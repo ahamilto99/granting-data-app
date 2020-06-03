@@ -1,37 +1,104 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{fragments/general.html :: common_header(~{::title},~{},~{})}">
-<head>
-<meta charset="ISO-8859-1">
-<title th:text="#{title.home}"></title>
-</head>
-<body>
-	<div th:insert="~{fragments/general.html :: header_nav('home')}"></div>
-	<div class="container">
-		<p th:text="#{p.home.welcome}"></p>
-		
-		<P th:text="#{p.home.browse}"></P>
-		<ol>
-			<li><a href="browse/fundingOpportunities" th:text="#{link.browse.fos}"></a></li>
-<!-- 			<li><a href="browse/grantingSystems" th:text="#{link.browse.systems}"></a></li> -->
-			<li><a href="browse/appParticipations" th:text="#{link.browse.appParticipations}"></a></li>
-			<li><a href="browse/awards" th:text="#{link.browse.awards}"></a></li>
+<!--[if lt IE 9]><html class="no-js lt-ie9" lang="en" dir="ltr"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!--<![endif]-->
 
+<head th:replace="~{fragments/general.html :: common_header(~{::title},~{})}">
+	<meta charset="ISO-8859-1">
+	<title th:text="#{title.home}"></title>
+</head>
+<body  class="home" vocab="http://schema.org/" typeof="WebPage">
+	<div th:insert="~{fragments/general.html :: header_nav('home')}"></div>
+	<main role="main" property="mainContentOfPage" class="container">
+		<h1 th:text="#{title.home}"></h1>
+		<div th:insert="~{fragments/general.html :: profile_info('home')}" />
+		
+		<h3 th:text="#{p.home.browse}"></h3>
+		<div class="row">
+			<div class="col-md-6">
+	           	<div class="well">
+	    	        <div class="row">
+	                    <div class="col-md-1">
+	                        <span class="glyphicon glyphicon-list"></span>
+	                    </div>
+	                    <div class="col-md-11">
+	                        <a href="browse/fundingOpportunities" th:text="#{link.browse.fos}"></a>
+	                        <p>Browse the Master Funding Opportunity list.</p>
+	                    </div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6">
+            	<div class="well">
+                    <div class="row">
+                        <div class="col-md-1">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </div>
+                        <div class="col-md-11"> 
+        					<a href="browse/appParticipations" th:text="#{link.browse.appParticipations}"></a>
+                            <p>Browser the Application Participation data stream.</p>
+                        </div>
+                    </div>
+		        </div>
+			</div>
+		</div>
 <!-- 			<li><a href="browse/viewCalendar" th:text="#{link.fc.cal}"></a></li> -->
-<!-- 			<li><a href="browse/viewFiscalYear" th:text="#{link.browse.fy}"></a></li> -->
-		</ol>
+   		
 		
 		<div sec:authorize="hasRole('MDM ADMIN')" >
-		<p th:text="#{p.home.adminZone}"></p>
-		<ol>
-<!-- 			<li><a href="admin/home" th:text="#{link.admin.home}"></a></li> -->
-	        <li><a href="admin/selectFileForComparison" th:text="#{link.selectFileForComparison}"></a></li>
-	        <li><a href="admin/analyzeSystemFOs" th:text="#{link.analyzeSFos}"></a></li>
-	        <li><a style="color: grey" href="admin/generateTestParticipations" th:text="#{link.generateTestParticipations}"></a></li>
-	        <li><a style="color: grey" th:href="@{/admin/generateTestAwards}" th:text="#{link.generateTestAwards}"></a></li>
-<!-- 	        <li><a href="admin/viewSystemActivities" th:text="#{link.viewSystemActivities}"></a></li> -->
-		</ol>
+			<h3 th:text="#{p.home.adminZone}"></h3>
+			<div class="row">
+				<div class="col-md-6">
+		           	<div class="well">
+		    	        <div class="row">
+		                    <div class="col-md-1">
+		                        <span class="glyphicon glyphicon-book"></span>
+		                    </div>
+		                    <div class="col-md-11">
+		                        <a href="admin/selectFileForComparison" th:text="#{link.selectFileForComparison}"></a>
+		                        <p>Analyze and Upload extracts containing Funding Opportunity references from granting systems.</p>
+		                    </div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-6">
+	            	<div class="well">
+	                    <div class="row">
+	                        <div class="col-md-1">
+	                            <span class="fa fa-files-o"></span>
+	                        </div>
+	                        <div class="col-md-11"> 
+	                        	<a href="admin/analyzeSystemFOs" th:text="#{link.analyzeSFos}"></a>
+	                            <p>Link Funding Opportunity references to master data records.</p>
+	                        </div>
+	                    </div>
+			        </div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-6">
+		           	<div class="well">
+		    	        <div class="row">
+		                    <div class="col-md-1">
+		                         <span class="fa fa-undo"></span>
+		                    </div>
+		                    <div class="col-md-11">
+		                    	<a style="color: grey" href="admin/generateTestParticipations" th:text="#{link.generateTestParticipations}"></a>
+		                        <p>Generate test application participations to simulate incoming data streams from data pipelines.</p>
+		                    </div>
+						</div>
+					</div>
+				</div>
+			</div>
+<!-- 		<ol> -->
+<!-- 	        <li><a href="admin/selectFileForComparison" th:text="#{link.selectFileForComparison}"></a></li> -->
+<!-- 	        <li><a href="admin/analyzeSystemFOs" th:text="#{link.analyzeSFos}"></a></li> -->
+<!-- 	        <li><a style="color: grey" href="admin/generateTestParticipations" th:text="#{link.generateTestParticipations}"></a></li> -->
+<!--  	        <li><a href="admin/viewSystemActivities" th:text="#{link.viewSystemActivities}"></a></li> -->
+<!-- 		</ol> -->
 		</div>
-	</div>
+	</main>
+	<footer th:insert="~{fragments/general.html :: footer(~{})}" />
 </body>
 </html>

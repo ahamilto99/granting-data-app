@@ -113,30 +113,31 @@ public class WebSecurityConfig {
 		protected void configure(HttpSecurity http) throws Exception {
 
 			http.authorizeRequests()
-					.antMatchers("/", "/home", "/webjars/**", "/css/**", "/images/**", "/js/**", "/browse/**")
+					.antMatchers("/", "/home", "/webjars/**", "/css/**", "/images/**", "/js/**", "/browse/**",
+							"/_WET_4-0/**")
 					.permitAll().and().authorizeRequests().antMatchers("/entities/**", "/reports/**")
 					.hasAnyRole("NSERC_USER", "SSHRC_USER", "AGENCY_USER").anyRequest().authenticated().and()
-					.formLogin().loginPage("/login").permitAll().and().logout().permitAll().and().exceptionHandling()
-					.accessDeniedPage("/exception/forbiden-by-role");
+					.formLogin().loginPage("/login").permitAll().and().logout().permitAll().and()
+					.exceptionHandling().accessDeniedPage("/exception/forbiden-by-role");
 		}
 
 	}
-	
-	@Profile(value = {"local", "test"})
+
+	@Profile(value = { "local", "test" })
 	@Configuration
 	@Order(1)
 	public static class LocalFormLoginWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
 
-			http.authorizeRequests()
-					.antMatchers("/h2**").access("hasRole('MDM ADMIN')")
-					.antMatchers("/", "/home", "/webjars/**", "/css/**", "/images/**", "/js/**", "/browse/**")
+			http.authorizeRequests().antMatchers("/h2**").access("hasRole('MDM ADMIN')")
+					.antMatchers("/", "/home", "/webjars/**", "/css/**", "/images/**", "/js/**", "/browse/**",
+							"/_WET_4-0/**")
 					.permitAll().and().authorizeRequests().antMatchers("/entities/**", "/reports/**")
 					.hasAnyRole("NSERC_USER", "SSHRC_USER", "AGENCY_USER").anyRequest().authenticated().and()
-					.formLogin().loginPage("/login").permitAll().and().logout().permitAll().and().exceptionHandling()
-					.accessDeniedPage("/exception/forbiden-by-role").and().headers().frameOptions()
-					.disable().and().csrf().disable();
+					.formLogin().loginPage("/login").permitAll().and().logout().permitAll().and()
+					.exceptionHandling().accessDeniedPage("/exception/forbiden-by-role").and().headers()
+					.frameOptions().disable().and().csrf().disable();
 		}
 	}
 

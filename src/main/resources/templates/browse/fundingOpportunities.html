@@ -1,19 +1,20 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/general.html :: common_header(~{::title},~{::link},~{::script})}">
+<!--[if lt IE 9]><html class="no-js lt-ie9" lang="en" dir="ltr"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!--<![endif]-->
+
+<head th:replace="~{fragments/general.html :: common_header(~{::title},~{})}">
 	<meta charset="ISO-8859-1">
-	<title id="/browse/fundingOpportunitiesPage" th:text="#{title.fundingOpportunities}"></title>
-	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" />
-	<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-	<script type="text/javascript">
-		$(document).ready( function () {
-			var table = $('#fundingOpportunitiesTable').DataTable({});
-		});
-	</script>
+	<title th:text="#{title.home}"></title>
 </head>
-<body id="fundingOpportunitiesPage">
-	<div th:insert="~{fragments/general.html :: header_nav('home')}" />
-	<div class="container">
+<body  class="home" vocab="http://schema.org/" typeof="WebPage">
+	<div th:insert="~{fragments/general.html :: header_nav('home')}"></div>
+	<main role="main" property="mainContentOfPage" class="container">
+		<h1 th:text="#{h.fundingOpportunities}"></h1>
+		<div th:insert="~{fragments/general.html :: profile_info('home')}" />
+		<p th:text="#{intro.fundingOpportunities}"></p>
+
 
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
   <div class="panel panel-default">
@@ -91,10 +92,8 @@
   </div>
 </div> 		
 
-			<h1 th:text="#{h.fundingOpportunities}"></h1>
-			<p th:text="#{intro.fundingOpportunities}"></p>
 			
-			<table id="fundingOpportunitiesTable" class="display">
+			<table id="fundingOpportunitiesTable" class="wb-tables table table-striped table-hover dataTable">
 				<thead>
 		            <tr>
 		                <th th:text="#{th.foName}"></th>
@@ -125,6 +124,7 @@
       	 </div> 
 		</div>
 	</div>
-
+</main>
+	<footer th:insert="~{fragments/general.html :: footer(~{})}" />
 </body>
 </html>

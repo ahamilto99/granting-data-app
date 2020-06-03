@@ -1,61 +1,191 @@
+
+
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:fragment="common_header(title,links,scripts)">
-<meta charset="ISO-8859-1">
-<title th:replace="${title}" th:text="#{title.general}"></title>
+<!--[if lt IE 9]><html class="no-js lt-ie9" lang="en" dir="ltr"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!--<![endif]-->
+
+
+<!-- Usage: /eic/site/ui-design2.nsf/tpl-eng/template-1col.html?Open&id=9 (optional: ?Open&page=filename.html&id=x) -->
+<!-- Created: ;  Product Code: 000;  Server: stratnotes.ic.gc.ca -->
+
+<head th:fragment="common_header(title,links)">
+	<!-- Title begins / Début du titre -->
+	<title th:replace="${title}" th:text="#{title.general}"></title>
+	<!-- Title ends / Fin du titre -->
+ 
+	<!-- Meta-data begins / Début des métadonnées -->
+	<meta charset="utf-8" />
+	<meta name="dcterms.language" title="ISO639-2" content="eng" />
+	<meta name="dcterms.title" content="" />
+	<meta name="description" content="" />
+	<meta name="dcterms.description" content="" />
+	<meta name="dcterms.type" content="report" />
+	<meta name="dcterms.subject" content="technology; internet" />
+	<meta name="dcterms.subject" content="technology; internet" />
+	<meta name="dcterms.issued" title="W3CDTF" content="" />
+	<meta name="dcterms.modified" title="W3CDTF" content="" />
+	<meta name="keywords" content="" />
 	
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="dcterms.creator" content="" />
+	<meta name="author" content="" />
+	<meta name="dcterms.created" title="W3CDTF" content="" />
+	<meta name="dcterms.publisher" content="" />
+	<meta name="dcterms.audience" title="icaudience" content="" />
+	<meta name="dcterms.spatial" title="ISO3166-1" content="" />
+	<meta name="dcterms.spatial" title="gcgeonames" content="" />
+	<meta name="dcterms.format" content="HTML" />
+	<meta name="dcterms.identifier" title="ICsiteProduct" content="000" />
 	
-	<!-- Common styles and scripts -->
-	<link rel="stylesheet" type="text/css"
-		href="/webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
+	<!-- EPI-11240 -->
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-	<link rel="stylesheet" th:href="@{/css/main.css}"
-		href="../../css/main.css" />
-	<script type="text/javascript" src="/webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<!-- MCG-202 -->
+	<meta content="width=device-width,initial-scale=1" name="viewport">
 	
-	<!--/* Per-page placeholder for additional links */-->
+	<!-- EPI-11567 -->
+	<meta name = "format-detection" content = "telephone=no">
+	
+	
+	
+	<!--[if gte IE 9 | !IE ]><!-->
+	<link href="/_WET_4-0/themes-dist/gcweb/assets/favicon.ico" rel="icon" type="image/x-icon">
+	<link rel="stylesheet" href="/_WET_4-0/themes-dist/gcweb/css/wet-boew.min.css">
+	<!--<![endif]-->
+	<link rel="stylesheet" href="/_WET_4-0/themes-dist/gcweb/css/theme.min.css">
+	<!--[if lt IE 9]>
+	<link href="/_WET_4-0/themes-dist/gcweb/assets/favicon.ico" rel="shortcut icon" />
+	
+	<link rel="stylesheet" href="/_WET_4-0/themes-dist/gcweb/css/ie8-wet-boew.min.css" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script src="/_WET_4-0/themes-dist/gcweb/js/ie8-wet-boew.min.js"></script>
+	<![endif]-->
+	<!--[if lte IE 9]>
+	
+	
+	<![endif]-->
+	<noscript><link rel="stylesheet" href="/_WET_4-0/themes-dist/gcweb/css/noscript.min.css" /></noscript>
+	
+	<!-- EPI-11235 -->
+	<link rel="stylesheet" href="https://ic.gc.ca/eic/home.nsf/css/add_WET_4-0_Canada_Apps.css">
+	
+	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"  rel="stylesheet" />
+    <!--/* Per-page placeholder for additional links */-->
   	<th:block th:replace="${links}" />
-
-	<!--/* Per-page placeholder for additional links */-->
-  	<th:block th:replace="${scripts}" />
-<title th:text="#{title.insertTitle}"></title>
-</head>
-
-<body>
-	<header th:fragment="header_nav(activeTab)">
-	<div class="container" style="height:10px; align: right;">
-		<nav class="navbar">
-			<ul class="nav navbar-nav navbar-right">
-				<li class="nav-item" th:with="currentUrl=(${@currentUrlWithoutParam.apply('lang')})">
-   					<a class="nav-link" th:href="@{${currentUrl}(lang=#{lang.otherLocale})}" th:text="#{lang.otherLanguage}">other language</a>
-				</li>
-				<li class="nav-item" th:with="currentUrl=(${@currentUrlWithoutParam.apply('lang')})">
-					<form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="post"><input type="submit" th:value="#{input.signOut}" class="btn"/></form>
-					<button sec:authorize="!isAuthenticated()" class="btn" onclick="location.href='/login';">Sign In</button>
-				</li>
-   			</ul>
-		</nav>
-	</div>
-	<div class="container"><img src="/images/sig-blk-en.svg" height="40px;" style="padding: 4px;"/></div>
 	
-	<nav class="navbar navbar-inverse">
-		<div class="container">
-			<div class="navbar-header">
-				<a th:class="${activeTab == 'home'}? 'navbar-brand active' : 'navbar-brand'"href="/" th:text="#{link.home}"></a>
-			</div>  <!-- 
-			<div id="navbar" class="collapse navbar-collapse">
-				<ul class="nav navbar-nav">
-					<li th:class="${activeTab == 'api'}? 'active' : null"><a href="/api/home">APIs</a></li>
-					<li th:class="${activeTab == 'entities'}? 'active' : null"><a href="/entities/home">Entities</a></li>
-					<li th:class="${activeTab == 'reports'}? 'active' : null"><a href="/reports/home">Reports</a></li>
-					<li th:class="${activeTab == 'datasets'}? 'active' : null"><a href="/datasets/home">Data-Sets</a></li>
-					
-				</ul>
-			</div>      all the different tabs will be put in this list-->
+    
+</head>
+ 
+
+<body  class="home" vocab="http://schema.org/" typeof="WebPage">
+ 
+	<div th:fragment="header_nav(activeTab)">
+		<!-- EPI-12801 -->
+		<span typeof="Organization"><meta property="legalName" content="Department_of_Industry" /></span>
+		
+		<ul id="wb-tphp">
+			<li class="wb-slc">
+				<a class="wb-sl" href="#wb-cont">Skip to main content</a>
+			</li>
+			<li class="wb-slc visible-sm visible-md visible-lg">
+				<a class="wb-sl" href="#wb-info">Skip to "About this site"</a>
+			</li>
+		</ul>
+		<header role="banner">
+			<div id="wb-bnr" class="container">
+				<div class="row">
+					<div class="brand col-xs-8 col-sm-9 col-md-6">
+						<object type="image/svg+xml" tabindex="-1" data="https://ic.gc.ca/utils/scripts/_WET_4-0/apps/themes-dist/gcweb/assets/sig-blk-en.svg"></object><span class="wb-inv"> Government of Canada</span>
+					</div>
+					<section class="wb-mb-links col-xs-4 col-sm-3 visible-xs" id="wb-glb-mn">
+						<h2>Menu</h2>
+						<ul class="list-inline text-right chvrn">
+							<li><a href="#mb-pnl" title="Menu" aria-controls="mb-pnl" class="overlay-lnk" role="button"><span class="glyphicon glyphicon-th-list"><span class="wb-inv">Menu</span></span></a></li>
+						</ul>
+						<div id="mb-pnl"></div>
+					</section>
+				</div>
+			</div>
+			<nav role="navigation" id="wb-sm" class="wb-menu visible-md visible-lg" style="min-height:56px" data-trgt="mb-pnl" typeof="SiteNavigationElement"></nav>
+		 </header>
+	</div>
+
+
+	<main role="main" property="mainContentOfPage" class="container">
+    	<h1 id="wb-cont">Nuans dashboard - Nuans</h1>
+		<div th:fragment="profile_info(activeTab)" class="profileInfo">
+		    <ol class="noStyleList">
+				<li sec:authorize="isAuthenticated()">Welcome&nbsp;<strong>Jane Smith</strong> | </li>
+			    <li><a href="/home.html">Home</a> | </li>  
+				<li sec:authorize="isAuthenticated()" class="mrgn-rght-sm"><a href="/logout">Sign out</a></li>
+				<li sec:authorize="!isAuthenticated()" class="mrgn-rght-sm"><a href="/login">Sign in</a></li>
+		    </ol>       
 		</div>
-	</nav>
-	</header>
-</body>
-</html>
+    </main>  
+      
+	<footer th:fragment="footer(scripts)" role="contentinfo" id="wb-info">
+		<nav role="navigation" class="container visible-sm visible-md visible-lg wb-navcurr">
+			<h2 class="wb-inv">About this site</h2>
+			 
+			<!-- EPIC FOOTER BEGIN -->
+			<div class="row">
+				<!--EPI-11901--> 
+				<section class="col-sm-2 col-lg-offset-3"><h3 class="wb-inv">Contact information</h3><ul class="list-unstyled"><li><a class="gl-footer" href="https://www.ic.gc.ca/eic/site/icgc.nsf/eng/h_07026.html#type=phone&from=Corporations&situation=Nuans ">Contact information</a></li></ul></section>
+				<section class="col-sm-3 col-lg-2">
+				<!-- EPI-11943 -->
+					<h3 class="wb-inv">Terms and conditions</h3>
+					<ul class="list-unstyled">
+						<li><a href="http://www.ic.gc.ca/eic/site/icgc.nsf/eng/h_07033.html">Terms and conditions</a></li>
+					</ul>
+				</section>
+				<section class="col-sm-3 col-lg-3">
+				<!-- EPI-11943 -->
+					<h3 class="wb-inv">Privacy</h3>
+					<ul class="list-unstyled">
+						<li><a href="http://www.canada.ca/en/transparency/privacy.html">Privacy</a></li>
+					</ul>
+				</section>
+			</div>
+		</nav>
+		<div class="brand">
+			<div class="container">
+				<div class="row">
+					<div class="col-xs-6 visible-sm visible-xs tofpg">
+						<a href="#wb-cont">Top of Page <span class="glyphicon glyphicon-chevron-up"></span></a>
+					</div>
+					<div class="col-xs-6 col-md-12 text-right">
+						<object type="image/svg+xml" tabindex="-1" role="img" data="https://ic.gc.ca/utils/scripts/_WET_4-0/themes-dist/gcweb/assets/wmms-blk.svg" aria-label="Symbol of the Government of Canada"></object>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--[if gte IE 9 | !IE ]><!-->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+		<script src="/_WET_4-0/themes-dist/js/wet-boew.min.js"></script>
+		<!--<![endif]-->
+		<!--[if lt IE 9]>
+		<script src="/_WET_4-0/themes-dist/gcweb/js/ie8-wet-boew2.min.js"></script>
+		<![endif]-->
+		<script src="/_WET_4-0/themes-dist/gcweb/js/theme.min.js"></script>
+		
+		<!-- EPI-10519 -->
+		<!-- JS deps -->
+		<script src="https://ic.gc.ca//eic/home.nsf/js/jquery.imagesloaded.js"></script>
+		
+		<!-- EPI-11262 - Util JS -->
+		<script src="https://ic.gc.ca//eic/home.nsf/js/_WET_4-0_utils_canada.min.js"></script>
+		
+		<!-- EPI-11318 -->
+		<script src="https://ic.gc.ca//eic/home.nsf/js/jQuery.externalOpensInNewWindow.js"></script>
+		
+		<!-- EPI-11383 -->
+		<script src="https://ic.gc.ca//eic/home.nsf/js/jQuery.icValidationErrors.js"></script>
+			<!--/* Per-page placeholder for additional links */-->
+	  	<th:block th:replace="${scripts}" />
+	</footer>
+	
+<!-- 	<span style="display:none;" id='app-info' data-project-groupid='ca.gc.ic.corp.nuans' data-project-artifactid='CORP_Nuans_External_WAR' data-project-version='4.4.4' data-project-build-timestamp='2020-01-20T16:23:17Z' data-issue-tracking='http://jira.ic.gc.ca/browse/CORPNUANS' data-scm-sha1='ae7ade2abd1d3b0809e8da65ce18a6144d214def' data-scm-sha1-abbrev='ae7ade2' data-scm-branch='HEAD' data-scm-commit-date='2020-01-20 11:23 AM -0500'></span> -->
+</body></html>
+
+
