@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/general.html :: common_header(~{::title},~{},~{})}">
+<title th:text="#{title.sfoAuditLog}"></title>
+</head>
+<body id="systemFundingOpportunityAuditLogPage">
+	<div th:insert="~{fragments/general.html :: header_nav('home')}"></div>
+
+	<div class="container">
+	
+		<h1 th:text="#{h.sfoAllAuditLogs}"></h1>
+		
+		<table class="table table-bordered" style="margin: 25px 0px;">
+		
+			<tr>
+				<th th:text="#{th.id}"></th>
+				<th th:text="#{th.user}"></th>
+				<th th:text="#{th.type}"></th>
+				<th th:text="#{th.extId}"></th>
+				<th th:text="#{form.nameEn}"></th>
+				<th th:text="#{form.nameFr}"></th>
+				<th th:text="#{th.grantingSystem}"></th>
+				<th th:text="#{th.linkedFo}"></th>
+				<th th:text="#{th.date}"></th>
+			</tr>
+			
+			<tbody>
+			
+				<tr th:each="revision : ${revisionList}">
+					<td><a th:href="@{/admin/viewSFO(id=${revision[0]})}" th:text="${revision[0]}"></a></td>
+					<td th:text="${revision[1]}"></td>
+					<td th:text="${revision[2]}"></td>
+					<td th:text="${revision[3]}"></td>
+					<td th:text="${revision[4]}"></td>
+					<td th:text="${revision[5]}"></td>
+					<td th:text="${revision[6]}"></td>
+					<td><a th:href="@{/browse/viewFo(id=${revision[7]})}" th:text="${revision[7]}"></a></td>
+					<td th:text="${revision[8]}"></td>
+				</tr>
+			
+			</tbody>
+		
+		</table>
+	
+		<div style="margin-bottom: 25px;">
+			<a th:text="#{link.goBack}" href="/admin/auditLogs" class="btn btn-primary"></a>
+		</div>
+		
+	</div>
+
+</body>
+</html>

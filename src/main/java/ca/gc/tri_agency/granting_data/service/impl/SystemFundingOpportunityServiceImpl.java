@@ -126,7 +126,8 @@ public class SystemFundingOpportunityServiceImpl implements SystemFundingOpportu
 					(sfo.getGrantingSystem() != null) ? sfo.getGrantingSystem().getId().toString() : null,
 					(sfo.getLinkedFundingOpportunity() != null)
 							? sfo.getLinkedFundingOpportunity().getId().toString()
-							: null });
+							: null,
+					revEntity.getRevTimestamp().toString() });
 		});
 
 		return auditArrList;

@@ -13,7 +13,7 @@
 <body>
 	<div th:insert="~{fragments/general.html :: header_nav('datasets')}"></div> 
 	<div class="container">
-		<h3 th:if="${unlinkedPerformedMsg != null}" th:utext="${unlinkedPerformedMsg}"></h3>
+		<h5 th:if="${unlinkedPerformedMsg != null}" th:utext="${unlinkedPerformedMsg}"></h5>
 		<h1 th:text="#{h.viewSFo}"></h1>
 		<div class="form-group row">
 			<div class="col-sm-2 col-form-label" th:text="#{form.name}"></div>
@@ -27,6 +27,35 @@
 			<div class="col-sm-2 col-form-label" th:text="#{msg.goldenFo}"></div>
 			<div class="col-sm-10" th:text="${systemFO.linkedFundingOpportunity != null} ? ${systemFO.linkedFundingOpportunity.getLocalizedAttribute('name')} : #{msg.noLinks}"></div>
 		</div>
+
+		<div style="margin: 25px 0px;">
+			<h3 th:text="#{h.auditLog}"></h3>
+			<table class="table table-bordered" style="margin: 25px 0px;">
+				<tr>
+					<th th:text="#{th.user}"></th>
+					<th th:text="#{th.type}"></th>
+					<th th:text="#{th.extId}"></th>
+					<th th:text="#{form.nameEn}"></th>
+					<th th:text="#{form.nameFr}"></th>
+					<th th:text="#{th.grantingSystem}"></th>
+					<th th:text="#{th.linkedFo}"></th>
+					<th th:text="#{th.date}"></th>
+				</tr>
+				<tbody>
+					<tr th:each="revision : ${revisionList}">
+						<td th:text="${revision[1]}"></td>
+						<td th:text="${revision[2]}"></td>
+						<td th:text="${revision[3]}"></td>
+						<td th:text="${revision[4]}"></td>
+						<td th:text="${revision[5]}"></td>
+						<td th:text="${revision[6]}"></td>
+						<td><a th:href="@{/browse/viewFo(id=${revision[7]})}" th:text="${revision[7]}"></a></td>
+						<td th:text="${revision[8]}"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
 		<div th:if="${systemFO.linkedFundingOpportunity == null}">
 			<div class="form-group row">
 				<div class="col-sm-2 col-form-label" th:text="#{msg.fosForMapping}"></div>

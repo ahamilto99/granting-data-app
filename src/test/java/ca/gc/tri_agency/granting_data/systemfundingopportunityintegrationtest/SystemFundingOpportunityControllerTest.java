@@ -1,9 +1,13 @@
 package ca.gc.tri_agency.granting_data.systemfundingopportunityintegrationtest;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.transaction.Transactional;
 
@@ -36,7 +40,7 @@ public class SystemFundingOpportunityControllerTest {
 
 	@Autowired
 	private SystemFundingOpportunityService sfoService;
-	
+
 	@Autowired
 	private SystemFundingOpportunityRepository sfoRepo;
 
@@ -102,12 +106,12 @@ public class SystemFundingOpportunityControllerTest {
 		SystemFundingOpportunity sfo = sfoService.findSystemFundingOpportunityById(2L);
 		sfo.setLinkedFundingOpportunity(null);
 		sfoService.saveSystemFundingOpportunity(sfo);
-		
+
 		assertNull(sfoService.findSystemFundingOpportunityById(2L).getLinkedFundingOpportunity());
 		SystemFundingOpportunity unlinkedSfo = sfoRepo.findById(2L).get();
 		unlinkedSfo.setLinkedFundingOpportunity(null);
 		sfoRepo.save(unlinkedSfo);
-		
+
 		assertNull(sfoRepo.getOne(2L).getLinkedFundingOpportunity());
 		assertTrue(mvc.perform(MockMvcRequestBuilders.get("/admin/confirmUnlink").param("sfoId", "2"))
 				.andExpect(MockMvcResultMatchers.status().isNotFound()).andReturn().getResponse().getContentAsString()
@@ -122,7 +126,7 @@ public class SystemFundingOpportunityControllerTest {
 		SystemFundingOpportunity unlinkedSfo = sfoRepo.findById(2L).get();
 		unlinkedSfo.setLinkedFundingOpportunity(null);
 		sfoRepo.save(unlinkedSfo);
-		
+
 		assertNull(sfoRepo.getOne(2L).getLinkedFundingOpportunity());
 		assertFalse(mvc.perform(MockMvcRequestBuilders.get("/admin/viewSFO").param("id", "2"))
 				.andExpect(MockMvcResultMatchers.status().isOk()).andReturn().getResponse().getContentAsString()
@@ -162,4 +166,55 @@ public class SystemFundingOpportunityControllerTest {
 						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
 	}
 
+	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@Test
+	public void test_adminCanAccessAuditLogForAllSystemFundingOpportunities_shouldSucceedWith200() throws Exception {
+		String response = mvc.perform(MockMvcRequestBuilders.get("/admin/auditLogSFO"))
+				.andExpect(MockMvcResultMatchers.status().isOk()).andReturn().getResponse().getContentAsString();
+
+		int numAdds = 0;
+
+		Pattern regex = Pattern.compile("<td>ADD</td>");
+		Matcher regexMatcher = regex.matcher(response);
+		while (regexMatcher.find()) {
+			++numAdds;
+		}
+
+		assertTrue(response.contains("id=\"systemFundingOpportunityAuditLogPage\""));
+		assertTrue(numAdds >= 123);
+	}
+
+	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@Test
+	public void test_nonAdminCannotAccessAuditLogForAllSystemFundingOpportunities_shouldReturn403() throws Exception {
+		mvc.perform(MockMvcRequestBuilders.get("/admin/auditLogSFO")).andExpect(MockMvcResultMatchers.status().isForbidden())
+				.andExpect(MockMvcResultMatchers.content()
+						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
+	}
+
+	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@Test
+	public void test_adminCanAccessAuditLogForOneSystemFundingOpportunity_shouldSucceedWith200() throws Exception {
+		String response = mvc.perform(MockMvcRequestBuilders.get("/admin/viewSFO").param("id", "1"))
+				.andExpect(MockMvcResultMatchers.status().isOk()).andReturn().getResponse().getContentAsString();
+
+		int numAdds = 0;
+
+		Pattern regex = Pattern.compile("<td>ADD</td>");
+		Matcher regexMatcher = regex.matcher(response);
+		while (regexMatcher.find()) {
+			++numAdds;
+		}
+
+		assertEquals(1, numAdds);
+		assertTrue(response.contains("<h3>Audit Log</h3>"));
+	}
+
+	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@Test
+	public void test_nonAdminCannotAccessAuditLogForOneSystemFundingOpportunity_shouldReturn403() throws Exception {
+		mvc.perform(MockMvcRequestBuilders.get("/admin/viewSFO").param("id", "1"))
+				.andExpect(MockMvcResultMatchers.status().isForbidden()).andExpect(MockMvcResultMatchers.content()
+						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
+	}
 }
