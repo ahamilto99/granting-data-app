@@ -112,7 +112,17 @@ public class BusinessUnitServiceTest {
 		int endNumRevisions = buRevisions.size();
 
 		assertEquals(startNumRevisions + 1, endNumRevisions);
-		assertEquals(nameEn, buRevisions.get(endNumRevisions - 1)[2]);
+		assertEquals(nameEn, buRevisions.get(endNumRevisions - 1)[3]);
+		
+		int numAdds = 0;
+
+		for (String[] strArr : buRevisions) {
+			if (strArr[2].equals("ADD")) {
+				++numAdds;
+			}
+		}
+		
+		assertEquals(numAdds, 1);
 	}
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
@@ -131,12 +141,16 @@ public class BusinessUnitServiceTest {
 	@Test
 	public void test_adminCanFindAllBusinessUnitRevisions() {
 		List<String[]> auditedArrList = buService.findAllBusinessUnitRevisions();
-		assertEquals("N/A (PREPOPULATED)", auditedArrList.get(0)[0]);
-		assertEquals("INSERT", auditedArrList.get(0)[1]);
-		assertEquals("MCT", auditedArrList.get(0)[2]);
-		assertEquals("FR MCT", auditedArrList.get(0)[3]);
-		assertEquals("MCT", auditedArrList.get(0)[4]);
-		assertEquals("MCT", auditedArrList.get(0)[5]);
+		
+		int numAdds = 0;
+
+		for (String[] strArr : auditedArrList) {
+			if (strArr[2].equals("ADD")) {
+				++numAdds;
+			}
+		}
+		
+		assertTrue(numAdds >= 44);
 	}
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })

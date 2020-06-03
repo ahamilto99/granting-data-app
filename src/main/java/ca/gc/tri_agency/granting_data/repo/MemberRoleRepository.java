@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import ca.gc.tri_agency.granting_data.model.MemberRole;
 
 @Repository
-public interface MemberRoleRepository extends JpaRepository<MemberRole, Long>, RevisionRepository<MemberRole, Long, Long> {
+public interface MemberRoleRepository extends JpaRepository<MemberRole, Long> {
 
 	List<MemberRole> findByBusinessUnitIdOrderByUserLogin(Long buId);
 

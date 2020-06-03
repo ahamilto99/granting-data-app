@@ -2,6 +2,7 @@ package ca.gc.tri_agency.granting_data.memberroleintegrationtest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
@@ -105,7 +106,7 @@ public class MemberRoleServiceTest {
 		int endNumRevisions = mrRevisions.size();
 
 		assertEquals(startNumRevisions + 1, endNumRevisions);
-		assertEquals(revisedUserLogin, mrRevisions.get(endNumRevisions - 1)[2]);
+		assertEquals(revisedUserLogin, mrRevisions.get(endNumRevisions - 1)[3]);
 	}
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
@@ -119,12 +120,15 @@ public class MemberRoleServiceTest {
 	public void test_adminCanFindAllMemberRoleRevisions() {
 		List<String[]> auditedArrList = mrService.findAllMemberRoleRevisions();
 		assertNotNull(auditedArrList);
-		assertEquals("N/A (PREPOPULATED)", auditedArrList.get(0)[0]);
-		assertEquals("INSERT", auditedArrList.get(0)[1]);
- 		assertEquals("aha", auditedArrList.get(0)[2]);
- 		assertEquals("FALSE", auditedArrList.get(0)[3]);
- 		assertEquals("Program Lead", auditedArrList.get(0)[4]);
- 		assertEquals("MCT", auditedArrList.get(0)[5]);
+		
+		int numAdds = 0;
+		for (String[] strArr : auditedArrList) {
+			if (strArr[2].equals("ADD")) {
+				++numAdds;
+			}
+		}
+		
+		assertTrue(numAdds >= 3);
 	}
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })

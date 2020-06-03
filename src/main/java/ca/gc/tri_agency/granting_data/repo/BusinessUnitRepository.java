@@ -10,7 +10,7 @@ import ca.gc.tri_agency.granting_data.model.Agency;
 import ca.gc.tri_agency.granting_data.model.BusinessUnit;
 
 @Repository
-public interface BusinessUnitRepository extends JpaRepository<BusinessUnit, Long>, RevisionRepository<BusinessUnit, Long, Long> {
+public interface BusinessUnitRepository extends JpaRepository<BusinessUnit, Long> {
 
 	List<BusinessUnit> findAllByAgency(Agency agency);
 	

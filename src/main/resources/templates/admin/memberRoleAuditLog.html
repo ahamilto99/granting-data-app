@@ -14,6 +14,7 @@
 		
 			<thead>
 				<tr>
+					<th th:text="#{th.id}"></th>
 					<th th:text="#{th.user}"></th>
 					<th th:text="#{th.type}"></th>
 					<th th:text="#{th.userLogin}"></th>
@@ -32,6 +33,7 @@
 					<td th:text="${revision[3]}"></td>
 					<td th:text="${revision[4]}"></td>
 					<td th:text="${revision[5]}"></td>
+					<td><a th:text="${revision[6]}" th:href="@{/browse/viewBU(id=${revision[6]})}"></a></td>
 					<td th:text="${revision[7]}"></td>
 				</tr>
 			</tbody>

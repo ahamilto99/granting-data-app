@@ -1,21 +1,20 @@
 package ca.gc.tri_agency.granting_data.service.impl;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
 
 import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.RevisionType;
+import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.envers.query.AuditQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
-import org.springframework.data.history.Revision;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import ca.gc.tri_agency.granting_data.model.Agency;
 import ca.gc.tri_agency.granting_data.model.BusinessUnit;
@@ -29,8 +28,8 @@ public class BusinessUnitServiceImpl implements BusinessUnitService {
 
 	private BusinessUnitRepository buRepo;
 
-	@PersistenceContext
-	private EntityManager em;
+	@PersistenceUnit
+	private EntityManagerFactory emf;
 
 	@Autowired
 	public BusinessUnitServiceImpl(BusinessUnitRepository buRepo) {
@@ -58,61 +57,57 @@ public class BusinessUnitServiceImpl implements BusinessUnitService {
 		return buRepo.save(bu);
 	}
 
-	private String[] createAuditedBusinessUnitStringArr(BusinessUnit bu, String revType, UsernameRevisionEntity revEntity) {
-		switch (revType) {
-		case "ADD":
-			revType = "INSERT";
-			break;
-		case "MOD":
-			revType = "UPDATE";
-			break;
-		case "DEL":
-			revType = "DELETE";
-		}
+	private List<String[]> convertAuditResults(List<Object[]> revisionList) {
+		List<String[]> auditedArrList = new ArrayList<>();
 		
-		return new String[] { revEntity.getUsername(), revType, bu.getNameEn(), bu.getNameFr(), bu.getAcronymEn(),
-				bu.getAcronymFr(), revEntity.getRevTimestamp().toString() };
-	}
-
-	@AdminOnly
-	@Override
-	public List<String[]> findBusinessUnitRevisionsById(Long buId) {
-		List<String[]> auditedArrList = new ArrayList<>();
-
-		List<Revision<Long, BusinessUnit>> revisionList = buRepo.findRevisions(buId).getContent();
-		if (!revisionList.isEmpty()) {
-			revisionList.forEach(rev -> {
-				BusinessUnit bu = rev.getEntity();
-				UsernameRevisionEntity revEntity = (UsernameRevisionEntity) rev.getMetadata().getDelegate();
-				auditedArrList.add(createAuditedBusinessUnitStringArr(bu,
-						rev.getMetadata().getRevisionType().toString(), revEntity));
-			});
-		}
-
-		auditedArrList.sort(Comparator.comparing(strArr -> strArr[6])); // sorts by timestamp
-		return auditedArrList;
-	}
-
-	@AdminOnly
-	@Transactional(readOnly = true)
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<String[]> findAllBusinessUnitRevisions() {
-		AuditReader auditReader = AuditReaderFactory.get(em);
-		AuditQuery auditQuery = auditReader.createQuery().forRevisionsOfEntity(BusinessUnit.class, false, true);
-
-		List<String[]> auditedArrList = new ArrayList<>();
-
-		List<Object[]> revisionList = auditQuery.getResultList();
 		revisionList.forEach(objArr -> {
 			BusinessUnit bu = (BusinessUnit) objArr[0];
 			UsernameRevisionEntity revEntity = (UsernameRevisionEntity) objArr[1];
 			RevisionType revType = (RevisionType) objArr[2];
-			auditedArrList.add(createAuditedBusinessUnitStringArr(bu, revType.toString(), revEntity));
+			auditedArrList.add(new String[] { bu.getId().toString(), revEntity.getUsername(), revType.toString(), bu.getNameEn(), bu.getNameFr(), bu.getAcronymEn(),
+					bu.getAcronymFr(), revEntity.getRevTimestamp().toString() });
 		});
-
-		auditedArrList.sort(Comparator.comparing(strArr -> strArr[6]));
+		
 		return auditedArrList;
+	}
+
+	@AdminOnly
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String[]> findBusinessUnitRevisionsById(Long buId) {
+		EntityManager em = emf.createEntityManager();
+		em.getTransaction().begin();
+		
+		AuditReader auditReader = AuditReaderFactory.get(em);
+		AuditQuery auditQuery = auditReader.createQuery().forRevisionsOfEntity(BusinessUnit.class, false, true);
+		auditQuery.add(AuditEntity.id().eq(buId));
+		auditQuery.addOrder(AuditEntity.revisionProperty("id").asc());
+		
+		List<Object[]> revisionList = auditQuery.getResultList();
+		
+		em.getTransaction().commit();
+		em.close();
+		
+		return convertAuditResults(revisionList);
+	}
+
+	@AdminOnly
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String[]> findAllBusinessUnitRevisions() {
+		EntityManager em = emf.createEntityManager();
+		em.getTransaction().begin();
+		
+		AuditReader auditReader = AuditReaderFactory.get(em);
+		AuditQuery auditQuery = auditReader.createQuery().forRevisionsOfEntity(BusinessUnit.class, false, true);
+		auditQuery.addOrder(AuditEntity.revisionProperty("id").asc());
+		
+		List<Object[]> revisionList = auditQuery.getResultList();
+
+		em.getTransaction().commit();
+		em.close();
+
+		return convertAuditResults(revisionList);
 	}
 
 }

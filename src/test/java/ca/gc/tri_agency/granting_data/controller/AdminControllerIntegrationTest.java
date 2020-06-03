@@ -127,12 +127,18 @@ public class AdminControllerIntegrationTest {
 		String response = mvc.perform(MockMvcRequestBuilders.get("/admin/auditLogMR"))
 				.andExpect(MockMvcResultMatchers.status().isOk()).andReturn().getResponse().getContentAsString();
 
+		int numAdds = 0;
+		
+		Pattern regex = Pattern.compile("<td>ADD</td>");
+		Matcher regexMatcher = regex.matcher(response);
+		while (regexMatcher.find()) {
+			++numAdds;
+		}
+		
 		assertTrue(response.contains("id=\"memberRoleAuditLogPage\""));
 		assertTrue(response.contains("Audit Log - All Member Roles"));
-		assertTrue(response.contains("<td>N/A (PREPOPULATED)</td>\r\n" + "\t\t\t\t\t<td>INSERT</td>\r\n"
-				+ "\t\t\t\t\t<td>aha</td>\r\n" + "\t\t\t\t\t<td>FALSE</td>\r\n" + "\t\t\t\t\t<td>Program Lead</td>\r\n"
-				+ "\t\t\t\t\t<td>MCT</td>\r\n" + "\t\t\t\t\t<td>2020-01-01 00:00:00.0</td>"));
 		assertTrue(response.contains("href=\"/admin/auditLogs\""));
+		assertTrue(numAdds >= 3);
 	}
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
@@ -149,16 +155,18 @@ public class AdminControllerIntegrationTest {
 		String response = mvc.perform(MockMvcRequestBuilders.get("/admin/auditLogMR").param("id", "2"))
 				.andExpect(MockMvcResultMatchers.status().isOk()).andReturn().getResponse().getContentAsString();
 
+		int numAdds = 0;
+		
+		Pattern regex = Pattern.compile("<td>ADD</td>");
+		Matcher regexMatcher = regex.matcher(response);
+		while (regexMatcher.find()) {
+			++numAdds;
+		}
+		
 		assertTrue(response.contains("id=\"memberRoleAuditLogPage\""));
 		assertTrue(response.contains("Audit Log - Member Role"));
-		assertTrue(response.contains(
-				"<td>N/A (PREPOPULATED)</td>\r\n" + "\t\t\t\t\t<td>INSERT</td>\r\n" + "\t\t\t\t\t<td>jfs</td>\r\n"
-						+ "\t\t\t\t\t<td>FALSE</td>\r\n" + "\t\t\t\t\t<td>Program Officer</td>\r\n"
-						+ "\t\t\t\t\t<td>MCT</td>\r\n" + "\t\t\t\t\t<td>2020-01-01 00:00:00.0</td>"));
-		assertFalse(response.contains("<td>N/A (PREPOPULATED)</td>\r\n" + "\t\t\t\t\t<td>INSERT</td>\r\n"
-				+ "\t\t\t\t\t<td>aha</td>\r\n" + "\t\t\t\t\t<td>FALSE</td>\r\n" + "\t\t\t\t\t<td>Program Lead</td>\r\n"
-				+ "\t\t\t\t\t<td>MCT</td>\r\n" + "\t\t\t\t\t<td>2020-01-01 00:00:00.0</td>"));
 		assertTrue(response.contains("href=\"/browse/viewBU?id=1\""));
+		assertEquals(1, numAdds);
 	}
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })

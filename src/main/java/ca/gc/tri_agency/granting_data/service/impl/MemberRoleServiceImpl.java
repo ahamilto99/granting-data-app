@@ -1,21 +1,20 @@
 package ca.gc.tri_agency.granting_data.service.impl;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
 
 import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.RevisionType;
+import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.envers.query.AuditQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
-import org.springframework.data.history.Revision;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import ca.gc.tri_agency.granting_data.model.MemberRole;
 import ca.gc.tri_agency.granting_data.model.auditing.UsernameRevisionEntity;
@@ -26,8 +25,8 @@ import ca.gc.tri_agency.granting_data.service.MemberRoleService;
 @Service
 public class MemberRoleServiceImpl implements MemberRoleService {
 
-	@PersistenceContext
-	private EntityManager em;
+	@PersistenceUnit
+	private EntityManagerFactory emf;
 
 	private MemberRoleRepository mrRepo;
 
@@ -63,106 +62,61 @@ public class MemberRoleServiceImpl implements MemberRoleService {
 		return mrRepo.findByBusinessUnitIdOrderByUserLogin(buId);
 	}
 
-	private String[] createAuditedMemberRoleStrArr(MemberRole mr, String revType, UsernameRevisionEntity revEntity,
-			String roleName, String buName, String buId) {
-		switch (revType) {
-		case "ADD":
-			revType = "INSERT";
-			break;
-		case "MOD":
-			revType = "UPDATE";
-			break;
-		case "DEL":
-			revType = "DELETE";
-		}
-
-		return new String[] { revEntity.getUsername(), revType, mr.getUserLogin(),
-				(mr.getEdiAuthorized() != null) ? mr.getEdiAuthorized().toString().toUpperCase() : null, roleName,
-				buName, buId, revEntity.getRevTimestamp().toString() };
-	}
-
-	@Override
-	@AdminOnly
-	@Transactional(readOnly = true)
-	public List<String[]> findMemberRoleRevisionsById(Long mrId) {
+	private List<String[]> convertAuditResults(List<Object[]> revisionList) {
 		List<String[]> auditedArrList = new ArrayList<>();
 
-		List<Revision<Long, MemberRole>> revisionList = mrRepo.findRevisions(mrId).getContent();
-		revisionList.forEach(rev -> {
-			MemberRole mr = rev.getEntity();
-			String revType = rev.getMetadata().getRevisionType().toString();
-			UsernameRevisionEntity revEntity = (UsernameRevisionEntity) rev.getMetadata().getDelegate();
-
-			String roleName;
-			try {
-				roleName = mr.getRole().getLocalizedAttribute("name");
-			} catch (NullPointerException npe) {
-				roleName = null;
-			}
-
-			String buName;
-			try {
-				buName = mr.getBusinessUnit().getLocalizedAttribute("name");
-			} catch (NullPointerException npe) {
-				buName = null;
-			}
-			
-			String buId;
-			try {
-				buId = mr.getBusinessUnit().getId().toString();
-			} catch (NullPointerException npe) {
-				buId = null;
-			}
-
-			auditedArrList.add(createAuditedMemberRoleStrArr(mr, revType, revEntity, roleName, buName, buId));
-		});
-
-		auditedArrList.sort(Comparator.comparing(strArr -> strArr[strArr.length - 1]));
-		return auditedArrList;
-	}
-
-	@Override
-	@AdminOnly
-	@Transactional(readOnly = true)
-	@SuppressWarnings("unchecked")
-	public List<String[]> findAllMemberRoleRevisions() {
-		AuditReader auditReader = AuditReaderFactory.get(em);
-		AuditQuery auditQuery = auditReader.createQuery().forRevisionsOfEntity(MemberRole.class, false, true);
-
-		List<String[]> auditedArrList = new ArrayList<>();
-
-		List<Object[]> revisionList = auditQuery.getResultList();
 		revisionList.forEach(rev -> {
 			MemberRole mr = (MemberRole) rev[0];
 			UsernameRevisionEntity revEntity = (UsernameRevisionEntity) rev[1];
 			RevisionType revType = (RevisionType) rev[2];
 
-			String roleName;
-			try {
-				roleName = mr.getRole().getLocalizedAttribute("name");
-			} catch (NullPointerException npe) {
-				roleName = null;
-			}
-
-			String buName;
-			try {
-				buName = mr.getBusinessUnit().getLocalizedAttribute("name");
-			} catch (NullPointerException npe) {
-				buName = null;
-			}
-
-			String buId;
-			try {
-				buId = mr.getBusinessUnit().getId().toString();
-			} catch (NullPointerException npe) {
-				buId = null;
-			}
-			
-			auditedArrList.add(createAuditedMemberRoleStrArr(mr, revType.toString(), revEntity, roleName, buName, buId));
+			auditedArrList.add(new String[] { mr.getId().toString(), revEntity.getUsername(), revType.toString(), mr.getUserLogin(),
+					(mr.getEdiAuthorized() != null) ? mr.getEdiAuthorized().toString().toUpperCase() : null,
+					(mr.getRole() != null) ? mr.getRole().getId().toString() : null,
+					(mr.getBusinessUnit() != null) ? mr.getBusinessUnit().getId().toString() : null,
+					revEntity.getRevTimestamp().toString() });
 		});
 
-		auditedArrList.sort(Comparator.comparing(strArr -> strArr[strArr.length - 1]));
 		return auditedArrList;
+	}
+
+	@Override
+	@AdminOnly
+	@SuppressWarnings("unchecked")
+	public List<String[]> findMemberRoleRevisionsById(Long mrId) {
+		EntityManager em = emf.createEntityManager();
+		em.getTransaction().begin();
+
+		AuditReader auditReader = AuditReaderFactory.get(em);
+
+		AuditQuery auditQuery = auditReader.createQuery().forRevisionsOfEntity(MemberRole.class, false, true);
+		auditQuery.add(AuditEntity.id().eq(mrId));
+		auditQuery.addOrder(AuditEntity.revisionProperty("id").asc());
+		List<Object[]> revisionList = auditQuery.getResultList();
+
+		em.getTransaction().commit();
+		em.close();
+
+		return convertAuditResults(revisionList);
+	}
+
+	@Override
+	@AdminOnly
+	@SuppressWarnings("unchecked")
+	public List<String[]> findAllMemberRoleRevisions() {
+		EntityManager em = emf.createEntityManager();
+		em.getTransaction().begin();
+
+		AuditReader auditReader = AuditReaderFactory.get(em);
+
+		AuditQuery auditQuery = auditReader.createQuery().forRevisionsOfEntity(MemberRole.class, false, true);
+		auditQuery.addOrder(AuditEntity.revisionProperty("id").asc());
+		List<Object[]> revisionList = auditQuery.getResultList();
+
+		em.getTransaction().commit();
+		em.close();
+
+		return convertAuditResults(revisionList);
 	}
 
 }
