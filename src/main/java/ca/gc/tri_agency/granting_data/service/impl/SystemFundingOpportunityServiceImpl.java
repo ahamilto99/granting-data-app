@@ -143,7 +143,7 @@ public class SystemFundingOpportunityServiceImpl implements SystemFundingOpportu
 		AuditReader auditReader = AuditReaderFactory.get(em);
 
 		AuditQuery auditQuery = auditReader.createQuery().forRevisionsOfEntity(SystemFundingOpportunity.class, false, true);
-		auditQuery.addOrder(AuditEntity.id().asc());
+		auditQuery.addOrder(AuditEntity.revisionProperty("id").asc());
 		List<Object[]> revisionList = auditQuery.getResultList();
 
 		em.getTransaction().commit();
