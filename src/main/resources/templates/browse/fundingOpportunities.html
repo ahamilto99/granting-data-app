@@ -13,7 +13,8 @@
 	<main role="main" property="mainContentOfPage" class="container">
 		<h1 th:text="#{h.fundingOpportunities}"></h1>
 		<div th:insert="~{fragments/general.html :: profile_info('home')}" />
-		<p th:text="#{intro.fundingOpportunities}"></p>
+
+<div class="panel panel-default"><div class="panel-body">
 
 
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
@@ -92,6 +93,8 @@
   </div>
 </div> 		
 
+		<p th:text="#{intro.fundingOpportunities}"></p>
+
 			
 			<table id="fundingOpportunitiesTable" class="wb-tables table table-striped table-hover dataTable">
 				<thead>
@@ -123,6 +126,8 @@
       	<h3 ><a href="/admin/createFo" th:text="#{link.addFo}"></a></h3>
       	 </div> 
 		</div>
+	</div>
+	<footer class="panel-footer">Return to <a href="/">Home</a></footer>
 	</div>
 </main>
 	<footer th:insert="~{fragments/general.html :: footer(~{})}" />
