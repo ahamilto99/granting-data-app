@@ -491,7 +491,7 @@
             <column name="ext_id" type="VARCHAR(255)"/>
             <column name="name_en" type="VARCHAR(255)"/>
             <column name="name_fr" type="VARCHAR(255)"/>
-            <column name="granting_sytsem_id" type="BIGINT"/>
+            <column name="granting_system_id" type="BIGINT"/>
             <column name="linked_funding_opportunity_id" type="BIGINT"/>
         </createTable>
         <addForeignKeyConstraint constraintName="fk_system_funding_opportunity_revision_info" 
