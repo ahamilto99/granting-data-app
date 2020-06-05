@@ -46,7 +46,7 @@
 
 			<div class="form-group row">
 				<div class="col-sm-2 col-form-label" th:text="#{form.agency}"></div>
-				<div th:text="*{agency.getName()}"></div>
+				<div th:text="*{agency.getLocalizedAttribute('name')}"></div>
 			</div>
 
 			<div>

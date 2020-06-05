@@ -81,7 +81,7 @@ public class FundingCycleServiceTest {
 	@Test
 	public void test_findMonthlyFundingCyclesByEndDate() {
 		assertEquals(0, fcService.findMonthlyFundingCyclesByEndDate(0).size());
-		assertTrue(0 < fcService.findMonthlyFundingCyclesByEndDate(12).size());
+		assertTrue(0 < fcService.findMonthlyFundingCyclesByEndDate(10).size());
 	}
 
 	@WithAnonymousUser
@@ -109,7 +109,7 @@ public class FundingCycleServiceTest {
 	@Test
 	public void test_findMonthlyFundingCyclesByEndDateNOI() {
 		assertEquals(0, fcService.findMonthlyFundingCyclesByEndDateNOI(Integer.MAX_VALUE).size());
-		assertTrue(0 < fcService.findMonthlyFundingCyclesByEndDateNOI(12).size());
+		assertTrue(0 < fcService.findMonthlyFundingCyclesByEndDateNOI(10).size());
 	}
 
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })

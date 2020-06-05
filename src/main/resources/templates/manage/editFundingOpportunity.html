@@ -20,6 +20,7 @@ $(document).ready(function(){
 		<form action="#" th:action="@{editFo}" th:object="${programForm}" method="post">            		
         	<input type="hidden" th:field="*{id}" />
         	<input type="hidden" th:field="*{programLeadName}" />
+        	<input type="hidden" th:field="*{businessUnit}" />
 			<h1 th:text="#{h.editFo}"></h1>
 			
 			<div class="form-group row">

@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/general.html :: common_header(~{::title},~{},~{})}">
+<title th:text="#{title.mrAuditLog}"></title>
+</head>
+<body id="memberRoleAuditLogPage">
+	<div th:insert="~{fragments/general.html :: header_nav('home')}"></div>
+	<div class="container">
+	
+		<h1 th:if="${#conversions.convert(param.id, 'Long') gt 0}" th:text="#{h.mrOneAuditLog}"></h1>
+		<h1 th:if="${#conversions.convert(param.id, 'Long') le 0}" th:text="#{h.mrAllAuditLogs}"></h1>
+	
+		<table class="table table-bordered" style="margin: 25px 0px;">
+		
+			<thead>
+				<tr>
+					<th th:text="#{th.id}"></th>
+					<th th:text="#{th.user}"></th>
+					<th th:text="#{th.type}"></th>
+					<th th:text="#{th.userLogin}"></th>
+					<th th:text="#{th.ediAuthorized}"></th>
+					<th th:text="#{th.role}"></th>
+					<th th:text="#{th.bu}"></th>
+					<th th:text="#{th.date}"></th>
+				</tr>	
+			</thead>
+			
+			<tbody>
+				<tr th:each="revision : ${revisionList}">
+					<td th:text="${revision[0]}"></td>
+					<td th:text="${revision[1]}"></td>
+					<td th:text="${revision[2]}"></td>
+					<td th:text="${revision[3]}"></td>
+					<td th:text="${revision[4]}"></td>
+					<td th:text="${revision[5]}"></td>
+					<td><a th:text="${revision[6]}" th:href="@{/browse/viewBU(id=${revision[6]})}"></a></td>
+					<td th:text="${revision[7]}"></td>
+				</tr>
+			</tbody>
+			
+		</table>
+
+		<div style="margin: 25px 0px;">
+			<a
+				th:if="${!revisionList.isEmpty()} and ${#conversions.convert(param.id, 'Long') gt 0} and ${revisionList.get(revisionList.size() - 1)[6]}"
+				class="btn btn-primary" th:href="@{/browse/viewBU(id=${revisionList.get(revisionList.size() - 1)[6]})}" th:text="#{link.goBack}"></a> <a
+				th:if="${revisionList.isEmpty()} or ${#conversions.convert(param.id, 'Long') le 0} or ${revisionList.get(revisionList.size() - 1)[6] eq null}"
+				class="btn btn-primary" href="/admin/auditLogs" th:text="#{link.goBack}"></a>
+		</div>
+
+	</div>
+</body>
+</html>

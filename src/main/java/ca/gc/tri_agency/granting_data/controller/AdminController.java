@@ -21,7 +21,7 @@ import ca.gc.tri_agency.granting_data.service.AdminService;
 public class AdminController {
 
 	private AdminService adminService;
-
+	
 	@Autowired
 	public AdminController(AdminService adminService) {
 		this.adminService = adminService;
@@ -51,8 +51,13 @@ public class AdminController {
 	}
 
 	@GetMapping("/home")
-	public String home(Model model) {
+	public String home() {
 		return "admin/home";
 	}
 
+	@GetMapping("/auditLogs")
+	public String auditLogs() {
+		return "admin/auditLogs";
+	}
+	
 }

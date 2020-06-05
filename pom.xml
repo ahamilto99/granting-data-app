@@ -140,6 +140,11 @@
             <version>1.0.2</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-envers</artifactId>
+        </dependency>
+        
 	</dependencies>
 
 

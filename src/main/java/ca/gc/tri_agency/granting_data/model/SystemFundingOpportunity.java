@@ -8,9 +8,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 
+import org.hibernate.envers.Audited;
+
 import ca.gc.tri_agency.granting_data.model.util.LocalizedParametersModel;
 
 @Entity
+@Audited
 public class SystemFundingOpportunity implements LocalizedParametersModel {
 	
 	@Id

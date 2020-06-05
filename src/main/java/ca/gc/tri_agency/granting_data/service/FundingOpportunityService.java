@@ -25,4 +25,8 @@ public interface FundingOpportunityService {
 
 	List<FundingOpportunity> getFilteredFundingOpportunities(FundingOpportunityFilterForm filter,
 			Map<Long, GrantingSystem> applyMap, Map<Long, List<GrantingSystem>> awardMap);
+
+	List<String[]> findFundingOpportunityRevisionsById(Long foId);
+
+	List<String[]> findAllFundingOpportunitiesRevisions();
 }

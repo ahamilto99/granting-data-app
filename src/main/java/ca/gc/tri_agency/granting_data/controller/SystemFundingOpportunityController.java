@@ -50,6 +50,7 @@ public class SystemFundingOpportunityController {
 
 		model.addAttribute("systemFO", sfoService.findSystemFundingOpportunityById(id));
 		model.addAttribute("fosForLink", foService.findAllFundingOpportunities());
+		model.addAttribute("revisionList", sfoService.findSystemFundingOpportunityRevisionById(id));
 		return "admin/viewSystemFO";
 	}
 
@@ -94,6 +95,12 @@ public class SystemFundingOpportunityController {
 	public String registerProgramLinkPost(@ModelAttribute("id") Long id, @ModelAttribute("foId") Long foId) {
 		sfoService.linkSystemFundingOpportunity(id, foId);
 		return "redirect:analyzeSFOs";
+	}
+	
+	@GetMapping("/admin/auditLogSFO")
+	public String systemFundingOpportunityAuditLog(Model model) {
+		model.addAttribute("revisionList", sfoService.findAllSystemFundingOpportunityRevisions());
+		return "admin/systemFundingOpportunityAuditLog";
 	}
 
 }

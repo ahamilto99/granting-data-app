@@ -25,5 +25,9 @@ public interface SystemFundingOpportunityService {
 	SystemFundingOpportunity registerSystemFundingOpportunity(FundingCycleDatasetRow row, GrantingSystem targetSystem);
 	
 	SystemFundingOpportunity saveSystemFundingOpportunity(SystemFundingOpportunity sfo);
+
+	List<String[]> findAllSystemFundingOpportunityRevisions();
+
+	List<String[]> findSystemFundingOpportunityRevisionById(Long sfoId);
 	
 }
