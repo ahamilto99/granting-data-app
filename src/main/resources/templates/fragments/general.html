@@ -86,22 +86,22 @@
 		
 		<ul id="wb-tphp">
 			<li class="wb-slc">
-				<a class="wb-sl" href="#wb-cont">Skip to main content</a>
+				<a class="wb-sl" href="#wb-cont" th:text="#{link.skipToMain}"></a>
 			</li>
 			<li class="wb-slc visible-sm visible-md visible-lg">
-				<a class="wb-sl" href="#wb-info">Skip to "About this site"</a>
+				<a class="wb-sl" href="#wb-info" th:text="#{link.skipToAbout}"></a>
 			</li>
 		</ul>
 		<header role="banner">
 			<div id="wb-bnr" class="container">
 				<div class="row">
 					<div class="brand col-xs-8 col-sm-9 col-md-6">
-						<object type="image/svg+xml" tabindex="-1" data="https://ic.gc.ca/utils/scripts/_WET_4-0/apps/themes-dist/gcweb/assets/sig-blk-en.svg"></object><span class="wb-inv"> Government of Canada</span>
+						<object type="image/svg+xml" tabindex="-1" data="https://ic.gc.ca/utils/scripts/_WET_4-0/apps/themes-dist/gcweb/assets/sig-blk-en.svg"></object><span class="wb-inv" th:text="#{s.gov}"></span>
 					</div>
 					<section class="wb-mb-links col-xs-4 col-sm-3 visible-xs" id="wb-glb-mn">
-						<h2>Menu</h2>
+						<h2 th:text="#{s.menu}"></h2>
 						<ul class="list-inline text-right chvrn">
-							<li><a href="#mb-pnl" title="Menu" aria-controls="mb-pnl" class="overlay-lnk" role="button"><span class="glyphicon glyphicon-th-list"><span class="wb-inv">Menu</span></span></a></li>
+							<li><a href="#mb-pnl" title="Menu" aria-controls="mb-pnl" class="overlay-lnk" role="button"><span class="glyphicon glyphicon-th-list"><span class="wb-inv" th:text="#{s.menu}"></span></span></a></li>
 						</ul>
 						<div id="mb-pnl"></div>
 					</section>
@@ -113,37 +113,37 @@
 
 
 	<main role="main" property="mainContentOfPage" class="container">
-    	<h1 id="wb-cont">Nuans dashboard - Nuans</h1>
+    	<h1 id="wb-cont" th:text="#{h.nuansDashboard}"></h1>
 		<div th:fragment="profile_info(activeTab)" class="profileInfo">
 		    <ol class="noStyleList">
-				<li sec:authorize="isAuthenticated()">Welcome&nbsp;<strong>Jane Smith</strong> | </li>
-			    <li><a href="/home.html">Home</a> | </li>  
-				<li sec:authorize="isAuthenticated()" class="mrgn-rght-sm"><a href="/logout">Sign out</a></li>
-				<li sec:authorize="!isAuthenticated()" class="mrgn-rght-sm"><a href="/login">Sign in</a></li>
+				<li sec:authorize="isAuthenticated()" th:text="#{msg.welcome} + ${#authentication.getPrincipal().getUsername()} + ' | '"></li>
+			    <li><a href="/home.html" th:text="#{msg.home}"></a> | </li>  
+				<li sec:authorize="isAuthenticated()" class="mrgn-rght-sm"><a href="/logout" th:text="#{input.signOut}"></a></li>
+				<li sec:authorize="!isAuthenticated()" class="mrgn-rght-sm"><a href="/login" th:text="#{input.signIn}"></a></li>
 		    </ol>       
 		</div>
     </main>  
       
 	<footer th:fragment="footer(scripts)" role="contentinfo" id="wb-info">
 		<nav role="navigation" class="container visible-sm visible-md visible-lg wb-navcurr">
-			<h2 class="wb-inv">About this site</h2>
+			<h2 class="wb-inv" th:text="#{h.aboutSite}"></h2>
 			 
 			<!-- EPIC FOOTER BEGIN -->
 			<div class="row">
 				<!--EPI-11901--> 
-				<section class="col-sm-2 col-lg-offset-3"><h3 class="wb-inv">Contact information</h3><ul class="list-unstyled"><li><a class="gl-footer" href="https://www.ic.gc.ca/eic/site/icgc.nsf/eng/h_07026.html#type=phone&from=Corporations&situation=Nuans ">Contact information</a></li></ul></section>
+				<section class="col-sm-2 col-lg-offset-3"><h3 class="wb-inv" th:text="#{h.contactInfo}"></h3><ul class="list-unstyled"><li><a class="gl-footer" href="https://www.ic.gc.ca/eic/site/icgc.nsf/eng/h_07026.html#type=phone&from=Corporations&situation=Nuans ">Contact information</a></li></ul></section>
 				<section class="col-sm-3 col-lg-2">
 				<!-- EPI-11943 -->
-					<h3 class="wb-inv">Terms and conditions</h3>
+					<h3 class="wb-inv" th:text="#{h.terms}"></h3>
 					<ul class="list-unstyled">
-						<li><a href="http://www.ic.gc.ca/eic/site/icgc.nsf/eng/h_07033.html">Terms and conditions</a></li>
+						<li><a href="http://www.ic.gc.ca/eic/site/icgc.nsf/eng/h_07033.html" th:text="#{h.terms}"></a></li>
 					</ul>
 				</section>
 				<section class="col-sm-3 col-lg-3">
 				<!-- EPI-11943 -->
-					<h3 class="wb-inv">Privacy</h3>
+					<h3 class="wb-inv" th:text="#{h.privacy}"></h3>
 					<ul class="list-unstyled">
-						<li><a href="http://www.canada.ca/en/transparency/privacy.html">Privacy</a></li>
+						<li><a href="http://www.canada.ca/en/transparency/privacy.html" th:text="#{h.privacy}"></a></li>
 					</ul>
 				</section>
 			</div>
@@ -152,7 +152,7 @@
 			<div class="container">
 				<div class="row">
 					<div class="col-xs-6 visible-sm visible-xs tofpg">
-						<a href="#wb-cont">Top of Page <span class="glyphicon glyphicon-chevron-up"></span></a>
+						<a href="#wb-cont" th:text="#{link.topPg}"><span class="glyphicon glyphicon-chevron-up"></span></a>
 					</div>
 					<div class="col-xs-6 col-md-12 text-right">
 						<object type="image/svg+xml" tabindex="-1" role="img" data="https://ic.gc.ca/utils/scripts/_WET_4-0/themes-dist/gcweb/assets/wmms-blk.svg" aria-label="Symbol of the Government of Canada"></object>

@@ -40,7 +40,7 @@ public class ADUserService {
 		return retval;
 	}
 
-	public List<String> findAllAUserFullNames() {
+	public List<String> findAllADUserFullNames() {
 		LdapQuery findAllPeronsQuery = LdapQueryBuilder.query().where("objectclass").is("person");
 		AttributesMapper<String> fullNameMapper = new AttributesMapper<String>() {
 			@Override
