@@ -1,18 +1,37 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/general.html :: common_header(~{::title},~{},~{})}">
+<!--[if lt IE 9]><html class="no-js lt-ie9" lang="en" dir="ltr"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!--<![endif]-->
+
+<head th:replace="~{fragments/general.html :: common_header(~{::title},~{})}">
+<meta charset="utf-8">
 <title th:text="#{title.confirmUnlink}"></title>
 </head>
-<body>
-	<div th:insert="~{fragments/general.html :: header_nav('datasets')}"></div>
-	<div class="container">
-		<p th:text="#{p.confirmUnlink(${sfo.getLocalizedAttribute('name')},${fo.getLocalizedAttribute('name')})}" style="font-size:12pt; font-weight=bold;"></p>
-		<div>
-		<form action="#" th:action="@{'/admin/confirmUnlink'(sfoId=${sfo.id})}" method="post">
-			<input type="submit" class="btn btn-primary" role="button" th:value="#{msg.confirm}" />
-			<a class="btn btn-primary" th:href="@{'/admin/viewSystemFO'(id=${sfo.id})}" th:text="#{msg.cancel}"></a>
-		</form>
+<body class="home" vocab="http://schema.org/" typeof="WebPage">
+	
+	<div th:insert="~{fragments/general.html :: header_nav('home')}"></div>
+	
+	<main role="main" property="mainContentOfPage" class="container">
+
+		<h1 th:text="#{title.confirmUnlink}"></h1>
+
+		<div th:insert="~{fragments/general.html :: profile_info('home')}"></div>
+
+		<div class="panel panel-default">
+
+			<p th:text="#{p.confirmUnlink(${sfo.getLocalizedAttribute('name')},${fo.getLocalizedAttribute('name')})}" style="font-size: 14pt;  margin-bottom: 25px;"></p>
+			<div>
+				<form action="#" th:action="@{'/admin/confirmUnlink'(sfoId=${sfo.id})}" method="post">
+					<input type="submit" class="btn btn-primary" role="button" th:value="#{msg.confirm}" /> <a class="btn btn-primary"
+						th:href="@{'/admin/viewSystemFO'(id=${sfo.id})}" th:text="#{msg.cancel}"></a>
+				</form>
+			</div>
 		</div>
-	</div>							 
+
+	</main>
+
+	<footer th:insert="fragments/general :: footer(~{})"></footer>
+
 </body>
 </html>
