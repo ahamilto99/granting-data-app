@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import javax.validation.Valid;
 
@@ -23,6 +24,7 @@ import ca.gc.tri_agency.granting_data.form.FundingOpportunityFilterForm;
 import ca.gc.tri_agency.granting_data.ldap.ADUser;
 import ca.gc.tri_agency.granting_data.ldap.ADUserService;
 import ca.gc.tri_agency.granting_data.model.Agency;
+import ca.gc.tri_agency.granting_data.model.BusinessUnit;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.GrantingSystem;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
@@ -49,7 +51,7 @@ public class FundingOpportunityController {
 	private AgencyService agencyService;
 
 	private SystemFundingOpportunityService sfoService;
-	
+
 	private BusinessUnitService buService;
 
 	private MessageSource msgSource;
@@ -59,7 +61,8 @@ public class FundingOpportunityController {
 	@Autowired
 	public FundingOpportunityController(FundingOpportunityService foService, GrantingSystemService gSystemService,
 			GrantingCapabilityService gcService, SystemFundingCycleService sfcService, AgencyService agencyService,
-			SystemFundingOpportunityService sfoService, BusinessUnitService buService, MessageSource msgSource, ADUserService adUserService) {
+			SystemFundingOpportunityService sfoService, BusinessUnitService buService, MessageSource msgSource,
+			ADUserService adUserService) {
 		this.foService = foService;
 		this.gSystemService = gSystemService;
 		this.gcService = gcService;
@@ -75,13 +78,25 @@ public class FundingOpportunityController {
 	public String viewGoldenList(@ModelAttribute("filter") FundingOpportunityFilterForm filter, Model model) {
 		Map<Long, GrantingSystem> applyMap = gSystemService.findApplySystemsByFundingOpportunityMap();
 		Map<Long, List<GrantingSystem>> awardMap = gSystemService.findAwardSystemsByFundingOpportunityMap();
+		List<FundingOpportunity> filteredFOs = foService.getFilteredFundingOpportunities(filter, applyMap, awardMap);
 
-		model.addAttribute("fundingOpportunities", foService.getFilteredFundingOpportunities(filter, applyMap, awardMap));
+		model.addAttribute("fundingOpportunities", filteredFOs);
 		model.addAttribute("allAgencies", agencyService.findAllAgencies());
 		model.addAttribute("allDivisions", buService.findAllBusinessUnits());
 		model.addAttribute("allGrantingSystems", gSystemService.findAllGrantingSystems());
 		model.addAttribute("applySystemByFoMap", applyMap);
 		model.addAttribute("awardSystemsByFoMap", awardMap);
+
+		// filtering options
+		Stream<BusinessUnit> buStream = filteredFOs.stream().map(FundingOpportunity::getBusinessUnit).distinct();
+		model.addAttribute("distinctAgencies",
+				buStream.map(bu -> bu.getAgency().getLocalizedAttribute("acronym")).distinct().sorted().iterator());
+		// get buStream's divisions when the model changes
+		model.addAttribute("distinctApplySystems",
+				applyMap.values().stream().distinct().map(GrantingSystem::getAcronym).sorted().iterator());
+		model.addAttribute("distinctAwardSystems", awardMap.values().stream().flatMap(List::stream).distinct()
+				.map(GrantingSystem::getAcronym).sorted().iterator());
+
 		return "browse/fundingOpportunities";
 	}
 

@@ -116,13 +116,15 @@
     	<h1 id="wb-cont" th:text="#{h.nuansDashboard}"></h1>
 		<div th:fragment="profile_info(activeTab)" class="profileInfo">
 		    <ol class="noStyleList">
-				<li sec:authorize="isAuthenticated()" th:text="#{msg.welcome} + ${#authentication.getPrincipal().getUsername()} + ' | '"></li>
+				<li sec:authorize="isAuthenticated()"><span th:text="#{msg.welcome}"></span><b th:text="${#authentication.getPrincipal().getUsername()}"></b> | </li>
 			    <li><a href="/home.html" th:text="#{msg.home}"></a> | </li>  
 				<li sec:authorize="isAuthenticated()" class="mrgn-rght-sm"><a href="/logout" th:text="#{input.signOut}"></a></li>
 				<li sec:authorize="!isAuthenticated()" class="mrgn-rght-sm"><a href="/login" th:text="#{input.signIn}"></a></li>
 		    </ol>       
 		</div>
     </main>  
+    
+    <div th:fragment="returnHome" class="panel-footer" id="web-returnHome"><span th:utext="#{msg.returnTo}"></span><a href="/" th:text="#{link.home}"></a></div>
       
 	<footer th:fragment="footer(scripts)" role="contentinfo" id="wb-info">
 		<nav role="navigation" class="container visible-sm visible-md visible-lg wb-navcurr">
@@ -131,7 +133,7 @@
 			<!-- EPIC FOOTER BEGIN -->
 			<div class="row">
 				<!--EPI-11901--> 
-				<section class="col-sm-2 col-lg-offset-3"><h3 class="wb-inv" th:text="#{h.contactInfo}"></h3><ul class="list-unstyled"><li><a class="gl-footer" href="https://www.ic.gc.ca/eic/site/icgc.nsf/eng/h_07026.html#type=phone&from=Corporations&situation=Nuans ">Contact information</a></li></ul></section>
+				<section class="col-sm-2 col-lg-offset-3"><h3 class="wb-inv"></h3><ul class="list-unstyled"><li><a class="gl-footer" href="https://www.ic.gc.ca/eic/site/icgc.nsf/eng/h_07026.html#type=phone&from=Corporations&situation=Nuans" th:text="#{h.contactInfo}"></a></li></ul></section>
 				<section class="col-sm-3 col-lg-2">
 				<!-- EPI-11943 -->
 					<h3 class="wb-inv" th:text="#{h.terms}"></h3>

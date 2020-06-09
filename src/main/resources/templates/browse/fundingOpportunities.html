@@ -5,131 +5,181 @@
 <!--<![endif]-->
 
 <head th:replace="~{fragments/general.html :: common_header(~{::title},~{})}">
-	<meta charset="ISO-8859-1">
-	<title th:text="#{title.home}"></title>
+<meta charset="utf-8">
+<title th:text="#{title.home}"></title>
 </head>
-<body  class="home" vocab="http://schema.org/" typeof="WebPage">
+<body class="home" vocab="http://schema.org/" typeof="WebPage">
 	<div th:insert="~{fragments/general.html :: header_nav('home')}"></div>
 	<main role="main" property="mainContentOfPage" class="container">
 		<h1 th:text="#{h.fundingOpportunities}"></h1>
 		<div th:insert="~{fragments/general.html :: profile_info('home')}" />
 
-<div class="panel panel-default"><div class="panel-body">
+		<div class="panel panel-default">
+
+			<div class="panel-body" style="margin-bottom: 0px;">
+
+				<p th:text="#{intro.fundingOpportunities}"></p>
+
+				<div class="col-md-3">
+
+					<details open>
+
+						<summary>
+							<h4 th:text="#{h.filteringOpts}"></h4>
+						</summary>
+
+						<p class="mrgn-tp-md" th:text="#{p.filtering}"></p>
+
+						<div class="form-group">
+							<label for="dt_leadAgency" th:text="#{form.leadAgency}"></label> <select class="form-control" id="dt_leadAgency" data-column="3">
+								<option th:text="#{msg.all}" th:value="#{msg.all}"></option>
+								<option th:each="agency : ${distinctAgencies}" th:text="${agency}" th:value="${agency}"></option>
+							</select>
+						</div>
+
+						<div class="form-group">
+							<label for="dt_leadAgency" th:text="#{form.division}"></label> <select class="form-control" id="dt_division" data-column="3">
+								<option th:text="#{msg.all}" th:value="#{msg.all}"></option>
+								<!-- th:each below will become the buStream's divisions when the model changes -->
+								<option th:each="agency : ${distinctAgencies}" th:text="${agency}" th:value="${agency}"></option>
+							</select>
+						</div>
+
+						<div class="form-group">
+							<label for="dt_applySystem" th:text="#{th.applySystem}"></label> <select class="form-control" id="dt_applySystem" data-column="3">
+								<option th:text="#{msg.all}" th:value="#{msg.all}"></option>
+								<option th:each="sys : ${distinctApplySystems}" th:value="${sys}" th:text="${sys}"></option>
+							</select>
+						</div>
+						
+						<div class="form-group">
+							<label for="dt_awardSystem" th:text="#{th.awardSystem}"></label> <select class="form-control" id="dt_awardSystem" data-column="3">
+								<option th:text="#{msg.all}" th:value="#{msg.all}"></option>
+								<option th:each="sys : ${distinctAwardSystems}" th:value="${sys}" th:text="${sys}"></option>
+							</select>
+						</div>
+
+						<div class="form-group">
+							<button type="submit" class="btn btn-primary" aria-controls="uploadDataTable" th:text="#{msg.filter}"></button>
+						</div>
+
+						<div class="form-group">
+							<button type="reset" class="btn btn-link btn-sm p-0" th:text="#{msg.defaults}"></button>
+						</div>
 
 
-<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-  <div class="panel panel-default">
-    <div class="panel-heading" role="tab" id="headingFilter">
-      <h4 class="panel-title">
-        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseFilterBox" aria-expanded="false" aria-controls="collapseFilterBox">
-          Filters
-        </a>
-      </h4>
-    </div>
-    <div id="collapseFilterBox" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFilter">
-      <div class="panel-body">
-		<form action="#" th:action="@{fundingOpportunities}" th:object="${filter}" method="get"> 
-			<div class="form-group row">
-				<div class="col-sm-2 col-form-label" th:text="#{form.leadAgency}"></div>
-					<div><select class="col-sm-2" th:field="*{leadAgency}">
-						<option th:each="agency : ${allAgencies}"
-							th:value="${agency.id}"
-							th:text="${agency.getLocalizedAttribute('acronym')}">
-						</option>
-					</select>
-				</div>
-				<div class="col-sm-2 col-form-label" th:text="#{form.division}"></div>
-					<div><select class="col-sm-2" th:field="*{division}">
-						<option value=""></option>
-						<option th:each="divi : ${allDivisions}"
-							th:value="${divi.id}" 
-							th:text="${divi.getLocalizedAttribute('acronym')}">
-						</option>
-					</select>
-				</div>
-				<div class="col-sm-2 col-form-label" th:text="#{form.foType}"></div>
-					<div><select class="col-sm-2" th:field="*{type}">
-						<option value=""/>
-						<option value="Scorlarships">Scholarships</option>
-						<option value="Research Grant">Research Grant</option>
-						<option value="Supplement">Supplement</option>
-						<option value="Partnerships Programs">Partnerships Programs</option>
-						<option value="Fellowships">Fellowships</option>
-						<option value="Internships">Internships</option>
-						<option value="Prize">Prize</option>
-<!-- 						<option th:each="fot: ${foTypes}" -->
-<!-- 							th:value="${fot.id}" th:selected="${foType.id==fot.id} ? 'selected' : '0'" -->
-<!-- 							th:text="${fot.getLocalizedAttribute('name')}"> -->
-<!-- 						</option> -->
-					</select>
+					</details>
+
+					<!-- <div class="panel-heading" role="tab" id="headingFilter">
+							<h4 class="panel-title">
+								<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseFilterBox" aria-expanded="false"
+									aria-controls="collapseFilterBox" th:text="#{link.filters}"> </a>
+							</h4>
+						</div>
+						<div id="collapseFilterBox" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFilter">
+							<div class="panel-body">
+								<form action="#" th:action="@{fundingOpportunities}" th:object="${filter}" method="get">
+									<div class="form-group row">
+										<div class="col-sm-2 col-form-label" th:text="#{form.leadAgency}"></div>
+										<div>
+											<select class="col-sm-2" th:field="*{leadAgency}">
+												<option th:each="agency : ${allAgencies}" th:value="${agency.id}" th:text="${agency.getLocalizedAttribute('acronym')}">
+												</option>
+											</select>
+										</div>
+										<div class="col-sm-2 col-form-label" th:text="#{form.division}"></div>
+										<div>
+											<select class="col-sm-2" th:field="*{division}">
+												<option value=""></option>
+												<option th:each="divi : ${allDivisions}" th:value="${divi.id}" th:text="${divi.getLocalizedAttribute('acronym')}"></option>
+											</select>
+										</div>
+										<div class="col-sm-2 col-form-label" th:text="#{form.foType}"></div>
+										<div>
+											<select class="col-sm-2" th:field="*{type}">
+												<option value="" />
+												<option value="Scorlarships">Scholarships</option>
+												<option value="Research Grant">Research Grant</option>
+												<option value="Supplement">Supplement</option>
+												<option value="Partnerships Programs">Partnerships Programs</option>
+												<option value="Fellowships">Fellowships</option>
+												<option value="Internships">Internships</option>
+												<option value="Prize">Prize</option>
+																		<option th:each="fot: ${foTypes}"
+																			th:value="${fot.id}" th:selected="${foType.id==fot.id} ? 'selected' : '0'"
+																			th:text="${fot.getLocalizedAttribute('name')}">
+																		</option>
+											</select>
+										</div>
+									</div>
+									<div class="form-group row">
+										<div class="col-sm-2 col-form-label" th:text="#{th.applySystem}"></div>
+										<div>
+											<select class="col-sm-2" th:field="*{applySystem}">
+												<option value="" />
+												<option th:each="system : ${allGrantingSystems}" th:value="${system.id}" th:text="${system.getLocalizedAttribute('name')}">
+												</option>
+											</select>
+										</div>
+										<div class="col-sm-2 col-form-label" th:text="#{th.awardSystems}"></div>
+										<div>
+											<select class="col-sm-2" th:field="*{awardSystem}">
+												<option value="" />
+												<option th:each="system : ${allGrantingSystems}" th:value="${system.id}" th:text="${system.getLocalizedAttribute('name')}">
+												</option>
+											</select>
+										</div>
+										<div class="col-sm-2 col-form-label">
+											<input th:type="submit" class="btn btn-primary" role="button" th:value="#{input.applyFilter}" />
+										</div>
+									</div>
+								</form>
+							</div>
+						</div> -->
+
+			</div>
+
+			<div class="col-md-9">
+
+				<table id="fundingOpportunitiesTable" class="wb-tables table table-striped table-hover dataTable">
+					<thead>
+						<tr>
+							<th th:text="#{th.foName}"></th>
+							<th th:text="#{th.leadAgency}"></th>
+							<th th:text="#{th.division}"></th>
+							<th th:text="#{th.applySystem}"></th>
+							<th th:text="#{th.awardSystem}"></th>
+						</tr>
+					</thead>
+
+					<tbody>
+						<tr th:each="fo : ${fundingOpportunities}">
+							<td><a th:href="@{viewFo(id=${fo.id})}"><span th:text="${fo.getLocalizedAttribute('name')}"></span></a></td>
+							<td><span th:text="${fo.businessUnit == null} ? 'None' : ${fo.businessUnit.agency.getLocalizedAttribute('acronym')}"></span></td>
+							<td><span th:text="${fo.businessUnit == null} ? 'None' : ${fo.businessUnit.agency.getLocalizedAttribute('acronym')}"></span></td>
+							<td><span th:text="${applySystemByFoMap.get(fo.id) == null} ? 'None' : ${applySystemByFoMap.get(fo.id).acronym}"></span></td>
+							<td><span th:if="${awardSystemsByFoMap.get(fo.id) == null}" th:value="None"></span> <span
+								th:if="${awardSystemsByFoMap.get(fo.id) != null}"><span th:each="system : ${awardSystemsByFoMap.get(fo.id)}"><span
+										th:text="${system.acronym}"></span></span></span></td>
+							<!-- 	           			<td><span th:text="${fcByFoMap.get(fo.id) == null} ? 'None' : ${fcByFoMap.get(fo.id).startDate}"></span></td>   add cycle start date -->
+							<!-- 	           			<td><span th:text="${fcByFoMap.get(fo.id) == null} ? 'None' : ${fcByFoMap.get(fo.id).endDate}"></span></td>	  add cycle end date -->
+							<!-- 	           			<td><span th:text="${fcByFoMap.get(fo.id) == null} ? 'None' : ${fcByFoMap.get(fo.id).expectedApplications}"></span></td>   add expected applications -->
+						</tr>
+					</tbody>
+				</table>
+
+			</div>
+
+			<div th:if="${#request.isUserInRole('ROLE_MDM ADMIN')}">
+				<div style="display: flex; justify-content: flex-end; width: 100%; margin-top: 10px; color: red">
+					<h3>
+						<a href="/admin/createFo" th:text="#{link.addFo}"></a>
+					</h3>
 				</div>
 			</div>
-			<div class="form-group row">
-				<div class="col-sm-2 col-form-label" th:text="#{th.applySystem}"></div>
-					<div><select class="col-sm-2" th:field="*{applySystem}">
-						<option value=""/>
-						<option th:each="system : ${allGrantingSystems}"
-							th:value="${system.id}"
-							th:text="${system.getLocalizedAttribute('name')}">
-						</option>
-					</select>
-				</div>
-				<div class="col-sm-2 col-form-label" th:text="#{th.awardSystems}"></div>
-					<div><select class="col-sm-2" th:field="*{awardSystem}">
-						<option value=""/>
-						<option th:each="system : ${allGrantingSystems}"
-							th:value="${system.id}"
-							th:text="${system.getLocalizedAttribute('name')}">
-						</option>
-					</select>
-				</div>
-				<div class="col-sm-2 col-form-label">
-					<input th:type="submit" class="btn btn-primary" role="button" th:value="#{input.applyFilter}"/>
-				</div>
-			</div>
-		</form>
-      </div>
-    </div>
-  </div>
-</div> 		
-
-		<p th:text="#{intro.fundingOpportunities}"></p>
-
-			
-			<table id="fundingOpportunitiesTable" class="wb-tables table table-striped table-hover dataTable">
-				<thead>
-		            <tr>
-		                <th th:text="#{th.foName}"></th>
-		                <th th:text="#{th.leadAgency}"></th>
-		                <th th:text="#{th.division}"></th>
-		                <th th:text="#{th.applySystem}"></th>
-		                <th th:text="#{th.awardSystems}"></th>
-		            </tr>
-				</thead>
-				
-				<tbody>
-	       			<tr th:each="fo : ${fundingOpportunities}">
-	           			<td><a th:href="@{viewFo(id=${fo.id})}"><span th:text="${fo.getLocalizedAttribute('name')}"></span></a></td>
-	           			<td><span th:text="${fo.businessUnit == null} ? 'None' : ${fo.businessUnit.agency.getLocalizedAttribute('acronym')}"></span></td>
-	           			<td><span th:text="${fo.businessUnit == null} ? 'None' : ${fo.businessUnit.agency.getLocalizedAttribute('acronym')}"></span></td>
-	           			<td><span th:text="${applySystemByFoMap.get(fo.id) == null} ? 'None' : ${applySystemByFoMap.get(fo.id).acronym}"></span></td>
-	           			<td><span th:if="${awardSystemsByFoMap.get(fo.id) == null}" th:value="None"></span>
-	           				<span th:if="${awardSystemsByFoMap.get(fo.id) != null}" ><span th:each="system : ${awardSystemsByFoMap.get(fo.id)}"><span th:text="${system.acronym}"></span></span></span></td>
-<!-- 	           			<td><span th:text="${fcByFoMap.get(fo.id) == null} ? 'None' : ${fcByFoMap.get(fo.id).startDate}"></span></td>   add cycle start date -->
-<!-- 	           			<td><span th:text="${fcByFoMap.get(fo.id) == null} ? 'None' : ${fcByFoMap.get(fo.id).endDate}"></span></td>	  add cycle end date -->
-<!-- 	           			<td><span th:text="${fcByFoMap.get(fo.id) == null} ? 'None' : ${fcByFoMap.get(fo.id).expectedApplications}"></span></td>   add expected applications -->
-	       			</tr>
-   				</tbody>
-			</table>
-		<div th:if="${#request.isUserInRole('ROLE_MDM ADMIN')}"> 	
-		<div style="display:flex; justify-content:flex-end; width:100%; margin-top:10px;color:red">
-      	<h3 ><a href="/admin/createFo" th:text="#{link.addFo}"></a></h3>
-      	 </div> 
+			<div th:insert="fragments/general :: returnHome"></div>
 		</div>
-	</div>
-	<footer class="panel-footer">Return to <a href="/">Home</a></footer>
-	</div>
-</main>
-	<footer th:insert="~{fragments/general.html :: footer(~{})}" />
+	</main>
+	<footer th:insert="~{fragments/general.html :: footer(~{})}"></footer>
 </body>
 </html>
