@@ -12,53 +12,63 @@
 	<div th:insert="~{fragments/general.html :: header_nav('home')}"></div>
 	<main role="main" property="mainContentOfPage" class="container">
 
-		<h1 th:text="#{h.createBu}" style="margin-bottom: 25px"></h1>
+		<h1 th:text="#{h.createBu}"></h1>
 
 		<div th:insert="~{fragments/general.html :: profile_info('home')}"></div>
 
-		<div class="web-frmvld">
+		<div class="panel panel-default">
 
-			<form action="#" th:action="@{createBU}" th:object="${bu}" method="post">
+			<div class="panel-body">
 
-				<div class="form-group">
-					<label for="nameEn" class="required"><span class="field-name" th:text="#{form.nameEn}"></span><strong class="required"
-						th:utext="#{form.required}"></strong></label> <input th:field="*{nameEn}" class="form-control" id="nameEn" type="text" required="required" />
-					<!-- <div class="col-sm-5" th:if="${#fields.hasErrors('nameEn')}" th:errors="*{nameEn}" th:text="#{err.nameErr}"></div> -->
+				<div class="web-frmvld">
+
+					<form action="#" th:action="@{createBU}" th:object="${bu}" method="post">
+
+						<div class="form-group">
+							<label for="nameEn" class="required"><span class="field-name" th:text="#{form.nameEn}"></span><strong class="required"
+								th:utext="#{form.required}"></strong></label> <input th:field="*{nameEn}" class="form-control" id="nameEn" type="text" required="required" />
+							<!-- <div class="col-sm-5" th:if="${#fields.hasErrors('nameEn')}" th:errors="*{nameEn}" th:text="#{err.nameErr}"></div> -->
+						</div>
+
+						<div class="form-group">
+							<label for="nameFr" class="required"><span class="field-name" th:text="#{form.nameFr}"></span><strong class="required"
+								th:utext="#{form.required}"></strong></label> <input th:field="*{nameFr}" class="form-control" id="nameFr" type="text" required="required" />
+							<!-- <div class="col-sm-5" th:if="${#fields.hasErrors('nameFr')}" th:errors="*{nameFr}"></div> -->
+						</div>
+
+						<div class="form-group">
+							<label for="acronymEn" class="required"><span class="field-name" th:text="#{form.acronymEn}"></span><strong class="required"
+								th:utext="#{form.required}"></strong></label> <input th:field="*{acronymEn}" class="form-control" id="acronymEn" type="text"
+								required="required" />
+							<!-- <div class="col-sm-5" th:if="${#fields.hasErrors('acronymEn')}" th:errors="*{acronymEn}"></div> -->
+						</div>
+
+						<div class="form-group">
+							<label for="acronymFr" class="required"><span class="field-name" th:text="#{form.acronymFr}"></span><strong class="required"
+								th:utext="#{form.required}"></strong></label> <input th:field="*{acronymFr}" class="form-control" id="acronymFr" type="text"
+								required="required" />
+							<!-- <div class="col-sm-5" th:if="${#fields.hasErrors('acronymFr')}" th:errors="*{acronymFr}"></div> -->
+						</div>
+
+						<div class="form-group">
+							<label for="agency"><span class="field-name" th:text="#{form.agency}"></span></label> <label th:text="${bu.agency.getName()}"
+								class="form-control" id="agency" style="background-color: #f9f9f9; border: none; -webkit-box-shadow: none; box-shadow: none;"></label>
+						</div>
+
+						<input hidden="true" th:field="*{agency}">
+
+						<div>
+							<input th:type="submit" class="btn btn-primary" role="button" th:value="#{input.submit}" /> <a class="btn btn-primary"
+								th:href="@{/browse/viewAgency(id=${bu.agency.id})}" th:text="#{msg.cancel}"></a>
+						</div>
+
+					</form>
+
 				</div>
 
-				<div class="form-group">
-					<label for="nameFr" class="required"><span class="field-name" th:text="#{form.nameFr}"></span><strong class="required"
-						th:utext="#{form.required}"></strong></label> <input th:field="*{nameFr}" class="form-control" id="nameFr" type="text" required="required" />
-					<!-- <div class="col-sm-5" th:if="${#fields.hasErrors('nameFr')}" th:errors="*{nameFr}"></div> -->
-				</div>
+			</div>
 
-				<div class="form-group">
-					<label for="acronymEn" class="required"><span class="field-name" th:text="#{form.acronymEn}"></span><strong class="required"
-						th:utext="#{form.required}"></strong></label> <input th:field="*{acronymEn}" class="form-control" id="acronymEn" type="text"
-						required="required" />
-					<!-- <div class="col-sm-5" th:if="${#fields.hasErrors('acronymEn')}" th:errors="*{acronymEn}"></div> -->
-				</div>
-
-				<div class="form-group">
-					<label for="acronymFr" class="required"><span class="field-name" th:text="#{form.acronymFr}"></span><strong class="required"
-						th:utext="#{form.required}"></strong></label> <input th:field="*{acronymFr}" class="form-control" id="acronymFr" type="text"
-						required="required" />
-					<!-- <div class="col-sm-5" th:if="${#fields.hasErrors('acronymFr')}" th:errors="*{acronymFr}"></div> -->
-				</div>
-
-				<div class="form-group">
-					<label for="agency"><span class="field-name" th:text="#{form.agency}"></span></label> <label
-						th:text="${bu.agency.getName()}" class="form-control" id="agency" style="background-color: #f9f9f9; border: none; -webkit-box-shadow: none; box-shadow: none;"></label>
-				</div>
-
-				<input hidden="true" th:field="*{agency}">
-
-				<div style="margin-bottom: 50px">
-					<input th:type="submit" class="btn btn-primary" role="button" th:value="#{input.submit}" /> <a class="btn btn-primary"
-						th:href="@{/browse/viewAgency(id=${bu.agency.id})}" th:text="#{msg.cancel}"></a>
-				</div>
-
-			</form>
+			<div th:insert="fragments/general :: returnHome"></div>
 
 		</div>
 

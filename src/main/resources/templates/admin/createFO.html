@@ -1,13 +1,14 @@
 <!DOCTYPE html>
-<html  xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/general.html :: common_header(~{::title},~{},~{::script})}">
-	<meta charset="ISO-8859-1">
-	<title th:text="#{title.createFo}"></title>
-	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" />
-	<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-	<script type="text/javascript">
+<!--[if lt IE 9]><html class="no-js lt-ie9" lang="en" dir="ltr"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!--<![endif]-->
+
+<head th:replace="~{fragments/general.html :: common_header(~{::title},~{})}">
+<meta charset="utf-8">
+<title th:text="#{h.createFo}"></title>
+<script type="text/javascript">
 	$(document).ready(function(){
-		
 		
 		  $('#isJointInitiative').click(function(){
 		    if($(this).is(":checked"))
@@ -15,7 +16,6 @@
 		    else
 		       $("#partnerOrg").attr("disabled" , "disabled");
 		});
-		  
 		  
 		  $("#isNOI").click(function(){
 			  
@@ -25,7 +25,6 @@
 			       $("#isNOI").set("false");  
 		  });
 		  
-		  
 			  $("#isLOI").click(function(){
 				  
 				  if($(this).is(":checked"))
@@ -34,119 +33,155 @@
 				       $("#isLOI").set("false");  
 			  });
 			  
-			  
 		}); 	
-	</script>
+</script>
 </head>
-<body>
-	 <div th:insert="~{fragments/general.html :: header_nav('home')}" />
-	 <div class="container">
-     <h1 th:text="#{h.createFo}"></h1>
-	<form action="#" th:action="@{createFo}" th:object="${fo}" method="post"> 
-			<input type="hidden" th:field="*{id}" />           					
-			<div class="form-group row">
-				<div class="col-sm-2 col-form-label" th:text="#{form.name}"></div>
-				<div><input th:field="*{nameEn}" class="col-sm-2"  /></div>
-				<div th:if="${#fields.hasErrors('nameEn')}" th:errors="*{nameEn}" th:text="#{err.nameErr}"></div>
-			</div>
-			
-			
-			<div class="form-group row">
-				<div class="col-sm-2 col-form-label" th:text="#{form.nameFr}"></div>
-				<div><input th:field="*{nameFr}" class="col-sm-2"  /></div>
-				<div th:if="${#fields.hasErrors('nameFr')}" th:errors="*{nameFr}" th:text="#{err.nameErr}"></div>
-			</div>
-			
-			
-			<div class="form-group row">
-				<div class="col-sm-2 col-form-label" th:text="#{form.leadAgency}"></div>
-				<div>
-					<select class="col-sm-2" th:field="*{leadAgency}">
-						<option th:each="agency : ${allAgencies}"
-							th:value="${agency.id}"
-							th:text="${agency.getLocalizedAttribute('acronym')}">
-						</option>
-					</select>
+<body id="createBusinessUnitPage" class="home" vocab="http://schema.org/" typeof="WebPage">
+
+	<div th:insert="~{fragments/general.html :: header_nav('home')}"></div>
+
+	<main role="main" property="mainContentOfPage" class="container">
+
+		<h1 th:text="#{h.createFo}"></h1>
+
+		<div th:insert="~{fragments/general.html :: profile_info('home')}"></div>
+
+		<div class="panel panel-default">
+
+			<div class="panel-body">
+
+				<div class="web-frmvld">
+
+					<form action="#" th:action="@{createFo}" th:object="${fo}" method="post">
+
+						<input type="hidden" th:field="*{id}" />
+
+						<div class="form-group">
+							<label for="nameEn" class="required"><span class="field-name" th:text="#{form.name}"></span><strong class="required"
+								th:utext="#{form.required}"></strong></label> <input th:field="*{nameEn}" class="form-control" id="nameEn" type="text" required="required" />
+							<!-- <div th:if="${#fields.hasErrors('nameEn')}" th:errors="*{nameEn}" th:text="#{err.nameErr}"></div> -->
+						</div>
+
+
+						<div class="form-group">
+							<label for="nameFr" class="required"><span class="field-name" th:text="#{form.nameFr}"></span><strong class="required"
+								th:utext="#{form.required}"></strong></label> <input th:field="*{nameFr}" class="form-control" id="nameFr" type="text" required="required" />
+							<!-- <div th:if="${#fields.hasErrors('nameFr')}" th:errors="*{nameFr}" th:text="#{err.nameErr}"></div> -->
+						</div>
+
+
+						<div class="form-group">
+							<label for="leadAgency" class="required"><span class="field-name" th:text="#{form.leadAgency}"></span><strong
+								class="required" th:utext="#{form.required}"></strong></label>
+
+							<div>
+								<select class="form-control" id="leadAgency" required="required" th:field="*{leadAgency}">
+									<option th:each="agency : ${allAgencies}" th:value="${agency.id}" th:text="${agency.getLocalizedAttribute('acronym')}"></option>
+								</select>
+							</div>
+
+							<!-- <div th:if="${#fields.hasErrors('leadAgency')}" th:errors="*{leadAgency}" th:text="#{err.leadAgency}"></div> -->
+						</div>
+
+						<div class="form-group">
+							<label for="bu" class="required"><span class="field-name" th:text="#{form.businessUnit}"></span><strong class="required"
+								th:utext="#{form.required}"></strong></label>
+
+							<div>
+								<select th:field="*{businessUnit}" class="form-control" id="bu" required="required">
+									<option th:each="bu : ${allBusinessUnits}" th:value="${bu.id}" th:text="${bu.getLocalizedAttribute('acronym')}"></option>
+								</select>
+							</div>
+
+							<!-- <div th:if="${#fields.hasErrors('businessUnit')}" th:errors="*{businessUnit}" th:text="#{err.businessUnit}"></div> -->
+						</div>
+
+						<label for="isJointInitiative"><span class="field-name" th:text="#{form.isJI}"></span></label> <input type="checkbox"
+							th:field="*{isJointInitiative}" class="form-control" id="isJointInitiative">
+
+						<div class="form-group">
+							<label for="partnerOrg"><span class="field-name" th:text="#{form.participatingOrg}"></span></label> <input th:field="*{partnerOrg}"
+								class="form-control" id="partnerOrg" type="text" disabled />
+						</div>
+
+						<label for="isComplex"><span class="field-name" th:text="#{form.participatingCmplx}"></span></label> <input id="isComplex"
+							type="checkbox" th:field="*{isComplex}" class="form-control"> <label for="isEdiRequired"><span class="field-name"
+							th:text="#{form.isEDIrequired}"></span></label> <input id="isEdiRequired" type="checkbox" th:field="*{isEdiRequired}" class="form-control">
+
+						<div class="form-group">
+							<label for="fundingType" class="required"><span class="field-name" th:text="#{form.fundingType}"></span><strong
+								class="required" th:utext="#{form.required}"></strong></label> <input th:field="*{fundingType}" class="form-control" id="fundingType"
+								type="text" required="required" />
+							<!-- <div th:if="${#fields.hasErrors('fundingType')}" th:errors="*{fundingType}" th:text="#{err.fundingType}"></div> -->
+						</div>
+
+						<div class="form-group">
+							<label for="programLeadName" class="required"><span class="field-name" th:text="#{form.programLeadName}"></span><strong
+								class="required" th:utext="#{form.required}"></strong></label> <input th:field="*{programLeadName}" class="form-control"
+								id="programLeadName" type="text" required="required" />
+						</div>
+
+						<div class="form-group">
+							<label for="frequency" class="required"><span class="field-name" th:text="#{form.frequency}"></span><strong class="required"
+								th:utext="#{form.required}"></strong></label> <input th:field="*{frequency}" class="form-control" id="frequency" type="text"
+								required="required" />
+							<!-- <div th:if="${#fields.hasErrors('frequency')}" th:errors="*{frequency}" th:text="#{err.frequency}"></div> -->
+						</div>
+
+						<div class="form-group">
+							<label for="programLeadDn" class="required"><span class="field-name" th:text="#{form.programLeadDn}"></span><strong
+								class="required" th:utext="#{form.required}"></strong></label> <input th:field="*{programLeadDn}" class="form-control" id="programLeadDn"
+								type="text" required="required" />
+						</div>
+
+						<div class="form-group">
+							<label><span class="field-name" th:text="#{msg.stages}"></span></label>
+							<div class="checkbox">
+								<label for="isNOI"><input id="isNOI" type="checkbox" th:field="*{isNOI}" value="isNOI" th:utext="#{input.noi}"></label>
+							</div>
+							<div class="checkbox">
+								<label for="isLOI"><input id="isLOI" type="checkbox" th:field="*{isLOI}" value="isLOI" th:utext="#{input.loi}"></label>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="agencies"><span class="field-name" th:text="#{form.agencies}"></span><strong class="required"
+								th:utext="#{form.required}"></strong></label>
+
+							<div>
+								<select id="agencies">
+									<option th:label="#{msg.nserc}"></option>
+									<option th:label="#{msg.SSHRC}"></option>
+									<option th:label="#{msg.cihr}"></option>
+								</select>
+							</div>
+							<!-- <div th:if="${#fields.hasErrors('participatingAgencies')}" th:errors="*{participatingAgencies}" th:text="#{err.agencies}"></div> -->
+						</div>
+
+						<div class="form-group">
+							<br> <input type="submit" class="btn btn-primary" role="button" th:value="#{input.submit}" />
+						</div>
+
+					</form>
 				</div>
-				<div th:if="${#fields.hasErrors('leadAgency')}" th:errors="*{leadAgency}" th:text="#{err.leadAgency}"></div>
+
 			</div>
-			<div class="form-group row">
-				<div class="col-sm-2 col-form-label" th:utext="#{form.businessUnit}">Business Unit</div>
-				<div>
-					<select class="col-sm-2" th:field="*{businessUnit}">
-						<option th:each="bu : ${allBusinessUnit}"
-							th:value="${bu.id}"
-							th:text="${bu.getLocalizedAttribute('acronym')}">
-						</option>
-					</select>
-				</div>
-				<div th:if="${#fields.hasErrors('businessUnit')}" th:errors="*{businessUnit}" th:text="#{err.businessUnit}"></div>
-			</div>
-			
-			<div class="form-group row">
-				<div class="col-sm-2 col-form-label" th:text="#{form.isJI}"></div>
-				<div><input id="isJointInitiative" type="checkbox" th:field="*{isJointInitiative}" class="col-sm-2"	></div>
-			</div>
-			
-			<div class="form-group row">
-				<div class="col-sm-2 col-form-label" th:text="#{form.participatingOrg}"></div>
-				<div><input id="partnerOrg" type="text" th:field="*{partnerOrg}" class="col-sm-2" disabled ></div>
-			</div>
-			
-			<div class="form-group row">
-				<div class="col-sm-2 col-form-label" th:text="#{form.participatingCmplx}"></div>
-				<div><input id="isComplex" type="checkbox" th:field="*{isComplex}" class="col-sm-2" ></div>
-			</div>
-			
-			<div class="form-group row">
-				<div class="col-sm-2 col-form-label" th:text="#{form.isEDIrequired}"></div>
-				<div><input id="isEdiRequired" type="checkbox" th:field="*{isEdiRequired}" class="col-sm-2"  ></div>  
-			</div>
-				
-			<div class="form-group row">
-				<div class="col-sm-2 col-form-label" th:text="#{form.fundingType}"></div>
-				<div><input class="col-sm-2" th:field="*{fundingType}" /></div>
-				<div th:if="${#fields.hasErrors('fundingType')}" th:errors="*{fundingType}" th:text="#{err.fundingType}"></div>
-			</div>
-			<div class="form-group row">
-				<div class="col-sm-2 col-form-label" th:text="#{form.programLeadName}"></div>
-				<div> <input class="col-sm-2" th:field="*{programLeadName}"/></div>
-			</div>
-			<div class="form-group row">
-				<div class="col-sm-2 col-form-label" th:text="#{form.frequency}"></div>
-				<div><input class="col-sm-2" th:field="*{frequency}" /></div>
-				<div th:if="${#fields.hasErrors('frequency')}" th:errors="*{frequency}" th:text="#{err.frequency}"></div>
-			</div>
-			<div class="form-group row">
-				<div class="col-sm-2 col-form-label" th:text="#{form.programLeadDn}"></div>
-				<div> <input class="col-sm-2" th:field="*{programLeadDn}"/></div>
-			</div>
-			
-			<div class="form-group row">
-				<div class="col-sm-2 col-form-label" th:text="#{msg.stages}"></div>
-				<br>
-				<div><input id="isNOI" type="checkbox" th:field="*{isNOI}" class="col-sm-2"	value="isNOI"  th:text="#{input.noi}"></div>
-				<div><input id="isLOI" type="checkbox" th:field="*{isLOI}" class="col-sm-2" value="isLOI" th:text="#{input.loi}"></div>
-			</div>
-			
-			<div class="form-group row">
-				<div class="col-sm-2 col-form-label" th:text="#{form.agencies}"></div>
-			
-				<div>
-					<select>
-							<option th:label="#{msg.nserc}"></option>
-							<option th:label="#{msg.SSHRC}"></option>
-		            </select>
-	            </div>
-		
-	            
-				<div th:if="${#fields.hasErrors('participatingAgencies')}" th:errors="*{participatingAgencies}" th:text="#{err.agencies}"></div>
-				
-				<br> 
-				<br>
-			
-			<input type="submit" class="btn btn-primary" role="button" th:value="#{input.submit}"/>
-		</form>
+
+			<div th:insert="fragments/general :: returnHome"></div>
+
 		</div>
-   </body>
+
+	</main>
+
+	<footer th:insert="fragments/general :: footer(~{})">
+		 
+	</footer>
+
+</body>
+<!-- 
+$('#isJointInitiative').click(function(){
+		    if($(this).is(":checked"))
+		       $("#partnerOrg").removeAttr("disabled");
+		    else
+		       $("#partnerOrg").attr("disabled" , "disabled"); -->
 </html>

@@ -172,9 +172,9 @@ public class FundingOpportunityController {
 			fo.setNameEn(sfo.getNameEn());
 			fo.setNameFr(sfo.getNameFr());
 		}
-		List<Agency> allAgencies = agencyService.findAllAgencies();
 		model.addAttribute("fo", fo);
-		model.addAttribute("allAgencies", allAgencies);
+		model.addAttribute("allAgencies", agencyService.findAllAgencies());
+		model.addAttribute("allBusinessUnits", buService.findAllBusinessUnits());
 		return "admin/createFo";
 	}
 

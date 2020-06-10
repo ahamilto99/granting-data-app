@@ -51,7 +51,7 @@
 								<option th:each="sys : ${distinctApplySystems}" th:value="${sys}" th:text="${sys}"></option>
 							</select>
 						</div>
-						
+
 						<div class="form-group">
 							<label for="dt_awardSystem" th:text="#{th.awardSystem}"></label> <select class="form-control" id="dt_awardSystem" data-column="3">
 								<option th:text="#{msg.all}" th:value="#{msg.all}"></option>
@@ -137,48 +137,53 @@
 							</div>
 						</div> -->
 
-			</div>
-
-			<div class="col-md-9">
-
-				<table id="fundingOpportunitiesTable" class="wb-tables table table-striped table-hover dataTable">
-					<thead>
-						<tr>
-							<th th:text="#{th.foName}"></th>
-							<th th:text="#{th.leadAgency}"></th>
-							<th th:text="#{th.division}"></th>
-							<th th:text="#{th.applySystem}"></th>
-							<th th:text="#{th.awardSystem}"></th>
-						</tr>
-					</thead>
-
-					<tbody>
-						<tr th:each="fo : ${fundingOpportunities}">
-							<td><a th:href="@{viewFo(id=${fo.id})}"><span th:text="${fo.getLocalizedAttribute('name')}"></span></a></td>
-							<td><span th:text="${fo.businessUnit == null} ? 'None' : ${fo.businessUnit.agency.getLocalizedAttribute('acronym')}"></span></td>
-							<td><span th:text="${fo.businessUnit == null} ? 'None' : ${fo.businessUnit.agency.getLocalizedAttribute('acronym')}"></span></td>
-							<td><span th:text="${applySystemByFoMap.get(fo.id) == null} ? 'None' : ${applySystemByFoMap.get(fo.id).acronym}"></span></td>
-							<td><span th:if="${awardSystemsByFoMap.get(fo.id) == null}" th:value="None"></span> <span
-								th:if="${awardSystemsByFoMap.get(fo.id) != null}"><span th:each="system : ${awardSystemsByFoMap.get(fo.id)}"><span
-										th:text="${system.acronym}"></span></span></span></td>
-							<!-- 	           			<td><span th:text="${fcByFoMap.get(fo.id) == null} ? 'None' : ${fcByFoMap.get(fo.id).startDate}"></span></td>   add cycle start date -->
-							<!-- 	           			<td><span th:text="${fcByFoMap.get(fo.id) == null} ? 'None' : ${fcByFoMap.get(fo.id).endDate}"></span></td>	  add cycle end date -->
-							<!-- 	           			<td><span th:text="${fcByFoMap.get(fo.id) == null} ? 'None' : ${fcByFoMap.get(fo.id).expectedApplications}"></span></td>   add expected applications -->
-						</tr>
-					</tbody>
-				</table>
-
-			</div>
-
-			<div th:if="${#request.isUserInRole('ROLE_MDM ADMIN')}">
-				<div style="display: flex; justify-content: flex-end; width: 100%; margin-top: 10px; color: red">
-					<h3>
-						<a href="/admin/createFo" th:text="#{link.addFo}"></a>
-					</h3>
 				</div>
+
+				<div class="col-md-9">
+
+					<table id="fundingOpportunitiesTable" class="wb-tables table table-striped table-hover dataTable">
+						<thead>
+							<tr>
+								<th th:text="#{th.foName}"></th>
+								<th th:text="#{th.leadAgency}"></th>
+								<th th:text="#{th.division}"></th>
+								<th th:text="#{th.applySystem}"></th>
+								<th th:text="#{th.awardSystem}"></th>
+							</tr>
+						</thead>
+
+						<tbody>
+							<tr th:each="fo : ${fundingOpportunities}">
+								<td><a th:href="@{viewFo(id=${fo.id})}"><span th:text="${fo.getLocalizedAttribute('name')}"></span></a></td>
+								<td><span th:text="${fo.businessUnit == null} ? 'None' : ${fo.businessUnit.agency.getLocalizedAttribute('acronym')}"></span></td>
+								<td><span th:text="${fo.businessUnit == null} ? 'None' : ${fo.businessUnit.agency.getLocalizedAttribute('acronym')}"></span></td>
+								<td><span th:text="${applySystemByFoMap.get(fo.id) == null} ? 'None' : ${applySystemByFoMap.get(fo.id).acronym}"></span></td>
+								<td><span th:if="${awardSystemsByFoMap.get(fo.id) == null}" th:value="None"></span> <span
+									th:if="${awardSystemsByFoMap.get(fo.id) != null}"><span th:each="system : ${awardSystemsByFoMap.get(fo.id)}"><span
+											th:text="${system.acronym}"></span></span></span></td>
+								<!-- 	           			<td><span th:text="${fcByFoMap.get(fo.id) == null} ? 'None' : ${fcByFoMap.get(fo.id).startDate}"></span></td>   add cycle start date -->
+								<!-- 	           			<td><span th:text="${fcByFoMap.get(fo.id) == null} ? 'None' : ${fcByFoMap.get(fo.id).endDate}"></span></td>	  add cycle end date -->
+								<!-- 	           			<td><span th:text="${fcByFoMap.get(fo.id) == null} ? 'None' : ${fcByFoMap.get(fo.id).expectedApplications}"></span></td>   add expected applications -->
+							</tr>
+						</tbody>
+					</table>
+
+				</div>
+
+				<div th:if="${#request.isUserInRole('ROLE_MDM ADMIN')}">
+					<div style="display: flex; justify-content: flex-end; width: 100%; margin-top: 10px; color: red">
+						<h3>
+							<a href="/admin/createFo" th:text="#{link.addFo}"></a>
+						</h3>
+					</div>
+				</div>
+
 			</div>
+
 			<div th:insert="fragments/general :: returnHome"></div>
+
 		</div>
+
 	</main>
 	<footer th:insert="~{fragments/general.html :: footer(~{})}"></footer>
 </body>
