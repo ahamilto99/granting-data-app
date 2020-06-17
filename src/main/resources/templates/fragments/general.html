@@ -117,7 +117,7 @@
 		<div th:fragment="profile_info(activeTab)" class="profileInfo">
 		    <ol class="noStyleList">
 				<li sec:authorize="isAuthenticated()"><span th:text="#{msg.welcome}"></span><b th:text="${#authentication.getPrincipal().getUsername()}"></b> | </li>
-			    <li><a href="/home.html" th:text="#{msg.home}"></a> | </li>  
+			    <li><a href="/" th:text="#{msg.home}"></a> | </li>  
 				<li sec:authorize="isAuthenticated()" class="mrgn-rght-sm"><a href="/logout" th:text="#{input.signOut}"></a></li>
 				<li sec:authorize="!isAuthenticated()" class="mrgn-rght-sm"><a href="/login" th:text="#{input.signIn}"></a></li>
 		    </ol>       

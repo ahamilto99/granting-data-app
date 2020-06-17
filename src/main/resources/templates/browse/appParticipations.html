@@ -1,53 +1,60 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/general.html :: common_header(~{::title},~{::link},~{::script})}">
-<meta charset="ISO-8859-1">
+<!--[if lt IE 9]><html class="no-js lt-ie9" lang="en" dir="ltr"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!--<![endif]-->
+
+<head th:replace="~{fragments/general.html :: common_header(~{::title},~{})}">
+<meta charset="utf-8">
 <title th:text="#{title.appParticipations}"></title>
-<link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" />
-<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-<script type="text/javascript">
-	$(document).ready(function() {
-	        var table = $('#appParticipationsTable').DataTable({});
-        });
-</script>
 </head>
-<body id="appParticipationsPage">
+<body id="appParticipationsPage" class="home" vocab="http://schema.org/" typeof="WebPage">
 	<div th:insert="~{fragments/general.html :: header_nav('home')}"></div>
-	<div class="container">
+	<main role="main" property="mainContentOfPage" class="container">
 
 		<h1 th:text="#{title.appParticipations}"></h1>
-		<p th:text="#{intro.appParticipations}"></p>
 
-		<table id="appParticipationsTable" class="display">
-			<thead>
-				<tr>
-					<th th:text="#{th.application}"></th>
-					<th th:text="#{th.programId}"></th>
-					<th th:text="#{th.name}"></th>
-					<th th:text="#{th.role}"></th>
-					<th th:text="#{th.orgName}"></th>
-				</tr>
-			</thead>
+		<div th:insert="~{fragments/general.html :: profile_info('home')}"></div>
 
-			<tbody>
-				<tr th:each="ap : ${appParticipations}">
-					<td><span th:text="${ap.applId}"></span></td>
-					<td><span th:text="${ap.programId}"></span></td>
-					<td><span th:text="${ap.familyName} + ', ' + ${ap.givenName}"></span></td>
-					<td><span th:text="${ap.getLocalizedAttribute('role')}"></span></td>
-					<td><span th:text="${ap.getLocalizedAttribute('organizationName')}"></span></td>
-				</tr>
-			</tbody>
-		</table>
+		<div class="panel panel-default">
 
-	</div>
+			<div class="panel-body">
+
+				<p th:text="#{intro.appParticipations}"></p>
+
+				<table id="dataTable" class="wb-tables table table-striped table-hover dataTable" aria-live="polite">
+					<thead>
+						<tr>
+							<th th:text="#{th.application}"></th>
+							<th th:text="#{th.programId}"></th>
+							<th th:text="#{th.name}"></th>
+							<th th:text="#{th.role}"></th>
+							<th th:text="#{th.orgName}"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="ap : ${appParticipations}">
+							<td><span th:text="${ap.applId}"></span></td>
+							<td><span th:text="${ap.programId}"></span></td>
+							<td><span th:text="${ap.familyName} + ', ' + ${ap.givenName}"></span></td>
+							<td><span th:text="${ap.getLocalizedAttribute('role')}"></span></td>
+							<td><span th:text="${ap.getLocalizedAttribute('organizationName')}"></span></td>
+						</tr>
+					</tbody>
+				</table>
+
+			</div>
+
+			<div th:insert="fragments/general :: returnHome"></div>
+
+		</div>
+
+	</main>
+
+	<footer th:insert="fragments/general :: footer(~{})"></footer>
 
 </body>
 </html>
-
-
-
-
 
 
 
