@@ -1,95 +1,123 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/general.html :: common_header(~{::title},~{::link},~{::script})}">
-<meta charset="ISO-8859-1">
-<title th:text="#{title.createMR}"></title>
-<link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" />
-<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+<!--[if lt IE 9]><html class="no-js lt-ie9" lang="en" dir="ltr"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!--<![endif]-->
+
+<head th:replace="~{fragments/general.html :: common_header(~{::title},~{})}">
+<meta charset="utf-8">
+<title th:text="#{h.createMR}"></title>
 </head>
-<body id="createMemberRolePage">
+<body id="createBusinessUnitPage" class="home" vocab="http://schema.org/" typeof="WebPage">
 	<div th:insert="~{fragments/general.html :: header_nav('home')}"></div>
-	<div class="container">
+	<main role="main" property="mainContentOfPage" class="container">
 
-		<div style="margin-bottom: 25px">
-			<h1 th:text="#{h.createMR}"></h1>
-		</div>
+		<h1 th:text="#{h.createMR}"></h1>
 
-		<form action="#" th:action="@{createMR(buId=${param.buId})}" method="get">
+		<div th:insert="~{fragments/general.html :: profile_info('home')}"></div>
 
-			<input hidden="true" name="buId" th:value="${param.buId}" />
+		<div class="panel panel-default">
 
-			<div class="form-group row" style="margin-bottom: 25px">
-				<div th:text="#{link.fo.searchUser}" class="col-sm-2"></div>
-				<input id="userSearchBox" th:type="search" th:name="searchStr" th:value="${param.searchStr}" />
+			<div class="panel-body">
+
+				<div class="web-frmvld">
+
+					<form action="#" th:action="@{createMR(buId=${param.buId})}" method="get">
+
+						<input hidden="true" name="buId" th:value="${param.buId}" />
+
+						<div class="form-group">
+							<label for="userSearchBox"><span class="field-name" th:text="#{link.fo.searchUser}"></span></label> <input id="userSearchBox"
+								class="form-control" th:type="search" th:name="searchStr" th:value="${param.searchStr}" />
+						</div>
+
+						<div class="form-group">
+							<input type="submit" id="searchButton" th:value="#{searchUser.submit}" class="btn btn-primary" />
+						</div>
+
+					</form>
+
+				</div>
+
+				<div th:if="${adUserList != null and !adUserList.isEmpty()}" id="searchResultsDiv">
+
+					<div class="web-frmvld">
+
+						<form action="#" th:action="@{createMR(buId=${param.buId})}" method="post" th:object="${memberRole}">
+
+							<div class="form-group">
+								<label for="hiddenRoleDropDown" class="required"><span class="field-name" th:text="#{form.role}"></span><strong
+									class="required" th:utext="#{form.required}"></strong></label>
+								<div>
+									<select class="form-control" id="hiddenRoleDropDown" th:field="*{role}" required>
+										<option th:each="role : ${@roleServiceImpl.findAllRoles()}" th:text="${role.getLocalizedAttribute('name')}" th:value="${role.id}">
+									</select>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="ediAuthorizedDropDown" class="required"><span class="field-name" th:text="#{form.ediAuthorized}"></span><strong
+									class="required" th:utext="#{form.required}"></strong></label> <select id="ediAuthorizedDropDown" th:field="*{ediAuthorized}"
+									class="form-control" required>
+									<option th:text="#{msg.no}" th:value="0">
+									<option th:text="#{msg.yes}" th:value="1">
+								</select>
+							</div>
+
+							<input type="hidden" th:value="${businessUnit}" th:field="*{businessUnit}" /> <input hidden="true" name="searchStr"
+								th:value="${param.searchStr}" />
+
+							<div class="form-group">
+								<label for="memberRoleTable" class="required" style="margin-top: 20px; margin-bottom: 30px;"><span class="field-name"
+									th:text="#{label.selUser}"></span><strong class="required" th:utext="#{form.required}"></strong></label>
+								<table id="memberRoleTable" class="wb-tables table table-striped table-hover dataTable">
+									<thead>
+										<tr>
+											<th th:text="#{th.select}" style="text-align: center; width: 25px;"></th>
+											<th th:text="#{th.name}"></th>
+											<th th:text="#{th.userLogin}"></th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr th:each="user : ${adUserList}">
+											<td><input type="radio" name="select" style="width: 65px;" th:value="${user.userLogin}" th:field="*{userLogin}" /></td>
+											<td th:text="${user.fullName}"></td>
+											<td th:text="${user.userLogin}"></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+
+							<div class="form-group row">
+								<div class="col-sm-1">
+									<input type="submit" class="btn btn-primary" th:value="#{input.submit}" />
+								</div>
+								<div class="col-sm-1">
+									<a th:href="@{/browse/viewBU(id=${param.buId})}" th:text="#{msg.cancel}" class="btn btn-primary"></a>
+								</div>
+							</div>
+
+							<div th:if="${#fields.hasErrors('userLogin')}" th:errors="*{userLogin}" style="color: red;" th:text="#{err.userLogin}"></div>
+
+						</form>
+
+					</div>
+
+				</div>
+
+				<div th:if="${adUserList != null and adUserList.isEmpty()}" id="noUserSearchResults" class="form-group">
+					<h4 th:text="#{h.noUserSearchResults}"></h4>
+				</div>
+
 			</div>
 
-			<div class="form-group row" style="margin-bottom: 25px">
-				<div class="col-sm-2">
-					<input type="submit" id="searchButton" th:value="#{searchUser.submit}" class="btn btn-primary" />
-				</div>
-			</div>
-
-		</form>
-
-		<div th:if="${adUserList != null and !adUserList.isEmpty()}" id="searchResultsDiv" style="margin-bottom: 25px;">
-
-			<form action="#" th:action="@{createMR(buId=${param.buId})}" method="post" th:object="${memberRole}">
-
-				<div class="form-group row" style="margin-bottom: 25px">
-					<div th:text="#{form.role}" class="col-sm-2"></div>
-					<select id="hiddenRoleDropDown" th:field="*{role}">
-						<option th:each="role : ${@roleServiceImpl.findAllRoles()}" th:text="${role.getLocalizedAttribute('name')}" th:value="${role.id}">
-					</select>
-				</div>
-				
-				<div class="form-group row" style="margin-bottom: 25px">
-					<div th:text="#{form.ediAuthorized}" class="col-sm-2"></div>
-					<select id="ediAuthorizedDropDown" th:field="*{ediAuthorized}">
-						<option th:text="#{msg.no}" th:value="0">
-						<option th:text="#{msg.yes}" th:value="1">
-					</select>
-				</div>
-
-				<input type="hidden" th:value="${businessUnit}" th:field="*{businessUnit}" /> <input hidden="true" name="searchStr"
-					th:value="${param.searchStr}" />
-
-				<table id="memberRoleTable" class="table table-bordered" style="margin-bottom: 25px;">
-					<thead>
-						<tr>
-							<th th:text="#{th.select}" style="text-align: center; width: 25px;"></th>
-							<th th:text="#{th.name}"></th>
-							<th th:text="#{th.userLogin}"></th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr th:each="user : ${adUserList}">
-							<td><input type="radio" name="select" style="width: 65px;" th:value="${user.userLogin}" th:field="*{userLogin}" /></td>
-							<td th:text="${user.fullName}"></td>
-							<td th:text="${user.userLogin}"></td>
-						</tr>
-					</tbody>
-				</table>
-
-				<div class="form-group row">
-					<div class="col-sm-1">
-						<input type="submit" class="btn btn-primary" th:value="#{input.submit}" />
-					</div>
-					<div class="col-sm-1">
-						<a th:href="@{/browse/viewBU(id=${param.buId})}" th:text="#{msg.cancel}" class="btn btn-primary"></a>
-					</div>
-				</div>
-
-				<div th:if="${#fields.hasErrors('userLogin')}" th:errors="*{userLogin}" style="color: red;" th:text="#{err.userLogin}"></div>
-
-			</form>
+			<div th:insert="fragments/general :: returnHome"></div>
 
 		</div>
 
-		<div th:if="${adUserList != null and adUserList.isEmpty()}" id="noUserSearchResults" class="form-group row" style="margin-bottom: 25px;">
-			<h4 class="col-sm-6" th:text="#{h.noUserSearchResults}"></h4>
-		</div>
+	</main>
 
-	</div>
+	<footer th:insert="fragments/general :: footer(~{})"></footer>
 
 </body>
 </html>

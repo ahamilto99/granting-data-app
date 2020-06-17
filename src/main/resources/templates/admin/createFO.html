@@ -58,14 +58,14 @@
 
 						<div class="form-group">
 							<label for="nameEn" class="required"><span class="field-name" th:text="#{form.name}"></span><strong class="required"
-								th:utext="#{form.required}"></strong></label> <input th:field="*{nameEn}" class="form-control" id="nameEn" type="text" required="required" />
+								th:utext="#{form.required}"></strong></label> <input th:field="*{nameEn}" class="form-control" style="width: 400px;" id="nameEn" type="text" required="required" />
 							<!-- <div th:if="${#fields.hasErrors('nameEn')}" th:errors="*{nameEn}" th:text="#{err.nameErr}"></div> -->
 						</div>
 
 
 						<div class="form-group">
 							<label for="nameFr" class="required"><span class="field-name" th:text="#{form.nameFr}"></span><strong class="required"
-								th:utext="#{form.required}"></strong></label> <input th:field="*{nameFr}" class="form-control" id="nameFr" type="text" required="required" />
+								th:utext="#{form.required}"></strong></label> <input th:field="*{nameFr}" class="form-control" style="width: 400px;" id="nameFr" type="text" required="required" />
 							<!-- <div th:if="${#fields.hasErrors('nameFr')}" th:errors="*{nameFr}" th:text="#{err.nameErr}"></div> -->
 						</div>
 
@@ -101,7 +101,7 @@
 
 						<div class="form-group">
 							<label for="partnerOrg"><span class="field-name" th:text="#{form.participatingOrg}"></span></label> <input th:field="*{partnerOrg}"
-								class="form-control" id="partnerOrg" type="text" disabled />
+								class="form-control" style="width: 400px;" id="partnerOrg" type="text" disabled />
 						</div>
 
 						<label for="isComplex"><span class="field-name" th:text="#{form.participatingCmplx}"></span></label> <input id="isComplex"
@@ -118,7 +118,7 @@
 						<div class="form-group">
 							<label for="programLeadName" class="required"><span class="field-name" th:text="#{form.programLeadName}"></span><strong
 								class="required" th:utext="#{form.required}"></strong></label> <input th:field="*{programLeadName}" class="form-control"
-								id="programLeadName" type="text" required="required" />
+								style="width: 400px;" id="programLeadName" type="text" required="required" />
 						</div>
 
 						<div class="form-group">
@@ -131,7 +131,7 @@
 						<div class="form-group">
 							<label for="programLeadDn" class="required"><span class="field-name" th:text="#{form.programLeadDn}"></span><strong
 								class="required" th:utext="#{form.required}"></strong></label> <input th:field="*{programLeadDn}" class="form-control" id="programLeadDn"
-								type="text" required="required" />
+								style="width: 400px;" type="text" required="required" />
 						</div>
 
 						<div class="form-group">
@@ -145,7 +145,7 @@
 						</div>
 
 						<div class="form-group">
-							<label for="agencies"><span class="field-name" th:text="#{form.agencies}"></span><strong class="required"
+							<label for="agencies" class="required"><span class="field-name" th:text="#{form.agencies}"></span><strong class="required"
 								th:utext="#{form.required}"></strong></label>
 
 							<div>
