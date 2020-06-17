@@ -1,64 +1,86 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/general.html :: common_header(~{::title},~{},~{})}">
-<title th:text="#{title.editBUPage}"></title>
+<!--[if lt IE 9]><html class="no-js lt-ie9" lang="en" dir="ltr"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!--<![endif]-->
+
+<head th:replace="~{fragments/general.html :: common_header(~{::title},~{})}">
+<meta charset="utf-8">
+<title th:text="#{title.home}"></title>
 </head>
-<body id="editBUPage">
+<body class="home" vocab="http://schema.org/" typeof="WebPage">
 	<div th:insert="~{fragments/general.html :: header_nav('home')}"></div>
-	<div class="container">
-		<h1 th:text="#{h.editBu}" style="margin-bottom: 25px"></h1>
+	<main role="main" property="mainContentOfPage" class="container">
 
-		<form action="#" th:action="@{editBU}" th:object="${bu}" method="post">
+		<h1 th:text="#{h.editBu}"></h1>
 
-			<input th:hidden="true" th:type="text" th:field="*{id}" />
+		<div th:insert="~{fragments/general.html :: profile_info('home')}"></div>
 
-			<div class="form-group row">
-				<div class="col-sm-2 col-form-label" th:text="#{form.nameEn}"></div>
-				<div>
-					<input th:type="text" th:field="*{nameEn}" class="col-sm-2" />
+		<div class="panel panel-default">
+
+			<div class="panel-body">
+
+				<div class="web-frmvld">
+
+					<form action="#" th:action="@{editBU}" th:object="${bu}" method="post">
+
+						<input th:hidden="true" th:type="text" th:field="*{id}" />
+
+						<div class="form-group">
+							<label for="nameEnInput" class="required"><span class="field-name" th:text="#{form.nameEn}"></span><strong class="required"
+								th:utext="#{form.required}"></strong></label> <input id="nameEnInput" th:type="text" th:field="*{nameEn}" class="form-control"
+								style="width: 400px;" />
+							<!-- <div class="col-sm-5" th:if="${#fields.hasErrors('nameEn')}" th:errors="*{nameEn}" th:text="#{err.nameErr}"></div> -->
+						</div>
+
+						<div class="form-group">
+							<label for="nameFrInput" class="required"><span class="field-name" th:text="#{form.nameFr}"></span><strong class="required"
+								th:utext="#{form.required}"></strong></label> <input id="nameFrInput" th:type="text" th:field="*{nameFr}" class="form-control"
+								style="width: 400px;" />
+							<!-- <div class="col-sm-5" th:if="${#fields.hasErrors('nameFr')}" th:errors="*{nameFr}"></div> -->
+						</div>
+
+						<div class="form-group">
+							<label for="acronymEnInput" class="required"><span class="field-name" th:text="#{form.acronymEn}"></span><strong
+								class="required" th:utext="#{form.required}"></strong></label> <input id="acronymEnInput" type="text" th:field="*{acronymEn}"
+								class="form-control" />
+							<!-- <div class="col-sm-5" th:if="${#fields.hasErrors('acronymEn')}" th:errors="*{acronymEn}"></div> -->
+						</div>
+
+						<div class="form-group">
+							<label for="acronymFrInput" class="required"><span class="field-name" th:text="#{form.acronymFr}"></span><strong
+								class="required" th:utext="#{form.required}"></strong></label> <input id="acronymFrInput" type="text" th:field="*{acronymFr}"
+								class="form-control" />
+							<!-- <div class="col-sm-5" th:if="${#fields.hasErrors('acronymFr')}" th:errors="*{acronymFr}"></div> -->
+						</div>
+
+						<div class="form-group ">
+							<label for="agency"><span class="field-name" th:text="#{form.agency}"></span></label>
+							<label th:text="*{agency.getName()}" class="form-control" id="agency" style="background-color: #f9f9f9; border: none; -webkit-box-shadow: none; box-shadow: none;"></label>
+						</div>
+
+						<div>
+							<input hidden="true" th:field="*{agency}">
+						</div>
+
+						<div>
+							<input th:type="submit" class="btn btn-primary" role="button" th:value="#{input.submit}" /> <a class="btn btn-link"
+								th:href="@{/browse/viewAgency(id=${bu.agency.id})}" th:text="#{msg.cancel}"></a>
+						</div>
+
+					</form>
+
 				</div>
-				<div class="col-sm-5" th:if="${#fields.hasErrors('nameEn')}" th:errors="*{nameEn}" th:text="#{err.nameErr}"></div>
+
 			</div>
 
-			<div class="form-group row">
-				<div class="col-sm-2 col-form-label" th:text="#{form.nameFr}"></div>
-				<div>
-					<input th:type="text" th:field="*{nameFr}" class="col-sm-2" />
-				</div>
-				<div class="col-sm-5" th:if="${#fields.hasErrors('nameFr')}" th:errors="*{nameFr}"></div>
-			</div>
+			<div th:insert="fragments/general :: returnHome"></div>
 
-			<div class="form-group row">
-				<div class="col-sm-2 col-form-label" th:text="#{form.acronymEn}"></div>
-				<div>
-					<input th:type="text" th:field="*{acronymEn}" class="col-sm-2" />
-				</div>
-				<div class="col-sm-5" th:if="${#fields.hasErrors('acronymEn')}" th:errors="*{acronymEn}"></div>
-			</div>
+		</div>
 
-			<div class="form-group row">
-				<div class="col-sm-2 col-form-label" th:text="#{form.acronymFr}"></div>
-				<div>
-					<input th:type="text" th:field="*{acronymFr}" class="col-sm-2" />
-				</div>
-				<div class="col-sm-5" th:if="${#fields.hasErrors('acronymFr')}" th:errors="*{acronymFr}"></div>
-			</div>
+	</main>
 
-			<div class="form-group row">
-				<div class="col-sm-2 col-form-label" th:text="#{form.agency}"></div>
-				<div th:text="*{agency.getName()}"></div>
-			</div>
+	<footer th:insert="fragments/general :: footer(~{})"></footer>
 
-			<div>
-				<input hidden="true" th:field="*{agency}">
-			</div>
-			
-			<div style="margin-bottom: 35px">
-				<input th:type="submit" class="btn btn-primary" role="button" th:value="#{input.submit}" /> <a class="btn btn-primary"
-					th:href="@{/browse/viewAgency(id=${bu.agency.id})}" th:text="#{msg.cancel}"></a>
-			</div>
-
-		</form>
-	</div>
 </body>
 </html>

@@ -39,71 +39,64 @@
 
 				</div>
 
-				<div th:if="${adUserList != null and !adUserList.isEmpty()}" id="searchResultsDiv">
+				<div class="web-frmvld" th:if="${adUserList != null and !adUserList.isEmpty()}" id="searchResultsDiv">
 
-					<div class="web-frmvld">
+					<form action="#" th:action="@{createMR(buId=${param.buId})}" method="post" th:object="${memberRole}">
 
-						<form action="#" th:action="@{createMR(buId=${param.buId})}" method="post" th:object="${memberRole}">
-
-							<div class="form-group">
-								<label for="hiddenRoleDropDown" class="required"><span class="field-name" th:text="#{form.role}"></span><strong
-									class="required" th:utext="#{form.required}"></strong></label>
-								<div>
-									<select class="form-control" id="hiddenRoleDropDown" th:field="*{role}" required>
-										<option th:each="role : ${@roleServiceImpl.findAllRoles()}" th:text="${role.getLocalizedAttribute('name')}" th:value="${role.id}">
-									</select>
-								</div>
-							</div>
-
-							<div class="form-group">
-								<label for="ediAuthorizedDropDown" class="required"><span class="field-name" th:text="#{form.ediAuthorized}"></span><strong
-									class="required" th:utext="#{form.required}"></strong></label> <select id="ediAuthorizedDropDown" th:field="*{ediAuthorized}"
-									class="form-control" required>
-									<option th:text="#{msg.no}" th:value="0">
-									<option th:text="#{msg.yes}" th:value="1">
+						<div class="form-group">
+							<label for="hiddenRoleDropDown" class="required"><span class="field-name" th:text="#{form.role}"></span><strong
+								class="required" th:utext="#{form.required}"></strong></label>
+							<div>
+								<select class="form-control" id="hiddenRoleDropDown" th:field="*{role}" required>
+									<option th:each="role : ${@roleServiceImpl.findAllRoles()}" th:text="${role.getLocalizedAttribute('name')}" th:value="${role.id}">
 								</select>
 							</div>
+						</div>
 
-							<input type="hidden" th:value="${businessUnit}" th:field="*{businessUnit}" /> <input hidden="true" name="searchStr"
-								th:value="${param.searchStr}" />
+						<div class="form-group">
+							<label for="ediAuthorizedDropDown" class="required"><span class="field-name" th:text="#{form.ediAuthorized}"></span><strong
+								class="required" th:utext="#{form.required}"></strong></label> <select id="ediAuthorizedDropDown" th:field="*{ediAuthorized}"
+								class="form-control" required>
+								<option th:text="#{msg.no}" th:value="0">
+								<option th:text="#{msg.yes}" th:value="1">
+							</select>
+						</div>
 
-							<div class="form-group">
-								<label for="memberRoleTable" class="required" style="margin-top: 20px; margin-bottom: 30px;"><span class="field-name"
-									th:text="#{label.selUser}"></span><strong class="required" th:utext="#{form.required}"></strong></label>
-								<table id="memberRoleTable" class="wb-tables table table-striped table-hover dataTable">
-									<thead>
-										<tr>
-											<th th:text="#{th.select}" style="text-align: center; width: 25px;"></th>
-											<th th:text="#{th.name}"></th>
-											<th th:text="#{th.userLogin}"></th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr th:each="user : ${adUserList}">
-											<td><input type="radio" name="select" style="width: 65px;" th:value="${user.userLogin}" th:field="*{userLogin}" /></td>
-											<td th:text="${user.fullName}"></td>
-											<td th:text="${user.userLogin}"></td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
+						<input type="hidden" th:value="${businessUnit}" th:field="*{businessUnit}" /> <input hidden="true" name="searchStr"
+							th:value="${param.searchStr}" />
 
-							<div class="form-group row">
-								<div class="col-sm-1">
-									<input type="submit" class="btn btn-primary" th:value="#{input.submit}" />
-								</div>
-								<div class="col-sm-1">
-									<a th:href="@{/browse/viewBU(id=${param.buId})}" th:text="#{msg.cancel}" class="btn btn-primary"></a>
-								</div>
-							</div>
+						<div class="form-group">
+							<label for="memberRoleTable" class="required" style="margin-top: 20px; margin-bottom: 30px;"><span class="field-name"
+								th:text="#{label.selUser}"></span><strong class="required" th:utext="#{form.required}"></strong></label>
+							<table id="memberRoleTable" class="wb-tables table table-striped table-hover dataTable">
+								<thead>
+									<tr>
+										<th th:text="#{th.select}" style="text-align: center; width: 25px;"></th>
+										<th th:text="#{th.name}"></th>
+										<th th:text="#{th.userLogin}"></th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="user : ${adUserList}">
+										<td><input type="radio" name="select" style="width: 65px;" th:value="${user.userLogin}" th:field="*{userLogin}" /></td>
+										<td th:text="${user.fullName}"></td>
+										<td th:text="${user.userLogin}"></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
 
-							<div th:if="${#fields.hasErrors('userLogin')}" th:errors="*{userLogin}" style="color: red;" th:text="#{err.userLogin}"></div>
+						<div>
+							<input type="submit" class="btn btn-primary" th:value="#{input.submit}" /> <a th:href="@{/browse/viewBU(id=${param.buId})}"
+								th:text="#{msg.cancel}" class="btn btn-link"></a>
+						</div>
 
-						</form>
+						<div th:if="${#fields.hasErrors('userLogin')}" th:errors="*{userLogin}" style="color: red;" th:text="#{err.userLogin}"></div>
 
-					</div>
+					</form>
 
 				</div>
+
 
 				<div th:if="${adUserList != null and adUserList.isEmpty()}" id="noUserSearchResults" class="form-group">
 					<h4 th:text="#{h.noUserSearchResults}"></h4>
