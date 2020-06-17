@@ -16,4 +16,6 @@ public interface FiscalYearService {
 	
 	FiscalYear saveFiscalYear(FiscalYear fy) throws UniqueColumnException;
 	
+	List<Object[]> findNumAppsExpectedForEachFiscalYear();
+	
 }

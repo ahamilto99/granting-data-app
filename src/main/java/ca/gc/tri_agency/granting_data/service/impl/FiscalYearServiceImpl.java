@@ -46,4 +46,10 @@ public class FiscalYearServiceImpl implements FiscalYearService {
 		}
 		return fyRepo.save(fy);
 	}
+
+	@Override
+	public List<Object[]> findNumAppsExpectedForEachFiscalYear() {
+		return fyRepo.findNumAppsExpectedForEachYear();
+	}
+	
 }

@@ -33,7 +33,7 @@ public class FiscalYearController {
 
 	@GetMapping("/browse/viewFYs")
 	public String viewFiscalYears(Model model) {
-		model.addAttribute("fiscalYears", fyService.findAllFiscalYears());
+		model.addAttribute("fiscalYearStats", fyService.findNumAppsExpectedForEachFiscalYear());
 		return "browse/viewFiscalYears";
 	}
 
