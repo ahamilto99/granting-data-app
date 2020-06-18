@@ -150,9 +150,10 @@ public class FundingOpportunityController {
 	@AdminOnly
 	@GetMapping("/manage/editProgramLead")
 	public String editProgramLeadGet(@RequestParam("id") Long id,
-			@RequestParam(value = "username", required = false) String username, Model model) {
-		List<ADUser> matchingUsers = username == null ? adUserService.findAllADUsers() : adUserService.searchADUsers(username);
-		model.addAttribute("matchingUsers", matchingUsers);
+			@RequestParam(value = "searchStr", defaultValue = "") String searchStr, Model model) {
+		if (!searchStr.trim().isEmpty()) {
+			model.addAttribute("adUserList", adUserService.searchADUsers(searchStr.trim()));
+		}
 		model.addAttribute("originalId", id);
 		return "manage/editProgramLead";
 	}

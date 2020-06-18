@@ -71,14 +71,14 @@
 							<table id="memberRoleTable" class="wb-tables table table-striped table-hover dataTable">
 								<thead>
 									<tr>
-										<th th:text="#{th.select}" style="text-align: center; width: 25px;"></th>
+										<th th:text="#{th.select}" style="width: 5%;"></th>
 										<th th:text="#{th.name}"></th>
 										<th th:text="#{th.userLogin}"></th>
 									</tr>
 								</thead>
 								<tbody>
 									<tr th:each="user : ${adUserList}">
-										<td><input type="radio" name="select" style="width: 65px;" th:value="${user.userLogin}" th:field="*{userLogin}" /></td>
+										<td><input type="radio" name="select" th:value="${user.userLogin}" th:field="*{userLogin}" /></td>
 										<td th:text="${user.fullName}"></td>
 										<td th:text="${user.userLogin}"></td>
 									</tr>
@@ -91,14 +91,14 @@
 								th:text="#{msg.cancel}" class="btn btn-link"></a>
 						</div>
 
-						<div th:if="${#fields.hasErrors('userLogin')}" th:errors="*{userLogin}" style="color: red;" th:text="#{err.userLogin}"></div>
+						<!-- <div th:if="${#fields.hasErrors('userLogin')}" th:errors="*{userLogin}" style="color: red;" th:text="#{err.userLogin}"></div> -->
 
 					</form>
 
 				</div>
 
 
-				<div th:if="${adUserList != null and adUserList.isEmpty()}" id="noUserSearchResults" class="form-group">
+				<div th:if="${adUserList ne null and adUserList.empty}" id="noUserSearchResults" class="form-group">
 					<h4 th:text="#{h.noUserSearchResults}"></h4>
 				</div>
 

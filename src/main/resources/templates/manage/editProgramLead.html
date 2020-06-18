@@ -1,48 +1,95 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/general.html :: common_header(~{::title},~{::link},~{::script})}">
-	<meta charset="ISO-8859-1">
-	<title th:text="#{title.editProgramLead}"></title>
-	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" />
-	<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-	<script type="text/javascript">
-		$(document).ready( function () {
-			var table = $('#dataTable').DataTable({});
-		});
-	</script>
+<!--[if lt IE 9]><html class="no-js lt-ie9" lang="en" dir="ltr"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!--<![endif]-->
+
+<head th:replace="fragments/general.html :: common_header(~{::title},~{})">
+<meta charset="utf-8">
+<title th:text="#{h.editProgramLead}"></title>
 </head>
-<body>
-	<div th:insert="~{fragments/general.html :: header_nav('programs')}"></div>
-	<div class="container">
-		<h1 th:text="#{h.searchUser}"></h1> <!--  th:utext="${fundingOpp.searchUser}" --> 
-		
-		<form th:if="${matchingUsers != null}" action="#" th:action="@{editProgramLead}" method="post">
-			<input type="hidden" name="foId" th:value="${originalId}"/>	
-			<table id="dataTable" class="display">
-	   			<thead>
-	       			<tr>
-	       				<th></th>
-	           			<th th:text="#{th.username}"></th>
-	           			<th th:text="#{th.surname}"></th>
-	           			<th th:text="#{th.dn}"></th>
-	       			</tr>
-	   			</thead>
-	  			<tbody>
-	   				<tr th:if="${matchingUsers.empty}">
-	           			<td colspan="4" th:text="#{th.noMatchingUsers}"></td>
-	       			</tr>
-	       			<tr th:each="user : ${matchingUsers}">
-	       				<td><input name="leadUserDn" th:value="${user.dn}" type="radio" /></td>
-	       				<!-- <td><input name="selectedUser" th:value="${user}" type="radio" /></td> -->
-	           			<td><span th:text="${user.userLogin}"></span></td>
-	           			<td><span th:text="${user.lastName}"></span></td>
-	           			<td><span th:text="${user.dn}"></span></td>
-	       			</tr>
-	   			</tbody>
-			</table>
-			<input th:if="${!matchingUsers.empty}" type="submit" class="btn btn-primary" role="button" th:value="#{input.submit}" />
-		</form>
-		
-	</div>
+<body class="home" vocab="http://schema.org/" typeof="WebPage">
+	<div th:insert="fragments/general.html :: header_nav('home')"></div>
+	<main role="main" property="mainContentOfPage" class="container">
+
+		<h1 th:text="#{h.editProgramLead}"></h1>
+		<!--  th:utext="${fundingOpp.searchUser}" -->
+
+		<div th:insert="fragments/general.html :: profile_info('home')"></div>
+
+		<div class="panel panel-default">
+
+			<div class="panel-body">
+
+				<div class="web-frmvld">
+
+					<form action="#" th:action="@{editProgramLead(id=${param.id})}" method="get">
+
+						<input hidden="true" name="id" th:value="${param.id}" />
+
+						<div class="form-group">
+							<label for="userSearchBox"><span class="field-name" th:text="#{link.fo.searchUser}"></span></label> <input id="userSearchBox"
+								class="form-control" th:type="search" th:name="searchStr" th:value="${param.searchStr}" />
+						</div>
+
+						<div class="form-group">
+							<input type="submit" id="searchButton" th:value="#{searchUser.submit}" class="btn btn-primary" />
+						</div>
+
+					</form>
+
+				</div>
+
+				<div class="web-frmvld" th:if="${adUserList != null and !adUserList.isEmpty()}" id="searchResultsDiv">
+
+					<form action="#" th:action="@{editProgramLead}" method="post">
+
+						<input type="hidden" name="foId" th:value="${originalId}" />
+
+						<table id="dataTable" class="wb-tables table table-striped table-hover dataTable">
+							<thead>
+								<tr>
+									<th th:text="#{th.select}" style="width: 5%;"></th>
+									<th th:text="#{th.userLogin}"></th>
+									<th th:text="#{th.name}"></th>
+									<th th:text="#{th.dn}"></th>
+								</tr>
+							</thead>
+							<tbody>
+								<!-- <tr th:if="${adUserList.empty}">
+									<td colspan="4" th:text="#{th.noMatchingUsers}"></td>
+								</tr> -->
+								<tr th:each="user : ${adUserList}">
+									<td><input name="leadUserDn" th:value="${user.dn}" type="radio" /></td>
+									<td><span th:text="${user.userLogin}"></span></td>
+									<td><span th:text="${user.fullName}"></span></td>
+									<td><span th:text="${user.dn}"></span></td>
+								</tr>
+							</tbody>
+						</table>
+
+						<div>
+							<input type="submit" class="btn btn-primary" th:value="#{input.submit}" /> <a th:href="@{/browse/viewFo(id=${param.id})}"
+								th:text="#{msg.cancel}" class="btn btn-link"></a>
+						</div>
+
+					</form>
+
+				</div>
+
+				<div th:if="${adUserList ne null and adUserList.empty}" id="noUserSearchResults" class="form-group">
+					<h4 th:text="#{h.noUserSearchResults}"></h4>
+				</div>
+
+			</div>
+
+			<div th:insert="fragments/general :: returnHome"></div>
+
+		</div>
+
+	</main>
+
+	<footer th:insert="fragments/general :: footer(~{})"></footer>
+
 </body>
 </html>
