@@ -118,7 +118,7 @@ public class WebSecurityConfig {
 					.permitAll().and().authorizeRequests().antMatchers("/entities/**", "/reports/**")
 					.hasAnyRole("NSERC_USER", "SSHRC_USER", "AGENCY_USER").anyRequest().authenticated().and()
 					.formLogin().loginPage("/login").permitAll().and().logout().permitAll().and()
-					.exceptionHandling().accessDeniedPage("/exception/forbiden-by-role");
+					.exceptionHandling().accessDeniedPage("/exception/forbidden-by-role");
 		}
 
 	}
@@ -136,7 +136,7 @@ public class WebSecurityConfig {
 					.permitAll().and().authorizeRequests().antMatchers("/entities/**", "/reports/**")
 					.hasAnyRole("NSERC_USER", "SSHRC_USER", "AGENCY_USER").anyRequest().authenticated().and()
 					.formLogin().loginPage("/login").permitAll().and().logout().permitAll().and()
-					.exceptionHandling().accessDeniedPage("/exception/forbiden-by-role").and().headers()
+					.exceptionHandling().accessDeniedPage("/exception/forbidden-by-role").and().headers()
 					.frameOptions().disable().and().csrf().disable();
 		}
 	}

@@ -72,7 +72,7 @@
 					</tbody>
 				</table>
 
-				<a sec:authorize="hasRole('MDM ADMIN')" id="createBusinessUnit" class="btn btn-link"
+				<a sec:authorize="hasRole('MDM ADMIN')" id="createBusinessUnit" class="btn btn-primary"
 					th:href="@{'/admin/createBU'(agencyId=${agency.id})}" th:text="#{link.createBusinessUnit}"></a>
 			</div>
 
