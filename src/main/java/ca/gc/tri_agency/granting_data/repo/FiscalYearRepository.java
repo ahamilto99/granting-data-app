@@ -14,9 +14,10 @@ public interface FiscalYearRepository extends JpaRepository<FiscalYear, Long> {
 
 	Optional<FiscalYear> findByYear(Long year);
 	
-	@Query("SELECT fy.id, sfc.fiscalYear, SUM(sfc.numAppsReceived) FROM FiscalYear fy"
-			+ " JOIN SystemFundingCycle sfc ON fy.year = sfc.fiscalYear"
-			+ " GROUP BY sfc.fiscalYear")
+	@Query("SELECT fy.id, fy.year, SUM(sfc.numAppsReceived) FROM FiscalYear fy"
+			+ " LEFT JOIN SystemFundingCycle sfc ON fy.year = sfc.fiscalYear"
+			+ " GROUP BY sfc.fiscalYear, fy.id"
+			+ " ORDER BY fy.year")
 	List<Object[]> findNumAppsExpectedForEachYear();
 
 }

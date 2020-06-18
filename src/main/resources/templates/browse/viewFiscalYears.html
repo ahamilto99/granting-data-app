@@ -31,13 +31,13 @@
 					<tbody>
 						<tr th:each="fy : ${fiscalYearStats}" class="form-group row">
 							<td th:text="${fy[1]}"></td>
-							<td th:text="${#numbers.formatInteger(fy[2], 1, 'COMMA')}"></td>
-							<td><a class="btn btn-primary" th:href="@{viewFcFromFy(fyId=${fy[0]})}" role="button" th:text="#{msg.view}"></a></td>
+							<td th:text="${fy[2] ne null ? #numbers.formatInteger(fy[2], 1, 'COMMA') : 0}"></td>
+							<td><span th:if="${fy[2] eq null}" th:text="#{msg.none}"></span><a th:if="${fy[2] ne null}" class="btn btn-primary" th:href="@{viewFcFromFy(fyId=${fy[0]})}" role="button" th:text="#{msg.view}"></a></td>
 						</tr>
 					</tbody>
 				</table>
 
-				<div sec:authorize="hasRole('MDM ADMIN')" class="form-group row" >
+				<div sec:authorize="hasRole('MDM ADMIN')" class="form-group row">
 					<a id="createFiscalYearLink" th:href="@{/manage/createFY}" th:text="#{link.createFy}" class="btn-primary btn"></a>
 				</div>
 
