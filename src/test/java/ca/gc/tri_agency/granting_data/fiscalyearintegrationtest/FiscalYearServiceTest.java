@@ -48,7 +48,7 @@ public class FiscalYearServiceTest {
 	@WithAnonymousUser
 	@Test
 	public void test_findAllFiscalYears() {
-		assertTrue(0 < fyService.findAllFiscalYears().size());
+		assertTrue(0 < fyService.findAllFiscalYearsOrderByYearAsc().size());
 	}
 
 	@WithAnonymousUser

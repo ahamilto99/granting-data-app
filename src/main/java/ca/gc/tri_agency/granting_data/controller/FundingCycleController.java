@@ -61,7 +61,7 @@ public class FundingCycleController {
 	public String createFundingCycleGet(@RequestParam("foId") Long foId, Model model) {
 		model.addAttribute("foId", foId);
 		model.addAttribute("fundingCycle", new FundingCycle());
-		model.addAttribute("fy", fyService.findAllFiscalYears());
+		model.addAttribute("fy", fyService.findAllFiscalYearsOrderByYearAsc());
 		model.addAttribute("fo", foService.findFundingOpportunityById(foId));
 		return "manage/createFundingCycle";
 	}
@@ -71,7 +71,7 @@ public class FundingCycleController {
 	public String createFundingCyclePost(@RequestParam("foId") Long foId, @Valid @ModelAttribute("fundingCycle") FundingCycle fc,
 			BindingResult bindingResult, Model model) {
 		if (bindingResult.hasErrors()) {
-			model.addAttribute("fy", fyService.findAllFiscalYears());
+			model.addAttribute("fy", fyService.findAllFiscalYearsOrderByYearAsc());
 			model.addAttribute("fo", foService.findFundingOpportunityById(foId));
 			return "manage/createFundingCycle";
 		}

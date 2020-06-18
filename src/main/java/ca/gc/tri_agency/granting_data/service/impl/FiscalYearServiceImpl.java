@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import ca.gc.tri_agency.granting_data.app.exception.UniqueColumnException;
@@ -29,8 +30,8 @@ public class FiscalYearServiceImpl implements FiscalYearService {
 	}
 
 	@Override
-	public List<FiscalYear> findAllFiscalYears() {
-		return fyRepo.findAll();
+	public List<FiscalYear> findAllFiscalYearsOrderByYearAsc() {
+		return fyRepo.findAll(Sort.by(Sort.Direction.ASC, "year"));
 	}
 
 	@Override
