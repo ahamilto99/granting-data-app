@@ -27,7 +27,7 @@
 
 				<div>
 					<form action="#" th:action="@{'/admin/confirmUnlink'(sfoId=${sfo.id})}" method="post">
-						<input type="submit" class="btn btn-primary" role="button" th:value="#{msg.confirm}" /> <a class="btn btn-primary"
+						<input type="submit" class="btn btn-primary" role="button" th:value="#{msg.confirm}" /> <a class="btn btn-link"
 							th:href="@{'/admin/viewSystemFO'(id=${sfo.id})}" th:text="#{msg.cancel}"></a>
 					</form>
 				</div>
