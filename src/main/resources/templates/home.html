@@ -5,75 +5,104 @@
 <!--<![endif]-->
 
 <head th:replace="~{fragments/general.html :: common_header(~{::title},~{})}">
-	<meta charset="utf-8">
-	<title th:text="#{title.home}"></title>
+<meta charset="utf-8">
+<title th:text="#{title.home}"></title>
 </head>
-<body  class="home" vocab="http://schema.org/" typeof="WebPage">
+<body class="home" vocab="http://schema.org/" typeof="WebPage">
 	<div th:insert="~{fragments/general.html :: header_nav('home')}"></div>
 	<main role="main" property="mainContentOfPage" class="container">
 		<h1 th:text="#{title.home}"></h1>
 		<div th:insert="~{fragments/general.html :: profile_info('home')}" />
-		
+
 		<h3 th:text="#{p.home.browse}"></h3>
 		<div class="row">
 			<div class="col-md-6">
-	           	<div class="well">
-	    	        <div class="row">
-	                    <div class="col-md-1">
-	                        <span class="glyphicon glyphicon-list"></span>
-	                    </div>
-	                    <div class="col-md-11">
-	                        <a href="browse/fundingOpportunities" th:text="#{link.browse.fos}"></a>
-	                        <p th:text="#{p.browseFoList}"></p>
-	                    </div>
+				<div class="well">
+					<div class="row">
+						<div class="col-md-1">
+							<span class="glyphicon glyphicon-list"></span>
+						</div>
+						<div class="col-md-11">
+							<a href="browse/fundingOpportunities" th:text="#{link.browse.fos}"></a>
+							<p th:text="#{p.browseFoList}"></p>
+						</div>
 					</div>
 				</div>
 			</div>
 			<div class="col-md-6">
-            	<div class="well">
-                    <div class="row">
-                        <div class="col-md-1">
-                            <span class="glyphicon glyphicon-search"></span>
-                        </div>
-                        <div class="col-md-11"> 
-        					<a href="browse/appParticipations" th:text="#{link.browse.appParticipations}"></a>
-                            <p th:text="#{p.browseAppPartData}"></p>
-                        </div>
-                    </div>
-		        </div>
+				<div class="well">
+					<div class="row">
+						<div class="col-md-1">
+							<span class="glyphicon glyphicon-stats"></span>
+						</div>
+						<div class="col-md-11">
+							<a href="browse/ediVisualization" th:text="#{link.browse.edi}"></a>
+							<p th:text="#{p.viewEdiVisualization}"></p>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
-<!-- 			<li><a href="browse/viewCalendar" th:text="#{link.fc.cal}"></a></li> -->
-   		
-		
-		<div sec:authorize="hasRole('MDM ADMIN')" >
+
+		<div class="row">
+			<div class="col-md-6">
+				<div class="well">
+					<div class="row">
+						<div class="col-md-1">
+							<span class="glyphicon glyphicon-search"></span>
+						</div>
+						<div class="col-md-11">
+							<a href="browse/appParticipations" th:text="#{link.browse.appParticipations}"></a>
+							<p th:text="#{p.browseAppPartData}"></p>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="well">
+					<div class="row">
+						<div class="col-md-1">
+							<span class="glyphicon glyphicon-search"></span>
+						</div>
+						<div class="col-md-11">
+							<a href="browse/awards" th:text="#{link.browse.awards}"></a>
+							<p th:text="#{p.browseAwards}"></p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- 			<li><a href="browse/viewCalendar" th:text="#{link.fc.cal}"></a></li> -->
+
+		<div sec:authorize="hasRole('MDM ADMIN')">
 			<h3 th:text="#{p.home.adminZone}"></h3>
 			<div class="row">
 				<div class="col-md-6">
-		           	<div class="well">
-		    	        <div class="row">
-		                    <div class="col-md-1">
-		                        <span class="glyphicon glyphicon-book"></span>
-		                    </div>
-		                    <div class="col-md-11">
-		                        <a href="admin/selectFileForComparison" th:text="#{link.selectFileForComparison}"></a>
-		                        <p th:text="#{p.analyzeFoUploadExtracts}"></p>
-		                    </div>
+					<div class="well">
+						<div class="row">
+							<div class="col-md-1">
+								<span class="glyphicon glyphicon-book"></span>
+							</div>
+							<div class="col-md-11">
+								<a href="admin/selectFileForComparison" th:text="#{link.selectFileForComparison}"></a>
+								<p th:text="#{p.analyzeFoUploadExtracts}"></p>
+							</div>
 						</div>
 					</div>
 				</div>
 				<div class="col-md-6">
-	            	<div class="well">
-	                    <div class="row">
-	                        <div class="col-md-1">
-	                            <span class="fa fa-files-o"></span>
-	                        </div>
-	                        <div class="col-md-11"> 
-	                        	<a href="admin/analyzeSystemFOs" th:text="#{link.analyzeSFos}"></a>
-	                            <p th:text="#{p.linkFosToMaster}"></p>
-	                        </div>
-	                    </div>
-			        </div>
+					<div class="well">
+						<div class="row">
+							<div class="col-md-1">
+								<span class="fa fa-files-o"></span>
+							</div>
+							<div class="col-md-11">
+								<a href="admin/analyzeSFOs" th:text="#{link.analyzeSFos}"></a>
+								<p th:text="#{p.linkFosToMaster}"></p>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 			<div class="row">
@@ -105,11 +134,11 @@
 				</div>
 			</div>
 			<!-- 		<ol> -->
-<!-- 	        <li><a href="admin/selectFileForComparison" th:text="#{link.selectFileForComparison}"></a></li> -->
-<!-- 	        <li><a href="admin/analyzeSystemFOs" th:text="#{link.analyzeSFos}"></a></li> -->
-<!-- 	        <li><a style="color: grey" href="admin/generateTestParticipations" th:text="#{link.generateTestParticipations}"></a></li> -->
-<!--  	        <li><a href="admin/viewSystemActivities" th:text="#{link.viewSystemActivities}"></a></li> -->
-<!-- 		</ol> -->
+			<!-- 	        <li><a href="admin/selectFileForComparison" th:text="#{link.selectFileForComparison}"></a></li> -->
+			<!-- 	        <li><a href="admin/analyzeSystemFOs" th:text="#{link.analyzeSFos}"></a></li> -->
+			<!-- 	        <li><a style="color: grey" href="admin/generateTestParticipations" th:text="#{link.generateTestParticipations}"></a></li> -->
+			<!--  	        <li><a href="admin/viewSystemActivities" th:text="#{link.viewSystemActivities}"></a></li> -->
+			<!-- 		</ol> -->
 		</div>
 	</main>
 	<footer th:insert="~{fragments/general.html :: footer(~{})}" />

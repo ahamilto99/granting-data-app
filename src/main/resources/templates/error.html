@@ -30,11 +30,11 @@
 					<span th:case="400" class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"
 						style="color: darkred; font-family: Helvetica, Arial, sans-serif; font-size: 16px;" th:text="#{err.p.400}"></span>
 					<span th:case="404" class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"
-						style="color: darkred; font-family: Helvetica, Arial, sans-serif; font-size: 16px;" th:text="${message} + '.'"></span>
+						style="color: darkred; font-family: Helvetica, Arial, sans-serif; font-size: 16px;" th:text="#{err.p.404}"></span>
 					<span th:case="500" class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"
-						style="color: darkred; font-family: Helvetica, Arial, sans-serif; font-size: 16px;" th:text="#{err.yourAcct}"></span>
+						style="color: darkred; font-family: Helvetica, Arial, sans-serif; font-size: 16px;" th:text="#{err.p.500}"></span>
 					<span th:case="*" class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"
-						style="color: darkred; font-family: Helvetica, Arial, sans-serif; font-size: 16px;" th:text="#{err.yourAcct}"></span>
+						style="color: darkred; font-family: Helvetica, Arial, sans-serif; font-size: 16px;" th:text="#{err.p.generic}"></span>
 				</div>
 
 				<p th:text="#{p.forbidden.contactSupportCentral}"></p>
