@@ -81,6 +81,10 @@
 					</div>
 				</div>
 
+				<div th:if="${actionMsg != null}" class="form-group">
+					<h4 th:text="#{h.createdGc}"></h4>
+				</div>
+
 				<table id="grantingCapabilitiesTable" class="wb-tables table table-striped table-hover dataTable" aria-live="polite">
 					<thead>
 						<tr>
@@ -100,10 +104,6 @@
 
 					</tbody>
 				</table>
-
-				<div th:if="${actionMsg != null}" class="form-group row">
-					<h4 th:text="#{h.createdGc}"></h4>
-				</div>
 
 				<div class="form-group">
 					<div>

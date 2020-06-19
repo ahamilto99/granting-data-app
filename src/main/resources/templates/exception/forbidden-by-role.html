@@ -13,7 +13,7 @@
 	<main role="main" property="mainContentOfPage" class="container">
 
 		<h1>
-			<span class="glyphicon glyphicon-warning-sign mrgn-rght-md"></span><span th:text="#{h.forbidden}"></span>
+			<span class="glyphicon glyphicon-warning-sign mrgn-rght-md text-danger"></span><span th:text="#{h.forbidden}"></span>
 		</h1>
 
 		<div th:insert="fragments/general.html :: profile_info('home')"></div>
@@ -24,7 +24,7 @@
 
 				<div class="alert alert-danger">
 					<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"
-						style="color: red; font-family: Helvetica, Arial, sans-serif; font-size: 16px;" th:text="#{err.yourAcct}"></span>
+						style="color: darkred; font-family: Helvetica, Arial, sans-serif; font-size: 16px;" th:text="#{err.yourAcct}"></span>
 				</div>
 
 				<p th:text="#{p.forbidden.contactSupportCentral}"></p>
