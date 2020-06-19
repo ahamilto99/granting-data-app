@@ -26,14 +26,15 @@
 
 						<div class="form-group">
 							<label for="descriptionInput" class="required"><span class="field-name" th:text="#{th.description}"></span><strong
-								class="required" th:utext="#{form.required}"></strong></label> <textarea id="descriptionInput" type="" th:field="*{description}"
-								class="form-control" rows="5" cols="50"></textarea>
+								class="required" th:utext="#{form.required}"></strong></label>
+							<textarea id="descriptionInput" th:field="*{description}" class="form-control" rows="5" cols="50" required></textarea>
 							<!-- <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}" th:text="#{err.description}"></div> -->
 						</div>
 
 						<div class="form-group">
 							<label for="urlInput" class="required"><span class="field-name" th:text="#{form.url}"></span><strong class="required"
-								th:utext="#{form.required}"></strong></label> <input id="urlInput" type="url" th:field="*{url}" class="form-control" style="width: 67%;" />
+								th:utext="#{form.required}"></strong></label> <input id="urlInput" type="url" th:field="*{url}" class="form-control" style="width: 67%;"
+								required />
 							<!-- <div th:if="${#fields.hasErrors('url')}" th:errors="*{url}" th:text="#{err.url}"></div> URL MUST INCLUDE THE PROTOCOL FOR IT TO BE ACCEPTED -->
 						</div>
 
@@ -41,7 +42,7 @@
 
 						<div class="form-group">
 							<label for="stageDropdown" class="required"><span class="field-name" th:text="#{form.gs}"></span><strong class="required"
-							th:utext="#{form.required}"></strong></label>
+								th:utext="#{form.required}"></strong></label>
 							<div>
 								<select id="stageDropdown" class="form-control" th:field="*{grantingStage}" required>
 									<option th:each="stage : ${grantingStages}" th:value="${stage.id}" th:text="${stage.getLocalizedAttribute('name')}"></option>
@@ -52,7 +53,7 @@
 
 						<div class="form-group">
 							<label for="systemDropdown" class="required"><span class="field-name" th:text="#{form.gSys}"></span><strong class="required"
-							th:utext="#{form.required}"></strong></label>
+								th:utext="#{form.required}"></strong></label>
 							<div>
 								<select id="systemDropdown" class="form-control" th:field="*{grantingSystem}" required>
 									<option th:each="system : ${grantingSystems}" th:value="${system.id}" th:text="${system.acronym}"></option>
@@ -61,7 +62,8 @@
 							<!-- <div th:if="${#fields.hasErrors('grantingSystem')}" th:errors="*{grantingSystems}" th:text="#{err.gSys}"></div> -->
 						</div>
 
-						<input type="submit" class="btn btn-primary" role="button" th:value="#{input.submit}" />
+						<input type="submit" class="btn btn-primary" th:value="#{input.submit}" /><a class="btn btn-link"
+							th:href="@{/manage/manageFo(id=${param.foId})}" th:text="#{msg.cancel}"></a>
 
 					</form>
 

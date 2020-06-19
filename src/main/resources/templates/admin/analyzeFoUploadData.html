@@ -10,11 +10,17 @@
 
 <!-- FIX JS BELOW B/C IT DOESN'T WORK ON NEW LOOK -->
 <script type="text/javascript">
-	$(document).ready( function () {
-		var table = $('#uploadDataTable').dataTable ( {
-			"paging": false
-		});
-	});
+	$(document).ready(function() {
+	        $('#uploadDataTable').dataTable({
+		        "paging" : false
+	        });
+        });
+	
+	$(document).ready(function() {
+	        $('#uploadDataTable').dataTable( {
+	            "pagingType": "scrolling"
+	        } );
+	    } );
 </script>
 
 </head>
@@ -32,60 +38,11 @@
 
 				<p th:text="#{p.admin.anaylzeFoUploadData.plsReview}"></p>
 
-				<div class="col-md-3">
+				<div class="web-frmlvd">
 
-					<details open>
-
-						<summary>
-							<h4 th:text="#{h.filteringOpts}"></h4>
-						</summary>
-
-						<p class="mrgn-tp-md" th:text="#{p.filtering}"></p>
-
-						<form class="wb-tables-filter" data-bind-to="uploadDataTable">
-
-							<div class="form-group">
-								<label for="dt_fundingCycle" th:text="#{th.fc}"></label> <select class="form-control" id="dt_fundingCycle" data-column="3">
-									<option th:text="#{msg.all}" th:value="#{msg.all}"></option>
-									<option th:each="fc : ${distinctFCs}" th:text="${fc}" th:value="${fc}"></option>
-								</select>
-							</div>
-
-							<div class="form-group">
-								<label for="dt_fo" th:text="#{th.fo}"></label> <select class="form-control" id="dt_fo" data-column="2">
-									<option th:text="#{msg.all}" th:value="#{msg.all}"></option>
-									<option th:each="fo : ${distinctFOs}" th:text="${fo}" th:value="${fo}"></option>
-								</select>
-							</div>
-
-							<div class="form-group">
-								<label for="dt_action" th:text="#{th.action}"></label> <select class="form-control" id="dt_action" data-column="8">
-									<option th:text="#{msg.all}" th:value="#{msg.all}"></option>
-									<option th:text="#{msg.exists}" th:value="#{msg.exists}"></option>
-									<option th:text="#{msg.actionable}" th:value="#{msg.actionable}"></option>
-								</select>
-							</div>
-
-							<div class="form-group">
-								<button type="submit" class="btn btn-primary" aria-controls="uploadDataTable" th:text="#{msg.filter}"></button>
-							</div>
-
-							<div class="form-group">
-								<button type="reset" class="btn btn-link btn-sm p-0" th:text="#{msg.defaults}"></button>
-							</div>
-
-						</form>
-
-					</details>
-
-				</div>
-
-				<form method="POST" th:action="@{analyzeFoUploadData}">
-
-					<div class="col-md-9">
+					<form method="POST" th:action="@{analyzeFoUploadData}">
 
 						<input type="hidden" name="filename" th:value="${filename}" />
-
 
 						<table id="uploadDataTable" class="wb-tables table table-striped table-hover dataTable" aria-live="polite">
 							<!-- data-wb-tables='{
@@ -121,13 +78,12 @@
 
 						</table>
 
-					</div>
+						<div class="form-group">
+							<input type="submit" th:value="#{input.register}" class="btn btn-primary col-md-offset-11" />
+						</div>
+					</form>
 
-					<div class="form-group">
-						<input type="submit" th:value="#{input.register}" class="btn btn-primary col-md-offset-11" />
-					</div>
-
-				</form>
+				</div>
 
 			</div>
 
