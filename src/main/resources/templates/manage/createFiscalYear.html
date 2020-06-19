@@ -26,13 +26,14 @@
 
 						<div class="form-group">
 							<label for="yearInput" class="required"><span class="field-name" th:text="#{form.enterYr}"></span><strong class="required"
-								th:utext="#{form.required}"></strong></label> <input id="yearInput" class="form-control" type="number" th:field="*{year}" required min="1999" max="2050" />
-							<!-- <div th:if="${#fields.hasErrors('year')}" th:errors="*{year}" class="col-sm-6" style="color: red;"></div> -->
+								th:utext="#{form.required}"></strong></label> <input id="yearInput" class="form-control" type="number" th:field="*{year}" required
+								min="1999" max="2050" />
+							<div th:if="${#fields.hasErrors('year')}" th:errors="*{year}" style="color: red;"></div>
 						</div>
 
 						<div>
-								<input type="submit" class="btn btn-primary" role="button" th:value="#{input.submit}" />
-							<a th:href="@{/browse/viewFYs}" class="btn btn-link" th:text="#{msg.cancel}"></a>
+							<input type="submit" class="btn btn-primary" role="button" th:value="#{input.submit}" /> <a th:href="@{/browse/viewFYs}"
+								class="btn btn-link" th:text="#{msg.cancel}"></a>
 						</div>
 
 					</form>

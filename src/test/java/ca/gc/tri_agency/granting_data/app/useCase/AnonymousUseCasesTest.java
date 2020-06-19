@@ -33,22 +33,21 @@ public class AnonymousUseCasesTest {
 
 	@Autowired
 	private WebApplicationContext ctx;
+
 	@Autowired
 	private FundingOpportunityRepository foRepo;
 
-	private String foId;
 	private MockMvc mvc;
 
 	@Before
 	public void setup() {
 		mvc = MockMvcBuilders.webAppContextSetup(ctx).apply(SecurityMockMvcConfigurers.springSecurity()).build();
-		foId = Long.toString(foRepo.findAll().get(0).getId());
 	}
 
 	@WithAnonymousUser
 	@Test
 	public void test_anonUserCanViewFieldsOnViewFoPage_shouldSucceedWith200() throws Exception {
-		mvc.perform(get("/browse/viewFo").param("id", foId)).andExpect(status().isOk())
+		mvc.perform(get("/browse/viewFo").param("id", "1")).andExpect(status().isOk())
 				.andExpect(content().string(containsString("id=\"nameRow\"")))
 				.andExpect(content().string(containsString("id=\"leadAgencyRow\"")))
 				.andExpect(content().string(containsString("id=\"fundingTypeRow\"")))
@@ -58,24 +57,23 @@ public class AnonymousUseCasesTest {
 	@WithAnonymousUser
 	@Test
 	public void test_anonUserCanViewFoPageInEnglish_shouldSucceed200() throws Exception {
-		mvc.perform(get("/browse/viewFo").param("id", foId).param("lang", "en")).andExpect(status().isOk())
-				.andExpect(content().string(containsString("Granting Data - View Funding Opportunity")));
+		mvc.perform(get("/browse/viewFo").param("id", "1").param("lang", "en")).andExpect(status().isOk())
+				.andExpect(content().string(containsString("Collaborative Health Research Projects (CHRP) (5640)")));
 	}
 
 	@WithAnonymousUser
 	@Test
 	public void test_anonUserCanViewFoPageInFrench_shouldSucceed200() throws Exception {
-		mvc.perform(get("/browse/viewFo").param("id", foId).param("lang", "fr")).andExpect(status().isOk())
-				.andExpect(content().string(containsString("id=\"/browse/viewFoPage\"")))
+		mvc.perform(get("/browse/viewFo").param("id", "3").param("lang", "fr")).andExpect(status().isOk())
 				.andExpect(content().string(containsString(
-						"Octroi de Donn&#233;es - Afficher L'Opportunit&#233; de Financement")));
+						"Chaires en génie de la conception")));
 	}
 
 	@WithAnonymousUser
 	@Test
 	public void test_anonUserCanAccessViewFoPage_shouldSucceedWith200() throws Exception {
-		mvc.perform(get("/browse/viewFo").param("id", foId)).andExpect(status().isOk())
-				.andExpect(content().string(containsString("id=\"/browse/viewFoPage\"")));
+		mvc.perform(get("/browse/viewFo").param("id", "1")).andExpect(status().isOk())
+				.andExpect(content().string(containsString("id=\"viewFundingOpportunityPage\"")));
 	}
 
 	@WithAnonymousUser

@@ -63,7 +63,7 @@ public class EditBusinessUnitIntegrationTest {
 	public void test_adminCanAccessEditBUPage_shouldSucceedWith200() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/admin/editBU").param("id", "1"))
 				.andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("id=\"editBUPage\"")));
+				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("id=\"editBusinessUnitPage\"")));
 	}
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })

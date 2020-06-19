@@ -88,9 +88,9 @@ public class GoldenFundingOpportunityIntegrationTest {
 		MvcResult result = mvc.perform(MockMvcRequestBuilders.get("/admin/createFo"))
 				.andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
 		assertTrue(result.getResponse().getContentAsString()
-				.contains("<input class=\"col-sm-2\" id=\"nameEn\" name=\"nameEn\" value=\"\""));
+				.contains("<input class=\"form-control\" style=\"width: 33%;\" id=\"nameEn\" type=\"text\" required=\"required\" name=\"nameEn\" value=\"\""));
 		assertTrue(result.getResponse().getContentAsString()
-				.contains("<input class=\"col-sm-2\" id=\"nameFr\" name=\"nameFr\" value=\"\""));
+				.contains("<input class=\"form-control\" style=\"width: 33%;\" id=\"nameFr\" type=\"text\" required=\"required\" name=\"nameFr\" value=\"\""));
 	}
 
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
@@ -103,9 +103,9 @@ public class GoldenFundingOpportunityIntegrationTest {
 				.andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
 
 		assertTrue(result.getResponse().getContentAsString()
-				.contains("<input class=\"col-sm-2\" id=\"nameEn\" name=\"nameEn\" value=\"" + sfo.getNameEn() + '"'));
+				.contains("<input class=\"form-control\" style=\"width: 33%;\" id=\"nameEn\" type=\"text\" required=\"required\" name=\"nameEn\" value=\"" + sfo.getNameEn() + '"'));
 		assertTrue(result.getResponse().getContentAsString()
-				.contains("<input class=\"col-sm-2\" id=\"nameFr\" name=\"nameFr\" value=\"" + sfo.getNameFr() + '"'));
+				.contains("<input class=\"form-control\" style=\"width: 33%;\" id=\"nameFr\" type=\"text\" required=\"required\" name=\"nameFr\" value=\"" + sfo.getNameFr() + '"'));
 	}
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
