@@ -27,6 +27,11 @@ public class SecurityUtils {
 
 	}
 
+	public static String getLdapUserFullName() {
+		return getLdapUser().getDn();
+
+	}
+
 	public static boolean hasRole(String role) {
 		LdapUserDetails principal = getLdapUser();
 		if (principal != null) {

@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataRetrievalFailureException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,8 +17,10 @@ import com.github.javafaker.Faker;
 
 import ca.gc.tri_agency.granting_data.model.ApplicationParticipation;
 import ca.gc.tri_agency.granting_data.model.GrantingSystem;
+import ca.gc.tri_agency.granting_data.model.MemberRole;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.repo.ApplicationParticipationRepository;
+import ca.gc.tri_agency.granting_data.repo.MemberRoleRepository;
 import ca.gc.tri_agency.granting_data.repo.SystemFundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.security.SecurityUtils;
 import ca.gc.tri_agency.granting_data.service.ApplicationParticipationService;
@@ -31,6 +35,8 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 
 	private SystemFundingOpportunityRepository sfoRepo;
 
+	private MemberRoleRepository mrRepo;
+
 	private static int applIdIncrementer = 0;
 
 //	@PersistenceContext
@@ -38,9 +44,10 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 
 	@Autowired
 	public ApplicationParticipationServiceImpl(ApplicationParticipationRepository appParticipationRepo,
-			SystemFundingOpportunityRepository sfoRepo) {
+			SystemFundingOpportunityRepository sfoRepo, MemberRoleRepository mrRepo) {
 		this.appParticipationRepo = appParticipationRepo;
 		this.sfoRepo = sfoRepo;
+		this.mrRepo = mrRepo;
 	}
 
 	@Override
@@ -336,6 +343,39 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 	@Override
 	public void saveAllApplicationParticipations(List<ApplicationParticipation> appParticipations) {
 		appParticipationRepo.saveAll(appParticipations);
+	}
+
+	@Override
+	public List<String> getExtIdsQualifiedForEdi() {
+		List<String> retval = new ArrayList<String>();
+		// 1. get users member roles with EDI,
+		List<MemberRole> mrList = mrRepo.findByUserLoginAndEdiAuthorizedTrue(SecurityUtils.getCurrentUsername());
+		// 2. use that to collect list of business unit IDs
+		List<Long> targetBuIds = new ArrayList<Long>();
+		for (MemberRole mr : mrList) {
+			targetBuIds.add(mr.getBusinessUnit().getId());
+		}
+		// 3. use that to query system funding opportunities
+		List<SystemFundingOpportunity> targetSFOs = sfoRepo.findByLinkedFundingOpportunityBusinessUnitIdIn(targetBuIds);
+		// 4. extract list of extIds
+		for (SystemFundingOpportunity sfo : targetSFOs) {
+			retval.add(sfo.getExtId());
+		}
+
+		return retval;
+	}
+
+	@Override
+	public ApplicationParticipation getAllowdRecord(Long id) {
+		ApplicationParticipation retval = appParticipationRepo.findById(id).orElseThrow(
+				() -> new DataRetrievalFailureException("That Application Participation record does not exist"));
+		if (SecurityUtils.hasRole("MDM ADMIN") == false) {
+			List<String> allowedExtIds = getExtIdsQualifiedForEdi();
+			if (!allowedExtIds.contains(retval.getProgramId())) {
+				throw new AccessDeniedException("not authorized to access this record");
+			}
+		}
+		return retval;
 	}
 
 //	private String[] createAuditedApplicationParticipationStrArr(ApplicationParticipation ap, String revType,

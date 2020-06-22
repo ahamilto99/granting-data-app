@@ -91,12 +91,12 @@ public class SystemFundingOpportunityController {
 		return "redirect:/admin/viewSFO?id=" + sfoId;
 	}
 
-	@PostMapping("/registerFOLink")
+	@PostMapping("/admin/registerFOLink")
 	public String registerProgramLinkPost(@ModelAttribute("id") Long id, @ModelAttribute("foId") Long foId) {
 		sfoService.linkSystemFundingOpportunity(id, foId);
 		return "redirect:analyzeSFOs";
 	}
-	
+
 	@GetMapping("/admin/auditLogSFO")
 	public String systemFundingOpportunityAuditLog(Model model) {
 		model.addAttribute("revisionList", sfoService.findAllSystemFundingOpportunityRevisions());
