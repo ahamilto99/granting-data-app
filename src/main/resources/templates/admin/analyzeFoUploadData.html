@@ -7,22 +7,6 @@
 <head th:replace="~{fragments/general.html :: common_header(~{::title},~{})}">
 <meta charset="utf-8">
 <title th:text="#{h.analyzeFoUploadData}"></title>
-
-<!-- FIX JS BELOW B/C IT DOESN'T WORK ON NEW LOOK -->
-<script type="text/javascript">
-	$(document).ready(function() {
-	        $('#uploadDataTable').dataTable({
-		        "paging" : false
-	        });
-        });
-	
-	$(document).ready(function() {
-	        $('#uploadDataTable').dataTable( {
-	            "pagingType": "scrolling"
-	        } );
-	    } );
-</script>
-
 </head>
 <body class="home" vocab="http://schema.org/" typeof="WebPage">
 	<div th:insert="~{fragments/general.html :: header_nav('home')}"></div>
@@ -44,17 +28,10 @@
 
 						<input type="hidden" name="filename" th:value="${filename}" />
 
-						<table id="uploadDataTable" class="wb-tables table table-striped table-hover dataTable" aria-live="polite">
-							<!-- data-wb-tables='{
-										"bDeferRender": true,
-										"ajaxSource": "ajax/datasource.json",
-										"order": [3, "desc"],
-										"columns": [
-											{ "data": "FUNDING_CYCLE", "className": "nws-tbl-fc" },
-											{ "data": "FUNDING_OPPORTUNITY", "className": "nws-tbl-fo" },
-											{ "data": "ACTION", "className": "nws-tbl-action" }
-										]}'>
- -->
+						<div th:text="${fileRows.size()} gt 0 ? #{msg.allEntries(${fileRows.size()})} : #{msg.noEntries}" class="col-md-12" style="text-align: center;"></div>
+
+						<table id="uploadDataTable" data-wb-tables='{ "paging" : false, "searching" : false, "info" : false }' class="wb-tables table table-striped table-hover dataTable" aria-live="polite">
+							
 							<thead>
 								<tr>
 									<th th:text="#{th.fc}"></th>
@@ -78,8 +55,8 @@
 
 						</table>
 
-						<div class="form-group">
-							<input type="submit" th:value="#{input.register}" class="btn btn-primary col-md-offset-11" />
+						<div class="form-group" style="margin-top: 25px;">
+							<input type="submit" th:value="#{input.register}" class="btn btn-primary" />
 						</div>
 					</form>
 
@@ -93,7 +70,7 @@
 
 	</main>
 
-	<footer th:insert="fragments/general :: footer(~{})"></footer>
+	<footer th:replace="fragments/general :: footer(~{})"> </footer>
 
 </body>
 </html>

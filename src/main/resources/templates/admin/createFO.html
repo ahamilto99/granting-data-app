@@ -7,36 +7,8 @@
 <head th:replace="~{fragments/general.html :: common_header(~{::title},~{})}">
 <meta charset="utf-8">
 <title th:text="#{h.createFo}"></title>
-<script type="text/javascript">
-	$(document).ready(function(){
-		
-		  $('#isJointInitiative').click(function(){
-		    if($(this).is(":checked"))
-		       $("#partnerOrg").removeAttr("disabled");
-		    else
-		       $("#partnerOrg").attr("disabled" , "disabled");
-		});
-		  
-		  $("#isNOI").click(function(){
-			  
-			  if($(this).is(":checked"))
-			       $("#isNOI").set("true");
-			    else
-			       $("#isNOI").set("false");  
-		  });
-		  
-			  $("#isLOI").click(function(){
-				  
-				  if($(this).is(":checked"))
-				       $("#isLOI").set("true");
-				    else
-				       $("#isLOI").set("false");  
-			  });
-			  
-		}); 	
-</script>
 </head>
-<body id="createBusinessUnitPage" class="home" vocab="http://schema.org/" typeof="WebPage">
+<body id="createFundingOpportunityPage" class="home" vocab="http://schema.org/" typeof="WebPage">
 
 	<div th:insert="~{fragments/general.html :: header_nav('home')}"></div>
 
@@ -58,14 +30,16 @@
 
 						<div class="form-group">
 							<label for="nameEn" class="required"><span class="field-name" th:text="#{form.nameEn}"></span><strong class="required"
-								th:utext="#{form.required}"></strong></label> <input th:field="*{nameEn}" class="form-control" style="width: 33%;" id="nameEn" type="text" required="required" />
+								th:utext="#{form.required}"></strong></label> <input th:field="*{nameEn}" class="form-control" style="width: 33%;" id="nameEn" type="text"
+								required="required" />
 							<!-- <div th:if="${#fields.hasErrors('nameEn')}" th:errors="*{nameEn}" th:text="#{err.nameErr}"></div> -->
 						</div>
 
 
 						<div class="form-group">
 							<label for="nameFr" class="required"><span class="field-name" th:text="#{form.nameFr}"></span><strong class="required"
-								th:utext="#{form.required}"></strong></label> <input th:field="*{nameFr}" class="form-control" style="width: 33%;" id="nameFr" type="text" required="required" />
+								th:utext="#{form.required}"></strong></label> <input th:field="*{nameFr}" class="form-control" style="width: 33%;" id="nameFr" type="text"
+								required="required" />
 							<!-- <div th:if="${#fields.hasErrors('nameFr')}" th:errors="*{nameFr}" th:text="#{err.nameErr}"></div> -->
 						</div>
 
@@ -117,8 +91,8 @@
 
 						<div class="form-group">
 							<label for="programLeadName" class="required"><span class="field-name" th:text="#{form.programLeadName}"></span><strong
-								class="required" th:utext="#{form.required}"></strong></label> <input th:field="*{programLeadName}" class="form-control"
-								style="width: 33%;" id="programLeadName" type="text" required="required" />
+								class="required" th:utext="#{form.required}"></strong></label> <input th:field="*{programLeadName}" class="form-control" style="width: 33%;"
+								id="programLeadName" type="text" required="required" />
 						</div>
 
 						<div class="form-group">
@@ -163,26 +137,49 @@
 						</div>
 
 					</form>
-					
+
 				</div>
 
 			</div>
 
-			<div th:insert="fragments/general :: returnHome"></div>
+			<div th:replace="fragments/general :: returnHome"></div>
 
 		</div>
 
 	</main>
 
-	<footer th:insert="fragments/general :: footer(~{})">
-		 
-	</footer>
+	<footer th:replace="fragments/general :: footer(~{})"> </footer>
+
+	<script type="text/javascript">
+			$(document).ready(function(){
+				
+				  $('#isJointInitiative').click(function(){
+				    if($(this).is(":checked")) {
+				       $("#partnerOrg").removeAttr("disabled");
+				    } else {
+				       $("#partnerOrg").attr("disabled" , "disabled");
+				       $("#partnerOrg").val("");
+				    }
+				});
+				  
+				  $("#isNOI").click(function(){
+					  
+					  if($(this).is(":checked"))
+					       $("#isNOI").set("true");
+					    else
+					       $("#isNOI").set("false");  
+				  });
+				  
+					  $("#isLOI").click(function(){
+						  
+						  if($(this).is(":checked"))
+						       $("#isLOI").set("true");
+						    else
+						       $("#isLOI").set("false");  
+					  });
+					  
+				}); 	
+	</script>
 
 </body>
-<!-- 
-$('#isJointInitiative').click(function(){
-		    if($(this).is(":checked"))
-		       $("#partnerOrg").removeAttr("disabled");
-		    else
-		       $("#partnerOrg").attr("disabled" , "disabled"); -->
 </html>
