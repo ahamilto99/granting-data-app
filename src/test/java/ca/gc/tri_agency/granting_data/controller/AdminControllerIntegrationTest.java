@@ -136,7 +136,7 @@ public class AdminControllerIntegrationTest {
 		}
 		
 		assertTrue(response.contains("id=\"memberRoleAuditLogPage\""));
-		assertTrue(response.contains("Audit Log - All Member Roles"));
+		assertTrue(response.contains("Audit Log - Member Roles"));
 		assertTrue(response.contains("href=\"/admin/auditLogs\""));
 		assertTrue(numAdds >= 3);
 	}

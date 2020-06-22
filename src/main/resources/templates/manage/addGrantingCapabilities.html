@@ -1,54 +1,83 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/general.html :: common_header(~{::title},~{},~{})}">
-<meta charset="ISO-8859-1">
-<title th:text="#{title.createFc}"></title>
+<!--[if lt IE 9]><html class="no-js lt-ie9" lang="en" dir="ltr"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!--<![endif]-->
+
+<head th:replace="fragments/general.html :: common_header(~{::title},~{})">
+<meta charset="utf-8">
+<title th:text="#{h.addGc}"></title>
 </head>
-<body id="createGrantingCapabilityPage">
-	<div th:insert="~{fragments/general.html :: header_nav('programs')}"></div>
-	<div class="container">
-		<form action="#" th:action="@{addGrantingCapabilities}" th:object="${gc}" method="post">            		
-        	<!-- <input type="hidden" th:field="*{id}" />  -->
-			<h1 th:text="#{h.addGc}"></h1>
-			<div class="form-group row">
-				<div class="col-sm-2 col-form-label" th:text="#{th.description}"></div>
-				<div><input type="text" th:field="*{description}" class="col-sm-10"  /></div>
-				<div th:if="${#fields.hasErrors('description')}" th:errors="*{description}" th:text="#{err.description}"></div>
+<body id="createGrantingCapabilityPage" class="home" vocab="http://schema.org/" typeof="WebPage">
+	<div th:insert="fragments/general.html :: header_nav('home')"></div>
+	<main role="main" property="mainContentOfPage" class="container">
+
+		<h1 th:text="#{h.addGc}"></h1>
+
+		<div th:insert="fragments/general.html :: profile_info('home')"></div>
+
+		<div class="panel panel-default">
+
+			<div class="panel-body">
+
+				<div class="web-frmvld">
+
+					<form action="#" th:action="@{addGrantingCapabilities}" th:object="${gc}" method="post">
+
+						<div class="form-group">
+							<label for="descriptionInput" class="required"><span class="field-name" th:text="#{th.description}"></span><strong
+								class="required" th:utext="#{form.required}"></strong></label>
+							<textarea id="descriptionInput" th:field="*{description}" class="form-control" rows="5" cols="50" required></textarea>
+							<!-- <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}" th:text="#{err.description}"></div> -->
+						</div>
+
+						<div class="form-group">
+							<label for="urlInput" class="required"><span class="field-name" th:text="#{form.url}"></span><strong class="required"
+								th:utext="#{form.required}"></strong></label> <input id="urlInput" type="url" th:field="*{url}" class="form-control" style="width: 67%;"
+								required />
+							<!-- <div th:if="${#fields.hasErrors('url')}" th:errors="*{url}" th:text="#{err.url}"></div> URL MUST INCLUDE THE PROTOCOL FOR IT TO BE ACCEPTED -->
+						</div>
+
+						<input type="hidden" name="fundingOpportunity" th:value="${foId}" />
+
+						<div class="form-group">
+							<label for="stageDropdown" class="required"><span class="field-name" th:text="#{form.gs}"></span><strong class="required"
+								th:utext="#{form.required}"></strong></label>
+							<div>
+								<select id="stageDropdown" class="form-control" th:field="*{grantingStage}" required>
+									<option th:each="stage : ${grantingStages}" th:value="${stage.id}" th:text="${stage.getLocalizedAttribute('name')}"></option>
+								</select>
+							</div>
+							<!-- <div th:if="${#fields.hasErrors('grantingStage')}" th:errors="*{grantingStage}" th:text="#{err.gs}"></div> -->
+						</div>
+
+						<div class="form-group">
+							<label for="systemDropdown" class="required"><span class="field-name" th:text="#{form.gSys}"></span><strong class="required"
+								th:utext="#{form.required}"></strong></label>
+							<div>
+								<select id="systemDropdown" class="form-control" th:field="*{grantingSystem}" required>
+									<option th:each="system : ${grantingSystems}" th:value="${system.id}" th:text="${system.acronym}"></option>
+								</select>
+							</div>
+							<!-- <div th:if="${#fields.hasErrors('grantingSystem')}" th:errors="*{grantingSystems}" th:text="#{err.gSys}"></div> -->
+						</div>
+
+						<input type="submit" class="btn btn-primary" th:value="#{input.submit}" /><a class="btn btn-link"
+							th:href="@{/manage/manageFo(id=${param.foId})}" th:text="#{msg.cancel}"></a>
+
+					</form>
+
+				</div>
+
 			</div>
-			<div class="form-group row">
-				<div class="col-sm-2 col-form-label" th:text="#{form.url}"></div>
-				<div><input type="text" th:field="*{url}" class="col-sm-10"  /></div>
-				<div th:if="${#fields.hasErrors('url')}" th:errors="*{url}" th:text="#{err.url}"></div>
-			</div>
-			<input type="hidden" name="fundingOpportunity" th:value="${foId}" />
-			
-			<div class="form-group row">
-				<div class="col-sm-2 col-form-label" th:text="#{form.gs}"></div>
-				<div><select class="col-sm-2" th:field="*{grantingStage}">
-					<option th:each="stage : ${grantingStages}"
-						th:value="${stage.id}"
-						th:text="${stage.getLocalizedAttribute('name')}"></option>
-				</select></div>
-				<div th:if="${#fields.hasErrors('grantingStage')}" th:errors="*{grantingStage}" th:text="#{err.gs}"></div>
-			</div>
-			
-			<div class="form-group row">
-				<div class="col-sm-2 col-form-label" th:text="#{form.gSys}"></div>
-				<div><select class="col-sm-2" th:field="*{grantingSystem}">
-					<option th:each="system : ${grantingSystems}"
-						th:value="${system.id}"
-						th:text="${system.acronym}"></option>
-				</select></div>
-				<div th:if="${#fields.hasErrors('grantingSystem')}" th:errors="*{grantingSystems}" th:text="#{err.gSys}"></div>
-			</div>
-			
-			
-			
-			<input type="submit" class="btn btn-primary" role="button" th:value="#{input.submit}" />
-		</form>
-		
-		
-		
-	</div>
+
+			<div th:insert="fragments/general :: returnHome"></div>
+
+		</div>
+
+	</main>
+
+	<footer th:insert="fragments/general :: footer(~{})"></footer>
+
 </body>
 </html>

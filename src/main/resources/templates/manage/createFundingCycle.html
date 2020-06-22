@@ -1,121 +1,113 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/general.html :: common_header(~{::title},~{},~{::script})}">
-<meta charset="ISO-8859-1">
-<title th:text="#{title.createFc}"></title>
-<script>
-      $(document).ready(function() { 
-       $("#isOpen").click(function() {
-         $("#startDate").attr('disabled', !$("#startDate").attr('disabled'));
-         $("#endDate").attr('disabled', !$("#endDate").attr('disabled'));
-       }); 
-      }); 
-</script>
+<!--[if lt IE 9]><html class="no-js lt-ie9" lang="en" dir="ltr"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!--<![endif]-->
+
+<head th:replace="fragments/general.html :: common_header(~{::title},~{})">
+<meta charset="utf-8">
+<title th:text="#{h.createFc}"></title>
 </head>
-<body id="createFundingCyclePage">
-	<div th:insert="~{fragments/general.html :: header_nav('programs')}"></div>
-	<div class="container" style="margin-bottom: 50px;">
+<body id="createFundingCyclePage" class="home" vocab="http://schema.org/" typeof="WebPage">
+	<div th:insert="fragments/general.html :: header_nav('home')"></div>
+	<main role="main" property="mainContentOfPage" class="container">
 
-		<form action="#" th:action="@{createFundingCycle(foId=${param.foId})}" th:object="${fundingCycle}" method="post">
+		<h1 th:text="#{h.createFc}"></h1>
 
-			<h1 th:text="#{h.createFc}" style="margin-bottom: 25px;"></h1>
+		<div th:insert="fragments/general.html :: profile_info('home')"></div>
 
-			<div class="form-group row">
-				<div class="col-sm-2 col-form-label" th:text="#{form.fy}" style="margin-right: 68px;"></div>
-				<select th:field="*{fiscalYear}">
-					<option th:each="i : ${fy}" th:value="${i.id}" th:text="${i.getYear()}"></option>
-				</select>
+		<div class="panel panel-default">
+
+			<div class="panel-body">
+
+				<div class="web-frmvld">
+
+					<form action="#" th:action="@{createFundingCycle(foId=${param.foId})}" th:object="${fundingCycle}" method="post">
+
+						<div class="form-group">
+							<label for="fiscalYearDropdown" class="required"><span class="field-name" th:text="#{form.fy}"></span><strong
+								class="required" th:utext="#{form.required}"></strong></label>
+							<div>
+								<select id="fiscalYearDropdown" th:field="*{fiscalYear}" class="form-control" required>
+									<option th:each="i : ${fy}" th:value="${i.id}" th:text="${i.getYear()}"></option>
+								</select>
+							</div>
+						</div>
+
+						<label for="isOpen"><span class="field-name" th:text="#{form.isOpenEnded}"></span></label> <input id="isOpen" type="checkbox"
+							th:field="*{open}" class="form-control" />
+
+						<div class="form-group">
+							<label for="startDate" class="required"><span class="field-name" th:text="#{form.startDate}"></span><strong class="required"
+								th:utext="#{form.required}"></strong></label> <input id="startDate" type="date" th:field="*{startDate}" class="form-control"
+								data-rule-dateISO="true" style="height: 100%;" required/>
+						</div>
+
+						<div class="form-group ">
+							<label for="endDate"><span class="field-name" th:text="#{form.endDate}"></span></label> <input id="endDate" type="date"
+								th:field="*{endDate}" class="form-control" style="height: 100%;" data-rule-dateISO="true" />
+						</div>
+
+						<div th:if="${fo.isNOI}">
+
+							<div class="form-group">
+								<label for="startDateNOI" class="required"><span class="field-name" th:text="#{form.startDateNOI}"></span><strong
+									class="required" th:utext="#{form.required}"></strong></label> <input id="startDateNOI" type="date" th:field="*{startDateNOI}"
+									class="form-control" style="height: 100%;" data-rule-dateISO="true" required />
+							</div>
+
+							<div class="form-group">
+								<label for="endDateNOI" class="required"><span class="field-name" th:text="#{form.endDateNOI}"></span><strong
+									class="required" th:utext="#{form.required}"></strong></label> <input id="endDateNOI" type="date" th:field="*{endDateNOI}"
+									class="form-control" style="height: 100%;" data-rule-dateISO="true" required />
+							</div>
+
+						</div>
+
+
+						<div th:if="${fo.isLOI}">
+
+							<div class="form-group">
+								<label for="startDateLOI" class="required"><span class="field-name" th:text="#{form.startDateLOI}"></span><strong
+									class="required" th:utext="#{form.required}"></strong></label> <input id="startDateLOI" type="date" th:field="*{startDateLOI}"
+									class="form-control" style="height: 100%;" data-rule-dateISO="true" required />
+							</div>
+
+							<div class="form-group">
+								<label for="endDateLOI" class="required"><span class="field-name" th:text="#{form.endDateLOI}"></span><strong class="required"
+									th:utext="#{form.required}"></strong></label> <input id="endDateLOI" type="date" th:field="*{endDateLOI}" class="form-control"
+									style="height: 100%;" data-rule-dateISO="true" required />
+							</div>
+
+						</div>
+
+						<div class="form-group">
+							<label for="numAppsInput" class="required"><span class="field-name" th:text="#{form.numAppsExpected}"></span><strong
+								class="required" th:utext="#{form.required}"></strong></label> <input id="numAppsInput" th:field="*{expectedApplications}"
+								class="form-control" th:type="number" min="1" required />
+							<!-- <div th:if="${#fields.hasErrors('expectedApplications')}" th:errors="*{expectedApplications}" th:text="#{err.expectedApps}"></div> -->
+						</div>
+
+						<input type="hidden" name="fundingOpportunity" th:value="${param.foId}" />
+
+						<div>
+							<input type="submit" class="btn btn-primary" role="button" th:value="#{input.submit}" /> <a
+								th:href="@{/browse/viewFo(id=${param.foId})}" class="btn btn-link" th:text="#{msg.cancel}"></a>
+						</div>
+						
+					</form>
+
+				</div>
+
 			</div>
 
-			<div class="form-group row">
-				<div class="col-sm-2 col-form-label" th:text="#{form.isOpenEnded}"></div>
-				<div>
-					<input id="isOpen" type="checkbox" th:field="*{open}" class="col-sm-2" />
-				</div>
-			</div>
+			<div th:insert="fragments/general :: returnHome"></div>
 
-			<div class="form-group row">
-				<div class="col-sm-2 col-form-label" th:text="#{form.startDate}"></div>
-				<div>
-					<input id="startDate" type="date" th:field="*{startDate}" class="col-sm-2" />
-				</div>
-				<div th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}" th:text="#{err.startDate}"></div>
-			</div>
+		</div>
 
-			<div class="form-group row">
-				<div class="col-sm-2 col-form-label" th:text="#{form.endDate}"></div>
-				<div>
-					<input id="endDate" type="date" th:field="*{endDate}" class="col-sm-2" />
-				</div>
-				<div th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}" th:text="#{err.endDate}"></div>
-			</div>
+	</main>
 
-			<div th:if="${fo.isNOI}">
+	<footer th:insert="fragments/general :: footer(~{})"></footer>
 
-				<b th:text="#{form.noi}"></b> <br> <br>
-
-				<div class="form-group row">
-					<div class="col-sm-2 col-form-label" th:text="#{form.startDate}"></div>
-					<div>
-						<input id="startDateNOI" type="date" th:field="*{startDateNOI}" class="col-sm-2" />
-					</div>
-					<div th:if="${#fields.hasErrors('startDateNOI')}" th:errors="*{startDateNOI}" th:text="#{err.startDate}"></div>
-				</div>
-
-				<div class="form-group row">
-					<div class="col-sm-2 col-form-label" th:text="#{form.endDate}"></div>
-					<div>
-						<input id="endDateNOI" type="date" th:field="*{endDateNOI}" class="col-sm-2" />
-					</div>
-					<div th:if="${#fields.hasErrors('endDateNOI')}" th:errors="*{endDateNOI}" th:text="#{err.endDate}"></div>
-				</div>
-
-			</div>
-
-
-			<div th:if="${fo.isLOI}">
-
-				<b th:text="#{form.loi}"></b> <br> <br>
-
-				<div class="form-group row">
-					<div class="col-sm-2 col-form-label" th:text="#{form.startDate}"></div>
-					<div>
-						<input id="startDateLOI" type="date" th:field="*{startDateLOI}" class="col-sm-2" />
-					</div>
-					<div th:if="${#fields.hasErrors('startDateLOI')}" th:errors="*{startDateLOI}" th:text="#{err.startDate}"></div>
-				</div>
-
-				<div class="form-group row">
-					<div class="col-sm-2 col-form-label" th:text="#{form.endDate}"></div>
-					<div>
-						<input id="endDateLOI" type="date" th:field="*{endDateLOI}" class="col-sm-2" />
-					</div>
-					<div th:if="${#fields.hasErrors('endDateLOI')}" th:errors="*{endDateLOI}" th:text="#{err.endDate}"></div>
-				</div>
-
-			</div>
-
-			<div class="form-group row" style="margin-bottom: 25px;">
-				<div class="col-sm-2 col-form-label" th:text="#{form.numAppsExpected}"></div>
-				<div>
-					<input th:field="*{expectedApplications}" class="col-sm-2" th:type="number" />
-				</div>
-				<div th:if="${#fields.hasErrors('expectedApplications')}" th:errors="*{expectedApplications}" th:text="#{err.expectedApps}"></div>
-			</div>
-
-			<input type="hidden" name="fundingOpportunity" th:value="${param.foId}" />
-
-			<div class="form-group row">
-				<div class="col-sm-2">
-					<input type="submit" class="btn btn-primary" role="button" th:value="#{input.submit}" />
-				</div>
-				<div class="col-sm-2 text-center">
-					<a th:href="@{/browse/viewFo(id=${param.foId})}" class="btn btn-primary" th:text="#{msg.cancel}"></a>
-				</div>
-			</div>
-
-		</form>
-
-	</div>
 </body>
 </html>

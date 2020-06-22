@@ -36,6 +36,6 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(AccessDeniedException.class)
 	@ResponseStatus(code = HttpStatus.FORBIDDEN)
 	public String handleAccessDeniedException(HttpServletRequest request, AccessDeniedException ade) {
-		return "/exception/forbiden-by-role";
+		return "/exception/forbidden-by-role";
 	}
 }

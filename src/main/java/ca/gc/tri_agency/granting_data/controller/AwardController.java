@@ -34,7 +34,7 @@ public class AwardController {
 	@PostMapping("/admin/generateTestAwards")
 	public String generateTestAwardsPost(RedirectAttributes redirectAttributes) {
 		int numAwards = awardService.generateTestAwards(appPartService.getAllowedRecords(), 10).size();
-		redirectAttributes.addFlashAttribute("actionMessage",
+		redirectAttributes.addFlashAttribute("actionMsg",
 				"Successfully created Awards for " + numAwards + " of the Test App Participations");
 		return "redirect:/admin/home";
 	}

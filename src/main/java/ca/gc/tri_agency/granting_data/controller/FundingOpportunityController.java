@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -25,6 +26,7 @@ import ca.gc.tri_agency.granting_data.form.FundingOpportunityFilterForm;
 import ca.gc.tri_agency.granting_data.ldap.ADUser;
 import ca.gc.tri_agency.granting_data.ldap.ADUserService;
 import ca.gc.tri_agency.granting_data.model.Agency;
+import ca.gc.tri_agency.granting_data.model.BusinessUnit;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.GrantingSystem;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
@@ -78,13 +80,26 @@ public class FundingOpportunityController {
 	public String viewGoldenList(@ModelAttribute("filter") FundingOpportunityFilterForm filter, Model model) {
 		Map<Long, GrantingSystem> applyMap = gSystemService.findApplySystemsByFundingOpportunityMap();
 		Map<Long, List<GrantingSystem>> awardMap = gSystemService.findAwardSystemsByFundingOpportunityMap();
+		List<FundingOpportunity> filteredFOs = foService.getFilteredFundingOpportunities(filter, applyMap, awardMap);
 
-		model.addAttribute("fundingOpportunities", foService.getFilteredFundingOpportunities(filter, applyMap, awardMap));
+		model.addAttribute("fundingOpportunities", filteredFOs);
 		model.addAttribute("allAgencies", agencyService.findAllAgencies());
 		model.addAttribute("allDivisions", buService.findAllBusinessUnits());
 		model.addAttribute("allGrantingSystems", gSystemService.findAllGrantingSystems());
 		model.addAttribute("applySystemByFoMap", applyMap);
 		model.addAttribute("awardSystemsByFoMap", awardMap);
+
+		// filtering options
+		List<BusinessUnit> buList = filteredFOs.stream().map(FundingOpportunity::getBusinessUnit).distinct()
+				.collect(Collectors.toList());
+		model.addAttribute("distinctBUs",
+				buList.stream().map(bu -> bu.getLocalizedAttribute("acronym")).distinct().sorted().iterator());
+		model.addAttribute("distinctAgencies", buList.stream().map(bu -> bu.getAgency().getLocalizedAttribute("acronym"))
+				.distinct().sorted().iterator());
+		model.addAttribute("distinctApplySystems",
+				applyMap.values().stream().distinct().map(GrantingSystem::getAcronym).sorted().iterator());
+		model.addAttribute("distinctAwardSystems", awardMap.values().stream().flatMap(List::stream).distinct()
+				.map(GrantingSystem::getAcronym).sorted().iterator());
 
 		return "browse/fundingOpportunities";
 	}
@@ -147,9 +162,10 @@ public class FundingOpportunityController {
 	@AdminOnly
 	@GetMapping("/manage/editProgramLead")
 	public String editProgramLeadGet(@RequestParam("id") Long id,
-			@RequestParam(value = "username", required = false) String username, Model model) {
-		List<ADUser> matchingUsers = username == null ? adUserService.findAllADUsers() : adUserService.searchADUsers(username);
-		model.addAttribute("matchingUsers", matchingUsers);
+			@RequestParam(value = "searchStr", defaultValue = "") String searchStr, Model model) {
+		if (!searchStr.trim().isEmpty()) {
+			model.addAttribute("adUserList", adUserService.searchADUsers(searchStr.trim()));
+		}
 		model.addAttribute("originalId", id);
 		return "manage/editProgramLead";
 	}
@@ -169,9 +185,9 @@ public class FundingOpportunityController {
 			fo.setNameEn(sfo.getNameEn());
 			fo.setNameFr(sfo.getNameFr());
 		}
-		List<Agency> allAgencies = agencyService.findAllAgencies();
 		model.addAttribute("fo", fo);
-		model.addAttribute("allAgencies", allAgencies);
+		model.addAttribute("allAgencies", agencyService.findAllAgencies());
+		model.addAttribute("allBusinessUnits", buService.findAllBusinessUnits());
 		return "admin/createFo";
 	}
 

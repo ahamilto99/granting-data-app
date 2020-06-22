@@ -1,54 +1,77 @@
-<!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/general.html :: common_header(~{::title},~{::link},~{::script})}">
-	<title th:text="#{title.analyzeFoUploadData}"></title>
-	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" />
-	<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-	<script type="text/javascript">
-		$(document).ready( function () {
+<!DOCTYPE html>
+<!--[if lt IE 9]><html class="no-js lt-ie9" lang="en" dir="ltr"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!--<![endif]-->
 
-			var table = $('#datasetFilesTable').DataTable({
-				"paging": false
-			});
-		});
-	</script>
+<head th:replace="~{fragments/general.html :: common_header(~{::title},~{})}">
+<meta charset="utf-8">
+<title th:text="#{h.analyzeFoUploadData}"></title>
 </head>
+<body class="home" vocab="http://schema.org/" typeof="WebPage">
+	<div th:insert="~{fragments/general.html :: header_nav('home')}"></div>
+	<main role="main" property="mainContentOfPage" class="container">
 
-<body>
-	<div th:insert="~{fragments/general.html :: header_nav('datasets')}" ></div>
-	<div class="section">
-			<div class="col-sm-2"></div>
-			<div class="col-sm-8">
-				<h2 th:text="#{h.analyzeFoUploadData}"></h2>
+		<h1 th:text="#{h.analyzeFoUploadData}"></h1>
+
+		<div th:insert="~{fragments/general.html :: profile_info('home')}"></div>
+
+		<div class="panel panel-default">
+
+			<div class="panel-body">
+
 				<p th:text="#{p.admin.anaylzeFoUploadData.plsReview}"></p>
-				<form method="POST" th:action="@{analyzeFoUploadData}">
-					<input type="hidden" name="filename" th:value="${filename}" />
-					<table id="datasetFilesTable" class="display">
-  			        <!-- Header Table -->
-				    <thead>
-				            <tr>
-				                <th th:text="#{th.fc}"></th>
-				                <th th:text="#{th.fo}"></th>
-				                <th th:text="#{th.action}"></th>
-				            </tr>
-					</thead>
-					<tbody>
-						<tr th:each="fo : ${fileRows}">
-							<td th:text="${fo.foCycle}"></td>
-							<td th:text="${fo.getLocalizedAttribute('programName')}" ></td>
-							<td>
-								<div th:switch="${#arrays.contains(actionRowIds, fo.foCycle)}">
-									<span th:case="true"><span th:utext="#{msg.forAction}" style="font-weight: normal" ></span><input type="checkbox" name="idToAction" th:value="${fo.foCycle}" checked="checked" /></span> 
-									<label th:case="false" th:text="#{msg.exists}" style="font-weight: normal"></label>
-								</div>
-							</td>
-						</tr>
-					</tbody>
-					</table>
-					<input type="submit" th:value="#{input.register}"/>
-				</form>
+
+				<div class="web-frmlvd">
+
+					<form method="POST" th:action="@{analyzeFoUploadData}">
+
+						<input type="hidden" name="filename" th:value="${filename}" />
+
+						<div th:text="${fileRows.size()} gt 0 ? #{msg.allEntries(${fileRows.size()})} : #{msg.noEntries}" class="col-md-12" style="text-align: center;"></div>
+
+						<table id="uploadDataTable" data-wb-tables='{ "paging" : false, "searching" : false, "info" : false }' class="wb-tables table table-striped table-hover dataTable" aria-live="polite">
+							
+							<thead>
+								<tr>
+									<th th:text="#{th.fc}"></th>
+									<th th:text="#{th.fo}"></th>
+									<th th:text="#{th.action}"></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="fo : ${fileRows}">
+									<td th:text="${fo.foCycle}"></td>
+									<td th:text="${fo.getLocalizedAttribute('programName')}"></td>
+									<td>
+										<div th:switch="${#arrays.contains(actionRowIds, fo.foCycle)}">
+											<span th:case="true"><span th:utext="#{msg.forAction}" style="font-weight: normal"></span><input type="checkbox"
+												name="idToAction" th:value="${fo.foCycle}" checked="checked" /></span> <label th:case="false" th:text="#{msg.exists}"
+												style="font-weight: normal"></label>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+
+						</table>
+
+						<div class="form-group" style="margin-top: 25px;">
+							<input type="submit" th:value="#{input.register}" class="btn btn-primary" />
+						</div>
+					</form>
+
+				</div>
+
 			</div>
-	</div>
-   </body>
+
+			<div th:insert="fragments/general :: returnHome"></div>
+
+		</div>
+
+	</main>
+
+	<footer th:replace="fragments/general :: footer(~{})"> </footer>
+
+</body>
 </html>
 

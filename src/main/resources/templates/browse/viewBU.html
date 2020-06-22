@@ -1,43 +1,63 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{fragments/general.html :: common_header(~{::title},~{},~{})}">
-<title th:text="#{title.viewBUPage}"></title>
+<!--[if lt IE 9]><html class="no-js lt-ie9" lang="en" dir="ltr"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!--<![endif]-->
+
+<head th:replace="~{fragments/general.html :: common_header(~{::title},~{})}">
+<meta charset="utf-8">
+<title th:text="#{h.businessUnit}"></title>
 </head>
-<body id="viewBUPage">
-	<div th:insert="~{fragments/general.html :: header_nav('entities')}"></div>
-	<div class="container" style="margin-bottom: 25px">
-		<h1 th:text="#{h.businessUnit}" style="margin-bottom: 25px"></h1>
-		<div class="form-group row">
-			<div class="col-sm-2 col-form-label" th:text="#{form.nameEn}"></div>
-			<div class="col-sm-10" th:text="${bu.nameEn}"></div>
-		</div>
-		<div class="form-group row">
-			<div class="col-sm-2 col-form-label" th:text="#{form.nameFr}"></div>
-			<div class="col-sm-10" th:text="${bu.nameFr}"></div>
-		</div>
-		<div class="form-group row">
-			<div class="col-sm-2 col-form-label" th:text="#{form.acronymEn}"></div>
-			<div class="col-sm-10" th:text="${bu.acronymEn}"></div>
-		</div>
-		<div class="form-group row">
-			<div class="col-sm-2 col-form-label" th:text="#{form.acronymFr}"></div>
-			<div class="col-sm-10" th:text="${bu.acronymFr}"></div>
-		</div>
-		<div class="form-group row">
-			<div class="col-sm-2 col-form-label" th:text="#{form.agency}"></div>
-			<div class="col-sm-10">
-				<a th:href="@{/browse/viewAgency(id=${bu.agency.id})}" th:text="${bu.agency.getLocalizedAttribute('name')}"></a>
-			</div>
-		</div>
-		<div sec:authorize="hasRole('MDM ADMIN')">
-			<div style="margin-top: 35px">
-				<a th:href="@{/admin/editBU(id=${bu.id})}" id="editBULink" class="btn btn-primary" th:text="#{link.editBU}"></a>
-			</div>
-			<div class="form-group row">
-				<h2 th:text="#{h.auditLog}"></h2>
-			</div>
-			<div class="col-md-12">
-				<table id="auditLogTable" class="table table-bordered">
+<body id="viewBUPage" class="home" vocab="http://schema.org/" typeof="WebPage">
+	<div th:replace="~{fragments/general.html :: header_nav('home')}"></div>
+	<main role="main" property="mainContentOfPage" class="container">
+
+		<h1 th:text="#{h.businessUnit}"></h1>
+
+		<div th:replace="~{fragments/general.html :: profile_info('home')}"></div>
+
+		<div class="panel panel-default">
+
+			<div class="panel-body">
+
+				<p th:if="${actionMsg != null}" style="font-weight: bold;" th:text="${actionMsg}"></p>
+
+				<div class="form-group row">
+					<label class="col-sm-2 col-form-label" th:text="#{form.nameEn}"></label>
+					<div class="col-sm-10" th:text="${bu.nameEn}"></div>
+				</div>
+
+				<div class="form-group row">
+					<label class="col-sm-2 col-form-label" th:text="#{form.nameFr}"></label>
+					<div class="col-sm-10" th:text="${bu.nameFr}"></div>
+				</div>
+
+				<div class="form-group row">
+					<label class="col-sm-2 col-form-label" th:text="#{form.acronymEn}"></label>
+					<div class="col-sm-10" th:text="${bu.acronymEn}"></div>
+				</div>
+
+				<div class="form-group row">
+					<label class="col-sm-2 col-form-label" th:text="#{form.acronymFr}"></label>
+					<div class="col-sm-10" th:text="${bu.acronymFr}"></div>
+				</div>
+
+				<div class="form-group row">
+					<label class="col-sm-2 col-form-label" th:text="#{form.agency}"></label>
+					<div class="col-sm-10">
+						<a th:href="@{/browse/viewAgency(id=${bu.agency.id})}" th:text="${bu.agency.getLocalizedAttribute('name')}"></a>
+					</div>
+				</div>
+
+				<div sec:authorize="hasRole('MDM ADMIN')" class="form-group">
+					<a th:href="@{/admin/editBU(id=${bu.id})}" id="editBULink" class="btn btn-primary" th:text="#{link.editBU}"></a>
+				</div>
+
+				<div class="form-group">
+					<h3 th:text="#{h.auditLog}"></h3>
+				</div>
+
+				<table id="auditLogTable" class="wb-tables table table-striped table-hover dataTable" aria-live="polite">
 					<thead>
 						<tr>
 							<th th:text="#{th.user}" />
@@ -51,54 +71,63 @@
 					</thead>
 					<tbody>
 						<tr th:each="revision : ${revisionList}">
-							<td th:text="${revision[1]}"/>
-							<td th:text="${revision[2]}"/>
-							<td th:text="${revision[3]}"/>
-							<td th:text="${revision[4]}"/>
-							<td th:text="${revision[5]}"/>
-							<td th:text="${revision[6]}"/>
-							<td th:text="${revision[7]}"/>
+							<td th:text="${revision[1]}" />
+							<td th:text="${revision[2]}" />
+							<td th:text="${revision[3]}" />
+							<td th:text="${revision[4]}" />
+							<td th:text="${revision[5]}" />
+							<td th:text="${revision[6]}" />
+							<td th:text="${revision[7]}" />
 						</tr>
 					</tbody>
 				</table>
+
+				<div class="form-group">
+					<h3 th:text="#{h.memberRoles}"></h3>
+				</div>
+
+				<table id="memberRolesTable" class="wb-tables table table-striped table-hover dataTable" aria-live="polite">
+					<thead>
+						<tr>
+							<!-- <th th:text="#{th.name}" /> -->
+							<th th:text="#{th.userLogin}" />
+							<th th:text="#{form.role}" />
+							<th th:text="#{form.ediAuthorized}" />
+							<th sec:authorize="hasRole('MDM ADMIN')" th:text="#{th.auditLog}"></th>
+							<th sec:authorize="hasRole('MDM ADMIN')" th:text="#{form.delete}" />
+						</tr>
+					</thead>
+					<tbody th:if="${!mrList.isEmpty()}">
+						<tr th:each="mr : ${mrList}">
+							<!-- <td th:text="${mr.fullName}" /> -->
+							<td th:text="${mr.userLogin}" />
+							<td th:text="${mr.role.getLocalizedAttribute('name')}" />
+							<td th:text="${mr.ediAuthorized} == true ? #{msg.yes} : #{msg.no}" />
+							<td sec:authorize="hasRole('MDM ADMIN')"><a th:text="#{msg.view}" class="btn btn-primary"
+								th:href="@{/admin/auditLogMR(id=${mr.id})}"></a></td>
+							<td sec:authorize="hasRole('MDM ADMIN')"><a th:text="#{form.delete}" class="btn btn-primary" th:id="deleteMemberRole"
+								th:href="@{/browse/viewBU(mrId=${mr.id})}"></a></td>
+						</tr>
+					</tbody>
+				</table>
+
+				<div th:if="${actionMsg != null}" class="form-group">
+					<h4 th:text="${actionMsg}"></h4>
+				</div>
+
+				<div class="form-group" sec:authorize="hasRole('MDM ADMIN')">
+					<a class="btn btn-primary" th:href="@{/admin/createMR(buId=${bu.id})}" th:text="#{link.createMR}" id="createMemberRoleLink"></a>
+				</div>
+
+				<div th:replace="fragments/general :: returnHome"></div>
+
 			</div>
+
 		</div>
-		<div class="form-group row">
-			<h2 th:text="#{h.memberRoles}"></h2>
-		</div>
-		<div class="col-sm-10">
-			<table id="memberRolesTable" class="table table-bordered">
-				<thead>
-					<tr>
-						<!-- <th th:text="#{th.name}" /> -->
-						<th th:text="#{th.userLogin}" />
-						<th th:text="#{form.role}" />
-						<th th:text="#{form.ediAuthorized}" />
-						<th sec:authorize="hasRole('MDM ADMIN')" th:text="#{th.auditLog}"></th>
-						<th sec:authorize="hasRole('MDM ADMIN')" th:text="#{form.delete}" />
-					</tr>
-				</thead>
-				<tbody th:if="${!mrList.isEmpty()}">
-					<tr th:each="mr : ${mrList}">
-						<!-- <td th:text="${mr.fullName}" /> -->
-						<td th:text="${mr.userLogin}" />
-						<td th:text="${mr.role.getLocalizedAttribute('name')}" />
-						<td th:text="${mr.ediAuthorized} == true ? #{msg.yes} : #{msg.no}" />
-						<td sec:authorize="hasRole('MDM ADMIN')"><a th:text="#{msg.view}" class="btn btn-primary"
-							th:href="@{/admin/auditLogMR(id=${mr.id})}"></a></td>
-						<td sec:authorize="hasRole('MDM ADMIN')"><a th:text="#{form.delete}" class="btn btn-primary" th:id="deleteMemberRole"
-							th:href="@{/browse/viewBU(mrId=${mr.id})}"></a></td>
-					</tr>
-				</tbody>
-			</table>
-			<div th:if="${actionMsg != null}" class="form-group row">
-				<h4 th:text="${actionMsg}"></h4>
-			</div>
-			<div class="form-group row" sec:authorize="hasRole('MDM ADMIN')">
-				<a class="btn btn-primary" th:href="@{/admin/createMR(buId=${bu.id})}" th:text="#{link.createMR}" id="createMemberRoleLink"></a>
-			</div>
-		</div>
-	</div>
+
+	</main>
+
+	<footer th:replace="fragments/general :: footer(~{})"></footer>
 
 </body>
 </html>

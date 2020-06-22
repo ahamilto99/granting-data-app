@@ -40,7 +40,7 @@ public class ADUserService {
 		return retval;
 	}
 
-	public List<String> findAllAUserFullNames() {
+	public List<String> findAllADUserFullNames() {
 		LdapQuery findAllPeronsQuery = LdapQueryBuilder.query().where("objectclass").is("person");
 		AttributesMapper<String> fullNameMapper = new AttributesMapper<String>() {
 			@Override
@@ -100,7 +100,7 @@ public class ADUserService {
 
 	public List<ADUser> searchADUsers(String searchStr) {
 		searchStr = "*" + searchStr + "*";
-		LdapQuery searchQuery = LdapQueryBuilder.query().countLimit(10).where("objectclass").is("person").and(LdapQueryBuilder
+		LdapQuery searchQuery = LdapQueryBuilder.query().countLimit(25).where("objectclass").is("person").and(LdapQueryBuilder
 				.query().where("uid").like(searchStr).or("cn").like(searchStr).or("sn").like(searchStr));
 
 		List<ADUser> adUsers = ldapTemplateNSERC.find(searchQuery, ADUser.class);

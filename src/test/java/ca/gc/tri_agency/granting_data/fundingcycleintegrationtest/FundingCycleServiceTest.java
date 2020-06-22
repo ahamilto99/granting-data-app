@@ -70,6 +70,12 @@ public class FundingCycleServiceTest {
 		assertTrue(0 < fcService.findFundingCyclesByFiscalYearId(1L).size());
 	}
 
+	/*
+	 * B/c findMonthlyFundingCyclesByStartDate(int plusMinusMonth) uses LocalDate.now() as the value to
+	 * which plusMinusMonth is applied, this test will at times fail since the test database contains
+	 * fixed dates for the FundingCycle entries. In order to resolve a failure, the value for
+	 * plusMinusMonth must be changed.
+	 */
 	@WithAnonymousUser
 	@Test
 	public void test_findMonthlyFundingCyclesByStartDate() {
@@ -77,13 +83,25 @@ public class FundingCycleServiceTest {
 		assertTrue(0 < fcService.findMonthlyFundingCyclesByStartDate(12).size());
 	}
 
+	/*
+	 * B/c findMonthlyFundingCyclesByEndDate(int plusMinusMonth) uses LocalDate.now() as the value to
+	 * which plusMinusMonth is applied, this test will at times fail since the test database contains
+	 * fixed dates for the FundingCycle entries. In order to resolve a failure, the value for
+	 * plusMinusMonth must be changed.
+	 */
 	@WithAnonymousUser
 	@Test
 	public void test_findMonthlyFundingCyclesByEndDate() {
 		assertEquals(0, fcService.findMonthlyFundingCyclesByEndDate(0).size());
-		assertTrue(0 < fcService.findMonthlyFundingCyclesByEndDate(10).size());
+		assertTrue(0 < fcService.findMonthlyFundingCyclesByEndDate(8).size());
 	}
 
+	/*
+	 * B/c findMonthlyFundingCyclesByStartDateLOI(int plusMinusMonth) uses LocalDate.now() as the value
+	 * to which plusMinusMonth is applied, this test will at times fail since the test database contains
+	 * fixed dates for the FundingCycle entries. In order to resolve a failure, the value for
+	 * plusMinusMonth must be changed.
+	 */
 	@WithAnonymousUser
 	@Test
 	public void test_findMonthlyFundingCyclesByStartDateLOI() {
@@ -91,6 +109,12 @@ public class FundingCycleServiceTest {
 		assertTrue(0 < fcService.findMonthlyFundingCyclesByStartDateLOI(12).size());
 	}
 
+	/*
+	 * B/c findMonthlyFundingCyclesByEndDateLOI(int plusMinusMonth) uses LocalDate.now() as the value to
+	 * which plusMinusMonth is applied, this test will at times fail since the test database contains
+	 * fixed dates for the FundingCycle entries. In order to resolve a failure, the value for
+	 * plusMinusMonth must be changed.
+	 */
 	@WithAnonymousUser
 	@Test
 	public void test_findMonthlyFundingCyclesByEndDateLOI() {
@@ -98,18 +122,30 @@ public class FundingCycleServiceTest {
 		assertTrue(0 < fcService.findMonthlyFundingCyclesByEndDateLOI(12).size());
 	}
 
+	/*
+	 * B/c findMonthlyFundingCyclesByStartDateNOI(int plusMinusMonth) uses LocalDate.now() as the value
+	 * to which plusMinusMonth is applied, this test will at times fail since the test database contains
+	 * fixed dates for the FundingCycle entries. In order to resolve a failure, the value for
+	 * plusMinusMonth must be changed.
+	 */
 	@WithAnonymousUser
 	@Test
 	public void test_findMonthlyFundingCyclesByStartDateNOI() {
 		assertEquals(0, fcService.findMonthlyFundingCyclesByStartDateNOI(Integer.MAX_VALUE).size());
-		assertTrue(0 < fcService.findMonthlyFundingCyclesByStartDateNOI(12).size());
+		assertTrue(0 < fcService.findMonthlyFundingCyclesByStartDateNOI(8).size());
 	}
 
+	/*
+	 * B/c findMonthlyFundingCyclesByEndDateNOI(int plusMinusMonth) uses LocalDate.now() as the value to
+	 * which plusMinusMonth is applied, this test will at times fail since the test database contains
+	 * fixed dates for the FundingCycle entries. In order to resolve a failure, the value for
+	 * plusMinusMonth must be changed.
+	 */
 	@WithAnonymousUser
 	@Test
 	public void test_findMonthlyFundingCyclesByEndDateNOI() {
 		assertEquals(0, fcService.findMonthlyFundingCyclesByEndDateNOI(Integer.MAX_VALUE).size());
-		assertTrue(0 < fcService.findMonthlyFundingCyclesByEndDateNOI(10).size());
+		assertTrue(0 < fcService.findMonthlyFundingCyclesByEndDateNOI(8).size());
 	}
 
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
@@ -138,7 +174,7 @@ public class FundingCycleServiceTest {
 	public void test_nonAdminCannotCreateFundingCycle() {
 		fcService.saveFundingCycle(new FundingCycle());
 	}
-	
+
 	@WithAnonymousUser
 	@Test
 	public void testFindFundingCyclesByFundingOpportunityMap() {
