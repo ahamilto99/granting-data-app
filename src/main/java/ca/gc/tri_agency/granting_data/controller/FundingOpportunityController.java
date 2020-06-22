@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -88,10 +88,11 @@ public class FundingOpportunityController {
 		model.addAttribute("awardSystemsByFoMap", awardMap);
 
 		// filtering options
-		Stream<BusinessUnit> buStream = filteredFOs.stream().map(FundingOpportunity::getBusinessUnit).distinct();
-		model.addAttribute("distinctAgencies",
-				buStream.map(bu -> bu.getAgency().getLocalizedAttribute("acronym")).distinct().sorted().iterator());
-		// get buStream's divisions when the model changes
+		List<BusinessUnit> buList = filteredFOs.stream().map(FundingOpportunity::getBusinessUnit).distinct()
+				.collect(Collectors.toList());
+		model.addAttribute("distinctBUs", buList.stream().map(bu -> bu.getLocalizedAttribute("acronym")).distinct().sorted().iterator());
+		model.addAttribute("distinctAgencies", buList.stream().map(bu -> bu.getAgency().getLocalizedAttribute("acronym"))
+				.distinct().sorted().iterator());
 		model.addAttribute("distinctApplySystems",
 				applyMap.values().stream().distinct().map(GrantingSystem::getAcronym).sorted().iterator());
 		model.addAttribute("distinctAwardSystems", awardMap.values().stream().flatMap(List::stream).distinct()

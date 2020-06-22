@@ -6,7 +6,7 @@
 
 <head th:replace="~{fragments/general.html :: common_header(~{::title},~{})}">
 <meta charset="utf-8">
-<title th:text="#{title.home}"></title>
+<title th:text="#{h.fundingOpportunities}"></title>
 </head>
 <body id="fundingOpportunitiesPage" class="home" vocab="http://schema.org/" typeof="WebPage">
 	<div th:insert="~{fragments/general.html :: header_nav('home')}"></div>
@@ -45,7 +45,7 @@
 								<label for="dt_leadAgency" th:text="#{form.division}"></label> <select class="form-control" id="dt_division" data-column="1">
 									<option th:text="#{msg.all}" th:value="#{msg.all}"></option>
 									<!-- th:each below will become the buStream's divisions when the model changes -->
-									<option th:each="agency : ${distinctAgencies}" th:text="${agency}" th:value="${agency}"></option>
+									<option th:each="bu : ${distinctBUs}" th:text="${bu}" th:value="${bu}"></option>
 								</select>
 							</div>
 
@@ -94,7 +94,7 @@
 							<tr th:each="fo : ${fundingOpportunities}">
 								<td><a th:href="@{viewFo(id=${fo.id})}"><span th:text="${fo.getLocalizedAttribute('name')}"></span></a></td>
 								<td><span th:text="${fo.businessUnit == null} ? 'None' : ${fo.businessUnit.agency.getLocalizedAttribute('acronym')}"></span></td>
-								<td><span th:text="${fo.businessUnit == null} ? 'None' : ${fo.businessUnit.agency.getLocalizedAttribute('acronym')}"></span></td>
+								<td><span th:text="${fo.businessUnit == null} ? 'None' : ${fo.businessUnit.getLocalizedAttribute('acronym')}"></span></td>
 								<td><span th:text="${applySystemByFoMap.get(fo.id) == null} ? 'None' : ${applySystemByFoMap.get(fo.id).acronym}"></span></td>
 								<td><span th:if="${awardSystemsByFoMap.get(fo.id) == null}" th:value="None"></span> <span
 									th:if="${awardSystemsByFoMap.get(fo.id) != null}"><span th:each="system : ${awardSystemsByFoMap.get(fo.id)}"><span

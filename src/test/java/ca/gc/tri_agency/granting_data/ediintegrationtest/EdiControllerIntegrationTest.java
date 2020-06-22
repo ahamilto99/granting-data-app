@@ -1,4 +1,4 @@
-package ca.gc.tri_agency.granting_data.fiscalyearintegrationtest;
+package ca.gc.tri_agency.granting_data.ediintegrationtest;
 
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -21,7 +21,7 @@ import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
 @SpringBootTest(classes = GrantingDataApp.class)
 @RunWith(SpringRunner.class)
 @ActiveProfiles("test")
-public class BrowseFiscalYearsIntegrationTest {
+public class EdiControllerIntegrationTest {
 
 	@Autowired
 	private WebApplicationContext ctx;
@@ -35,8 +35,17 @@ public class BrowseFiscalYearsIntegrationTest {
 
 	@WithAnonymousUser
 	@Test
-	public void test_anonUserCanAccessViewAllFYsPage_shouldSucceedWith200() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get("/browse/viewFYs")).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(
-				MockMvcResultMatchers.content().string(Matchers.containsString("id=\"viewFiscalYearsPage\"")));
+	public void test_ediVisualizationLinkVisibleOnHomePage_shouldSucceedWith200() throws Exception {
+		mvc.perform(MockMvcRequestBuilders.get("/")).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(
+				MockMvcResultMatchers.content().string(Matchers.containsString("href=\"browse/ediVisualization\"")));
 	}
+
+	@WithAnonymousUser
+	@Test
+	public void test_nonAdminUserCanAccessEdiVisualizationPage_shouldSucceedWith200() throws Exception {
+		mvc.perform(MockMvcRequestBuilders.get("/browse/ediVisualization")).andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.content()
+						.string(Matchers.containsString("id=\"ediDataVisualizationPage\"")));
+	}
+
 }
