@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<!--[if lt IE 9]><html class="no-js lt-ie9" lang="en" dir="ltr"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!--<![endif]-->
+
+<head th:replace="fragments/general.html :: common_header(~{::title},~{})">
+<meta charset="utf-8">
+<title th:text="#{h.ediDataVisualization}"></title>
+</head>
+<body id="ediDataVisualizationPage" class="home" vocab="http://schema.org/" typeof="WebPage">
+
+	<div th:replace="fragments/general.html :: header_nav('home')"></div>
+
+	<main role="main" property="mainContentOfPage" class="container">
+
+		<h1 th:text="#{h.ediDataVisualization}"></h1>
+
+		<div th:replace="fragments/general.html :: profile_info('home')"></div>
+
+		<div class="panel panel-default">
+
+			<div class="panel-body"></div>
+
+			<iframe width="90%" height="80%" style="margin: 5% 5% 10% 5%;"
+				src="https://app.powerbi.com/reportEmbed?reportId=ca374886-7208-4b3d-8960-ede22d96433d&groupId=60a5b46f-e2ff-4c77-bd8d-dd24c741eb33&autoAuth=true&ctid=fbef0798-20e3-4be7-bdc8-372032610f65&config=eyJjbHVzdGVyVXJsIjoiaHR0cHM6Ly93YWJpLWNhbmFkYS1jZW50cmFsLXJlZGlyZWN0LmFuYWx5c2lzLndpbmRvd3MubmV0LyJ9"
+				frameborder="0" allowFullScreen="true"></iframe>
+
+			<div th:replace="fragments/general :: returnHome"></div>
+
+		</div>
+
+	</main>
+
+	<footer th:replace="fragments/general :: footer(~{})"></footer>
+
+</body>
+</html>

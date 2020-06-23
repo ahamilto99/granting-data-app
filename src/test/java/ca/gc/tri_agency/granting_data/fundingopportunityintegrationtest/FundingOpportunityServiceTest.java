@@ -32,17 +32,15 @@ public class FundingOpportunityServiceTest {
 	@WithAnonymousUser
 	@Test
 	public void test_findFundingOpportunitiesByNameEn() {
-		assertTrue(0 == foService.findFundingOpportunitiesByNameEn("ZZZZZZZZZZ").size());
-
-		assertTrue(1 == foService.findFundingOpportunitiesByNameEn("Digging into Data").size());
+		assertEquals(0, foService.findFundingOpportunitiesByNameEn("ZZZZZZZZZZ").size());
+		assertEquals(1, foService.findFundingOpportunitiesByNameEn("Digging into Data").size());
 	}
 
 	@WithAnonymousUser
 	@Test
 	public void test_findFundingOpportunitiesByBusinessUnit() {
-		assertTrue(0 == foService.findFundingOpportunitiesByBusinessUnitId(Long.MAX_VALUE).size());
-
-		assertTrue(8 == foService.findFundingOpportunitiesByBusinessUnitId(1L).size());
+		assertEquals(0, foService.findFundingOpportunitiesByBusinessUnitId(Long.MAX_VALUE).size());
+		assertTrue(0 < foService.findFundingOpportunitiesByBusinessUnitId(1L).size());
 	}
 
 	@WithMockUser(username = "admin", roles = "MDM ADMIN")

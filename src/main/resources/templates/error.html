@@ -1,49 +1,54 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
-<head>
-    <style>
-table td{
-vertical-align:top;
-border:solid 1px #888;
-padding:10px;
-}
+<!--[if lt IE 9]><html class="no-js lt-ie9" lang="en" dir="ltr"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!--<![endif]-->
 
-    </style>
+<head th:replace="fragments/general.html :: common_header(~{::title},~{})">
+<meta charset="utf-8">
+<title th:text="#{err.h.generic}"></title>
 </head>
-<body id="generalErrorPage">
-<h1>My Thymeleaf Error Page</h1>
-<table>
-    <tr>
-        <td>Date</td>
-        <td th:text="${timestamp}"/>
-    </tr>
-    <tr>
-        <td>Path</td>
-        <td th:text="${path}"/>
-    </tr>
-    <tr>
-        <td>Error</td>
-        <td th:text="${error}"/>
-    </tr>
-    <tr>
-        <td>Status</td>
-        <td th:text="${status}"/>
-    </tr>
-    <tr>
-        <td>Message</td>
-        <td th:text="${message}"/>
-    </tr>
-    <tr>
-        <td>Exception</td>
-        <td th:text="${exception}"/>
-    </tr>
-    <tr>
-        <td>Trace</td>
-        <td>
-            <pre th:text="${trace}"/>
-        </td>
-    </tr>
-</table>
+<body id="generalErrorPage" class="home" vocab="http://schema.org/" typeof="WebPage">
+	<div th:insert="fragments/general.html :: header_nav('home')"></div>
+	<main role="main" property="mainContentOfPage" class="container">
+
+		<h1 th:switch="${status}">
+			<span class="glyphicon glyphicon-warning-sign mrgn-rght-md text-danger"></span>
+			<span th:case="400" th:text="#{err.h.400}"></span>
+			<span th:case="404" th:text="#{err.h.404}"></span>
+			<span th:case="500" th:text="#{err.h.500}"></span>
+			<span th:case="*" th:text="#{err.h.generic}"></span>
+		</h1>
+
+		<div th:insert="fragments/general.html :: profile_info('home')"></div>
+
+		<div class="panel panel-default">
+
+			<div class="panel-body">
+
+				<div  th:switch="${status}"class="alert alert-danger">
+					<span th:case="400" class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"
+						style="color: darkred; font-family: Helvetica, Arial, sans-serif; font-size: 16px;" th:text="#{err.p.400}"></span>
+					<span th:case="404" class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"
+						style="color: darkred; font-family: Helvetica, Arial, sans-serif; font-size: 16px;" th:text="#{err.p.404}"></span>
+					<span th:case="500" class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"
+						style="color: darkred; font-family: Helvetica, Arial, sans-serif; font-size: 16px;" th:text="#{err.p.500}"></span>
+					<span th:case="*" class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"
+						style="color: darkred; font-family: Helvetica, Arial, sans-serif; font-size: 16px;" th:text="#{err.p.generic}"></span>
+				</div>
+
+				<p th:text="#{p.forbidden.contactSupportCentral}"></p>
+
+
+			</div>
+
+			<div th:insert="fragments/general :: returnHome"></div>
+
+		</div>
+
+	</main>
+
+	<footer th:insert="fragments/general :: footer(~{})"></footer>
+
 </body>
 </html>

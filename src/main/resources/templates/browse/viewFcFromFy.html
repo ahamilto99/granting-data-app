@@ -1,41 +1,51 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/general.html :: common_header(~{::title},~{::link},~{::script})}">
-	<meta charset="ISO-8859-1">
-	<title th:text="#{title.fcsByFys}"></title>
-	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" />
-	<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-	<script type="text/javascript">
-		$(document).ready( function () {
-			var table = $('fc').DataTable({});
-		});
-	</script>
+<!--[if lt IE 9]><html class="no-js lt-ie9" lang="en" dir="ltr"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!--<![endif]-->
+
+<head th:replace="~{fragments/general.html :: common_header(~{::title},~{})}">
+<meta charset="utf-8">
+<title th:text="#{h.fcs}"></title>
 </head>
-<body id="viewFcFromFyPage">
+<body id="viewFcFromFyPage" class="home" vocab="http://schema.org/" typeof="WebPage">
 	<div th:insert="~{fragments/general.html :: header_nav('home')}"></div>
-	<div class="container" style="margin-bottom: 50px">
-		
-			<h1 th:text="#{h.fcs}" style="margin-bottom: 25px"></h1>
-			<table id="fc" class="display" border="1" width="1000">
-				<thead>
-		            <tr>
-		                <th th:text="#{th.foName}"></th>
-		                <th th:text="#{th.cycleStart}"></th>
-		                <th th:text="#{th.cycleEnd}"></th>
-		            </tr>
-				</thead>
-				
-				<tbody>
-	       			<tr th:each="fc : ${fc}">
-	           			<td><a th:href="@{viewFo(id=${fc.fundingOpportunity.id})}" th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}"></a></td>
-						<td><span th:text="${fc.startDate}"></span></td>
-	           			<td><span th:text="${fc.endDate}"></span></td>
-	       			</tr>
-   				</tbody>
-			</table>
-		
-	
-	</div>
+	<main role="main" property="mainContentOfPage" class="container">
+
+		<h1 th:text="#{h.fcs}"></h1>
+
+		<div th:insert="~{fragments/general.html :: profile_info('home')}"></div>
+
+		<div class="panel panel-default">
+
+			<div class="panel-body">
+
+				<table id="fcsTable" class="wb-tables table table-striped table-hover dataTable" aria-live="polite">
+					<thead>
+						<tr>
+							<th th:text="#{th.foName}"></th>
+							<th th:text="#{th.cycleStart}"></th>
+							<th th:text="#{th.cycleEnd}"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="fc : ${fc}">
+							<td><a th:href="@{viewFo(id=${fc.fundingOpportunity.id})}" th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}"></a></td>
+							<td><span th:text="${fc.startDate}"></span></td>
+							<td><span th:text="${fc.endDate}"></span></td>
+						</tr>
+					</tbody>
+				</table>
+			
+			</div>
+
+			<div th:insert="fragments/general :: returnHome"></div>
+
+		</div>
+
+	</main>
+
+	<footer th:insert="fragments/general :: footer(~{})"></footer>
 
 </body>
 </html>

@@ -1,22 +1,83 @@
-<!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/general.html :: common_header(~{::title},~{},~{})}">
-<title th:text="#{title.auditLogs}"></title>
+<!DOCTYPE html>
+<!--[if lt IE 9]><html class="no-js lt-ie9" lang="en" dir="ltr"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!--<![endif]-->
+
+<head th:replace="fragments/general.html :: common_header(~{::title},~{})">
+<meta charset="utf-8">
+<title th:text="#{h.auditLogs}"></title>
 </head>
-<body>
-	<div th:insert="~{fragments/general.html :: header_nav('home')}"></div>
-	<div class="container">
-	
+<body class="home" vocab="http://schema.org/" typeof="WebPage">
+
+	<div th:replace="fragments/general.html :: header_nav('home')"></div>
+
+	<main role="main" property="mainContentOfPage" class="container">
+
 		<h1 th:text="#{h.auditLogs}"></h1>
-		
-		<p th:text="#{p.auditLogs.choose}"></p>
-		
-		<ol>
-			<li><a href="/admin/auditLogFO" th:text="#{link.auditLogFO}"></a></li>
-			<li><a href="/admin/auditLogMR" th:text="#{link.auditLogMR}"></a></li>
-			<li><a href="/admin/auditLogSFO" th:text="#{link.auditLogSFO}"></a></li>
-		</ol>
-	
-	</div>
+
+		<div th:replace="fragments/general.html :: profile_info('home')"></div>
+
+		<div class="panel panel-default">
+
+			<div class="panel-body">
+
+				<p th:text="#{p.auditLogs.choose}"></p>
+
+				<div class="row">
+					<div class="col-md-6">
+						<div class="well">
+							<div class="row">
+								<div class="col-md-1">
+									<span class="glyphicon glyphicon-list-alt"></span>
+								</div>
+								<div class="col-md-11">
+									<a href="/admin/auditLogFO" th:text="#{link.auditLogFO}"></a>
+									<p th:text="#{p.auditLog.fos}"></p>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="well">
+							<div class="row">
+								<div class="col-md-1">
+									<span class="glyphicon glyphicon-list-alt"></span>
+								</div>
+								<div class="col-md-11">
+									<a href="/admin/auditLogMR" th:text="#{link.auditLogMR}"></a>
+									<p th:text="#{p.auditLog.mrs}"></p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-md-6">
+						<div class="well">
+							<div class="row">
+								<div class="col-md-1">
+									<span class="glyphicon glyphicon-list-alt"></span>
+								</div>
+								<div class="col-md-11">
+									<a href="/admin/auditLogSFO" th:text="#{link.auditLogSFO}"></a>
+									<p th:text="#{p.auditLog.sfos}"></p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+
+			<div th:insert="fragments/general :: returnHome"></div>
+
+		</div>
+
+	</main>
+
+	<footer th:replace="fragments/general.html :: footer(~{})"></footer>
+
 </body>
 </html>

@@ -172,4 +172,9 @@ public class SystemFundingOpportunityServiceImpl implements SystemFundingOpportu
 		return convertAuditResults(revisionList);
 	}
 
+	@Override
+	public List<SystemFundingOpportunity> findSFOsByLinkedFundingOpportunityBusinessUnitIdIn(List<Long> targetBuIds) {
+		return sfoRepo.findByLinkedFundingOpportunityBusinessUnitIdIn(targetBuIds);
+	}
+
 }

@@ -69,7 +69,7 @@ public class CreateBusinessUnitIntegrationTest {
 	public void test_adminCanAccessCreateBUPage_shouldSucceedWith200() throws Exception {
 		String agencyName = agencyService.findAgencyById(1L).getNameEn();
 		assertTrue(mvc.perform(get("/admin/createBU?agencyId=1")).andExpect(status().isOk()).andReturn().getResponse()
-				.getContentAsString().contains('>' + agencyName + "</div>"));
+				.getContentAsString().contains('>' + agencyName + "</label>"));
 	}
 
 	// CREATE PAGE CANNOT BE ACCESSED BY NON-ADMIN

@@ -92,9 +92,16 @@ public class SystemFundingOpportunityController {
 	}
 
 	@PostMapping("/admin/registerFOLink")
-	public String registerProgramLinkPost(@ModelAttribute("id") Long id, @ModelAttribute("foId") Long foId) {
+	public String registerProgramLinkPost(@ModelAttribute("id") Long id, @ModelAttribute("foId") Long foId,
+			RedirectAttributes redirectAttributes) {
 		sfoService.linkSystemFundingOpportunity(id, foId);
-		return "redirect:analyzeSFOs";
+
+		SystemFundingOpportunity sfoLinked = sfoService.findSystemFundingOpportunityById(id);
+		String linkedTo = msgSource.getMessage("msg.linkPerformed", null, LocaleContextHolder.getLocale());
+		redirectAttributes.addFlashAttribute("actionMessage", sfoLinked.getLocalizedAttribute("name") + linkedTo
+				+ sfoLinked.getLinkedFundingOpportunity().getLocalizedAttribute("name"));
+
+		return "redirect:/admin/viewSFO?id=" + id;
 	}
 
 	@GetMapping("/admin/auditLogSFO")

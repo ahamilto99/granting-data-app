@@ -33,7 +33,7 @@ public class FiscalYearController {
 
 	@GetMapping("/browse/viewFYs")
 	public String viewFiscalYears(Model model) {
-		model.addAttribute("fiscalYears", fyService.findAllFiscalYears());
+		model.addAttribute("fiscalYearStats", fyService.findNumAppsExpectedForEachFiscalYear());
 		return "browse/viewFiscalYears";
 	}
 
@@ -41,7 +41,7 @@ public class FiscalYearController {
 	@GetMapping("/manage/createFY")
 	public String createFiscalYearGet(Model model) {
 		model.addAttribute("fy", new FiscalYear());
-		model.addAttribute("fiscalYears", fyService.findAllFiscalYears());
+		model.addAttribute("fiscalYears", fyService.findAllFiscalYearsOrderByYearAsc());
 		return "manage/createFiscalYear";
 	}
 

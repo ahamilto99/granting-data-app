@@ -1,32 +1,52 @@
-<!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/general.html :: common_header(~{::title},~{},~{})}">
-<title th:text="#{title.selectFileForComparison}"></title>
-</head>
-<body>
-	<div th:insert="~{fragments/general.html :: header_nav('datasets')}" ></div>
-	<div class="section">
-			<div class="col-sm-2"></div>
-			<div class="col-sm-8">
-				<h2 th:text="#{h.FcDatasetImport}"></h2>
-				<p th:text="#{p.selectDatasetFile}"></p>
-				<table id="datasetFilesTable" class="display">
-			       <!-- Header Table -->
-			    <thead>
-			            <tr>
-			                <th th:text="#{th.filename}"></th>
-			                <th th:text="#{th.action}"></th>
-			            </tr>
-				</thead>
-				<tbody>
-					<tr th:each="file : ${datasetFiles}">
-						<td th:text="${file.name}"></td>
-						<td><a class="btn" th:text="#{link.select}" th:href="@{analyzeFoUploadData(filename=${file.name})}"></a></td>
-					</tr>
-				</tbody>
-				</table>
-			</div>
-	</div>
-   </body>
-</html>
+<!DOCTYPE html>
+<!--[if lt IE 9]><html class="no-js lt-ie9" lang="en" dir="ltr"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!--<![endif]-->
 
+<head th:replace="~{fragments/general.html :: common_header(~{::title},~{})}">
+<meta charset="utf-8">
+<title th:text="#{h.FcDatasetImport}"></title>
+</head>
+<body class="home" vocab="http://schema.org/" typeof="WebPage">
+	<div th:insert="~{fragments/general.html :: header_nav('home')}"></div>
+	<main role="main" property="mainContentOfPage" class="container">
+
+		<h1 th:text="#{h.FcDatasetImport}"></h1>
+
+		<div th:insert="~{fragments/general.html :: profile_info('home')}"></div>
+
+		<div class="panel panel-default">
+
+			<div class="panel-body">
+
+				<p th:text="#{p.selectDatasetFile}"></p>
+
+				<table id="datasetFilesTable" class="wb-tables table table-striped table-hover dataTable" aria-live="polite">
+					<!-- Header Table -->
+					<thead>
+						<tr>
+							<th th:text="#{th.filename}"></th>
+							<th th:text="#{th.action}"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="file : ${datasetFiles}">
+							<td th:text="${file.name}"></td>
+							<td><a class="btn btn-primary" th:text="#{link.select}" th:href="@{analyzeFoUploadData(filename=${file.name})}"></a></td>
+						</tr>
+					</tbody>
+				</table>
+
+			</div>
+
+			<div th:insert="fragments/general :: returnHome"></div>
+
+		</div>
+
+	</main>
+
+	<footer th:insert="fragments/general :: footer(~{})"></footer>
+
+</body>
+</html>
