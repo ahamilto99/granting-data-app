@@ -2,6 +2,7 @@ package ca.gc.tri_agency.granting_data.service.impl;
 
 import java.security.SecureRandom;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,34 +21,32 @@ import ca.gc.tri_agency.granting_data.model.GrantingSystem;
 import ca.gc.tri_agency.granting_data.model.MemberRole;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.repo.ApplicationParticipationRepository;
-import ca.gc.tri_agency.granting_data.repo.MemberRoleRepository;
-import ca.gc.tri_agency.granting_data.repo.SystemFundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.security.SecurityUtils;
 import ca.gc.tri_agency.granting_data.service.ApplicationParticipationService;
+import ca.gc.tri_agency.granting_data.service.MemberRoleService;
+import ca.gc.tri_agency.granting_data.service.SystemFundingOpportunityService;
 
 @Service
 public class ApplicationParticipationServiceImpl implements ApplicationParticipationService {
+
 	Map<GrantingSystem, ReferenceBean[]> roleMap;
 
 	private SecureRandom sRand = new SecureRandom();
 
 	private ApplicationParticipationRepository appParticipationRepo;
 
-	private SystemFundingOpportunityRepository sfoRepo;
+	private SystemFundingOpportunityService sfoService;
 
-	private MemberRoleRepository mrRepo;
+	private MemberRoleService mrService;
 
 	private static int applIdIncrementer = 0;
 
-//	@PersistenceContext
-//	private EntityManager em;
-
 	@Autowired
 	public ApplicationParticipationServiceImpl(ApplicationParticipationRepository appParticipationRepo,
-			SystemFundingOpportunityRepository sfoRepo, MemberRoleRepository mrRepo) {
+			SystemFundingOpportunityService sfoService, MemberRoleService mrService) {
 		this.appParticipationRepo = appParticipationRepo;
-		this.sfoRepo = sfoRepo;
-		this.mrRepo = mrRepo;
+		this.sfoService = sfoService;
+		this.mrService = mrService;
 	}
 
 	@Override
@@ -81,6 +80,11 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 				fillInRandomOrg(app, gs);
 				fillInRandomPerson(app, gs);
 
+				int day = generateRandNumBtw(1, 28);
+				int month = generateRandNumBtw(1, 12);
+				int year = generateRandNumBtw(1940, 55);
+				app.setDateOfBirth(LocalDate.of(year, month, day));
+				
 				appPartList.add(app);
 			}
 
@@ -218,7 +222,7 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		List<ApplicationParticipation> participations = new ArrayList<ApplicationParticipation>();
 		Instant inst = Instant.parse("2020-02-02T00:00:00.00Z");
 
-		for (SystemFundingOpportunity sfo : sfoRepo.findAll()) {
+		for (SystemFundingOpportunity sfo : sfoService.findAllSystemFundingOpportunities()) {
 			participations.addAll(generateTestAppParticipations(sfo, inst, 3, 5));
 		}
 
@@ -349,14 +353,14 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 	public List<String> getExtIdsQualifiedForEdi() {
 		List<String> retval = new ArrayList<String>();
 		// 1. get users member roles with EDI,
-		List<MemberRole> mrList = mrRepo.findByUserLoginAndEdiAuthorizedTrue(SecurityUtils.getCurrentUsername());
+		List<MemberRole> mrList = mrService.findMRsByUserLoginAndEdiAuthorizedTrue(SecurityUtils.getCurrentUsername());
 		// 2. use that to collect list of business unit IDs
 		List<Long> targetBuIds = new ArrayList<Long>();
 		for (MemberRole mr : mrList) {
 			targetBuIds.add(mr.getBusinessUnit().getId());
 		}
 		// 3. use that to query system funding opportunities
-		List<SystemFundingOpportunity> targetSFOs = sfoRepo.findByLinkedFundingOpportunityBusinessUnitIdIn(targetBuIds);
+		List<SystemFundingOpportunity> targetSFOs = sfoService.findSFOsByLinkedFundingOpportunityBusinessUnitIdIn(targetBuIds);
 		// 4. extract list of extIds
 		for (SystemFundingOpportunity sfo : targetSFOs) {
 			retval.add(sfo.getExtId());
@@ -376,6 +380,10 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 			}
 		}
 		return retval;
+	}
+	
+	private int generateRandNumBtw(int start, int end) {
+		return sRand.nextInt(end) + start;
 	}
 
 //	private String[] createAuditedApplicationParticipationStrArr(ApplicationParticipation ap, String revType,

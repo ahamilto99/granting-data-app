@@ -30,4 +30,6 @@ public interface SystemFundingOpportunityService {
 
 	List<String[]> findSystemFundingOpportunityRevisionById(Long sfoId);
 	
+	List<SystemFundingOpportunity> findSFOsByLinkedFundingOpportunityBusinessUnitIdIn(List<Long> targetBuIds);
+
 }

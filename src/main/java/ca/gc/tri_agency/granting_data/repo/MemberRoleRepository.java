@@ -12,6 +12,6 @@ public interface MemberRoleRepository extends JpaRepository<MemberRole, Long> {
 
 	List<MemberRole> findByBusinessUnitIdOrderByUserLogin(Long buId);
 
-	List<MemberRole> findByUserLoginAndEdiAuthorizedTrue(String string);
+	List<MemberRole> findByUserLoginAndEdiAuthorizedTrue(String userLogin);
 
 }

@@ -119,4 +119,9 @@ public class MemberRoleServiceImpl implements MemberRoleService {
 		return convertAuditResults(revisionList);
 	}
 
+	@Override
+	public List<MemberRole> findMRsByUserLoginAndEdiAuthorizedTrue(String userLogin) {
+		return mrRepo.findByUserLoginAndEdiAuthorizedTrue(userLogin);
+	}
+
 }

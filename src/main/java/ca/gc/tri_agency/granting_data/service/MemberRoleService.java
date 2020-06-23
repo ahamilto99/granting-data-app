@@ -20,4 +20,6 @@ public interface MemberRoleService {
 
 	List<String[]> findAllMemberRoleRevisions();
 	
+	List<MemberRole> findMRsByUserLoginAndEdiAuthorizedTrue(String userLogin);
+	
 }

@@ -34,7 +34,7 @@
 					</thead>
 					<tbody>
 						<tr th:each="ap : ${appParticipations}">
-							<td><span th:text="${ap.applId}"></span></td>
+							<td style="width: 175px;"><span th:text="${ap.applId}"></span><a th:if="${#request.isUserInRole('ROLE_MDM ADMIN') or #lists.contains(ediExtIds, ap.programId)}" th:href="@{/browse/viewAppParticipationEdi(id=${ap.id})}" style="margin-left: 10px;"><span class="glyphicon glyphicon-eye-open"></span></a></td>
 							<td><span th:text="${ap.programId}"></span></td>
 							<td><span th:text="${ap.familyName} + ', ' + ${ap.givenName}"></span></td>
 							<td><span th:text="${ap.getLocalizedAttribute('role')}"></span></td>
