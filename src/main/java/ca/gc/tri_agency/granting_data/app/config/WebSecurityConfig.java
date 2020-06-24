@@ -53,6 +53,11 @@ public class WebSecurityConfig {
 		LdapContextSource contextSource = new LdapContextSource();
 		contextSource.setUrl(ldapUrlNSERC);
 		contextSource.setBase(ldapBaseDnNSERC);
+
+		// added
+		contextSource.setUserDn("cn=Hamilton\\,Alexander,ou=Dev_Users,dc=nserc,dc=ca");
+		contextSource.setPassword("9973@so((er#15");
+
 //		contextSource.setAnonymousReadOnly(true);
 		return contextSource;
 	}
@@ -62,6 +67,11 @@ public class WebSecurityConfig {
 		LdapContextSource contextSource = new LdapContextSource();
 		contextSource.setUrl(ldapUrlSSHRC);
 		contextSource.setBase(ldapBaseDnSSHRC);
+
+		// added
+		contextSource.setUserDn("cn=Hamilton\\,Alexander,ou=Dev_Users,dc=nserc,dc=ca");
+		contextSource.setPassword("9973@so((er#15");
+
 //		contextSource.setAnonymousReadOnly(true);
 		return contextSource;
 	}
@@ -77,6 +87,10 @@ public class WebSecurityConfig {
 	public LdapTemplate ldapTemplateSSHRC() {
 		LdapTemplate retval = new LdapTemplate(contextSourceSSHRC());
 		retval.setIgnorePartialResultException(true);
+
+		// added
+		retval.setDefaultCountLimit(0);
+
 		return retval;
 	}
 
@@ -116,27 +130,26 @@ public class WebSecurityConfig {
 					.antMatchers("/", "/home", "/webjars/**", "/css/**", "/images/**", "/js/**", "/browse/**")
 					.permitAll().and().authorizeRequests().antMatchers("/entities/**", "/reports/**")
 					.hasAnyRole("NSERC_USER", "SSHRC_USER", "AGENCY_USER").anyRequest().authenticated().and()
-					.formLogin().loginPage("/login").permitAll().and().logout().permitAll().and().exceptionHandling()
-					.accessDeniedPage("/exception/forbiden-by-role");
+					.formLogin().loginPage("/login").permitAll().and().logout().permitAll().and()
+					.exceptionHandling().accessDeniedPage("/exception/forbiden-by-role");
 		}
 
 	}
-	
-	@Profile(value = {"local", "test"})
+
+	@Profile(value = { "local", "test" })
 	@Configuration
 	@Order(1)
 	public static class LocalFormLoginWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
 
-			http.authorizeRequests()
-					.antMatchers("/h2**").access("hasRole('MDM ADMIN')")
+			http.authorizeRequests().antMatchers("/h2**").access("hasRole('MDM ADMIN')")
 					.antMatchers("/", "/home", "/webjars/**", "/css/**", "/images/**", "/js/**", "/browse/**")
 					.permitAll().and().authorizeRequests().antMatchers("/entities/**", "/reports/**")
 					.hasAnyRole("NSERC_USER", "SSHRC_USER", "AGENCY_USER").anyRequest().authenticated().and()
-					.formLogin().loginPage("/login").permitAll().and().logout().permitAll().and().exceptionHandling()
-					.accessDeniedPage("/exception/forbiden-by-role").and().headers().frameOptions()
-					.disable().and().csrf().disable();
+					.formLogin().loginPage("/login").permitAll().and().logout().permitAll().and()
+					.exceptionHandling().accessDeniedPage("/exception/forbiden-by-role").and().headers()
+					.frameOptions().disable().and().csrf().disable();
 		}
 	}
 

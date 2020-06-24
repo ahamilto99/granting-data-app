@@ -6,16 +6,17 @@ import org.springframework.ldap.odm.annotations.Attribute;
 import org.springframework.ldap.odm.annotations.Entry;
 import org.springframework.ldap.odm.annotations.Id;
 
-@Entry(objectClasses = { "top", "person", "organizationalPerson", "inetOrgPerson" })
+//@Entry(objectClasses = { "top", "person", "organizationalPerson", "inetOrgPerson" })
+@Entry(objectClasses = { /* "top", "person", "organizationalPerson", "user" */ "organizationalPerson" })
 public final class ADUser {
 
 	@Id
 	private Name dn;
 
-	@Attribute(name = "uid", readonly = true)
+	@Attribute(name = "sAMAccountName", readonly = true)
 	private String userLogin;
 
-	@Attribute(name = "cn", readonly = true)
+	@Attribute(name = "name", readonly = true)
 	private String fullName;
 
 	@Attribute(name = "sn", readonly = true)
@@ -24,15 +25,19 @@ public final class ADUser {
 	@Attribute(name = "mail", readonly = true)
 	private String email;
 
+	@Attribute(name = "givenName", readonly = true)
+	private String givenNameString;
+
 	public ADUser() {
 	}
 
-	public ADUser(Name dn, String userLogin, String fullName, String lastName, String email) {
+	public ADUser(Name dn, String userLogin, String fullName, String lastName, String email, String givenName) {
 		this.dn = dn;
 		this.userLogin = userLogin;
 		this.fullName = fullName;
 		this.lastName = lastName;
 		this.email = email;
+		this.givenNameString = givenName;
 	}
 
 	public Name getDn() {
@@ -75,6 +80,14 @@ public final class ADUser {
 		this.email = email;
 	}
 
+	public String getGivenName() {
+		return givenNameString;
+	}
+
+	public void setGivenName(String givenName) {
+		this.givenNameString = givenName;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -84,6 +97,8 @@ public final class ADUser {
 		builder.append(userLogin);
 		builder.append(", fullName=");
 		builder.append(fullName);
+		builder.append(", givenName=");
+		builder.append(givenNameString);
 		builder.append(", lastName=");
 		builder.append(lastName);
 		builder.append(", email=");
