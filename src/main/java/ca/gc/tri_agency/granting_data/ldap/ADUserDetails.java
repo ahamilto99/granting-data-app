@@ -11,13 +11,13 @@ import ca.gc.tri_agency.granting_data.security.SecurityUtils;
 public class ADUserDetails implements LdapUserDetails {
 
 	private static final long serialVersionUID = -775664263411224569L;
-	
+
 	private ADUserService adUserService;
-	
+
 	private LdapUserDetails ldapUserDetails;
-	
+
 	private ADUser adUser;
-	
+
 	@Autowired
 	public ADUserDetails(LdapUserDetails ldapUserDetails, ADUserService adUserService) {
 		this.ldapUserDetails = ldapUserDetails;
@@ -28,24 +28,30 @@ public class ADUserDetails implements LdapUserDetails {
 		if (adUser == null) {
 			adUser = adUserService.findAllADUsers().get(4);
 		}
-		System.out.println(adUser.getDn().toString());
+
+		System.out.println(SecurityUtils.getLdapUserDn());
+		System.out.println(SecurityUtils.getLdapUser().getDn());
+		System.out.println(SecurityUtils.getLdapUser().getPassword());
+		System.out.println(SecurityUtils.getLdapUser().getUsername());
+		System.out.println(SecurityUtils.getLdapUser().getAuthorities());
+
 		return adUser.getFullName();
 	}
-	
+
 	public String getLastName() {
 		if (adUser == null) {
 			adUser = adUserService.findADUserByDn(getDn());
 		}
 		return adUser.getLastName();
 	}
-	
+
 	public String getEmail() {
 		if (adUser == null) {
 			adUser = adUserService.findADUserByDn(getDn());
 		}
 		return adUser.getEmail();
 	}
-	
+
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return ldapUserDetails.getAuthorities();
@@ -85,7 +91,7 @@ public class ADUserDetails implements LdapUserDetails {
 	public String getDn() {
 		return ldapUserDetails.getDn();
 	}
-	
+
 	@Override
 	public void eraseCredentials() {
 	}
