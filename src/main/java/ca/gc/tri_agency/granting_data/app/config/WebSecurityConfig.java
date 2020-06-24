@@ -1,11 +1,14 @@
 package ca.gc.tri_agency.granting_data.app.config;
 
+import java.util.Collection;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
+import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -14,8 +17,15 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider;
+import org.springframework.security.ldap.userdetails.LdapUserDetails;
+import org.springframework.security.ldap.userdetails.LdapUserDetailsMapper;
+import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
 
+import ca.gc.tri_agency.granting_data.ldap.ADUserDetails;
+import ca.gc.tri_agency.granting_data.ldap.ADUserService;
 import ca.gc.tri_agency.granting_data.security.CustomAuthoritiesMapper;
 
 @EnableWebSecurity
@@ -80,15 +90,28 @@ public class WebSecurityConfig {
 		return retval;
 	}
 
+	@Bean
+	public UserDetailsContextMapper userDetailsContextMapper() {
+		return new LdapUserDetailsMapper() {
+			@Override
+			public UserDetails mapUserFromContext(DirContextOperations ctx, String username,
+					Collection<? extends GrantedAuthority> authorities) {
+				UserDetails userDetails = super.mapUserFromContext(ctx, username, authorities);
+
+				return new ADUserDetails((LdapUserDetails) userDetails, new ADUserService(ldapTemplateNSERC(), ldapTemplateSSHRC()));
+			}
+		};
+	}
+
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 		if (ldapUrlNSERC.contains("localhost")) {
-			auth.ldapAuthentication().userDnPatterns(ldapUserDnPatternNSERC).groupSearchBase(ldapGroupSearchBase)
-					.contextSource().url(ldapUrlNSERC + ldapBaseDnNSERC).and().passwordCompare()
-					.passwordAttribute("userPassword");
-			auth.ldapAuthentication().userDnPatterns(ldapUserDnPatternSSHRC).groupSearchBase(ldapGroupSearchBase)
-					.contextSource().url(ldapUrlSSHRC + ldapBaseDnSSHRC).and().passwordCompare()
-					.passwordAttribute("userPassword");
+			auth.ldapAuthentication().userDetailsContextMapper(userDetailsContextMapper())
+					.userDnPatterns(ldapUserDnPatternNSERC).groupSearchBase(ldapGroupSearchBase).contextSource()
+					.url(ldapUrlNSERC + ldapBaseDnNSERC).and().passwordCompare().passwordAttribute("userPassword");
+			auth.ldapAuthentication().userDetailsContextMapper(userDetailsContextMapper())
+					.userDnPatterns(ldapUserDnPatternSSHRC).groupSearchBase(ldapGroupSearchBase).contextSource()
+					.url(ldapUrlSSHRC + ldapBaseDnSSHRC).and().passwordCompare().passwordAttribute("userPassword");
 		} else {
 			auth.authenticationProvider(activeDirectoryLdapAuthenticationProviderNSERC());
 			auth.authenticationProvider(activeDirectoryLdapAuthenticationProviderSSHRC());

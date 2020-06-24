@@ -20,28 +20,29 @@
 
 			<div class="panel-body">
 
-				<table class="wb-tables table table-striped table-hover dataTable" aria-live="polite"
-						data-wb-tables='{ "scrollX" : "true" }'>
+				<table class="wb-tables table table-striped table-hover dataTable" aria-live="polite" data-wb-tables='{ "scrollX" : "true" }'>
 					<thead>
 						<tr>
 							<th th:text="#{th.id}"></th>
 							<th th:text="#{th.user}"></th>
 							<th th:text="#{th.type}"></th>
-							<th th:text="#{form.nameEn}"></th>
-							<th th:text="#{form.nameFr}"></th>
+							<th><span th:text="#{form.nameEn}" style="padding-right: 250px;"></span></th>
+							<th><span th:text="#{form.nameFr}" style="padding-right: 250px;"></span></th>
 							<th th:text="#{form.frequency}"></th>
-							<th th:text="#{form.fundingType}"></th>
+							<th><span
+								th:text="#{form.fundingType}" style="padding-right: 100px;"></span></th>
 							<th th:text="#{th.complex}"></th>
 							<th th:text="#{th.edi}"></th>
 							<th th:text="#{th.jointInitiative}"></th>
 							<th th:text="#{form.loi}"></th>
 							<th th:text="#{form.noi}"></th>
 							<th th:text="#{th.partnerOrg}"></th>
-							<th th:text="#{th.leadName}"></th>
+							<th><span
+								th:text="#{th.leadName}" style="padding-right: 50px;"></span></th>
 							<th th:text="#{th.leadDn}"></th>
 							<th th:text="#{form.agency}"></th>
 							<th th:text="#{th.bu}"></th>
-							<th th:text="#{th.date}"></th>
+							<th><span th:text="#{th.date}" style="padding-right: 50px;"></span></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -73,7 +74,7 @@
 			<div th:replace="fragments/general :: returnHome"></div>
 
 		</div>
-		
+
 	</main>
 
 	<footer th:replace="fragments/general :: footer(~{})"></footer>
