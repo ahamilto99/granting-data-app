@@ -55,8 +55,8 @@ public class WebSecurityConfig {
 		contextSource.setBase(ldapBaseDnNSERC);
 
 		// added
-		contextSource.setUserDn("cn=Hamilton\\,Alexander,ou=Dev_Users,dc=nserc,dc=ca");
-		contextSource.setPassword("9973@so((er#15");
+		contextSource.setUserDn(/* MUST BE FILLED IN WITH AN ACTUAL AD ACCOUNT */);
+		contextSource.setPassword(/* MUST BE FILLED IN WITH AN ACTUAL AD ACCOUNT */);
 
 //		contextSource.setAnonymousReadOnly(true);
 		return contextSource;
@@ -69,8 +69,8 @@ public class WebSecurityConfig {
 		contextSource.setBase(ldapBaseDnSSHRC);
 
 		// added
-		contextSource.setUserDn("cn=Hamilton\\,Alexander,ou=Dev_Users,dc=nserc,dc=ca");
-		contextSource.setPassword("9973@so((er#15");
+		contextSource.setUserDn(/* MUST BE FILLED IN WITH AN ACTUAL AD ACCOUNT */);
+		contextSource.setPassword(/* MUST BE FILLED IN WITH AN ACTUAL AD ACCOUNT */);
 
 //		contextSource.setAnonymousReadOnly(true);
 		return contextSource;
