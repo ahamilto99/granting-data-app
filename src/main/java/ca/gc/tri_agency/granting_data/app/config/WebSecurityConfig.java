@@ -98,7 +98,7 @@ public class WebSecurityConfig {
 					Collection<? extends GrantedAuthority> authorities) {
 				UserDetails userDetails = super.mapUserFromContext(ctx, username, authorities);
 
-				return new ADUserDetails((LdapUserDetails) userDetails, new ADUserService(ldapTemplateNSERC(), ldapTemplateSSHRC()));
+				return new ADUserDetails((LdapUserDetails) userDetails);
 			}
 		};
 	}

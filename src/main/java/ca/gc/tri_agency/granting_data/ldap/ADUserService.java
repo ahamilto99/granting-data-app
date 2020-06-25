@@ -18,6 +18,8 @@ import org.springframework.ldap.query.LdapQueryBuilder;
 import org.springframework.ldap.support.LdapUtils;
 import org.springframework.stereotype.Service;
 
+import ca.gc.tri_agency.granting_data.security.SecurityUtils;
+
 @Service
 public class ADUserService {
 
@@ -26,6 +28,10 @@ public class ADUserService {
 	private LdapTemplate ldapTemplateSSHRC;
 
 	private static final Logger LOG = LogManager.getLogger();
+	
+	private String currentUsername;
+	
+	private String currentUserFirstName;
 
 	@Autowired
 	public ADUserService(@Qualifier("ldapTemplateNSERC") LdapTemplate ldapTemplateNSERC,
@@ -109,5 +115,15 @@ public class ADUserService {
 		return adUsers;
 
 	}
+
+	public String getCurrentUserFirstName() {
+		String username = SecurityUtils.getCurrentUsername();
+		if (currentUsername == null || ! username.equals(currentUsername)) {
+			currentUsername = username;
+			currentUserFirstName = findADUserByDn(findDnByADUserLogin(currentUsername)).getFullName();
+		}
+		return currentUserFirstName;
+	}
+	
 
 }

@@ -116,7 +116,7 @@
     	<h1 id="wb-cont" th:text="#{h.nuansDashboard}"></h1>
 		<div th:fragment="profile_info(activeTab)" class="profileInfo">
 		    <ol class="noStyleList">
-				<li sec:authorize="isAuthenticated()"><span th:text="#{msg.welcome}"></span><b th:text="${#authentication.getPrincipal().getFullName()}"></b> | </li>
+				<li sec:authorize="isAuthenticated()"><span th:text="#{msg.welcome}"></span><b th:text="${@ADUserService.getCurrentUserFirstName()}"></b> | </li>
 			    <li><a href="/" th:text="#{msg.home}"></a> | </li>  
 				<li sec:authorize="isAuthenticated()" class="mrgn-rght-sm"><a href="/logout" th:text="#{input.signOut}"></a></li>
 				<li sec:authorize="!isAuthenticated()" class="mrgn-rght-sm"><a href="/login" th:text="#{input.signIn}"></a></li>
