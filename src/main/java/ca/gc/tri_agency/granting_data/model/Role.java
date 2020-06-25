@@ -6,10 +6,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 
+import org.hibernate.envers.Audited;
+
 import ca.gc.tri_agency.granting_data.model.util.LocalizedParametersModel;
 
 @Entity
-public class Role implements LocalizedParametersModel{
+@Audited
+public class Role implements LocalizedParametersModel {
 
 	@Id
 	@SequenceGenerator(name = "SEQ_ROLE", sequenceName = "SEQ_ROLE", initialValue = 1, allocationSize = 1) 

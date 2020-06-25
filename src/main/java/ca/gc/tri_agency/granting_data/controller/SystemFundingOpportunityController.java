@@ -50,6 +50,7 @@ public class SystemFundingOpportunityController {
 
 		model.addAttribute("systemFO", sfoService.findSystemFundingOpportunityById(id));
 		model.addAttribute("fosForLink", foService.findAllFundingOpportunities());
+		model.addAttribute("revisionList", sfoService.findSystemFundingOpportunityRevisionById(id));
 		return "admin/viewSystemFO";
 	}
 
@@ -90,10 +91,23 @@ public class SystemFundingOpportunityController {
 		return "redirect:/admin/viewSFO?id=" + sfoId;
 	}
 
-	@PostMapping("/registerFOLink")
-	public String registerProgramLinkPost(@ModelAttribute("id") Long id, @ModelAttribute("foId") Long foId) {
+	@PostMapping("/admin/registerFOLink")
+	public String registerProgramLinkPost(@ModelAttribute("id") Long id, @ModelAttribute("foId") Long foId,
+			RedirectAttributes redirectAttributes) {
 		sfoService.linkSystemFundingOpportunity(id, foId);
-		return "redirect:analyzeSFOs";
+
+		SystemFundingOpportunity sfoLinked = sfoService.findSystemFundingOpportunityById(id);
+		String linkedTo = msgSource.getMessage("msg.linkPerformed", null, LocaleContextHolder.getLocale());
+		redirectAttributes.addFlashAttribute("actionMessage", sfoLinked.getLocalizedAttribute("name") + linkedTo
+				+ sfoLinked.getLinkedFundingOpportunity().getLocalizedAttribute("name"));
+
+		return "redirect:/admin/viewSFO?id=" + id;
+	}
+
+	@GetMapping("/admin/auditLogSFO")
+	public String systemFundingOpportunityAuditLog(Model model) {
+		model.addAttribute("revisionList", sfoService.findAllSystemFundingOpportunityRevisions());
+		return "admin/systemFundingOpportunityAuditLog";
 	}
 
 }

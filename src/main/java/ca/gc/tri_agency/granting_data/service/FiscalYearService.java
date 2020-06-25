@@ -10,10 +10,12 @@ public interface FiscalYearService {
 
 	FiscalYear findFiscalYearById(Long id);
 	
-	List<FiscalYear> findAllFiscalYears();
+	List<FiscalYear> findAllFiscalYearsOrderByYearAsc();
 	
 	Optional<FiscalYear> findFiscalYearByYear(Long yr);
 	
 	FiscalYear saveFiscalYear(FiscalYear fy) throws UniqueColumnException;
+	
+	List<Object[]> findNumAppsExpectedForEachFiscalYear();
 	
 }

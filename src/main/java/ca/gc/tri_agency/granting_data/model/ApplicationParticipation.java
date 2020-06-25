@@ -12,8 +12,6 @@ import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.springframework.data.annotation.CreatedDate;
-
 import ca.gc.tri_agency.granting_data.model.util.LocalizedParametersModel;
 
 @Entity
@@ -38,7 +36,6 @@ public class ApplicationParticipation implements LocalizedParametersModel {
 
 	private String programFr;
 
-	@CreatedDate
 	private Instant createDate;
 
 	private String roleCode;

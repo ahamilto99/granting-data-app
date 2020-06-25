@@ -1,61 +1,67 @@
-<!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{fragments/general.html :: common_header(~{::title},~{::link},~{::script})}">
-	<title th:text="#{title.viewAgency}"></title>
-	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" />
-	<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-	<script type="text/javascript">
-		$(document).ready( function () {
-			var table = $('#dataTable').DataTable({});
-		});
-	</script>
+<!DOCTYPE html>
+<!--[if lt IE 9]><html class="no-js lt-ie9" lang="en" dir="ltr"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!--<![endif]-->
 
+<head th:replace="~{fragments/general.html :: common_header(~{::title},~{})}">
+<meta charset="utf-8">
+<title th:text="#{th.viewAgency}"></title>
 </head>
-<body>
-	<div th:insert="~{fragments/general.html :: header_nav('entities')}"></div>
-	<div class="container">
+<body class="home" vocab="http://schema.org/" typeof="WebPage">
+	<div th:insert="~{fragments/general.html :: header_nav('home')}"></div>
+	<main role="main" property="mainContentOfPage" class="container">
+
 		<h1 th:text="#{th.viewAgency}"></h1>
-		<div class="form-group row">
-			<div class="col-sm-2 col-form-label" th:utext="#{form.name}">Name</div>
-			<div class="col-sm-10" th:text="${agency.getLocalizedAttribute('name')}"></div>
-		</div>
-		<div class="form-group row">
-			<div class="col-sm-2 col-form-label" th:utext="#{form.acronym}">Acronym</div>
-			<div class="col-sm-10" th:text="${agency.getLocalizedAttribute('acronym')}"></div>
-		</div>
-		<div class="form-group row">
-			<div class="col-sm-2 col-form-label" th:utext="#{form.FOs}">Programs</div>
-		</div>
-		<div class="form-group row">
-			<div class="col-sm-10">
-				<table id="dataTable">
+
+		<div th:insert="~{fragments/general.html :: profile_info('home')}"></div>
+
+		<div class="panel panel-default">
+
+			<div class="panel-body">
+			
+			<p th:if="${actionMsg != null}" th:utext="${actionMsg}" style="font-weight: bold;"></p>
+
+				<div class="form-group row">
+					<label class="col-sm-2 col-form-label" th:text="#{form.name}"></label>
+					<div class="col-sm-10" th:text="${agency.getLocalizedAttribute('name')}"></div>
+				</div>
+
+				<div class="form-group row">
+					<label class="col-sm-2 col-form-label" th:text="#{form.acronym}"></label>
+					<div class="col-sm-10" th:text="${agency.getLocalizedAttribute('acronym')}"></div>
+				</div>
+
+				<div class="form-group">
+					<h3 th:text="#{form.FOs}" style="margin: 25px 0px;"></h3>
+				</div>
+
+				<table id="dataTable" class="wb-tables table table-striped table-hover dataTable" aria-live="polite">
 					<thead>
 						<tr>
-							<td th:text="#{form.name}"></td>
-							<td th:text="#{form.leadAgency}"></td>
+							<th th:text="#{form.name}"></th>
+							<th th:text="#{form.programLead}"></th>
+							<th th:text="#{form.businessUnit}"></th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr th:each="fo : ${agencyFos}">
 							<td><a th:href="@{'/browse/viewFo'(id=${fo.id})}" th:text="${fo.getLocalizedAttribute('name')}"></a></td>
-							<td th:text="${fo.leadAgency.getLocalizedAttribute('acronym')}"></td>
+							<td th:text="${fo.programLeadName}"></td>
+							<td th:text="${fo.businessUnit.getLocalizedAttribute('name')}"></td>
 						</tr>
 					</tbody>
 				</table>
-			</div>
-		</div>
-		<div class="form-group row">
-			<div>
-				<h3 th:text="#{h.businessUnits}"></h3>
-			</div>
-		</div>
-		<div class="form-group row">
-			<div class="col-sm-10">
-				<table id="businessUnitsTable" class="table table-bordered">
+
+				<div class="form-group">
+					<h3 th:text="#{h.businessUnits}" style="margin: 25px 0px;"></h3>
+				</div>
+
+				<table id="businessUnitsTable" class="wb-tables table table-striped table-hover dataTable" aria-live="polite">
 					<thead>
 						<tr>
-							<td th:text="#{th.name}"></td>
-							<td th:text="#{th.acronym}"></td>
+							<th th:text="#{th.name}"></th>
+							<th th:text="#{th.acronym}"></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -65,11 +71,18 @@
 						</tr>
 					</tbody>
 				</table>
+
+				<a sec:authorize="hasRole('MDM ADMIN')" id="createBusinessUnit" class="btn btn-primary"
+					th:href="@{'/admin/createBU'(agencyId=${agency.id})}" th:text="#{link.createBusinessUnit}"></a>
 			</div>
+
+			<div th:insert="fragments/general :: returnHome"></div>
+
 		</div>
-		<h4 th:if="${actionMsg != null}" th:utext="${actionMsg}"></h4>
-		<a sec:authorize="hasRole('MDM ADMIN')" id="createBusinessUnit" class="btn btn-primary"
-			th:href="@{'/admin/createBU'(agencyId=${agency.id})}" th:text="#{link.createBusinessUnit}" style="margin-bottom: 100px"></a>
-	</div>
+
+	</main>
+
+	<footer th:insert="fragments/general :: footer(~{})"></footer>
+
 </body>
 </html>

@@ -55,8 +55,8 @@ public class WebSecurityConfig {
 		contextSource.setBase(ldapBaseDnNSERC);
 
 		// added
-		contextSource.setUserDn(/* MUST BE FILLED IN WITH AN ACTUAL AD ACCOUNT */);
-		contextSource.setPassword(/* MUST BE FILLED IN WITH AN ACTUAL AD ACCOUNT */);
+//		contextSource.setUserDn(/* MUST BE FILLED IN WITH AN ACTUAL AD ACCOUNT */);
+//		contextSource.setPassword(/* MUST BE FILLED IN WITH AN ACTUAL AD ACCOUNT */);
 
 //		contextSource.setAnonymousReadOnly(true);
 		return contextSource;
@@ -69,8 +69,8 @@ public class WebSecurityConfig {
 		contextSource.setBase(ldapBaseDnSSHRC);
 
 		// added
-		contextSource.setUserDn(/* MUST BE FILLED IN WITH AN ACTUAL AD ACCOUNT */);
-		contextSource.setPassword(/* MUST BE FILLED IN WITH AN ACTUAL AD ACCOUNT */);
+//		contextSource.setUserDn(/* MUST BE FILLED IN WITH AN ACTUAL AD ACCOUNT */);
+//		contextSource.setPassword(/* MUST BE FILLED IN WITH AN ACTUAL AD ACCOUNT */);
 
 //		contextSource.setAnonymousReadOnly(true);
 		return contextSource;
@@ -87,10 +87,6 @@ public class WebSecurityConfig {
 	public LdapTemplate ldapTemplateSSHRC() {
 		LdapTemplate retval = new LdapTemplate(contextSourceSSHRC());
 		retval.setIgnorePartialResultException(true);
-
-		// added
-		retval.setDefaultCountLimit(0);
-
 		return retval;
 	}
 
@@ -127,7 +123,8 @@ public class WebSecurityConfig {
 		protected void configure(HttpSecurity http) throws Exception {
 
 			http.authorizeRequests()
-					.antMatchers("/", "/home", "/webjars/**", "/css/**", "/images/**", "/js/**", "/browse/**")
+					.antMatchers("/", "/home", "/webjars/**", "/css/**", "/images/**", "/js/**", "/browse/**",
+							"_WET_4-0/themes-dist/")
 					.permitAll().and().authorizeRequests().antMatchers("/entities/**", "/reports/**")
 					.hasAnyRole("NSERC_USER", "SSHRC_USER", "AGENCY_USER").anyRequest().authenticated().and()
 					.formLogin().loginPage("/login").permitAll().and().logout().permitAll().and()

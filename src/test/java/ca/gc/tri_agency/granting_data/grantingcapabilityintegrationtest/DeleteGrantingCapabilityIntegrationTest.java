@@ -109,7 +109,7 @@ public class DeleteGrantingCapabilityIntegrationTest {
 				.andExpect(MockMvcResultMatchers.flash().attribute("actionMsg",
 						"Successfully Deleted Granting Capability"));
 
-		mvc.perform(MockMvcRequestBuilders.get("manage/manageFo").param("id", foId))
+		mvc.perform(MockMvcRequestBuilders.get("/manage/manageFo").param("id", foId))
 				.andExpect(MockMvcResultMatchers.flash().attributeCount(0));
 
 		assertEquals(numGCs - 1, gcRepo.count());

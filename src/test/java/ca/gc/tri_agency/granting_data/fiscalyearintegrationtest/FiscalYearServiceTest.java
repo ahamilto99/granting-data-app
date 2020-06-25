@@ -5,6 +5,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +48,7 @@ public class FiscalYearServiceTest {
 	@WithAnonymousUser
 	@Test
 	public void test_findAllFiscalYears() {
-		assertTrue(0 < fyService.findAllFiscalYears().size());
+		assertTrue(0 < fyService.findAllFiscalYearsOrderByYearAsc().size());
 	}
 
 	@WithAnonymousUser
@@ -75,5 +77,14 @@ public class FiscalYearServiceTest {
 	@Test(expected = AccessDeniedException.class)
 	public void test_nonAdminCannotCreateFiscalYear() {
 		fyService.saveFiscalYear(new FiscalYear(2041L));
+	}
+	
+	@WithAnonymousUser
+	@Test
+	public void test_findNumAppsExpectedForEachFiscalYear() {
+		List<Object[]> results = fyService.findNumAppsExpectedForEachFiscalYear();
+		
+		assertEquals(4, results.size());
+		assertEquals(702_527L, results.get(3)[2]);
 	}
 }

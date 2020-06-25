@@ -21,7 +21,6 @@ import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
 @SpringBootTest(classes = GrantingDataApp.class)
 @RunWith(SpringRunner.class)
 @ActiveProfiles("test")
-//@Ignore(value = "The FiscalYear functionality is not required for Version 1")
 public class BrowseFiscalYearsIntegrationTest {
 
 	@Autowired

@@ -11,7 +11,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.NoSuchElementException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -40,6 +43,8 @@ public class AdminServiceImpl implements AdminService {
 
 	@Value("${dataset.analysis.folder}")
 	private String datasetAnalysisFolder;
+	
+	private static final Logger LOG = LoggerFactory.getLogger(AdminService.class);
 
 	@Autowired
 	public AdminServiceImpl(SystemFundingCycleService sfcService, SystemFundingOpportunityService sfoService,
@@ -68,7 +73,13 @@ public class AdminServiceImpl implements AdminService {
 		xcelite = new Xcelite(new File(datasetAnalysisFolder + filename));
 		XceliteSheet sheet = xcelite.getSheet(0);
 		SheetReader<FundingCycleDatasetRow> reader = sheet.getBeanReader(FundingCycleDatasetRow.class);
-		rows = reader.read();
+		try {
+			rows = reader.read();
+		} catch (NoSuchElementException nse) {
+			nse.printStackTrace();
+			LOG.error("That file contains no FundingCycleDataSetRows");
+			return new ArrayList<FundingCycleDatasetRow>();
+		}
 
 		return new ArrayList<FundingCycleDatasetRow>(rows);
 	}

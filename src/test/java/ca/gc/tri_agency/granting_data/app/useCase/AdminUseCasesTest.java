@@ -71,7 +71,7 @@ public class AdminUseCasesTest {
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void testSelectFileForCopmarisonFilePageLinkRequests() throws Exception {
-		mvc.perform(get("/admin/analyzeFoUploadData").param("filename", "NAMIS-TestFile.xlsx"))
+		mvc.perform(get("/admin/analyzeFoUploadData").param("filename", "CRM-TestFile.xlsx"))
 				.andExpect(status().isOk());
 	}
 

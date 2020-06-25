@@ -1,46 +1,55 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{fragments/general.html :: common_header(~{::title},~{::link},~{::script})}">
-	<meta charset="ISO-8859-1">
-	<title th:text="#{title.viewFYsPage}"></title>
-	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" />
-	<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-	<script type="text/javascript">
-		$(document).ready( function () {
-			var table = $('#fiscalYear').DataTable({});
-		});
-	</script>
+<!--[if lt IE 9]><html class="no-js lt-ie9" lang="en" dir="ltr"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!--<![endif]-->
+
+<head th:replace="~{fragments/general.html :: common_header(~{::title},~{})}">
+<meta charset="utf-8">
+<title th:text="#{h.fys}"></title>
 </head>
-<body id="viewFiscalYearsPage">
+<body id="viewFiscalYearsPage" class="home" vocab="http://schema.org/" typeof="WebPage">
 	<div th:insert="~{fragments/general.html :: header_nav('home')}"></div>
-	<div class="container" style="margin-bottom: 50px">
-	
+	<main role="main" property="mainContentOfPage" class="container">
+
 		<h1 th:text="#{h.fys}" style="margin-bottom: 25px"></h1>
 
-		<table id="fiscalYear" class="display">
+		<div th:insert="~{fragments/general.html :: profile_info('home')}"></div>
 
-			<thead>
-				<tr class="form-group row">
-					<th th:text="#{title.fy}"></th>
-					<th th:text="#{th.fcsList}"></th>
+		<div class="panel panel-default">
 
-				</tr>
-			</thead>
+			<div class="panel-body">
 
-			<tbody>
-				<tr th:each="fo : ${fiscalYears}" class="form-group row">
-					<td><span th:text="${fo.year}"></span></td>
-					<td><a class="btn btn-primary" th:href="@{viewFcFromFy(id=${fo.id})}" role="button" th:text="#{msg.view}"></a></td>
-					<!-- add expected applications -->
-				</tr>
-			</tbody>
+				<table id="fiscalYearTable" class="wb-tables table table-striped table-hover dataTable" aria-live="polite">
+					<thead>
+						<tr class="form-group row">
+							<th th:text="#{title.fy}"></th>
+							<th th:text="#{form.numAppsExpected}"></th>
+							<th th:text="#{th.fcsList}"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="fy : ${fiscalYearStats}" class="form-group row">
+							<td th:text="${fy[1]}"></td>
+							<td th:text="${fy[2] ne null ? #numbers.formatInteger(fy[2], 1, 'COMMA') : 0}"></td>
+							<td><span th:if="${fy[2] eq null}" th:text="#{msg.none}"></span><a th:if="${fy[2] ne null}" class="btn btn-primary" th:href="@{viewFcFromFy(fyId=${fy[0]})}" role="button" th:text="#{msg.view}"></a></td>
+						</tr>
+					</tbody>
+				</table>
 
-		</table>
+				<div sec:authorize="hasRole('MDM ADMIN')" class="form-group row">
+					<a id="createFiscalYearLink" th:href="@{/manage/createFY}" th:text="#{link.createFy}" class="btn-primary btn"></a>
+				</div>
 
-		<div sec:authorize="hasRole('MDM ADMIN')" class="form-group row" style="margin: 25px 0px 50px 0px;">
-			<a id="createFiscalYearLink" th:href="@{/manage/createFY}" th:text="#{link.createFy}" class="btn-primary btn"></a>
+			</div>
+
+			<div th:insert="fragments/general :: returnHome"></div>
+
 		</div>
 
-	</div>
+	</main>
+
+	<footer th:insert="fragments/general :: footer(~{})"></footer>
+
 </body>
 </html>

@@ -1,27 +1,36 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/general.html :: common_header(~{::title},~{},~{})}">
-<head>
-<meta charset="ISO-8859-1">
-<title th:text="#{title.home}"></title>
-</head>
-<body>
-	<div th:insert="~{fragments/general.html :: header_nav('home')}" />
-	<div class="container">
+<!--[if lt IE 9]><html class="no-js lt-ie9" lang="en" dir="ltr"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!--<![endif]-->
 
-		<div th:if="${param.error}" th:text="#{err.invalidLogin}"></div>
-		<div th:if="${param.logout}" th:text="#{msg.loggedOut}"></div>
-		<form th:action="@{/login}" method="post">
-			<div>
-				<label th:utext="#{label.username}" style="width: 100px;"> </label><input type="text" name="username" />
-			</div>
-			<div>
-				<label th:utext="#{label.password}" style="width: 100px;"> </label><input type="password" name="password" />
-			</div>
-			<div>
-				<input type="submit" th:value="#{input.signIn}" />
-			</div>
-		</form>
-	</div>
+<head th:replace="~{fragments/general.html :: common_header(~{::title},~{})}">
+	<meta charset="ISO-8859-1">
+	<title th:text="#{title.home}"></title>
+</head>
+<body  class="home" vocab="http://schema.org/" typeof="WebPage">
+	<div th:insert="~{fragments/general.html :: header_nav('home')}"></div>
+	<main role="main" property="mainContentOfPage" class="container">
+		<h1 th:text="#{title.home}"></h1>
+		<div th:insert="~{fragments/general.html :: profile_info('home')}" ></div>
+
+		<div class="panel-body">
+
+			<div th:if="${param.error}" th:text="#{err.invalidLogin}"></div>
+			<div th:if="${param.logout}" th:text="#{msg.loggedOut}"></div>
+			<form th:action="@{/login}" method="post">
+				<div>
+					<label th:utext="#{label.username}" style="width: 100px;"> </label><input type="text" name="username" />
+				</div>
+				<div>
+					<label th:utext="#{label.password}" style="width: 100px;"> </label><input type="password" name="password" />
+				</div>
+				<div>
+					<input type="submit" th:value="#{input.signIn}" />
+				</div>
+			</form>
+		</div>
+	</main>
+	<footer th:insert="~{fragments/general.html :: footer(~{})}" />
 </body>
 </html>

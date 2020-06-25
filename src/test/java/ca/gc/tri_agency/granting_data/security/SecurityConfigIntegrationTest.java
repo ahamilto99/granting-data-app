@@ -89,16 +89,16 @@ public class SecurityConfigIntegrationTest {
 	@Test
         public void signOutButtonVisibleOnlyForAuthenticatedUsers() throws Exception {
                 ResultActions resAction = mvc.perform(get("/home")).andExpect(status().isOk())
-                    .andExpect(MockMvcResultMatchers.content().string(containsString("value=\"Sign Out\"")));
-                assertFalse(resAction.andReturn().getResponse().getContentAsString().contains(">Sign In</button>"));
+                    .andExpect(MockMvcResultMatchers.content().string(containsString(">Sign Out</a>")));
+                assertFalse(resAction.andReturn().getResponse().getContentAsString().contains("Sign In"));
         }
     
         @WithAnonymousUser
         @Test
         public void signInButtonVisibleOnlyForUnauthenticatedUsers() throws Exception {
                 ResultActions resAction = mvc.perform(get("/home")).andExpect(status().isOk())
-                    .andExpect(MockMvcResultMatchers.content().string(containsString(">Sign In</button>")));
-                assertFalse(resAction.andReturn().getResponse().getContentAsString().contains("value=\"Sign Out\""));
+                    .andExpect(MockMvcResultMatchers.content().string(containsString(">Sign In</a>")));
+                assertFalse(resAction.andReturn().getResponse().getContentAsString().contains("Sign Out"));
         }
 
 }

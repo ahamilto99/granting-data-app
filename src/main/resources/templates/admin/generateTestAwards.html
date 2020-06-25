@@ -1,23 +1,48 @@
-<!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/general.html :: common_header(~{::title},~{},~{})}">
+<!DOCTYPE html>
+<!--[if lt IE 9]><html class="no-js lt-ie9" lang="en" dir="ltr"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!--<![endif]-->
+
+<head th:replace="~{fragments/general.html :: common_header(~{::title},~{})}">
+<meta charset="utf-8">
 <title th:text="#{title.generateTestAwards}"></title>
 </head>
-<body>
-
+<body class="home" vocab="http://schema.org/" typeof="WebPage">
 	<div th:insert="~{fragments/general.html :: header_nav('home')}"></div>
+	<main role="main" property="mainContentOfPage" class="container">
 
-	<div class="container">
-	
 		<h1 th:text="#{title.generateTestAwards}"></h1>
-		
-		<p th:text="#{intro.generateTestAwards}"></p>
-		
-		<form action="generateTestAwards" method="post">
-			<input type="submit" class="btn btn-primary" th:value="#{input.generateTestAppParticipations}"/>
-		</form>
-	
-	</div>
+
+		<div th:insert="~{fragments/general.html :: profile_info('home')}"></div>
+
+		<div class="panel panel-default">
+
+			<div class="panel-body">
+
+				<p th:text="#{intro.generateTestAwards}"></p>
+
+				<div class="web-frmlvd">
+
+					<form action="generateTestAwards" method="post">
+
+						<div class="form-group">
+							<input type="submit" class="btn btn-primary" th:value="#{input.generateTestAppParticipations}" />
+						</div>
+
+					</form>
+
+				</div>
+
+			</div>
+
+			<div th:insert="fragments/general :: returnHome"></div>
+
+		</div>
+
+	</main>
+
+	<footer th:insert="fragments/general :: footer(~{})"></footer>
 
 </body>
 </html>
