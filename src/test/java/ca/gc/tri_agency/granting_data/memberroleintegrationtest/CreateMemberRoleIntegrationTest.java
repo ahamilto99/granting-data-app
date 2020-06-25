@@ -40,7 +40,7 @@ public class CreateMemberRoleIntegrationTest {
 		mvc = MockMvcBuilders.webAppContextSetup(ctx).apply(SecurityMockMvcConfigurers.springSecurity()).build();
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_createMRLinkVisibleToAdmin_shouldSucceedWith200() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/browse/viewBU").param("id", "1"))
@@ -48,7 +48,7 @@ public class CreateMemberRoleIntegrationTest {
 						.string(Matchers.containsString("id=\"createMemberRoleLink\"")));
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_createMRLinkNotVisibleToNonAdmin_shouldReturn200() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/browse/viewBU").param("id", "1"))
@@ -56,7 +56,7 @@ public class CreateMemberRoleIntegrationTest {
 						.string(Matchers.not(containsString("id=\"createMemberRoleLink\""))));
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_adminCanAccessCreateMRPage_shouldSucceedWith200() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/admin/createMR").param("buId", "1"))
@@ -64,7 +64,7 @@ public class CreateMemberRoleIntegrationTest {
 						.string(Matchers.containsString("id=\"createMemberRolePage\"")));
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotAccessCreateMRPage_shouldReturn403() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/admin/createMR").param("buId", "1"))
@@ -72,7 +72,7 @@ public class CreateMemberRoleIntegrationTest {
 						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void testController_adminCanCreateMR_shouldSucceedWith302() throws Exception {
 		long initMRCount = mrRepo.count();
@@ -90,7 +90,7 @@ public class CreateMemberRoleIntegrationTest {
 		assertEquals(initMRCount + 1, mrRepo.count());
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void testController_nonAdminCannotCreateMR_shouldReturn403() throws Exception {
 		long initMRCount = mrRepo.count();

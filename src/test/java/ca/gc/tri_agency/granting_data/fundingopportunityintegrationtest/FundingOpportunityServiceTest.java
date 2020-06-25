@@ -43,7 +43,7 @@ public class FundingOpportunityServiceTest {
 		assertTrue(0 < foService.findFundingOpportunitiesByBusinessUnitId(1L).size());
 	}
 
-	@WithMockUser(username = "admin", roles = "MDM ADMIN")
+	@WithMockUser(username = "mock_admin", roles = "MDM ADMIN")
 	@Test
 	public void test_setFundingOpportunityLeadContributor() {
 		Long foId = 3L;
@@ -65,7 +65,7 @@ public class FundingOpportunityServiceTest {
 		assertEquals("NSERC1 User", updatedFo.getProgramLeadName());
 	}
 
-	@WithMockUser(username = "admin", roles = "MDM ADMIN")
+	@WithMockUser(username = "mock_admin", roles = "MDM ADMIN")
 	@Test
 	public void test_adminCanFindFundingOpportunityRevisionsById() {
 		final Long foId = 1L;
@@ -95,13 +95,13 @@ public class FundingOpportunityServiceTest {
 		assertEquals(1, numAdds);
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test(expected = AccessDeniedException.class)
 	public void test_nonAdminCannotFindFundingOpportunityRevisionsById_shouldThrowException() {
 		foService.findFundingOpportunityRevisionsById(1L);
 	}
 
-	@WithMockUser(username = "admin", roles = "MDM ADMIN")
+	@WithMockUser(username = "mock_admin", roles = "MDM ADMIN")
 	@Test
 	public void test_adminCanFindAllFundingOpportunitiesRevisions() {
 		int numAdds = 0;
@@ -116,7 +116,7 @@ public class FundingOpportunityServiceTest {
 		assertTrue(numAdds >= 141);
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test(expected = AccessDeniedException.class)
 	public void test_nonAdminCannotFindAllFundingOpportunitiesRevisions() {
 		foService.findAllFundingOpportunitiesRevisions();

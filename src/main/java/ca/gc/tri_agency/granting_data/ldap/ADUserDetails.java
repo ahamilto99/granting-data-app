@@ -17,7 +17,6 @@ public class ADUserDetails implements LdapUserDetails {
 		this.ldapUserDetails = ldapUserDetails;
 	}
 
-	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return ldapUserDetails.getAuthorities();
 	}
@@ -56,7 +55,7 @@ public class ADUserDetails implements LdapUserDetails {
 	public String getDn() {
 		return ldapUserDetails.getDn();
 	}
-	
+
 	@Override
 	public void eraseCredentials() {
 	}

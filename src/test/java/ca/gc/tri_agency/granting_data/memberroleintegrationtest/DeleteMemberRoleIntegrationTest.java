@@ -40,7 +40,7 @@ public class DeleteMemberRoleIntegrationTest {
 		mvc = MockMvcBuilders.webAppContextSetup(ctx).apply(SecurityMockMvcConfigurers.springSecurity()).build();
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_deleteMRLinkVisibleToAdmin_shouldSucceedWith200() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/browse/viewBU").param("id", "1"))
@@ -48,7 +48,7 @@ public class DeleteMemberRoleIntegrationTest {
 				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("id=\"deleteMemberRole\"")));
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_deleteMRLinkNotVisibleToNonAdmin_shouldReturn200() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/browse/viewBU").param("id", "1"))
@@ -56,7 +56,7 @@ public class DeleteMemberRoleIntegrationTest {
 						.string(Matchers.not(Matchers.containsString("id=\"deleteMemberRole\""))));
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Rollback
 	@Test
 	public void testController_adminCanDeleteMR_shouldSucceedWith302() throws Exception {
@@ -65,7 +65,7 @@ public class DeleteMemberRoleIntegrationTest {
 		mvc.perform(MockMvcRequestBuilders.get("/browse/viewBU").param("mrId", "3"))
 				.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
 				.andExpect(MockMvcResultMatchers.redirectedUrl("/browse/viewBU?id=1")).andExpect(MockMvcResultMatchers
-						.flash().attribute("actionMsg", "Successfully Deleted Member Role for: rwi"));
+						.flash().attribute("actionMsg", "Successfully Deleted Member Role for: admin"));
 
 		mvc.perform(MockMvcRequestBuilders.get("/browse/ViewBU").param("id", "1"))
 				.andExpect(MockMvcResultMatchers.flash().attributeCount(0));
@@ -73,7 +73,7 @@ public class DeleteMemberRoleIntegrationTest {
 		assertEquals(initMRCount - 1, mrRepo.count());
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void testController_nonAdminCannotDelete_shouldReturn403() throws Exception {
 		long initMRCount = mrRepo.count();

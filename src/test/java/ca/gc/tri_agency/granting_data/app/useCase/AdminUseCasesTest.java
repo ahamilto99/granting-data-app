@@ -54,34 +54,34 @@ public class AdminUseCasesTest {
 		mvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_formVisibleOnSearchUserPage_shouldSucceedWith200() throws Exception {
 		mvc.perform(get("/manage/searchUser")).andExpect(status().isOk())
 				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("id=\"searchUserForm\"")));
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void requestSelectBackendFileForComparison_withAdminUser_shouldSucceedWith200() throws Exception {
 		mvc.perform(get("/admin/selectFileForComparison").contentType(MediaType.APPLICATION_XHTML_XML))
 				.andExpect(status().isOk());
 	}
 	
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void testSelectFileForCopmarisonFilePageLinkRequests() throws Exception {
 		mvc.perform(get("/admin/analyzeFoUploadData").param("filename", "CRM-TestFile.xlsx"))
 				.andExpect(status().isOk());
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void testDatabaseIsPopulatedOnInstall() {
 		assertTrue("There are " + foRepo.findAll().size() + " FOs in the db", foRepo.findAll().size() > 100);
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void testChangeProgramLeadLink_visibleWithAdminUser() throws Exception {
 		foId = foRepo.findAll().get(0).getId().toString();
@@ -89,7 +89,7 @@ public class AdminUseCasesTest {
 				MockMvcResultMatchers.content().string(containsString("href=\"editProgramLead?id=" + foId + "\"")));
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void testViewEditProgramLead_withAdminUser_expectOk() throws Exception {
 		foId = foRepo.findAll().get(0).getId().toString();

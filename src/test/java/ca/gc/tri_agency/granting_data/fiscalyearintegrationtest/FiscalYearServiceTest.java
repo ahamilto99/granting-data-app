@@ -58,7 +58,7 @@ public class FiscalYearServiceTest {
 		assertFalse(fyService.findFiscalYearByYear(Long.MAX_VALUE).isPresent());
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Rollback
 	@Test(expected = UniqueColumnException.class)
 	public void test_adminCanCreateFiscalYear() {
@@ -73,7 +73,7 @@ public class FiscalYearServiceTest {
 		fyService.saveFiscalYear(new FiscalYear(2040L));
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test(expected = AccessDeniedException.class)
 	public void test_nonAdminCannotCreateFiscalYear() {
 		fyService.saveFiscalYear(new FiscalYear(2041L));

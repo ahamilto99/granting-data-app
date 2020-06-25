@@ -52,13 +52,13 @@ public class SecurityConfigIntegrationTest {
 				.andExpect(MockMvcResultMatchers.redirectedUrl("http://localhost/login"));
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void givenAdminAuthRequestOnAdminUrl_shouldSucceedWith200() throws Exception {
 		mvc.perform(get("/admin/home").contentType(MediaType.APPLICATION_XHTML_XML)).andExpect(status().isOk());
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER", "nserc-user-edi" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER", "nserc-user-edi" })
 	@Test
 	public void editProgramLeadLinkNotVisibleForNonAminUsers() throws Exception {
 		String mockResponse = mvc.perform(get("/manage/manageFo").param("id", "26")).andExpect(status().isOk())
@@ -67,7 +67,7 @@ public class SecurityConfigIntegrationTest {
 				mockResponse.contains("href=\"editProgramLead?id=26\""));
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER", "nserc-user-edi" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER", "nserc-user-edi" })
 	@Test
 	public void nonAdminUsersCannotAccessEditProgramLeadPage_shouldBeForbidden() throws Exception {
 		String mockResponse = mvc.perform(get("/manage/editProgramLead").param("id", "26")).andExpect(status().isForbidden())
@@ -76,7 +76,7 @@ public class SecurityConfigIntegrationTest {
 				"Non-admin users should not be able to access the \"Change Program Lead\" page");
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER", "nserc-user-edi" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER", "nserc-user-edi" })
 	@Test
 	public void nonAdminUserCannotAccessEditFOPage_shouldBeForbidden() throws Exception {
 		String mockResponse = mvc.perform(get("/manage/editFo").param("id", "26")).andExpect(status().isForbidden())
@@ -85,7 +85,7 @@ public class SecurityConfigIntegrationTest {
 				"Non-admin users should not be able to access the \"Edit Funding Opportunity\" page");
 	}
 	
-	@WithMockUser(roles = { "MDM ADMIN", "NSERC_USER", "SSHRC_USER", "AGENCY_USER", "nserc-user-edi" })
+	@WithMockUser(username = "mock_agency_user", roles = { "MDM ADMIN", "NSERC_USER", "SSHRC_USER", "AGENCY_USER", "nserc-user-edi" })
 	@Test
         public void signOutButtonVisibleOnlyForAuthenticatedUsers() throws Exception {
                 ResultActions resAction = mvc.perform(get("/home")).andExpect(status().isOk())

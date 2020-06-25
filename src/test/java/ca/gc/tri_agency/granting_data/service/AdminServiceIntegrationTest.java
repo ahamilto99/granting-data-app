@@ -60,7 +60,7 @@ public class AdminServiceIntegrationTest {
 
 	private static String testFoName = "TESTFO";
 
-	private static final String TEST_FILE = "NAMIS-TestFile.xlsx";
+	private static final String TEST_FILE = "CRM-TestFile.xlsx";
 
 	/* TEST UTIL FUNCTION */
 	FundingCycleDatasetRow createFcDatasetRow(String foName, String year) {
@@ -92,7 +92,7 @@ public class AdminServiceIntegrationTest {
 	}
 
 	@Test
-	@WithMockUser(username = "admin", roles = "MDM ADMIN")
+	@WithMockUser(username = "mock_admin", roles = "MDM ADMIN")
 	@Transactional
 	public void test_applyChangesFromFileByIds_regsiterSFCwhenSFOalreadyExists() {
 		String targetYear = "2009";
@@ -123,7 +123,7 @@ public class AdminServiceIntegrationTest {
 	}
 
 	@Test
-	@WithMockUser(username = "admin", roles = "MDM ADMIN")
+	@WithMockUser(username = "mock_admin", roles = "MDM ADMIN")
 	public void test_applyChangesFromFileByIds_adminCanRegisterSFOandSFC() throws Exception {
 		List<FundingCycleDatasetRow> fundingCycles = adminService.getFundingCyclesFromFile(TEST_FILE);
 		String[] idsToAction = new String[] { fundingCycles.get(0).getFoCycle() };
@@ -152,7 +152,7 @@ public class AdminServiceIntegrationTest {
 
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_generateActionableFoCycleIds_actionDueToNewSfc() {
 		// register FO
@@ -168,7 +168,7 @@ public class AdminServiceIntegrationTest {
 
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_generateActionableFoCycleIds_noActionCauseSfcAndSfoExists() {
 		GrantingSystem gs = gsSystem.findAllGrantingSystems().get(0);

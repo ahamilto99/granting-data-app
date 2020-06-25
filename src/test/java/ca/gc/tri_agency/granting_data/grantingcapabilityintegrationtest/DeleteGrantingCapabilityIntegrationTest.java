@@ -48,7 +48,7 @@ public class DeleteGrantingCapabilityIntegrationTest {
 		mvc = MockMvcBuilders.webAppContextSetup(ctx).apply(SecurityMockMvcConfigurers.springSecurity()).build();
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_deleteGCLinkVisibleToAdmin_shouldSucceedWith200() throws Exception {
 		long numGCs = gcService.findGrantingCapabilitiesByFoId(1L).size();
@@ -63,7 +63,7 @@ public class DeleteGrantingCapabilityIntegrationTest {
 		assertEquals(numGCs, numDeleteGCLinks);
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_deleteGCLinkNotVisibleToNonAdmin_shouldReturn200() throws Exception {
 		long numGCs = gcService.findGrantingCapabilitiesByFoId(1L).size();
@@ -79,7 +79,7 @@ public class DeleteGrantingCapabilityIntegrationTest {
 		assertEquals(0L, numDeleteGCLinks);
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_adminCanAccessDeleteGCPage_shouldSucceedWith200() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/manage/deleteGC").param("id", "102"))
@@ -87,7 +87,7 @@ public class DeleteGrantingCapabilityIntegrationTest {
 						.string(Matchers.containsString("id=\"deleteGrantingCapabilityPage\"")));
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotAccessDeleteGCPage_shouldReturn403() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/manage/deleteGC").param("id", "102"))
@@ -95,7 +95,7 @@ public class DeleteGrantingCapabilityIntegrationTest {
 						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Rollback
 	@Test
 	public void test_adminCanDeleteGC_shouldSucceedWith302() throws Exception {
@@ -115,7 +115,7 @@ public class DeleteGrantingCapabilityIntegrationTest {
 		assertEquals(numGCs - 1, gcRepo.count());
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotDeleteGC_shouldReturn403() throws Exception {
 		long numGCs = gcRepo.count();

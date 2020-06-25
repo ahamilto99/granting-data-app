@@ -49,14 +49,14 @@ public class CreateBusinessUnitIntegrationTest {
 	}
 
 	// CREATE LINK ACCESSIBLE VROM VIEW AGENCY PAGE, ONLY ACCESSIBLE BY ADMIN
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_createBULinkVisibleToAdmin_shouldSucceedWith200() throws Exception {
 		mvc.perform(get("/browse/viewAgency?id=1")).andExpect(status().isOk()).andExpect(
 				MockMvcResultMatchers.content().string(Matchers.containsString("id=\"createBusinessUnit\"")));
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_createBULinkNotVisibleToNonAdmin_shouldReturn200() throws Exception {
 		mvc.perform(get("/browse/viewAgency?id=1")).andExpect(status().isOk()).andExpect(
@@ -64,7 +64,7 @@ public class CreateBusinessUnitIntegrationTest {
 	}
 
 	// CREATE PAGE CAN ONLY BE ACCESSED BY ADMIN
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_adminCanAccessCreateBUPage_shouldSucceedWith200() throws Exception {
 		String agencyName = agencyService.findAgencyById(1L).getNameEn();
@@ -73,7 +73,7 @@ public class CreateBusinessUnitIntegrationTest {
 	}
 
 	// CREATE PAGE CANNOT BE ACCESSED BY NON-ADMIN
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdmminCannotAccessCreateBUPage_Return403() throws Exception {
 		assertTrue(mvc.perform(get("/admin/createBU?agencyId=1")).andExpect(status().isForbidden()).andReturn().getResponse()
@@ -81,7 +81,7 @@ public class CreateBusinessUnitIntegrationTest {
 	}
 
 	// CREATE POST ACTION CAN ONLY BE EXECUTED BY ADMIN
-	@WithMockUser(roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void testController_adminCanCreateBU_shouldSucceedWith302() throws Exception {
 		long initBuCount = buRepo.count();
@@ -115,7 +115,7 @@ public class CreateBusinessUnitIntegrationTest {
 	}
 
 	// CREATE POST ACTION CANNOT BE EXECUTED BY NON-ADMIN
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void testController_nonAdminCannotCreateBU_shouldReturn403() throws Exception {
 		long initBuCount = buRepo.count();

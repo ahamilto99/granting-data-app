@@ -51,7 +51,7 @@ public class AdminControllerIntegrationTest {
 		mvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminUserCannotAddFundingOpportunities_shouldFailWith403() throws Exception {
 		long numFos = foRepo.count();
@@ -85,7 +85,7 @@ public class AdminControllerIntegrationTest {
 		assertEquals(numFos, foRepo.count());
 	}
 
-	@WithMockUser(roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_onlyAdminCanAddFundingOpportunities_shouldSucceedWith302() throws Exception {
 		long numFos = foRepo.count();
@@ -115,13 +115,13 @@ public class AdminControllerIntegrationTest {
 				.andExpect(content().string(containsString("id=\"forbiddenByRoleErrorPage\"")));
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void givenAdminAuthRequestOnAdminUrl_shouldSucceedWith200() throws Exception {
 		mvc.perform(get("/admin/home").contentType(MediaType.APPLICATION_XHTML_XML)).andExpect(status().isOk());
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_adminCanAccessAuditLogForAllMemberRoles_shouldSucceedWith200() throws Exception {
 		String response = mvc.perform(MockMvcRequestBuilders.get("/admin/auditLogMR"))
@@ -141,7 +141,7 @@ public class AdminControllerIntegrationTest {
 		assertTrue(numAdds >= 3);
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotAccessAuditLogForAllMemberRoles_shouldReturn403() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/admin/auditLogMR")).andExpect(MockMvcResultMatchers.status().isForbidden())
@@ -149,7 +149,7 @@ public class AdminControllerIntegrationTest {
 						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
 	}
 
-	@WithMockUser(username = "admin", roles = "MDM ADMIN")
+	@WithMockUser(username = "mock_admin", roles = "MDM ADMIN")
 	@Test
 	public void test_adminCanAccessAuditLogForOneMemberRole_shouldSucceedWith200() throws Exception {
 		String response = mvc.perform(MockMvcRequestBuilders.get("/admin/auditLogMR").param("id", "2"))
@@ -169,14 +169,14 @@ public class AdminControllerIntegrationTest {
 		assertEquals(1, numAdds);
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotAccessAuditLogForOneMemberRole_shouldReturn403() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/admin/auditLogMR").param("id", "2")).andExpect(
 				MockMvcResultMatchers.content().string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
 	}
 
-	@WithMockUser(username = "admin", roles = "MDM ADMIN")
+	@WithMockUser(username = "mock_admin", roles = "MDM ADMIN")
 	@Test
 	public void test_adminCanAccessAuditLogForAllFundingOpportunites_shouldSucceedWith200() throws Exception {
 		String response = mvc.perform(MockMvcRequestBuilders.get("/admin/auditLogFO"))
@@ -194,7 +194,7 @@ public class AdminControllerIntegrationTest {
 		assertTrue(numAdds >= 141);
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotAccessAuditLogForAllFundingOpportunities_shouldReturn403() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/admin/auditLogFO")).andExpect(MockMvcResultMatchers.status().isForbidden())
@@ -202,7 +202,7 @@ public class AdminControllerIntegrationTest {
 						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
 	}
 
-	@WithMockUser(username = "admin", roles = "MDM ADMIN")
+	@WithMockUser(username = "mock_admin", roles = "MDM ADMIN")
 	@Test
 	public void test_adminCanAccessAuditLogForOneFundingOpportunity_shouldSucceedWith200() throws Exception {
 		String response = mvc.perform(MockMvcRequestBuilders.get("/browse/viewFo").param("id", "1"))
@@ -220,7 +220,7 @@ public class AdminControllerIntegrationTest {
 		assertEquals(1, numAdds);
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotAccessAuditLogForOneFundingOpportunity_shouldReturn200() throws Exception {
 		String response = mvc.perform(MockMvcRequestBuilders.get("/browse/viewFo").param("id", "1"))

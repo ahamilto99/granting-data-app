@@ -49,7 +49,7 @@ public class EditGrantingCapabilityIntegrationTest {
 		mvc = MockMvcBuilders.webAppContextSetup(ctx).apply(SecurityMockMvcConfigurers.springSecurity()).build();
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_editGCLinkVisibleToAdmin_shouldSucceedWith200() throws Exception {
 		long numGCs = gcService.findGrantingCapabilitiesByFoId(1L).size();
@@ -63,7 +63,7 @@ public class EditGrantingCapabilityIntegrationTest {
 		assertEquals(numGCs, numEditGCLinks);
 	}
 
-	@WithMockUser(username = "admin", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_editGCLinkNotVisibleToNonAdmin_shouldReturn200() throws Exception {
 		long numGCs = gcService.findGrantingCapabilitiesByFoId(1L).size();
@@ -78,7 +78,7 @@ public class EditGrantingCapabilityIntegrationTest {
 		assertEquals(0, numEditGCLinks);
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_adminCanAccessEditGCPage_shouldSucceedWith200() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/manage/editGC").param("id", "1"))
@@ -86,7 +86,7 @@ public class EditGrantingCapabilityIntegrationTest {
 						.string(Matchers.containsString("id=\"editGrantingCapabilityPage\"")));
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotAccessEditGCPage_shouldReturn403() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/manage/editGC").param("id", "1"))
@@ -94,7 +94,7 @@ public class EditGrantingCapabilityIntegrationTest {
 						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_adminCanEditGC_shouldSucceedWith302() throws Exception {
 		long initGcRepoCount = gcRepo.count();
@@ -129,7 +129,7 @@ public class EditGrantingCapabilityIntegrationTest {
 		assertEquals(initGcRepoCount, gcRepo.count());
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotEditGC_shouldReturn403() throws Exception {
 		long initGcRepoCount = gcRepo.count();

@@ -41,7 +41,7 @@ public class MemberRoleServiceTest {
 	@Autowired
 	private MemberRoleRepository mrRepo;
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_adminCanCreateMR() {
 		long initMRCount = mrRepo.count();
@@ -62,7 +62,7 @@ public class MemberRoleServiceTest {
 		assertNotNull(mr.getId());
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test(expected = AccessDeniedException.class)
 	public void test_nonAdminCannotCreateMR_shouldThrowAccessDeniedException() {
 		MemberRole mr = new MemberRole();
@@ -74,7 +74,7 @@ public class MemberRoleServiceTest {
 		mrService.saveMemberRole(mr);
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Rollback
 	@Test
 	public void test_adminCanDeleteMR() {
@@ -85,13 +85,13 @@ public class MemberRoleServiceTest {
 		assertEquals(initMRCount - 1, mrRepo.count());
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test(expected = AccessDeniedException.class)
 	public void test_nonAdminCannotDeleteMR_shouldThrowAccessDeniedException() {
 		mrService.deleteMemberRole(mrService.findAllMemberRoles().get(0).getId());
 	}
 
-	@WithMockUser(username = "admin", roles = "MDM ADMIN")
+	@WithMockUser(username = "mock_admin", roles = "MDM ADMIN")
 	@Test
 	public void test_adminCanFindMemberRoleRevisionsById() {
 		final Long mrId = 1L;
@@ -109,13 +109,13 @@ public class MemberRoleServiceTest {
 		assertEquals(revisedUserLogin, mrRevisions.get(endNumRevisions - 1)[3]);
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test(expected = AccessDeniedException.class)
 	public void test_nonAdminCannotFindMemberRoleRevisionsById() {
 		mrService.findMemberRoleRevisionsById(1L);
 	}
 
-	@WithMockUser(username = "admin", roles = "MDM ADMIN")
+	@WithMockUser(username = "mock_admin", roles = "MDM ADMIN")
 	@Test
 	public void test_adminCanFindAllMemberRoleRevisions() {
 		List<String[]> auditedArrList = mrService.findAllMemberRoleRevisions();
@@ -131,7 +131,7 @@ public class MemberRoleServiceTest {
 		assertTrue(numAdds >= 3);
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test(expected = AccessDeniedException.class)
 	public void test_nonAdminCannotFindAllMemberRoleRevisions() {
 		mrService.findAllMemberRoleRevisions();

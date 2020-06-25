@@ -71,7 +71,7 @@ public class SystemFundingOpportunityServiceTest {
 		assertTrue(0 < sfoService.findSystemFundingOpportunitiesByNameEn("Technology Access Centre").size());
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void testLinkSystemFundingOpportunity() {
 		SystemFundingOpportunity sfo = new SystemFundingOpportunity();
@@ -89,13 +89,13 @@ public class SystemFundingOpportunityServiceTest {
 		assertEquals(1L, (long) sfoService.findSystemFundingOpportunityById(sfoId).getLinkedFundingOpportunity().getId());
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test(expected = DataRetrievalFailureException.class)
 	public void testUnlinkSystemFundingOpportunity_shouldThrowDataRetrievalFailureException() {
 		sfoService.unlinkSystemFundingOpportunity(1L, 100L);
 	}
 
-	@WithMockUser(username = "admin", roles = "MDM ADMIN")
+	@WithMockUser(username = "mock_admin", roles = "MDM ADMIN")
 	@Test
 	public void testAdminCanFindAllSystemFundingOpportunityRevisions() {
 		List<String[]> revisionList = sfoService.findAllSystemFundingOpportunityRevisions();
@@ -111,13 +111,13 @@ public class SystemFundingOpportunityServiceTest {
 		assertTrue(numAdds >= 123);
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test(expected = AccessDeniedException.class)
 	public void testNonAdminCannotFindAllSystemFundingOpportunityRevisionsShouldThrowsException() {
 		sfoService.findAllSystemFundingOpportunityRevisions();
 	}
 
-	@WithMockUser(username = "admin", roles = "MDM ADMIN")
+	@WithMockUser(username = "mock_admin", roles = "MDM ADMIN")
 	@Test
 	public void testAdminCanFindSystemFundingOpportunityRevisionById() {
 		List<String[]> revisionList = sfoService.findSystemFundingOpportunityRevisionById(1L);
@@ -133,7 +133,7 @@ public class SystemFundingOpportunityServiceTest {
 		assertEquals(1, numAdds);
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test(expected = AccessDeniedException.class)
 	public void testNonAdminCannotFindSystemFundingOpportunityRevisionByIdShouldThrowException() {
 		sfoService.findSystemFundingOpportunityRevisionById(1L);

@@ -46,14 +46,14 @@ public class CreateFiscalYearIntegrationTest {
 		mvc = MockMvcBuilders.webAppContextSetup(ctx).apply(SecurityMockMvcConfigurers.springSecurity()).build();
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_createFYLinkVisibleToAdmin_shouldSucceedWith200() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/browse/viewFYs")).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(
 				MockMvcResultMatchers.content().string(Matchers.containsString("id=\"createFiscalYearLink\"")));
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_createFYLinkNotVisibleToNonAdmin_shouldReturn200() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/browse/viewFYs")).andExpect(MockMvcResultMatchers.status().isOk())
@@ -61,14 +61,14 @@ public class CreateFiscalYearIntegrationTest {
 						.string(Matchers.not(Matchers.containsString("id=\"createFiscalYearLink\""))));
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_adminCanAccessCreateFYPage_shouldSucceedWith200() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/manage/createFY")).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(
 				MockMvcResultMatchers.content().string(Matchers.containsString("id=\"createFiscalYearPage\"")));
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotAccessCreateFYPage_shouldReturn403() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/manage/createFY")).andExpect(MockMvcResultMatchers.status().isForbidden())
@@ -76,7 +76,7 @@ public class CreateFiscalYearIntegrationTest {
 						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Rollback
 	@Test
 	public void test_adminCanCreateFY_shouldSucceedWith302() throws Exception {
@@ -92,7 +92,7 @@ public class CreateFiscalYearIntegrationTest {
 		assertEquals(initFYCount + 1, fyRepo.count());
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotCreateFY_shouldReturn403() throws Exception {
 		long initFYCount = fyRepo.count();
@@ -104,7 +104,7 @@ public class CreateFiscalYearIntegrationTest {
 		assertEquals(initFYCount, fyRepo.count());
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_createFormValidation_shouldReturn200() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.post("/manage/createFY").param("year", String.valueOf(Integer.MAX_VALUE)))

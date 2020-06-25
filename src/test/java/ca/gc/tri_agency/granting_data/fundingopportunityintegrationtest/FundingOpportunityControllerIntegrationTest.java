@@ -45,7 +45,7 @@ public class FundingOpportunityControllerIntegrationTest {
 		mvc = MockMvcBuilders.webAppContextSetup(ctx).apply(SecurityMockMvcConfigurers.springSecurity()).build();
 	}
 
-	@WithMockUser(username = "admin", roles = "MDM ADMIN")
+	@WithMockUser(username = "mock_admin", roles = "MDM ADMIN")
 	@Test
 	public void test_adminCanAccessEditFOPage_shouldSucceedWith200() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/manage/editFo").param("id", "1"))
@@ -53,7 +53,7 @@ public class FundingOpportunityControllerIntegrationTest {
 						.string(Matchers.containsString("id=\"editFundingOpportunityPage\"")));
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotAccessEditFOPage_shouldReturn403() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/manage/editFo").param("id", "1"))
@@ -61,7 +61,7 @@ public class FundingOpportunityControllerIntegrationTest {
 						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
 	}
 
-	@WithMockUser(username = "admin", roles = "MDM ADMIN")
+	@WithMockUser(username = "mock_admin", roles = "MDM ADMIN")
 	@Test
 	public void test_adminCanEditFundingOpportunity_shouldSucceedWith302() throws Exception {
 		long initFOCount = foRepo.count();
@@ -82,7 +82,7 @@ public class FundingOpportunityControllerIntegrationTest {
 		assertEquals(frequency, foService.findFundingOpportunityById(1L).getFrequency());
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotEditFundingOpportunity_shouldReturn403() throws Exception {
 		long initFOCount = foRepo.count();
@@ -104,7 +104,7 @@ public class FundingOpportunityControllerIntegrationTest {
 
 	}
 
-	@WithMockUser(username = "admin", roles = "MDM ADMIN")
+	@WithMockUser(username = "mock_admin", roles = "MDM ADMIN")
 	@Test
 	public void test_adminCanEditProgramLead_shouldSucceedWith302() throws Exception {
 		long initFOCount = foRepo.count();
@@ -120,7 +120,7 @@ public class FundingOpportunityControllerIntegrationTest {
 		assertEquals(initFOCount, foRepo.count());
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotEditProgramLead_shouldReturn403() throws Exception {
 		String originalProgramLead = foService.findFundingOpportunityById(3L).getProgramLeadDn();

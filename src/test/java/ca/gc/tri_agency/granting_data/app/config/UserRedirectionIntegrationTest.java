@@ -63,7 +63,7 @@ public class UserRedirectionIntegrationTest {
 				.andExpect(MockMvcResultMatchers.redirectedUrl("http://localhost/login"));
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER", "nserc-user-edi" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER", "nserc-user-edi" })
 	@Test
 	public void testAdminControllerAccess_withLoggedInNonAdminUser_shouldBeForbidden() throws Exception {
 		String responseString = mvc.perform(get("/admin/home")).andExpect(status().isForbidden()).andReturn()
@@ -74,7 +74,7 @@ public class UserRedirectionIntegrationTest {
 		assertTrue(responseString.contains("id=\"forbiddenByRoleErrorPage\""));
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void testAdminControllerAccess_withAdminUser_shouldSucceed200() throws Exception {
 		mvc.perform(get("/admin/home").contentType(MediaType.APPLICATION_XHTML_XML)).andExpect(status().isOk());

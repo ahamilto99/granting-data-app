@@ -30,7 +30,7 @@ public class GrantingCapabilityServiceTest {
 	@Autowired
 	private GrantingCapabilityRepository gcRepo;
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Rollback
 	@Test(expected = DataRetrievalFailureException.class)
 	public void testService_adminCanDeleteGC() {
@@ -43,13 +43,13 @@ public class GrantingCapabilityServiceTest {
 		gcService.findGrantingCapabilityById(100L);
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test(expected = AccessDeniedException.class)
 	public void testService_nonAdminCannotDeleteGC_shouldThrowAccessDeniedExcepction() {
 		gcService.deleteGrantingCapabilityById(101L);
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void testService_adminCanEditGC() {
 		long initGcRepoCount = gcRepo.count();
@@ -63,7 +63,7 @@ public class GrantingCapabilityServiceTest {
 		assertEquals(initGcRepoCount, gcRepo.count());
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test(expected = AccessDeniedException.class)
 	public void testService_nonAdminCannotEditGC_shouldThrowAccessDeniedException() {
 		GrantingCapability gc = gcService.findGrantingCapabilityById(1L);

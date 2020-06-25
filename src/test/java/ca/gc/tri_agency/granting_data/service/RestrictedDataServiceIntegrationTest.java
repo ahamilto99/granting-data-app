@@ -29,7 +29,7 @@ public class RestrictedDataServiceIntegrationTest {
 	@Autowired
 	private GrantingCapabilityService gcService;
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_createGrantingCapabaility() {
 		GrantingCapability newGc = new GrantingCapability();

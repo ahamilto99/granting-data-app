@@ -11,138 +11,150 @@
 <!-- Created: ;  Product Code: 000;  Server: stratnotes.ic.gc.ca -->
 
 <head th:fragment="common_header(title,links)">
-	<!-- Title begins / Début du titre -->
-	<title th:replace="${title}" th:text="#{title.general}"></title>
-	<!-- Title ends / Fin du titre -->
- 
-	<!-- Meta-data begins / Début des métadonnées -->
-	<meta charset="utf-8" />
-	<meta name="dcterms.language" title="ISO639-2" content="eng" />
-	<meta name="dcterms.title" content="" />
-	<meta name="description" content="" />
-	<meta name="dcterms.description" content="" />
-	<meta name="dcterms.type" content="report" />
-	<meta name="dcterms.subject" content="technology; internet" />
-	<meta name="dcterms.subject" content="technology; internet" />
-	<meta name="dcterms.issued" title="W3CDTF" content="" />
-	<meta name="dcterms.modified" title="W3CDTF" content="" />
-	<meta name="keywords" content="" />
-	
-	<meta name="dcterms.creator" content="" />
-	<meta name="author" content="" />
-	<meta name="dcterms.created" title="W3CDTF" content="" />
-	<meta name="dcterms.publisher" content="" />
-	<meta name="dcterms.audience" title="icaudience" content="" />
-	<meta name="dcterms.spatial" title="ISO3166-1" content="" />
-	<meta name="dcterms.spatial" title="gcgeonames" content="" />
-	<meta name="dcterms.format" content="HTML" />
-	<meta name="dcterms.identifier" title="ICsiteProduct" content="000" />
-	
-	<!-- EPI-11240 -->
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	
-	<!-- MCG-202 -->
-	<meta content="width=device-width,initial-scale=1" name="viewport">
-	
-	<!-- EPI-11567 -->
-	<meta name = "format-detection" content = "telephone=no">
-	
-	
-	
-	<!--[if gte IE 9 | !IE ]><!-->
-	<link href="/_WET_4-0/themes-dist/gcweb/assets/favicon.ico" rel="icon" type="image/x-icon">
-	<link rel="stylesheet" href="/_WET_4-0/themes-dist/gcweb/css/wet-boew.min.css">
-	<!--<![endif]-->
-	<link rel="stylesheet" href="/_WET_4-0/themes-dist/gcweb/css/theme.min.css">
-	<!--[if lt IE 9]>
+<!-- Title begins / Début du titre -->
+<title th:replace="${title}" th:text="#{title.general}"></title>
+<!-- Title ends / Fin du titre -->
+
+<!-- Meta-data begins / Début des métadonnées -->
+<meta charset="utf-8" />
+<meta name="dcterms.language" title="ISO639-2" content="eng" />
+<meta name="dcterms.title" content="" />
+<meta name="description" content="" />
+<meta name="dcterms.description" content="" />
+<meta name="dcterms.type" content="report" />
+<meta name="dcterms.subject" content="technology; internet" />
+<meta name="dcterms.subject" content="technology; internet" />
+<meta name="dcterms.issued" title="W3CDTF" content="" />
+<meta name="dcterms.modified" title="W3CDTF" content="" />
+<meta name="keywords" content="" />
+
+<meta name="dcterms.creator" content="" />
+<meta name="author" content="" />
+<meta name="dcterms.created" title="W3CDTF" content="" />
+<meta name="dcterms.publisher" content="" />
+<meta name="dcterms.audience" title="icaudience" content="" />
+<meta name="dcterms.spatial" title="ISO3166-1" content="" />
+<meta name="dcterms.spatial" title="gcgeonames" content="" />
+<meta name="dcterms.format" content="HTML" />
+<meta name="dcterms.identifier" title="ICsiteProduct" content="000" />
+
+<!-- EPI-11240 -->
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- MCG-202 -->
+<meta content="width=device-width,initial-scale=1" name="viewport">
+
+<!-- EPI-11567 -->
+<meta name="format-detection" content="telephone=no">
+
+
+
+<!--[if gte IE 9 | !IE ]><!-->
+<link href="/_WET_4-0/themes-dist/gcweb/assets/favicon.ico" rel="icon" type="image/x-icon">
+<link rel="stylesheet" href="/_WET_4-0/themes-dist/gcweb/css/wet-boew.min.css">
+<!--<![endif]-->
+<link rel="stylesheet" href="/_WET_4-0/themes-dist/gcweb/css/theme.min.css">
+<!--[if lt IE 9]>
 	<link href="/_WET_4-0/themes-dist/gcweb/assets/favicon.ico" rel="shortcut icon" />
 	
 	<link rel="stylesheet" href="/_WET_4-0/themes-dist/gcweb/css/ie8-wet-boew.min.css" />
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 	<script src="/_WET_4-0/themes-dist/gcweb/js/ie8-wet-boew.min.js"></script>
 	<![endif]-->
-	<!--[if lte IE 9]>
+<!--[if lte IE 9]>
 	
 	
 	<![endif]-->
-	<noscript><link rel="stylesheet" href="/_WET_4-0/themes-dist/gcweb/css/noscript.min.css" /></noscript>
-	
-	<!-- EPI-11235 -->
-	<link rel="stylesheet" href="https://ic.gc.ca/eic/home.nsf/css/add_WET_4-0_Canada_Apps.css">
-	
-	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"  rel="stylesheet" />
-    <!--/* Per-page placeholder for additional links */-->
-  	<th:block th:replace="${links}" />
-	
-    
-</head>
- 
+<noscript>
+	<link rel="stylesheet" href="/_WET_4-0/themes-dist/gcweb/css/noscript.min.css" />
+</noscript>
 
-<body  class="home" vocab="http://schema.org/" typeof="WebPage">
- 
+<!-- EPI-11235 -->
+<link rel="stylesheet" href="https://ic.gc.ca/eic/home.nsf/css/add_WET_4-0_Canada_Apps.css">
+
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" />
+<!--/* Per-page placeholder for additional links */-->
+<th:block th:replace="${links}" />
+
+
+</head>
+
+
+<body class="home" vocab="http://schema.org/" typeof="WebPage">
+
 	<div th:fragment="header_nav(activeTab)">
 		<!-- EPI-12801 -->
 		<span typeof="Organization"><meta property="legalName" content="Department_of_Industry" /></span>
-		
+
 		<ul id="wb-tphp">
-			<li class="wb-slc">
-				<a class="wb-sl" href="#wb-cont" th:text="#{link.skipToMain}"></a>
-			</li>
-			<li class="wb-slc visible-sm visible-md visible-lg">
-				<a class="wb-sl" href="#wb-info" th:text="#{link.skipToAbout}"></a>
-			</li>
+			<li class="wb-slc"><a class="wb-sl" href="#wb-cont" th:text="#{link.skipToMain}"></a></li>
+			<li class="wb-slc visible-sm visible-md visible-lg"><a class="wb-sl" href="#wb-info" th:text="#{link.skipToAbout}"></a></li>
 		</ul>
 		<header role="banner">
 			<div id="wb-bnr" class="container">
 				<div class="row">
 					<div class="brand col-xs-8 col-sm-9 col-md-6">
-						<object type="image/svg+xml" tabindex="-1" data="https://ic.gc.ca/utils/scripts/_WET_4-0/apps/themes-dist/gcweb/assets/sig-blk-en.svg"></object><span class="wb-inv" th:text="#{s.gov}"></span>
+						<object type="image/svg+xml" tabindex="-1" data="https://ic.gc.ca/utils/scripts/_WET_4-0/apps/themes-dist/gcweb/assets/sig-blk-en.svg"></object>
+						<span class="wb-inv" th:text="#{s.gov}"></span>
 					</div>
 					<section class="wb-mb-links col-xs-4 col-sm-3 visible-xs" id="wb-glb-mn">
 						<h2 th:text="#{s.menu}"></h2>
 						<ul class="list-inline text-right chvrn">
-							<li><a href="#mb-pnl" title="Menu" aria-controls="mb-pnl" class="overlay-lnk" role="button"><span class="glyphicon glyphicon-th-list"><span class="wb-inv" th:text="#{s.menu}"></span></span></a></li>
+							<li><a href="#mb-pnl" title="Menu" aria-controls="mb-pnl" class="overlay-lnk" role="button"><span
+									class="glyphicon glyphicon-th-list"><span class="wb-inv" th:text="#{s.menu}"></span></span></a></li>
 						</ul>
 						<div id="mb-pnl"></div>
 					</section>
 				</div>
 			</div>
-			<nav role="navigation" id="wb-sm" class="wb-menu visible-md visible-lg" style="min-height:56px" data-trgt="mb-pnl" typeof="SiteNavigationElement"></nav>
-		 </header>
+			<nav role="navigation" id="wb-sm" class="wb-menu visible-md visible-lg" style="min-height: 56px" data-trgt="mb-pnl"
+				typeof="SiteNavigationElement"></nav>
+		</header>
 	</div>
 
 
 	<main role="main" property="mainContentOfPage" class="container">
-    	<h1 id="wb-cont" th:text="#{h.nuansDashboard}"></h1>
+		<h1 id="wb-cont" th:text="#{h.nuansDashboard}"></h1>
 		<div th:fragment="profile_info(activeTab)" class="profileInfo">
-		    <ol class="noStyleList">
-				<li sec:authorize="isAuthenticated()"><span th:text="#{msg.welcome}"></span><b th:text="${@ADUserService.getCurrentUserFirstName()}"></b> | </li>
-			    <li><a href="/" th:text="#{msg.home}"></a> | </li>  
+			<ol class="noStyleList">
+				<li sec:authorize="isAuthenticated()"><span th:text="#{msg.welcome}"></span><b
+					th:text="${not (#authentication.principal.username ne 'mock_admin' and #authentication.principal.username eq 'mock_agency_user') and not (#authentication.principal.username eq 'mock_admin' and #authentication.principal.username ne 'mock_agency_user')} ? ${@ADUserService.getCurrentUserFirstName()}"></b>
+					|</li>
+				<li><a href="/" th:text="#{msg.home}"></a> |</li>
 				<li sec:authorize="isAuthenticated()" class="mrgn-rght-sm"><a href="/logout" th:text="#{input.signOut}"></a></li>
 				<li sec:authorize="!isAuthenticated()" class="mrgn-rght-sm"><a href="/login" th:text="#{input.signIn}"></a></li>
-		    </ol>       
+			</ol>
 		</div>
-    </main>  
-    
-    <div th:fragment="returnHome" class="panel-footer" id="web-returnHome"><span th:utext="#{msg.returnTo}"></span><a href="/" th:text="#{link.home}"></a></div>
-      
+	</main>
+
+	<div th:fragment="returnHome" class="panel-footer" id="web-returnHome">
+		<span th:utext="#{msg.returnTo}"></span><a href="/" th:text="#{link.home}"></a>
+	</div>
+
 	<footer th:fragment="footer(scripts)" role="contentinfo" id="wb-info">
 		<nav role="navigation" class="container visible-sm visible-md visible-lg wb-navcurr">
 			<h2 class="wb-inv" th:text="#{h.aboutSite}"></h2>
-			 
+
 			<!-- EPIC FOOTER BEGIN -->
 			<div class="row">
-				<!--EPI-11901--> 
-				<section class="col-sm-2 col-lg-offset-3"><h3 class="wb-inv"></h3><ul class="list-unstyled"><li><a class="gl-footer" href="https://www.ic.gc.ca/eic/site/icgc.nsf/eng/h_07026.html#type=phone&from=Corporations&situation=Nuans" th:text="#{h.contactInfo}"></a></li></ul></section>
+				<!--EPI-11901-->
+				<section class="col-sm-2 col-lg-offset-3">
+					<h3 class="wb-inv"></h3>
+					<ul class="list-unstyled">
+						<li><a class="gl-footer"
+							href="https://www.ic.gc.ca/eic/site/icgc.nsf/eng/h_07026.html#type=phone&from=Corporations&situation=Nuans"
+							th:text="#{h.contactInfo}"></a></li>
+					</ul>
+				</section>
 				<section class="col-sm-3 col-lg-2">
-				<!-- EPI-11943 -->
+					<!-- EPI-11943 -->
 					<h3 class="wb-inv" th:text="#{h.terms}"></h3>
 					<ul class="list-unstyled">
 						<li><a href="http://www.ic.gc.ca/eic/site/icgc.nsf/eng/h_07033.html" th:text="#{h.terms}"></a></li>
 					</ul>
 				</section>
 				<section class="col-sm-3 col-lg-3">
-				<!-- EPI-11943 -->
+					<!-- EPI-11943 -->
 					<h3 class="wb-inv" th:text="#{h.privacy}"></h3>
 					<ul class="list-unstyled">
 						<li><a href="http://www.canada.ca/en/transparency/privacy.html" th:text="#{h.privacy}"></a></li>
@@ -157,7 +169,8 @@
 						<a href="#wb-cont" th:text="#{link.topPg}"><span class="glyphicon glyphicon-chevron-up"></span></a>
 					</div>
 					<div class="col-xs-6 col-md-12 text-right">
-						<object type="image/svg+xml" tabindex="-1" role="img" data="https://ic.gc.ca/utils/scripts/_WET_4-0/themes-dist/gcweb/assets/wmms-blk.svg" aria-label="Symbol of the Government of Canada"></object>
+						<object type="image/svg+xml" tabindex="-1" role="img"
+							data="https://ic.gc.ca/utils/scripts/_WET_4-0/themes-dist/gcweb/assets/wmms-blk.svg" aria-label="Symbol of the Government of Canada"></object>
 					</div>
 				</div>
 			</div>
@@ -170,24 +183,25 @@
 		<script src="/_WET_4-0/themes-dist/gcweb/js/ie8-wet-boew2.min.js"></script>
 		<![endif]-->
 		<script src="/_WET_4-0/themes-dist/gcweb/js/theme.min.js"></script>
-		
+
 		<!-- EPI-10519 -->
 		<!-- JS deps -->
 		<script src="https://ic.gc.ca//eic/home.nsf/js/jquery.imagesloaded.js"></script>
-		
+
 		<!-- EPI-11262 - Util JS -->
 		<script src="https://ic.gc.ca//eic/home.nsf/js/_WET_4-0_utils_canada.min.js"></script>
-		
+
 		<!-- EPI-11318 -->
 		<script src="https://ic.gc.ca//eic/home.nsf/js/jQuery.externalOpensInNewWindow.js"></script>
-		
+
 		<!-- EPI-11383 -->
 		<script src="https://ic.gc.ca//eic/home.nsf/js/jQuery.icValidationErrors.js"></script>
-			<!--/* Per-page placeholder for additional links */-->
-	  	<th:block th:replace="${scripts}" />
+		<!--/* Per-page placeholder for additional links */-->
+		<th:block th:replace="${scripts}" />
 	</footer>
-	
-<!-- 	<span style="display:none;" id='app-info' data-project-groupid='ca.gc.ic.corp.nuans' data-project-artifactid='CORP_Nuans_External_WAR' data-project-version='4.4.4' data-project-build-timestamp='2020-01-20T16:23:17Z' data-issue-tracking='http://jira.ic.gc.ca/browse/CORPNUANS' data-scm-sha1='ae7ade2abd1d3b0809e8da65ce18a6144d214def' data-scm-sha1-abbrev='ae7ade2' data-scm-branch='HEAD' data-scm-commit-date='2020-01-20 11:23 AM -0500'></span> -->
-</body></html>
+
+	<!-- 	<span style="display:none;" id='app-info' data-project-groupid='ca.gc.ic.corp.nuans' data-project-artifactid='CORP_Nuans_External_WAR' data-project-version='4.4.4' data-project-build-timestamp='2020-01-20T16:23:17Z' data-issue-tracking='http://jira.ic.gc.ca/browse/CORPNUANS' data-scm-sha1='ae7ade2abd1d3b0809e8da65ce18a6144d214def' data-scm-sha1-abbrev='ae7ade2' data-scm-branch='HEAD' data-scm-commit-date='2020-01-20 11:23 AM -0500'></span> -->
+</body>
+</html>
 
 

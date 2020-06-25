@@ -45,7 +45,7 @@ public class CreateGrantingCapabilityIntegrationTest {
 		mvc = MockMvcBuilders.webAppContextSetup(ctx).apply(SecurityMockMvcConfigurers.springSecurity()).build();
 	}
 
-	@WithMockUser(username = "admin", roles = "MDM ADMIN")
+	@WithMockUser(username = "mock_admin", roles = "MDM ADMIN")
 	@Test
 	public void test_createGCLinkVisibleToAdmin_shouldSucceedWith200() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/manage/manageFo").param("id", "1"))
@@ -53,7 +53,7 @@ public class CreateGrantingCapabilityIntegrationTest {
 						.string(Matchers.containsString("id=\"createGrantingCapabilityLink\"")));
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_createGCLinkNotVisibleToNonAdmin_shouldReturn200() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/manage/manageFo").param("id", "1"))
@@ -61,7 +61,7 @@ public class CreateGrantingCapabilityIntegrationTest {
 						.string(Matchers.not(Matchers.containsString("id=\"createGrantingCapabilityLink\""))));
 	}
 
-	@WithMockUser(username = "admin", roles = "MDM ADMIN")
+	@WithMockUser(username = "mock_admin", roles = "MDM ADMIN")
 	@Test
 	public void test_adminCanAccessCreateGCPage_shouldSucceedWith200() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/manage/addGrantingCapabilities").param("foId", "1"))
@@ -69,7 +69,7 @@ public class CreateGrantingCapabilityIntegrationTest {
 						.string(Matchers.containsString("id=\"createGrantingCapabilityPage\"")));
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotAccessCreateGCPage_shouldReturn403() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/manage/addGrantingCapabilities").param("foId", "1"))
@@ -77,7 +77,7 @@ public class CreateGrantingCapabilityIntegrationTest {
 						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
 	}
 
-	@WithMockUser(username = "admin", roles = "MDM ADMIN")
+	@WithMockUser(username = "mock_admin", roles = "MDM ADMIN")
 	@Test
 	public void test_adminCanCreateGC_shouldSucceedWith302() throws Exception {
 		long initGCCount = gcRepo.count();
@@ -103,7 +103,7 @@ public class CreateGrantingCapabilityIntegrationTest {
 		assertEquals(url, newGc.getUrl());
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotCreateGC_shouldReturn403() throws Exception {
 		long initGCCount = gcRepo.count();

@@ -77,14 +77,14 @@ public class GoldenFundingOpportunityIntegrationTest {
 		mvc = MockMvcBuilders.webAppContextSetup(ctx).apply(SecurityMockMvcConfigurers.springSecurity()).build();
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void testNameFieldsEmptyOnAddFoPageWhenNewSfoNotLinkedWithSfo() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/admin/createFo")).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(
 				MockMvcResultMatchers.content().string(Matchers.containsString("name=\"nameEn\" value=\"\"")));
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void testNameFieldsAutoFilledOnAddFoPageWhenLinkingNewFoWithSfo() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/admin/createFo").param("sfoId", "4"))
@@ -92,7 +92,7 @@ public class GoldenFundingOpportunityIntegrationTest {
 						.string(Matchers.containsString("value=\"Insight Grants\"")));
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_NonAdminCannotCreateGoldenFo_shouldFailWith403() throws Exception {
 		boolean cpx = true;
@@ -125,7 +125,7 @@ public class GoldenFundingOpportunityIntegrationTest {
 						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
 	}
 
-	@WithMockUser(roles = "MDM ADMIN")
+	@WithMockUser(username = "mock_admin", roles = "MDM ADMIN")
 	@Test
 	public void test_AdminCanCreateGoldenFo_usingMvcPerform_shouldSucceed() throws Exception {
 		boolean cpx = true;
@@ -194,7 +194,7 @@ public class GoldenFundingOpportunityIntegrationTest {
 		foService.saveFundingOpportunity(new FundingOpportunity());
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	@Transactional
 	public void test_AdminCanCreateGoldenFo_shouldSucceed() throws Exception {

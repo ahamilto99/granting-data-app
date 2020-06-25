@@ -148,7 +148,7 @@ public class FundingCycleServiceTest {
 		assertTrue(0 < fcService.findMonthlyFundingCyclesByEndDateNOI(8).size());
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_adminCanCreateFundingCycle() {
 		long initFCCount = fcRepo.count();
@@ -169,7 +169,7 @@ public class FundingCycleServiceTest {
 		assertEquals(initFCCount + 1, fcRepo.count());
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test(expected = AccessDeniedException.class)
 	public void test_nonAdminCannotCreateFundingCycle() {
 		fcService.saveFundingCycle(new FundingCycle());

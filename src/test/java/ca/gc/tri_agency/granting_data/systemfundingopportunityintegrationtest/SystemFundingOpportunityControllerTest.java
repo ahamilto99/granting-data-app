@@ -56,7 +56,7 @@ public class SystemFundingOpportunityControllerTest {
 
 	@Transactional
 	@Rollback
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_adminCanUnlinkFoFromSfo_shouldRedirectToViewSystemFo() throws Exception {
 		assertNotNull(sfoService.findSystemFundingOpportunityById(1L).getLinkedFundingOpportunity());
@@ -74,7 +74,7 @@ public class SystemFundingOpportunityControllerTest {
 				.andExpect(MockMvcResultMatchers.flash().attributeCount(0));
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_unlinkFoConfirmationPageAccessableByAdmin_shouldSucceedWith200() throws Exception {
 		String sfoName = sfoService.findSystemFundingOpportunityById(1L).getNameEn();
@@ -85,7 +85,7 @@ public class SystemFundingOpportunityControllerTest {
 						+ " from the Funding Opportunity named " + foName + '?'));
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_unlinkFoConfirmationPageNotAccessableByNonAdminUsers_shouldReturn403() throws Exception {
 		assertNotNull(sfoService.findSystemFundingOpportunityById(1L).getLinkedFundingOpportunity());
@@ -98,7 +98,7 @@ public class SystemFundingOpportunityControllerTest {
 				.contains("id=\"forbiddenByRoleErrorPage\""));
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Transactional
 	@Rollback
 	@Test
@@ -118,7 +118,7 @@ public class SystemFundingOpportunityControllerTest {
 				.contains("id=\"generalErrorPage\""));
 	}
 
-	@WithMockUser(roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Transactional
 	@Rollback
 	@Test
@@ -133,7 +133,7 @@ public class SystemFundingOpportunityControllerTest {
 				.contains("id=\"unlinkSfoBtn\""));
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_unlinkFoBtnNotVisibleToNonAdminUsers() throws Exception {
 		assertNotNull(sfoService.findSystemFundingOpportunityById(1L).getLinkedFundingOpportunity());
@@ -142,7 +142,7 @@ public class SystemFundingOpportunityControllerTest {
 				.contains("id=\"unlinkSfoBtn\""));
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_unlinkFoBtnVisibleToAdminWhenFoLinkedToSfo() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/admin/viewSFO").param("id", "1"))
@@ -150,7 +150,7 @@ public class SystemFundingOpportunityControllerTest {
 				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("id=\"unlinkSfoBtn\"")));
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_adminCanAccessAnalyzeSystemFOsPage_shouldSucceedWith200() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/admin/analyzeSFOs")).andExpect(MockMvcResultMatchers.status().isOk())
@@ -158,7 +158,7 @@ public class SystemFundingOpportunityControllerTest {
 						.string(Matchers.containsString("id=\"analyzeSystemFundingOpportunitiesPage\"")));
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotAccessAnalyzeSystemFundingOpportunitiesPage_shouldReturn403() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/admin/analyzeSFOs")).andExpect(MockMvcResultMatchers.status().isForbidden())
@@ -166,7 +166,7 @@ public class SystemFundingOpportunityControllerTest {
 						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_adminCanAccessAuditLogForAllSystemFundingOpportunities_shouldSucceedWith200() throws Exception {
 		String response = mvc.perform(MockMvcRequestBuilders.get("/admin/auditLogSFO"))
@@ -184,7 +184,7 @@ public class SystemFundingOpportunityControllerTest {
 		assertTrue(numAdds >= 123);
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotAccessAuditLogForAllSystemFundingOpportunities_shouldReturn403() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/admin/auditLogSFO")).andExpect(MockMvcResultMatchers.status().isForbidden())
@@ -192,7 +192,7 @@ public class SystemFundingOpportunityControllerTest {
 						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_adminCanAccessAuditLogForOneSystemFundingOpportunity_shouldSucceedWith200() throws Exception {
 		String response = mvc.perform(MockMvcRequestBuilders.get("/admin/viewSFO").param("id", "1"))
@@ -210,7 +210,7 @@ public class SystemFundingOpportunityControllerTest {
 		assertTrue(response.contains("<h3>Audit Log</h3>"));
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotAccessAuditLogForOneSystemFundingOpportunity_shouldReturn403() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/admin/viewSFO").param("id", "1"))

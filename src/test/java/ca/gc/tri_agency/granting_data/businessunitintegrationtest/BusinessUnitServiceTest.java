@@ -39,7 +39,7 @@ public class BusinessUnitServiceTest {
 	@Autowired
 	private BusinessUnitRepository buRepo;
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_adminCanCreateBU() {
 		long initBuCount = buRepo.count();
@@ -51,7 +51,7 @@ public class BusinessUnitServiceTest {
 		assertEquals(initBuCount + 1, buRepo.count());
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test(expected = AccessDeniedException.class)
 	public void test_nonAdminCannotCreateBU_shouldthrowAccessDeniedException() {
 		Agency agency = agencyService.findAllAgencies().get(0);
@@ -59,7 +59,7 @@ public class BusinessUnitServiceTest {
 		buService.saveBusinessUnit(bu);
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_adminCanEditBU() {
 		long initBuRepoCount = buRepo.count();
@@ -79,7 +79,7 @@ public class BusinessUnitServiceTest {
 		assertNotEquals(buBeforeUpate, buAfterUpdate);
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test(expected = AccessDeniedException.class)
 	public void test_nonAdminCannotEditBU() {
 		BusinessUnit bu = buRepo.findById(1L).get();
@@ -97,7 +97,7 @@ public class BusinessUnitServiceTest {
 		assertTrue(0 < buService.findAllBusinessUnits().size());
 	}
 
-	@WithMockUser(username = "admin", roles = "MDM ADMIN")
+	@WithMockUser(username = "mock_admin", roles = "MDM ADMIN")
 	@Test
 	public void test_adminCanFindBusinessUnitRevisionsById() {
 		final Long buId = 1L;
@@ -125,7 +125,7 @@ public class BusinessUnitServiceTest {
 		assertEquals(numAdds, 1);
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test(expected = AccessDeniedException.class)
 	public void test_nonAdminCannotFindBusinessUnitRevisionsById() {
 		buService.findBusinessUnitRevisionsById(1L);
@@ -137,7 +137,7 @@ public class BusinessUnitServiceTest {
 		buService.findBusinessUnitById(Long.MAX_VALUE);
 	}
 
-	@WithMockUser(username = "admin", roles = "MDM ADMIN")
+	@WithMockUser(username = "mock_admin", roles = "MDM ADMIN")
 	@Test
 	public void test_adminCanFindAllBusinessUnitRevisions() {
 		List<String[]> auditedArrList = buService.findAllBusinessUnitRevisions();
@@ -153,7 +153,7 @@ public class BusinessUnitServiceTest {
 		assertTrue(numAdds >= 44);
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test(expected = AccessDeniedException.class)
 	public void test_nonAdminCannotFindAllBusinessUnitRevisions() {
 		buService.findAllBusinessUnitRevisions();

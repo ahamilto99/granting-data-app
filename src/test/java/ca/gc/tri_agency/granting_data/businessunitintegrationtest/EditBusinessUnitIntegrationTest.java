@@ -42,7 +42,7 @@ public class EditBusinessUnitIntegrationTest {
 		mvc = MockMvcBuilders.webAppContextSetup(ctx).apply(SecurityMockMvcConfigurers.springSecurity()).build();
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_editBULinkVisibileToAdmin_shouldSucceedWith200() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/browse/viewBU").param("id", "1"))
@@ -50,7 +50,7 @@ public class EditBusinessUnitIntegrationTest {
 				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("id=\"editBULink\"")));
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_editBULinkNotVisibileToNonAdmin_shouldReturn200() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/browse/viewBU").param("id", "1"))
@@ -58,7 +58,7 @@ public class EditBusinessUnitIntegrationTest {
 						.string(Matchers.not(Matchers.containsString("id=\"editBULink\""))));
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_adminCanAccessEditBUPage_shouldSucceedWith200() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/admin/editBU").param("id", "1"))
@@ -66,7 +66,7 @@ public class EditBusinessUnitIntegrationTest {
 				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("id=\"editBusinessUnitPage\"")));
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotAccessEditBUPage_shouldReturn403() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/admin/editBU").param("id", "1"))
@@ -74,7 +74,7 @@ public class EditBusinessUnitIntegrationTest {
 						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
+	@WithMockUser(username = "mock_admin", roles = { "MDM ADMIN" })
 	@Test
 	public void testController_adminCanEditBU_shouldSucceedWith302() throws Exception {
 		long initBuRepoCount = buRepo.count();
@@ -105,7 +105,7 @@ public class EditBusinessUnitIntegrationTest {
 		assertEquals(buBeforeUpate.getId(), buAfterUpdate.getId());
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@WithMockUser(username = "mock_agency_user", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void testController_nonAdminCannotEditBU_shouldReturn403() throws Exception {
 		long initBuRepoCount = buRepo.count();
