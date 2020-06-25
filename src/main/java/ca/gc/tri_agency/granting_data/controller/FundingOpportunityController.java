@@ -2,6 +2,7 @@ package ca.gc.tri_agency.granting_data.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -23,6 +24,7 @@ import ca.gc.tri_agency.granting_data.ldap.ADUser;
 import ca.gc.tri_agency.granting_data.ldap.ADUserService;
 import ca.gc.tri_agency.granting_data.model.Agency;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
+import ca.gc.tri_agency.granting_data.model.GrantingSystem;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.AgencyService;
@@ -47,7 +49,7 @@ public class FundingOpportunityController {
 	private AgencyService agencyService;
 
 	private SystemFundingOpportunityService sfoService;
-
+	
 	private BusinessUnitService buService;
 
 	private MessageSource msgSource;
@@ -72,29 +74,15 @@ public class FundingOpportunityController {
 
 	@GetMapping("/browse/fundingOpportunities")
 	public String viewGoldenList(@ModelAttribute("filter") FundingOpportunityFilterForm filter, Model model) {
+		Map<Long, GrantingSystem> applyMap = gSystemService.findApplySystemsByFundingOpportunityMap();
+		Map<Long, List<GrantingSystem>> awardMap = gSystemService.findAwardSystemsByFundingOpportunityMap();
 
-		// added
-		System.out.println("======================================================");
-		System.out.println(adUserService.searchADUsers("Alexander"));
-//		System.out.println(adUserService.findAllADUsers());
-		System.out.println("======================================================");
-//		System.out.println(SecurityUtils.getLdapUserDn());
-//		System.out.println(SecurityUtils.getLdapUser().getPassword());
-//		System.out.println(SecurityUtils.getCurrentUsername());
-//		adUserService.searchADUsers("jean").forEach(System.out::println);
-//		System.out.println("======================================================");
-//		adUserService.findAllAUserFullNames().forEach(System.out::println);
-//		System.out.println("======================================================");
-//
-//		Map<Long, GrantingSystem> applyMap = gSystemService.findApplySystemsByFundingOpportunityMap();
-//		Map<Long, List<GrantingSystem>> awardMap = gSystemService.findAwardSystemsByFundingOpportunityMap();
-//
-//		model.addAttribute("fundingOpportunities", foService.getFilteredFundingOpportunities(filter, applyMap, awardMap));
-//		model.addAttribute("allAgencies", agencyService.findAllAgencies());
-//		model.addAttribute("allDivisions", buService.findAllBusinessUnits());
-//		model.addAttribute("allGrantingSystems", gSystemService.findAllGrantingSystems());
-//		model.addAttribute("applySystemByFoMap", applyMap);
-//		model.addAttribute("awardSystemsByFoMap", awardMap);
+		model.addAttribute("fundingOpportunities", foService.getFilteredFundingOpportunities(filter, applyMap, awardMap));
+		model.addAttribute("allAgencies", agencyService.findAllAgencies());
+		model.addAttribute("allDivisions", buService.findAllBusinessUnits());
+		model.addAttribute("allGrantingSystems", gSystemService.findAllGrantingSystems());
+		model.addAttribute("applySystemByFoMap", applyMap);
+		model.addAttribute("awardSystemsByFoMap", awardMap);
 
 		return "browse/fundingOpportunities";
 	}

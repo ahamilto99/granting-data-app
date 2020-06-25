@@ -77,8 +77,8 @@ public class ADUserService {
 
 	public String findDnByADUserLogin(String userLogin) {
 		String dn = null;
-		LdapQuery findByUidQuery = LdapQueryBuilder.query().countLimit(1).where("objectclass").is("person").and("uid")
-				.is(userLogin);
+		LdapQuery findByUidQuery = LdapQueryBuilder.query().countLimit(1).where("objectclass").is("person")
+				.and("sAMAccountName").is(userLogin);
 
 		try {
 			dn = ldapTemplateNSERC.findOne(findByUidQuery, ADUser.class).getDn().toString();
