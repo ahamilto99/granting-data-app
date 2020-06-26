@@ -24,7 +24,7 @@
 
 					<form action="#" th:action="@{editFo}" th:object="${programForm}" method="post">
 
-						<input type="hidden" th:field="*{id}" /> <input type="hidden" th:field="*{programLeadName}" /> <input type="hidden"
+						<input type="hidden" th:field="*{id}" /> <input type="hidden"
 							th:field="*{businessUnit}" />
 
 						<div class="form-group">
@@ -40,20 +40,6 @@
 								th:utext="#{form.required}"></strong></label> <input th:field="*{nameFr}" class="form-control" style="width: 33%;" id="nameFr" type="text"
 								required="required" />
 							<!-- <div th:if="${#fields.hasErrors('nameFr')}" th:errors="*{nameFr}" th:text="#{err.nameErr}"></div> -->
-						</div>
-
-
-						<div class="form-group">
-							<label for="leadAgency" class="required"><span class="field-name" th:text="#{form.leadAgency}"></span><strong
-								class="required" th:utext="#{form.required}"></strong></label>
-
-							<div>
-								<select class="form-control" id="leadAgency" required="required" th:field="*{leadAgency}">
-									<option th:each="agency : ${allAgencies}" th:value="${agency.id}" th:text="${agency.getLocalizedAttribute('acronym')}"></option>
-								</select>
-							</div>
-
-							<!-- <div th:if="${#fields.hasErrors('leadAgency')}" th:errors="*{leadAgency}" th:text="#{err.leadAgency}"></div> -->
 						</div>
 
 						<label for="isJointInitiative"><span class="field-name" th:text="#{form.isJI}"></span></label> <input type="checkbox"
@@ -88,11 +74,6 @@
 						</div>
 
 						<div class="form-group">
-							<label for="programLeadLabel"><span th:utext="#{form.programLeadName}"></span></label> <label class="form-control"
-								th:text="${programForm.programLeadName}" style="border: none; -webkit-box-shadow: none; box-shadow: none;"></label>
-						</div>
-
-						<div class="form-group">
 							<label><span class="field-name" th:text="#{msg.stages}"></span></label>
 							<div class="checkbox">
 								<label for="isNOI"><input id="isNOI" type="checkbox" th:field="*{isNOI}" value="isNOI" th:utext="#{input.noi}"></label>
@@ -100,20 +81,6 @@
 							<div class="checkbox">
 								<label for="isLOI"><input id="isLOI" type="checkbox" th:field="*{isLOI}" value="isLOI" th:utext="#{input.loi}"></label>
 							</div>
-						</div>
-
-						<div class="form-group">
-							<label for="agencies" class="required"><span class="field-name" th:text="#{form.agencies}"></span><strong class="required"
-								th:utext="#{form.required}"></strong></label>
-
-							<div>
-								<select id="agencies" class="form-control" th:field="*{leadAgency}" required>
-									<option th:label="#{msg.nserc}" th:value="2"></option>
-									<option th:label="#{msg.SSHRC}" th:value="1"></option>
-									<option th:label="#{msg.cihr}" th:value="3"></option>
-								</select>
-							</div>
-							<!-- <div th:if="${#fields.hasErrors('participatingAgencies')}" th:errors="*{participatingAgencies}" th:text="#{err.agencies}"></div> -->
 						</div>
 
 						<div class="form-group">
@@ -135,75 +102,36 @@
 
 	<footer th:replace="fragments/general :: footer(~{})"></footer>
 
-	<script type="text/javascript">
-		$(document)
-                                .ready(
-                                                function() {
-
-	                                                $('#isJointInitiative')
-	                                                                .click(
-	                                                                                function() {
-		                                                                                if ($(
-		                                                                                                this)
-		                                                                                                .is(
-		                                                                                                                ":checked")) {
-			                                                                                $(
-			                                                                                                "#partnerOrg")
-			                                                                                                .removeAttr(
-			                                                                                                                "disabled");
-		                                                                                } else {
-			                                                                                $(
-			                                                                                                "#partnerOrg")
-			                                                                                                .attr(
-			                                                                                                                "disabled",
-			                                                                                                                "disabled");
-			                                                                                $(
-			                                                                                                "#partnerOrg")
-			                                                                                                .val(
-			                                                                                                                "");
-		                                                                                }
-	                                                                                });
-
-	                                                $("#isNOI")
-	                                                                .click(
-	                                                                                function() {
-
-		                                                                                if ($(
-		                                                                                                this)
-		                                                                                                .is(
-		                                                                                                                ":checked"))
-			                                                                                $(
-			                                                                                                "#isNOI")
-			                                                                                                .set(
-			                                                                                                                "true");
-		                                                                                else
-			                                                                                $(
-			                                                                                                "#isNOI")
-			                                                                                                .set(
-			                                                                                                                "false");
-	                                                                                });
-
-	                                                $("#isLOI")
-	                                                                .click(
-	                                                                                function() {
-
-		                                                                                if ($(
-		                                                                                                this)
-		                                                                                                .is(
-		                                                                                                                ":checked"))
-			                                                                                $(
-			                                                                                                "#isLOI")
-			                                                                                                .set(
-			                                                                                                                "true");
-		                                                                                else
-			                                                                                $(
-			                                                                                                "#isLOI")
-			                                                                                                .set(
-			                                                                                                                "false");
-	                                                                                });
-
-                                                });
-	</script>
+	<script type = "text/javascript">
+	    $(document).ready(function() {
+	        $('#isJointInitiative').click(function() {
+	            if ($(this).is(":checked")) {
+	                $("#partnerOrg").removeAttr("disabled");
+	            } else {
+	                $("#partnerOrg").attr("disabled", "disabled");
+	                $("#partnerOrg").val("");
+	            }
+	        });
+	
+	        $("#isNOI").click(
+	            function() {
+	                if ($(this).is(":checked"))
+	                    $("#isNOI").set("true");
+	                else
+	                    $("#isNOI").set("false");
+	            });
+	
+	        $("#isLOI")
+	            .click(
+	                function() {
+						if ($(this).is(":checked"))
+	                        $("#isLOI").set("true");
+	                    else
+	                        $("#isLOI").set("false");
+	                });
+	
+	    }); 
+    </script>
 
 </body>
 </html>

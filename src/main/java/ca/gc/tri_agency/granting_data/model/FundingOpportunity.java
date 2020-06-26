@@ -5,7 +5,6 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -15,7 +14,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 
@@ -35,11 +33,6 @@ public class FundingOpportunity implements LocalizedParametersModel {
 
 	@NotBlank
 	private String nameFr;
-
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "lead_agency_id")
-	@NotNull
-	private Agency leadAgency;
 
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable
@@ -61,10 +54,6 @@ public class FundingOpportunity implements LocalizedParametersModel {
 
 	private Boolean isComplex = false;
 
-	private String programLeadName;
-
-	private String programLeadDn;
-	
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "business_unit_id")
 	private BusinessUnit businessUnit;
@@ -76,10 +65,8 @@ public class FundingOpportunity implements LocalizedParametersModel {
 	public void loadFromForm(FundingOpportunity f) {
 		this.setFundingType(f.getFundingType());
 		this.setFrequency(f.getFrequency());
-		this.setLeadAgency(f.getLeadAgency());
 		this.setNameEn(f.getNameEn());
 		this.setNameFr(f.getNameFr());
-		this.setProgramLeadName(f.getProgramLeadName());
 	}
 
 	public String getNameEn() {
@@ -106,22 +93,6 @@ public class FundingOpportunity implements LocalizedParametersModel {
 		this.frequency = frequency;
 	}
 
-	public String getProgramLeadName() {
-		return programLeadName;
-	}
-
-	public void setProgramLeadName(String programLeadName) {
-		this.programLeadName = programLeadName;
-	}
-
-	public Agency getLeadAgency() {
-		return leadAgency;
-	}
-
-	public void setLeadAgency(Agency leadAgency) {
-		this.leadAgency = leadAgency;
-	}
-	
 	public void setId(Long id) {
 		this.id = id;
 	}
@@ -144,14 +115,6 @@ public class FundingOpportunity implements LocalizedParametersModel {
 
 	public void setParticipatingAgencies(Set<Agency> participatingAgencies) {
 		this.participatingAgencies = participatingAgencies;
-	}
-
-	public String getProgramLeadDn() {
-		return programLeadDn;
-	}
-
-	public void setProgramLeadDn(String programLeadDn) {
-		this.programLeadDn = programLeadDn;
 	}
 
 	public Boolean isJointInitiative() {

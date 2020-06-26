@@ -159,24 +159,6 @@ public class FundingOpportunityController {
 		return "redirect:/browse/viewFo?id=" + fo.getId();
 	}
 
-	@AdminOnly
-	@GetMapping("/manage/editProgramLead")
-	public String editProgramLeadGet(@RequestParam("id") Long id,
-			@RequestParam(value = "searchStr", defaultValue = "") String searchStr, Model model) {
-		if (!searchStr.trim().isEmpty()) {
-			model.addAttribute("adUserList", adUserService.searchADUsers(searchStr.trim()));
-		}
-		model.addAttribute("originalId", id);
-		return "manage/editProgramLead";
-	}
-
-	@AdminOnly
-	@PostMapping(value = "/manage/editProgramLead", params = { "foId", "leadUserDn" })
-	public String editProgramLeadPost(@RequestParam("foId") Long foId, @RequestParam("leadUserDn") String leadUserDn) {
-		foService.setFundingOpportunityLeadContributor(foId, leadUserDn);
-		return "redirect:/browse/viewFo?id=" + foId;
-	}
-
 	@GetMapping("/admin/createFo")
 	public String createFundingOpportunityGet(Model model, @RequestParam("sfoId") Optional<Long> sfoId) {
 		FundingOpportunity fo = new FundingOpportunity();

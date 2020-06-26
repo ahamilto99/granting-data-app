@@ -16,11 +16,9 @@ import org.hibernate.envers.query.AuditQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import ca.gc.tri_agency.granting_data.form.FundingOpportunityFilterForm;
-import ca.gc.tri_agency.granting_data.ldap.ADUser;
-import ca.gc.tri_agency.granting_data.ldap.ADUserService;
+import ca.gc.tri_agency.granting_data.model.Agency;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.GrantingSystem;
 import ca.gc.tri_agency.granting_data.model.auditing.UsernameRevisionEntity;
@@ -33,15 +31,12 @@ public class FundingOpportunityServiceImpl implements FundingOpportunityService 
 
 	private FundingOpportunityRepository foRepo;
 
-	private ADUserService aduService;
-
 	@PersistenceUnit
 	private EntityManagerFactory emf;
 
 	@Autowired
-	public FundingOpportunityServiceImpl(FundingOpportunityRepository foRepo, ADUserService aduService) {
+	public FundingOpportunityServiceImpl(FundingOpportunityRepository foRepo) {
 		this.foRepo = foRepo;
-		this.aduService = aduService;
 	}
 
 	@Override
@@ -61,11 +56,6 @@ public class FundingOpportunityServiceImpl implements FundingOpportunityService 
 	}
 
 	@Override
-	public List<FundingOpportunity> findFundingOpportunitiesByLeadAgencyId(Long leadAgencyId) {
-		return foRepo.findByLeadAgencyId(leadAgencyId);
-	}
-
-	@Override
 	public List<FundingOpportunity> findFundingOpportunitiesByBusinessUnitId(Long buId) {
 		return foRepo.findByBusinessUnitId(buId);
 	}
@@ -74,17 +64,6 @@ public class FundingOpportunityServiceImpl implements FundingOpportunityService 
 	@Override
 	public FundingOpportunity saveFundingOpportunity(FundingOpportunity fo) {
 		return foRepo.save(fo);
-	}
-
-	@AdminOnly
-	@Transactional
-	@Override
-	public void setFundingOpportunityLeadContributor(Long foId, String dn) {
-		ADUser adUser = aduService.findADUserByDn(dn);
-
-		FundingOpportunity fo = findFundingOpportunityById(foId);
-		fo.setProgramLeadDn(dn);
-		fo.setProgramLeadName(adUser.getFullName());
 	}
 
 	@Override
@@ -122,12 +101,6 @@ public class FundingOpportunityServiceImpl implements FundingOpportunityService 
 					continue;
 				}
 			}
-			if (filter.getLeadAgency() != null) {
-				if (fo.getBusinessUnit() == null || fo.getBusinessUnit() != null
-						&& fo.getBusinessUnit().getAgency().getId() != filter.getLeadAgency().getId()) {
-					continue;
-				}
-			}
 			if (filter.getType() != null && filter.getType().length() != 0) {
 				if (fo.getFundingType() == null || filter.getType().compareTo(fo.getFundingType()) != 0) {
 					continue;
@@ -136,6 +109,11 @@ public class FundingOpportunityServiceImpl implements FundingOpportunityService 
 			retval.add(fo);
 		}
 		return retval;
+	}
+
+	@Override
+	public List<FundingOpportunity> findFundingOpportunitiesByAgency(Agency agency) {
+		return foRepo.findByAgency(agency);
 	}
 
 	private List<String[]> convertAuditResults(List<Object[]> revisionList) {
@@ -153,8 +131,6 @@ public class FundingOpportunityServiceImpl implements FundingOpportunityService 
 					(fo.getIsJointInitiative() != null) ? fo.getIsJointInitiative().toString() : null,
 					(fo.getIsLOI() != null) ? fo.getIsLOI().toString() : null,
 					(fo.getIsNOI() != null) ? fo.getIsNOI().toString() : null, fo.getPartnerOrg(),
-					fo.getProgramLeadName(), fo.getProgramLeadDn(),
-					(fo.getLeadAgency() != null) ? fo.getLeadAgency().getId().toString() : null,
 					(fo.getBusinessUnit() != null) ? fo.getBusinessUnit().getId().toString() : null,
 					revEntity.getRevTimestamp().toString()
 

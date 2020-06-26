@@ -33,13 +33,8 @@ public class ProgramForm {
 	@Size(min = 2)
 	private String frequency;
 
-	private String programLeadName;
-
 	@NotNull
 	private Set<Agency> agencies;
-
-	@NotNull
-	private Agency leadAgency;
 
 	public ProgramForm(FundingOpportunity p) {
 		id = p.getId();
@@ -48,9 +43,6 @@ public class ProgramForm {
 		this.setFundingType(p.getFundingType());
 		this.setBusinessUnit(p.getBusinessUnit());
 		this.frequency = p.getFrequency();
-		this.programLeadName = p.getProgramLeadName();
-		this.leadAgency = p.getLeadAgency();
-
 	}
 
 	public ProgramForm() {
@@ -91,28 +83,12 @@ public class ProgramForm {
 		this.frequency = frequency;
 	}
 
-	public String getProgramLeadName() {
-		return programLeadName;
-	}
-
-	public void setProgramLeadName(String programLeadName) {
-		this.programLeadName = programLeadName;
-	}
-
 	public Set<Agency> getAgencies() {
 		return agencies;
 	}
 
 	public void setAgencies(Set<Agency> agencies) {
 		this.agencies = agencies;
-	}
-
-	public Agency getLeadAgency() {
-		return leadAgency;
-	}
-
-	public void setLeadAgency(Agency leadAgency) {
-		this.leadAgency = leadAgency;
 	}
 
 	public String toString() {

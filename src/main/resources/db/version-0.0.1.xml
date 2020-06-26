@@ -55,11 +55,6 @@
             <column name="name_en" type="VARCHAR(255)"/>
             <column name="name_fr" type="VARCHAR(255)"/>
             <column name="partner_org" type="VARCHAR(255)"/>
-            <column name="program_lead_dn" type="VARCHAR(255)"/>
-            <column name="program_lead_name" type="VARCHAR(255)"/>
-            <column name="lead_agency_id" type="BIGINT">
-            	<constraints nullable="false" foreignKeyName="fk_funding_opportunity_agency" references="agency(id)"/>
-            </column>
             <column name="isloi" type="BIT(1)">
                 <constraints nullable="false"/>
             </column>
@@ -467,9 +462,6 @@
                 <column name="name_en" type="VARCHAR(255)"/>
                 <column name="name_fr" type="VARCHAR(255)"/>
                 <column name="partner_org" type="VARCHAR(255)"/>
-                <column name="program_lead_dn" type="VARCHAR(255)"/>
-                <column name="program_lead_name" type="VARCHAR(255)"/>
-                <column name="lead_agency_id" type="BIGINT"/>
                 <column name="isloi" type="BIT(1)"/>
                 <column name="isnoi" type="BIT(1)"/>
                 <column name="business_unit_id" type="BIGINT"/>

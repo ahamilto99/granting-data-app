@@ -1,7 +1,6 @@
 package ca.gc.tri_agency.granting_data.fundingopportunityintegrationtest;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -19,6 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
+import ca.gc.tri_agency.granting_data.service.AgencyService;
 import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
 
 @SpringBootTest(classes = GrantingDataApp.class)
@@ -28,6 +28,9 @@ public class FundingOpportunityServiceTest {
 
 	@Autowired
 	private FundingOpportunityService foService;
+	
+	@Autowired
+	private AgencyService agencyService;
 
 	@WithAnonymousUser
 	@Test
@@ -41,28 +44,6 @@ public class FundingOpportunityServiceTest {
 	public void test_findFundingOpportunitiesByBusinessUnit() {
 		assertEquals(0, foService.findFundingOpportunitiesByBusinessUnitId(Long.MAX_VALUE).size());
 		assertTrue(0 < foService.findFundingOpportunitiesByBusinessUnitId(1L).size());
-	}
-
-	@WithMockUser(username = "admin", roles = "MDM ADMIN")
-	@Test
-	public void test_setFundingOpportunityLeadContributor() {
-		Long foId = 3L;
-
-		FundingOpportunity fo = foService.findFundingOpportunityById(foId);
-		String initProgamLeadDn = fo.getProgramLeadDn();
-		String initProgramLeadName = fo.getProgramLeadName();
-
-		String newLeadDn = "uid=nserc1-user,ou=NSERC_Users";
-
-		foService.setFundingOpportunityLeadContributor(foId, newLeadDn);
-
-		FundingOpportunity updatedFo = foService.findFundingOpportunityById(foId);
-
-		assertNotEquals(initProgamLeadDn, updatedFo.getProgramLeadDn());
-		assertNotEquals(initProgramLeadName, updatedFo.getProgramLeadName());
-
-		assertEquals(newLeadDn, updatedFo.getProgramLeadDn());
-		assertEquals("NSERC1 User", updatedFo.getProgramLeadName());
 	}
 
 	@WithMockUser(username = "admin", roles = "MDM ADMIN")
@@ -120,6 +101,12 @@ public class FundingOpportunityServiceTest {
 	@Test(expected = AccessDeniedException.class)
 	public void test_nonAdminCannotFindAllFundingOpportunitiesRevisions() {
 		foService.findAllFundingOpportunitiesRevisions();
+	}
+	
+	@WithAnonymousUser
+	@Test
+	public void test_anonUserCanFindFundingOpportunitiesByAgency() {
+		assertEquals(35, foService.findFundingOpportunitiesByAgency(agencyService.findAgencyById(1L)).size());
 	}
 
 }

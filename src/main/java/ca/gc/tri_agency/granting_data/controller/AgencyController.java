@@ -35,7 +35,7 @@ public class AgencyController {
 	public String viewAgency(@RequestParam("id") Long id, Model model) {
 		Agency agency = agencyService.findAgencyById(id);
 		model.addAttribute("agency", agency);
-		model.addAttribute("agencyFos", foService.findFundingOpportunitiesByLeadAgencyId(id));
+		model.addAttribute("agencyFos", foService.findFundingOpportunitiesByAgency(agency));
 		model.addAttribute("agencyBUs", buService.findAllBusinessUnitsByAgency(agency).stream()
 				.sorted(Comparator.comparing((BusinessUnit bu) -> bu.getLocalizedAttribute("name"))).collect(Collectors.toList()));
 		return "browse/viewAgency";

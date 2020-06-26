@@ -29,12 +29,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
 import ca.gc.tri_agency.granting_data.controller.FundingOpportunityController;
-import ca.gc.tri_agency.granting_data.model.Agency;
 import ca.gc.tri_agency.granting_data.model.BusinessUnit;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
 import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.repo.SystemFundingOpportunityRepository;
-import ca.gc.tri_agency.granting_data.service.AgencyService;
 import ca.gc.tri_agency.granting_data.service.BusinessUnitService;
 import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
 
@@ -45,9 +43,6 @@ public class GoldenFundingOpportunityIntegrationTest {
 
 	@Autowired
 	private FundingOpportunityController foController;
-
-	@Autowired
-	private AgencyService agencyService;
 
 	@Autowired
 	private FundingOpportunityRepository foRepo;
@@ -106,21 +101,16 @@ public class GoldenFundingOpportunityIntegrationTest {
 		String nameEn = RandomStringUtils.randomAlphabetic(25);
 		String nameFr = RandomStringUtils.randomAlphabetic(25);
 		String po = RandomStringUtils.randomAlphabetic(25);
-		String pld = RandomStringUtils.randomAlphabetic(25);
-		String pln = RandomStringUtils.randomAlphabetic(25);
-		List<Agency> agencyList = agencyService.findAllAgencies();
-		Agency la = agencyList.size() > 0 ? agencyList.remove(0) : null;
 //		Set<Agency> pas = agencyList.size() > 0 ? new HashSet<>(agencyList) : null;
 
 		List<FundingOpportunity> fos = foRepo.findAll();
 		String idParam = String.valueOf(fos.get(fos.size() - 1).getId() + 1L);
 
 		mvc.perform(MockMvcRequestBuilders.post("/admin/createFo").param("id", idParam).param("nameEn", nameEn)
-				.param("nameFr", nameFr).param("leadAgency", Long.toString(la.getId())).param("division", div)
-				.param("isJointInitiative", Boolean.toString(ji)).param("fundingType", ft).param("partnerOrg", po)
-				.param("frequency", frequency).param("isComplex", Boolean.toString(cpx))
-				.param("isEdiRequired", Boolean.toString(edi)).param("isNOI", Boolean.toString(noi))
-				.param("isLOI", Boolean.toString(loi)).param("programLeadName", pln).param("programLeadDn", pld))
+				.param("nameFr", nameFr).param("division", div).param("isJointInitiative", Boolean.toString(ji))
+				.param("fundingType", ft).param("partnerOrg", po).param("frequency", frequency)
+				.param("isComplex", Boolean.toString(cpx)).param("isEdiRequired", Boolean.toString(edi))
+				.param("isNOI", Boolean.toString(noi)).param("isLOI", Boolean.toString(loi)))
 				.andExpect(MockMvcResultMatchers.status().isForbidden()).andExpect(MockMvcResultMatchers.content()
 						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
 	}
@@ -138,10 +128,6 @@ public class GoldenFundingOpportunityIntegrationTest {
 		String nameEn = RandomStringUtils.randomAlphabetic(25);
 		String nameFr = RandomStringUtils.randomAlphabetic(25);
 		String po = RandomStringUtils.randomAlphabetic(25);
-		String pld = RandomStringUtils.randomAlphabetic(25);
-		String pln = RandomStringUtils.randomAlphabetic(25);
-		List<Agency> agencyList = agencyService.findAllAgencies();
-		Agency la = agencyList.size() > 0 ? agencyList.remove(0) : null;
 		List<BusinessUnit> businessUnitList = businessUnitService.findAllBusinessUnits();
 		BusinessUnit leadBu = businessUnitList.size() > 0 ? businessUnitList.remove(0) : null;
 
@@ -149,12 +135,11 @@ public class GoldenFundingOpportunityIntegrationTest {
 		String idParam = String.valueOf(fos.get(fos.size() - 1).getId() + 1L);
 
 		mvc.perform(MockMvcRequestBuilders.post("/admin/createFo").param("id", idParam).param("nameEn", nameEn)
-				.param("nameFr", nameFr).param("leadAgency", Long.toString(la.getId()))
-				.param("businessUnit", Long.toString(leadBu.getId())).param("isJointInitiative", Boolean.toString(ji))
-				.param("fundingType", ft).param("partnerOrg", po).param("frequency", frequency)
-				.param("isComplex", Boolean.toString(cpx)).param("isEdiRequired", Boolean.toString(edi))
-				.param("isNOI", Boolean.toString(noi)).param("isLOI", Boolean.toString(loi))
-				.param("programLeadName", pln).param("programLeadDn", pld))
+				.param("nameFr", nameFr).param("businessUnit", Long.toString(leadBu.getId()))
+				.param("isJointInitiative", Boolean.toString(ji)).param("fundingType", ft).param("partnerOrg", po)
+				.param("frequency", frequency).param("isComplex", Boolean.toString(cpx))
+				.param("isEdiRequired", Boolean.toString(edi)).param("isNOI", Boolean.toString(noi))
+				.param("isLOI", Boolean.toString(loi)))
 				.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
 				.andExpect(MockMvcResultMatchers.redirectedUrl("/admin/home")).andExpect(MockMvcResultMatchers.flash()
 						.attribute("actionMessage", "Created Funding Opportunity named: " + nameEn));
@@ -174,12 +159,9 @@ public class GoldenFundingOpportunityIntegrationTest {
 		assertEquals(loi, newGfo.getIsLOI());
 		assertEquals(noi, newGfo.getIsNOI());
 		assertEquals(ji, newGfo.getIsJointInitiative());
-		assertEquals(la.getId(), newGfo.getLeadAgency().getId());
 		assertEquals(nameEn, newGfo.getNameEn());
 		assertEquals(nameFr, newGfo.getNameFr());
 		assertEquals(po, newGfo.getPartnerOrg());
-		assertEquals(pld, newGfo.getProgramLeadDn());
-		assertEquals(pln, newGfo.getProgramLeadName());
 	}
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
@@ -211,9 +193,6 @@ public class GoldenFundingOpportunityIntegrationTest {
 		gfo.setNameEn(RandomStringUtils.randomAlphabetic(25));
 		gfo.setNameFr(RandomStringUtils.randomAlphabetic(25));
 		gfo.setPartnerOrg(RandomStringUtils.randomAlphabetic(25));
-		gfo.setProgramLeadDn(RandomStringUtils.randomAlphabetic(25));
-		gfo.setProgramLeadName(RandomStringUtils.randomAlphabetic(25));
-		gfo.setLeadAgency(agencyService.findAgencyById(1L));
 
 		String successUrl = foController.createFundingOpportunityPost(gfo, bindingResult, model, redirectAttributes);
 

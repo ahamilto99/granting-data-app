@@ -69,11 +69,11 @@ public class FundingOpportunityControllerIntegrationTest {
 		String nameFr = RandomStringUtils.randomAlphabetic(25);
 		String frequency = RandomStringUtils.randomAlphabetic(10);
 
-		mvc.perform(MockMvcRequestBuilders.post("/manage/editFo").param("id", "1").param("programLeadName", "Jennifer Mills")
+		mvc.perform(MockMvcRequestBuilders.post("/manage/editFo").param("id", "1")
 				.param("frequency", frequency).param("nameFr", nameFr)
-				.param("nameEn", "Collaborative Health Research Projects (CHRP) (5640)").param("leadAgency", "3")
-				.param("division", "MCT").param("_isJointInitiative", "on").param("_isComplex", "on")
-				.param("_isNOI", "on").param("_isLOI", "on").param("_participatingAgencies", "1"))
+				.param("nameEn", "Collaborative Health Research Projects (CHRP) (5640)").param("division", "MCT")
+				.param("_isJointInitiative", "on").param("_isComplex", "on").param("_isNOI", "on")
+				.param("_isLOI", "on").param("_participatingAgencies", "1"))
 				.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
 				.andExpect(MockMvcResultMatchers.redirectedUrl("/browse/viewFo?id=1"));
 
@@ -90,11 +90,11 @@ public class FundingOpportunityControllerIntegrationTest {
 		String nameFr = RandomStringUtils.randomAlphabetic(25);
 		String frequency = RandomStringUtils.randomAlphabetic(10);
 
-		mvc.perform(MockMvcRequestBuilders.post("/manage/editFo").param("id", "1").param("programLeadName", "Jennifer Mills")
+		mvc.perform(MockMvcRequestBuilders.post("/manage/editFo").param("id", "1")
 				.param("frequency", frequency).param("nameFr", nameFr)
-				.param("nameEn", "Collaborative Health Research Projects (CHRP) (5640)").param("leadAgency", "3")
-				.param("division", "MCT").param("_isJointInitiative", "on").param("_isComplex", "on")
-				.param("_isNOI", "on").param("_isLOI", "on").param("_participatingAgencies", "1"))
+				.param("nameEn", "Collaborative Health Research Projects (CHRP) (5640)").param("division", "MCT")
+				.param("_isJointInitiative", "on").param("_isComplex", "on").param("_isNOI", "on")
+				.param("_isLOI", "on").param("_participatingAgencies", "1"))
 				.andExpect(MockMvcResultMatchers.status().isForbidden()).andExpect(MockMvcResultMatchers.content()
 						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
 
@@ -102,35 +102,6 @@ public class FundingOpportunityControllerIntegrationTest {
 		assertNotEquals(nameFr, foService.findFundingOpportunityById(1L).getNameFr());
 		assertNotEquals(frequency, foService.findFundingOpportunityById(1L).getFrequency());
 
-	}
-
-	@WithMockUser(username = "admin", roles = "MDM ADMIN")
-	@Test
-	public void test_adminCanEditProgramLead_shouldSucceedWith302() throws Exception {
-		long initFOCount = foRepo.count();
-		String newProgramLead = "uid=sshrc-admin,ou=SSHRC_Users";
-
-		assertNotEquals(newProgramLead, foService.findFundingOpportunityById(3L).getProgramLeadDn());
-
-		mvc.perform(MockMvcRequestBuilders.post("/manage/editProgramLead").param("foId", "3").param("leadUserDn",
-				newProgramLead)).andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-				.andExpect(MockMvcResultMatchers.redirectedUrl("/browse/viewFo?id=3"));
-
-		assertEquals(newProgramLead, foService.findFundingOpportunityById(3L).getProgramLeadDn());
-		assertEquals(initFOCount, foRepo.count());
-	}
-
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
-	@Test
-	public void test_nonAdminCannotEditProgramLead_shouldReturn403() throws Exception {
-		String originalProgramLead = foService.findFundingOpportunityById(3L).getProgramLeadDn();
-
-		mvc.perform(MockMvcRequestBuilders.post("/manage/editProgramLead").param("foId", "3").param("leadUserDn",
-				"uid=nserc1-user,ou=NSERC_Users")).andExpect(MockMvcResultMatchers.status().isForbidden())
-				.andExpect(MockMvcResultMatchers.content()
-						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
-
-		assertEquals(originalProgramLead, foService.findFundingOpportunityById(3L).getProgramLeadDn());
 	}
 
 }

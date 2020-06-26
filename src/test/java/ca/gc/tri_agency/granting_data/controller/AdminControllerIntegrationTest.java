@@ -57,7 +57,7 @@ public class AdminControllerIntegrationTest {
 		long numFos = foRepo.count();
 
 		mvc.perform(post("/admin/createFo").param("id", "26").param("nameEn", "ACE").param("nameFr", "BDF")
-				.param("leadAgency", "3").param("division", "Q").param("isJointIntiative", "false")
+				.param("division", "Q").param("isJointIntiative", "false")
 				.param("_isJointIntiative", "on").param("partnerOrg", "Z").param("isComplex", "false")
 				.param("_isComplex", "on").param("isEdiRequired", "false").param("_isEdiRequired", "on")
 				.param("fundingType", "E").param("frequency", "Once").param("isNOI", "false").param("_isNOI", "on")
@@ -74,7 +74,7 @@ public class AdminControllerIntegrationTest {
 		long numFos = foRepo.count();
 
 		mvc.perform(post("/admin/createFo").param("id", "26").param("nameEn", "A").param("nameFr", "B")
-				.param("leadAgency", "3").param("division", "Q").param("isJointIntiative", "false")
+				.param("division", "Q").param("isJointIntiative", "false")
 				.param("_isJointIntiative", "on").param("partnerOrg", "Z").param("isComplex", "false")
 				.param("_isComplex", "on").param("isEdiRequired", "false").param("_isEdiRequired", "on")
 				.param("fundingType", "E").param("frequency", "Once").param("isNOI", "false").param("_isNOI", "on")
@@ -90,13 +90,12 @@ public class AdminControllerIntegrationTest {
 	public void test_onlyAdminCanAddFundingOpportunities_shouldSucceedWith302() throws Exception {
 		long numFos = foRepo.count();
 
-		mvc.perform(post("/admin/createFo").param("nameEn", "ABC").param("nameFr", "BCD").param("leadAgency", "3")
-				.param("division", "Q").param("isJointIntiative", "false").param("_isJointIntiative", "on")
-				.param("partnerOrg", "Z").param("isComplex", "false").param("_isComplex", "on")
-				.param("isEdiRequired", "false").param("_isEdiRequired", "on").param("fundingType", "E")
-				.param("frequency", "Once").param("isNOI", "false").param("_isNOI", "on").param("isLOI", "false")
-				.param("_isLOI", "on")).andExpect(status().is3xxRedirection())
-				.andExpect(MockMvcResultMatchers.redirectedUrl("/admin/home"));
+		mvc.perform(post("/admin/createFo").param("nameEn", "ABC").param("nameFr", "BCD").param("division", "Q")
+				.param("isJointIntiative", "false").param("_isJointIntiative", "on").param("partnerOrg", "Z")
+				.param("isComplex", "false").param("_isComplex", "on").param("isEdiRequired", "false")
+				.param("_isEdiRequired", "on").param("fundingType", "E").param("frequency", "Once")
+				.param("isNOI", "false").param("_isNOI", "on").param("isLOI", "false").param("_isLOI", "on"))
+				.andExpect(status().is3xxRedirection()).andExpect(MockMvcResultMatchers.redirectedUrl("/admin/home"));
 
 		// verify that a FO was added
 		assertEquals(numFos + 1, foRepo.count());
@@ -128,13 +127,13 @@ public class AdminControllerIntegrationTest {
 				.andExpect(MockMvcResultMatchers.status().isOk()).andReturn().getResponse().getContentAsString();
 
 		int numAdds = 0;
-		
+
 		Pattern regex = Pattern.compile("<td>ADD</td>");
 		Matcher regexMatcher = regex.matcher(response);
 		while (regexMatcher.find()) {
 			++numAdds;
 		}
-		
+
 		assertTrue(response.contains("id=\"memberRoleAuditLogPage\""));
 		assertTrue(response.contains("Audit Log - Member Roles"));
 		assertTrue(response.contains("href=\"/admin/auditLogs\""));
@@ -156,13 +155,13 @@ public class AdminControllerIntegrationTest {
 				.andExpect(MockMvcResultMatchers.status().isOk()).andReturn().getResponse().getContentAsString();
 
 		int numAdds = 0;
-		
+
 		Pattern regex = Pattern.compile("<td>ADD</td>");
 		Matcher regexMatcher = regex.matcher(response);
 		while (regexMatcher.find()) {
 			++numAdds;
 		}
-		
+
 		assertTrue(response.contains("id=\"memberRoleAuditLogPage\""));
 		assertTrue(response.contains("Audit Log - Member Role"));
 		assertTrue(response.contains("href=\"/browse/viewBU?id=1\""));

@@ -170,12 +170,12 @@
 								<div th:each="fc : ${startDates}"
 									th:if="${fc.startDate.getDayOfMonth()} == ${col.dayOfMonth} and ${fc.startDate.getMonthValue()} == ${calGrid.month.plusMonths(calGrid.currentMonth).getMonthValue()}"
 									style="max-height: 16px;">
-									<a th:if="${fc.fundingOpportunity.leadAgency.id} == 1" class="sshrc startDate"
+									<a th:if="${fc.fundingOpportunity.businessUnit.agency.id} == 1" class="sshrc startDate"
 										th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
-										th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a th:if="${fc.fundingOpportunity.leadAgency.id} == 2"
+										th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a th:if="${fc.fundingOpportunity.businessUnit.agency.id} == 2"
 										class="nserc startDate" th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
 										th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a
-										th:if="${fc.fundingOpportunity.leadAgency.id} == 3" class="cihr startDate"
+										th:if="${fc.fundingOpportunity.businessUnit.agency.id} == 3" class="cihr startDate"
 										th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
 										th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a>
 								</div>
@@ -183,12 +183,12 @@
 								<div th:each="fc : ${endDates}"
 									th:if="${fc.endDate.getDayOfMonth()} == ${col.dayOfMonth} and ${fc.endDate.getMonthValue()} == ${calGrid.month.plusMonths(calGrid.currentMonth).getMonthValue()}"
 									style="max-height: 16px;">
-									<a th:if="${fc.fundingOpportunity.leadAgency.id} == 1" class="sshrc endDate"
+									<a th:if="${fc.fundingOpportunity.businessUnit.agency.id} == 1" class="sshrc endDate"
 										th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
-										th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a th:if="${fc.fundingOpportunity.leadAgency.id} == 2"
+										th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a th:if="${fc.fundingOpportunity.businessUnit.agency.id} == 2"
 										class="nserc endDate" th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
 										th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a
-										th:if="${fc.fundingOpportunity.leadAgency.id} == 3" class="cihr endDate"
+										th:if="${fc.fundingOpportunity.businessUnit.agency.id} == 3" class="cihr endDate"
 										th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
 										th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a>
 								</div>
@@ -196,12 +196,12 @@
 								<div th:each="fc : ${startLOIDates}"
 									th:if="${fc.startDateLOI.getDayOfMonth()} == ${col.dayOfMonth} and ${fc.startDateLOI.getMonthValue()} == ${calGrid.month.plusMonths(calGrid.currentMonth).getMonthValue()}"
 									style="max-height: 16px;">
-									<a th:if="${fc.fundingOpportunity.leadAgency.id} == 1" class="sshrc startDateLOI"
+									<a th:if="${fc.fundingOpportunity.businessUnit.agency.id} == 1" class="sshrc startDateLOI"
 										th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
-										th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a th:if="${fc.fundingOpportunity.leadAgency.id} == 2"
+										th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a th:if="${fc.fundingOpportunity.businessUnit.agency.id} == 2"
 										class="nserc startDateLOI" th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
 										th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a
-										th:if="${fc.fundingOpportunity.leadAgency.id} == 3" class="cihr startDateLOI"
+										th:if="${fc.fundingOpportunity.businessUnit.agency.id} == 3" class="cihr startDateLOI"
 										th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
 										th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a>
 								</div>
@@ -209,12 +209,12 @@
 								<div th:each="fc : ${endLOIDates}"
 									th:if="${fc.endDateLOI.getDayOfMonth()} == ${col.dayOfMonth} and ${fc.endDateLOI.getMonthValue()} == ${calGrid.month.plusMonths(calGrid.currentMonth).getMonthValue()}"
 									style="max-height: 16px;">
-									<a th:if="${fc.fundingOpportunity.leadAgency.id} == 1" class="sshrc endDateLOI"
+									<a th:if="${fc.fundingOpportunity.businessUnit.agency.id} == 1" class="sshrc endDateLOI"
 										th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
-										th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a th:if="${fc.fundingOpportunity.leadAgency.id} == 2"
+										th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a th:if="${fc.fundingOpportunity.businessUnit.agency.id} == 2"
 										class="nserc endDateLOI" th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
 										th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a
-										th:if="${fc.fundingOpportunity.leadAgency.id} == 3" class="cihr endDateLOI"
+										th:if="${fc.fundingOpportunity.businessUnit.agency.id} == 3" class="cihr endDateLOI"
 										th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
 										th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a>
 								</div>
@@ -222,12 +222,12 @@
 								<div th:each="fc : ${startNOIDates}"
 									th:if="${fc.startDateNOI.getDayOfMonth()} == ${col.dayOfMonth} and ${fc.startDateNOI.getMonthValue()} == ${calGrid.month.plusMonths(calGrid.currentMonth).getMonthValue()}"
 									style="max-height: 16px;">
-									<a th:if="${fc.fundingOpportunity.leadAgency.id} == 1" class="sshrc startDateNOI"
+									<a th:if="${fc.fundingOpportunity.businessUnit.agency.id} == 1" class="sshrc startDateNOI"
 										th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
-										th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a th:if="${fc.fundingOpportunity.leadAgency.id} == 2"
+										th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a th:if="${fc.fundingOpportunity.businessUnit.agency.id} == 2"
 										class="nserc startDateNOI" th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
 										th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a
-										th:if="${fc.fundingOpportunity.leadAgency.id} == 3" class="cihr startDateNOI"
+										th:if="${fc.fundingOpportunity.businessUnit.agency.id} == 3" class="cihr startDateNOI"
 										th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
 										th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a>
 								</div>
@@ -235,12 +235,12 @@
 								<div th:each="fc : ${endNOIDates}"
 									th:if="${fc.endDateNOI.getDayOfMonth()} == ${col.dayOfMonth} and ${fc.endDateNOI.getMonthValue()} == ${calGrid.month.plusMonths(calGrid.currentMonth).getMonthValue()}"
 									style="max-height: 16px;">
-									<a th:if="${fc.fundingOpportunity.leadAgency.id} == 1" class="sshrc endDateNOI"
+									<a th:if="${fc.fundingOpportunity.businessUnit.agency.id} == 1" class="sshrc endDateNOI"
 										th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
-										th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a th:if="${fc.fundingOpportunity.leadAgency.id} == 2"
+										th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a th:if="${fc.fundingOpportunity.businessUnit.agency.id} == 2"
 										class="nserc endDateNOI" th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
 										th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a
-										th:if="${fc.fundingOpportunity.leadAgency.id} == 3" class="cihr endDateNOI"
+										th:if="${fc.fundingOpportunity.businessUnit.agency.id} == 3" class="cihr endDateNOI"
 										th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
 										th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a>
 								</div>

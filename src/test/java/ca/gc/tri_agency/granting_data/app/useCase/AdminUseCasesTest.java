@@ -1,7 +1,5 @@
 package ca.gc.tri_agency.granting_data.app.useCase;
 
-import static org.hamcrest.CoreMatchers.containsString;
-
 //import static org.junit.Assert.assertArrayEquals;
 //import static org.junit.Assert.assertEquals;
 
@@ -44,7 +42,6 @@ public class AdminUseCasesTest {
 	private WebApplicationContext context;
 
 	private MockMvc mvc;
-	private String foId;
 
 	@Autowired
 	private FundingOpportunityRepository foRepo;
@@ -79,21 +76,6 @@ public class AdminUseCasesTest {
 	@Test
 	public void testDatabaseIsPopulatedOnInstall() {
 		assertTrue("There are " + foRepo.findAll().size() + " FOs in the db", foRepo.findAll().size() > 100);
-	}
-
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
-	@Test
-	public void testChangeProgramLeadLink_visibleWithAdminUser() throws Exception {
-		foId = foRepo.findAll().get(0).getId().toString();
-		mvc.perform(get("/manage/manageFo").param("id", foId)).andExpect(status().isOk()).andExpect(
-				MockMvcResultMatchers.content().string(containsString("href=\"editProgramLead?id=" + foId + "\"")));
-	}
-
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
-	@Test
-	public void testViewEditProgramLead_withAdminUser_expectOk() throws Exception {
-		foId = foRepo.findAll().get(0).getId().toString();
-		mvc.perform(get("/manage/editProgramLead").param("id", foId)).andExpect(status().isOk());
 	}
 
 }

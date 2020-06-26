@@ -40,14 +40,12 @@
 					<thead>
 						<tr>
 							<th th:text="#{form.name}"></th>
-							<th th:text="#{form.programLead}"></th>
 							<th th:text="#{form.businessUnit}"></th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr th:each="fo : ${agencyFos}">
 							<td><a th:href="@{'/browse/viewFo'(id=${fo.id})}" th:text="${fo.getLocalizedAttribute('name')}"></a></td>
-							<td th:text="${fo.programLeadName}"></td>
 							<td th:text="${fo.businessUnit.getLocalizedAttribute('name')}"></td>
 						</tr>
 					</tbody>

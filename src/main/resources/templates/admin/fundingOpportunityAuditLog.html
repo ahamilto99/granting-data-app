@@ -37,9 +37,6 @@
 							<th th:text="#{form.loi}"></th>
 							<th th:text="#{form.noi}"></th>
 							<th th:text="#{th.partnerOrg}"></th>
-							<th th:text="#{th.leadName}"></th>
-							<th th:text="#{th.leadDn}"></th>
-							<th th:text="#{form.agency}"></th>
 							<th th:text="#{th.bu}"></th>
 							<th th:text="#{th.date}"></th>
 						</tr>
@@ -59,11 +56,8 @@
 							<td th:text="${revision[10]}"></td>
 							<td th:text="${revision[11]}"></td>
 							<td th:text="${revision[12]}"></td>
-							<td th:text="${revision[13]}"></td>
+							<td><a th:text="${revision[13]}" th:href="@{/browse/viewBU(id=${revision[13]})}"></a></td>
 							<td th:text="${revision[14]}"></td>
-							<td><a th:text="${revision[15]}" th:href="@{/browse/viewAgency(id=${revision[15]})}"></a></td>
-							<td><a th:text="${revision[16]}" th:href="@{/browse/viewBU(id=${revision[16]})}"></a></td>
-							<td th:text="${revision[17]}"></td>
 						</tr>
 					</tbody>
 				</table>
