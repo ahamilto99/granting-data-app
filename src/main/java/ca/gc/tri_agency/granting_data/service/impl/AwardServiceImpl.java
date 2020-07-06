@@ -70,6 +70,8 @@ public class AwardServiceImpl implements AwardService {
 						appPart.getGivenName(), appPart.getRoleCode(), appPart.getRoleEn(),
 						appPart.getRoleFr()))
 				.collect(Collectors.toList());
+		
+		testAwards.forEach(award -> award.setRequestedAmount((sRand.nextDouble() + 1.0) * award.getAwardedAmount()));
 
 		appPartService.saveAllApplicationParticipations(appParts);
 

@@ -538,6 +538,11 @@
             </column>
         </createTable>
     </changeSet>
+    <changeSet id="0000000000053" author="dev_aha">
+        <addColumn tableName="award">
+            <column name="requested_amount" type="DOUBLE"/>
+        </addColumn>
+    </changeSet>
         
     <!-- 
     <changeSet author="dev_yab (generated)" id="1574353543232-28">

@@ -30,6 +30,8 @@ public class Award {
 	
 	private String roleFr;
 	
+	private Double requestedAmount;
+	
 	public Award() {
 	}
 
@@ -115,6 +117,14 @@ public class Award {
 
 	public void setRoleFr(String roleFr) {
 		this.roleFr = roleFr;
+	}
+
+	public Double getRequestedAmount() {
+		return requestedAmount;
+	}
+
+	public void setRequestedAmount(Double requestedAmount) {
+		this.requestedAmount = requestedAmount;
 	}
 
 	@Override
