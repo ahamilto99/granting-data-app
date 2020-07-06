@@ -2,12 +2,20 @@ package ca.gc.tri_agency.granting_data.model;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -77,74 +85,37 @@ public class ApplicationParticipation implements LocalizedParametersModel {
 	private String provinceStateCode;
 
 	private String country;
-	
+
 	private Boolean ediNotApplicable = false;
-	
+
 	private Boolean dateOfBirthIndicator = false;
-	
+
 	private LocalDate dateOfBirth;
-	
-	@Column(name = "gender_selection")
-	private String genderSelection;
-	
-	private String indIdentityResponse;
-	
+
+	@ManyToOne
+	@JoinColumn(name = "gender_id")
+	private Gender gender;
+
 	private Boolean indIdentityPrefNotTo = false;
-	
-	@Column(name = "ind_identity_selection_1")
-	private Long indIdentitySelection1;
 
-	@Column(name = "ind_identity_selection_2")
-	private Long indIdentitySelection2;
-
-	@Column(name = "ind_identity_selection_3")
-	private Long indIdentitySelection3;
-	
 	private String disabilityResponse;
-	
+
 	private Boolean visibleMinPrefNotTo = false;
-	
-	@Column(name = "visible_min_selection_1")
-	private Long visibleMinSelection1;
-	
-	@Column(name = "visible_min_selection_2")
-	private Long visibleMinSelection2;
-	
-	@Column(name = "visible_min_selection_3")
-	private Long visibleMinSelection3;
-	
-	@Column(name = "visible_min_selection_4")
-	private Long visibleMinSelection4;
-	
-	@Column(name = "visible_min_selection_5")
-	private Long visibleMinSelection5;
-	
-	@Column(name = "visible_min_selection_6")
-	private Long visibleMinSelection6;
-	
-	@Column(name = "visible_min_selection_7")
-	private Long visibleMinSelection7;
-	
-	@Column(name = "visible_min_selection_8")
-	private Long visibleMinSelection8;
-	
-	@Column(name = "visible_min_selection_9")
-	private Long visibleMinSelection9;
-	
-	@Column(name = "visible_min_selection_10")
-	private Long visibleMinSelection10;
-	
-	@Column(name = "visible_min_selection_11")
-	private Long visibleMinSelection11;
-	
-	private String visibleMinorityResponse;
-	
+
 	@Size(max = 3)
 	private String createUserId;
-	
+
 	// TODO: REMOVE AFTER DEMO
 	@NotNull
 	private Boolean isDeadlinePassed = false;
+
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@JoinTable(name = "app_part_indigenous_identity", joinColumns = @JoinColumn(name = "application_participation_id"), inverseJoinColumns = @JoinColumn(name = "indigenous_identity_id"))
+	private Set<IndigenousIdentity> indigenousIdentities = new HashSet<>();
+
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@JoinTable(name = "app_part_visible_minority", joinColumns = @JoinColumn(name = "application_participation_id"), inverseJoinColumns = @JoinColumn(name = "visible_minority_id"))
+	private Set<VisibleMinority> visibleMinorities = new HashSet<>();
 
 	public Long getId() {
 		return id;
@@ -370,20 +341,12 @@ public class ApplicationParticipation implements LocalizedParametersModel {
 		this.dateOfBirth = dateOfBirth;
 	}
 
-	public String getGenderSelection() {
-		return genderSelection;
+	public Gender getGender() {
+		return gender;
 	}
 
-	public void setGenderSelection(String genderSelection) {
-		this.genderSelection = genderSelection;
-	}
-
-	public String getIndIdentityResponse() {
-		return indIdentityResponse;
-	}
-
-	public void setIndIdentityResponse(String indIdentityResponse) {
-		this.indIdentityResponse = indIdentityResponse;
+	public void setGender(Gender gender) {
+		this.gender = gender;
 	}
 
 	public Boolean getIndIdentityPrefNotTo() {
@@ -392,30 +355,6 @@ public class ApplicationParticipation implements LocalizedParametersModel {
 
 	public void setIndIdentityPrefNotTo(Boolean indIdentityPrefNotTo) {
 		this.indIdentityPrefNotTo = indIdentityPrefNotTo;
-	}
-
-	public Long getIndIdentitySelection1() {
-		return indIdentitySelection1;
-	}
-
-	public void setIndIdentitySelection1(Long indIdentitySelection1) {
-		this.indIdentitySelection1 = indIdentitySelection1;
-	}
-
-	public Long getIndIdentitySelection2() {
-		return indIdentitySelection2;
-	}
-
-	public void setIndIdentitySelection2(Long indIdentitySelection2) {
-		this.indIdentitySelection2 = indIdentitySelection2;
-	}
-
-	public Long getIndIdentitySelection3() {
-		return indIdentitySelection3;
-	}
-
-	public void setIndIdentitySelection3(Long indIdentitySelection3) {
-		this.indIdentitySelection3 = indIdentitySelection3;
 	}
 
 	public String getDisabilityResponse() {
@@ -434,102 +373,6 @@ public class ApplicationParticipation implements LocalizedParametersModel {
 		this.visibleMinPrefNotTo = visibleMinPrefNotTo;
 	}
 
-	public Long getVisibleMinSelection1() {
-		return visibleMinSelection1;
-	}
-
-	public void setVisibleMinSelection1(Long visibleMinSelection1) {
-		this.visibleMinSelection1 = visibleMinSelection1;
-	}
-
-	public Long getVisibleMinSelection2() {
-		return visibleMinSelection2;
-	}
-
-	public void setVisibleMinSelection2(Long visibleMinSelection2) {
-		this.visibleMinSelection2 = visibleMinSelection2;
-	}
-
-	public Long getVisibleMinSelection3() {
-		return visibleMinSelection3;
-	}
-
-	public void setVisibleMinSelection3(Long visibleMinSelection3) {
-		this.visibleMinSelection3 = visibleMinSelection3;
-	}
-
-	public Long getVisibleMinSelection4() {
-		return visibleMinSelection4;
-	}
-
-	public void setVisibleMinSelection4(Long visibleMinSelection4) {
-		this.visibleMinSelection4 = visibleMinSelection4;
-	}
-
-	public Long getVisibleMinSelection5() {
-		return visibleMinSelection5;
-	}
-
-	public void setVisibleMinSelection5(Long visibleMinSelection5) {
-		this.visibleMinSelection5 = visibleMinSelection5;
-	}
-
-	public Long getVisibleMinSelection6() {
-		return visibleMinSelection6;
-	}
-
-	public void setVisibleMinSelection6(Long visibleMinSelection6) {
-		this.visibleMinSelection6 = visibleMinSelection6;
-	}
-
-	public Long getVisibleMinSelection7() {
-		return visibleMinSelection7;
-	}
-
-	public void setVisibleMinSelection7(Long visibleMinSelection7) {
-		this.visibleMinSelection7 = visibleMinSelection7;
-	}
-
-	public Long getVisibleMinSelection8() {
-		return visibleMinSelection8;
-	}
-
-	public void setVisibleMinSelection8(Long visibleMinSelection8) {
-		this.visibleMinSelection8 = visibleMinSelection8;
-	}
-
-	public Long getVisibleMinSelection9() {
-		return visibleMinSelection9;
-	}
-
-	public void setVisibleMinSelection9(Long visibleMinSelection9) {
-		this.visibleMinSelection9 = visibleMinSelection9;
-	}
-
-	public Long getVisibleMinSelection10() {
-		return visibleMinSelection10;
-	}
-
-	public void setVisibleMinSelection10(Long visibleMinSelection10) {
-		this.visibleMinSelection10 = visibleMinSelection10;
-	}
-
-	public Long getVisibleMinSelection11() {
-		return visibleMinSelection11;
-	}
-
-	public void setVisibleMinSelection11(Long visibleMinSelection11) {
-		this.visibleMinSelection11 = visibleMinSelection11;
-	}
-
-	public String getVisibleMinorityResponse() {
-		return visibleMinorityResponse;
-	}
-
-	public void setVisibleMinorityResponse(String visibleMinorityResponse) {
-		this.visibleMinorityResponse = visibleMinorityResponse;
-	}
-
 	public String getCreateUserId() {
 		return createUserId;
 	}
@@ -545,7 +388,59 @@ public class ApplicationParticipation implements LocalizedParametersModel {
 	public void setIsDeadlinePassed(Boolean isDeadlinePassed) {
 		this.isDeadlinePassed = isDeadlinePassed;
 	}
-	
+
+	public Set<IndigenousIdentity> getIndigenousIdentities() {
+		return indigenousIdentities;
+	}
+
+	public void setIndigenousIdentities(Set<IndigenousIdentity> indigenousIdentities) {
+		this.indigenousIdentities = indigenousIdentities;
+	}
+
+	public Set<VisibleMinority> getVisibleMinorities() {
+		return visibleMinorities;
+	}
+
+	public void setVisibleMinorities(Set<VisibleMinority> visibleMinorities) {
+		this.visibleMinorities = visibleMinorities;
+	}
+
+	public void addIndigenousIdentity(IndigenousIdentity indigenousIdentity) {
+		indigenousIdentities.add(indigenousIdentity);
+		indigenousIdentity.getApplicationParticipations().add(this);
+	}
+
+	public void removeIndigenousIdentity(IndigenousIdentity indigenousIdentity) {
+		indigenousIdentities.remove(indigenousIdentity);
+		indigenousIdentity.getApplicationParticipations().remove(this);
+	}
+
+	public void removeIndigenousIdentities() {
+		Iterator<IndigenousIdentity> iter = indigenousIdentities.iterator();
+		iter.forEachRemaining(identity -> {
+			identity.getApplicationParticipations().remove(this);
+			iter.remove();
+		});
+	}
+
+	public void addVisibleMinority(VisibleMinority visibleMinority) {
+		visibleMinorities.add(visibleMinority);
+		visibleMinority.getApplicationParticipations().add(this);
+	}
+
+	public void removeVisibleMinority(VisibleMinority visibleMinority) {
+		visibleMinorities.remove(visibleMinority);
+		visibleMinority.getApplicationParticipations().remove(this);
+	}
+
+	public void removeVisibleMinorities() {
+		Iterator<VisibleMinority> iter = visibleMinorities.iterator();
+		iter.forEachRemaining(minority -> {
+			minority.getApplicationParticipations().remove(this);
+			iter.remove();
+		});
+	}
+
 	@Override
 	public int hashCode() {
 		return 2020;
@@ -556,15 +451,15 @@ public class ApplicationParticipation implements LocalizedParametersModel {
 		if (this == obj) {
 			return true;
 		}
-		
+
 		if (obj == null || getClass() != obj.getClass()) {
 			return false;
 		}
-		
+
 		ApplicationParticipation other = (ApplicationParticipation) obj;
-		
+
 		return id != null && id.equals(other.getId());
-		
+
 	}
 
 }

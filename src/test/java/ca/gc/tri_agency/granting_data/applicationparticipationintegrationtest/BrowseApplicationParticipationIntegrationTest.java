@@ -9,13 +9,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
 import ca.gc.tri_agency.granting_data.model.ApplicationParticipation;
 import ca.gc.tri_agency.granting_data.repo.ApplicationParticipationRepository;
+import ca.gc.tri_agency.granting_data.service.GenderService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = GrantingDataApp.class)
@@ -24,13 +24,10 @@ public class BrowseApplicationParticipationIntegrationTest {
 
     @Autowired
     private ApplicationParticipationRepository apRepo;
+    
+    @Autowired 
+    private GenderService genderService;
 
-    /* 
-     * When the ApplicationParticipation object is persisted, a corresponding entry
-     * in its audit table is also persisted. We are using @WithMockUser because
-     * an audit table entry requires a username ("user" in this case).
-     */
-    @WithMockUser
     @Test
     public void test_repo() {
         long initApRepoCount = apRepo.count();
@@ -48,7 +45,6 @@ public class BrowseApplicationParticipationIntegrationTest {
 	ap.setFreeformAddress2(RandomStringUtils.randomAlphabetic(10));
 	ap.setFreeformAddress3(RandomStringUtils.randomAlphabetic(10));
 	ap.setFreeformAddress4(RandomStringUtils.randomAlphabetic(10));
-	ap.setIndIdentityResponse(RandomStringUtils.randomAlphabetic(10));
 	ap.setGivenName(RandomStringUtils.randomAlphabetic(10));
 	ap.setMunicipality(RandomStringUtils.randomAlphabetic(10));
 	ap.setOrganizationNameEn(RandomStringUtils.randomAlphabetic(10));
@@ -63,12 +59,17 @@ public class BrowseApplicationParticipationIntegrationTest {
 	ap.setRoleCode("1234");
 	ap.setRoleEn(RandomStringUtils.randomAlphabetic(10));
 	ap.setRoleFr(RandomStringUtils.randomAlphabetic(10));
+	ap.setGender(genderService.findGenderByNameEn("female"));
 
         apRepo.save(ap);
         
+        ApplicationParticipation savedAp = apRepo.findById(1L).get();
+        
         assertEquals(initApRepoCount + 1, apRepo.count());
-        assertEquals(appIdentifier, apRepo.findById((long) apRepo.count()).get().getApplicationIdentifier());
-        assertEquals(currentTimestamp, apRepo.findById((long) apRepo.count()).get().getCreateDate());
+        assertEquals(appIdentifier, savedAp.getApplicationIdentifier());
+        assertEquals(currentTimestamp, savedAp.getCreateDate());
+        assertEquals("female", savedAp.getGender().getNameEn());
+        
     }
     
 }

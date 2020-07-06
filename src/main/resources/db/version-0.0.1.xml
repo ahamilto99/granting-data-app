@@ -295,30 +295,13 @@
                 <constraints nullable="false"/>
             </column>
             <column name="date_of_birth" type="DATE"/>
-            <column name="gender_selection" type="VARCHAR(255)"/>
-            <column name="ind_identity_response" type="VARCHAR(255)"/>
             <column name="ind_identity_pref_not_to" type="BIT(1)" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
-            <column name="ind_identity_selection_1" type="BIGINT"/>
-            <column name="ind_identity_selection_2" type="BIGINT"/>
-            <column name="ind_identity_selection_3" type="BIGINT"/>
             <column name="disability_response" type="VARCHAR(255)"/>
             <column name="visible_min_pref_not_to" type="BIT(1)" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
-            <column name="visible_min_selection_1" type="BIGINT"/>
-            <column name="visible_min_selection_2" type="BIGINT"/>
-            <column name="visible_min_selection_3" type="BIGINT"/>
-            <column name="visible_min_selection_4" type="BIGINT"/>
-            <column name="visible_min_selection_5" type="BIGINT"/>
-            <column name="visible_min_selection_6" type="BIGINT"/>
-            <column name="visible_min_selection_7" type="BIGINT"/>
-            <column name="visible_min_selection_8" type="BIGINT"/>
-            <column name="visible_min_selection_9" type="BIGINT"/>
-            <column name="visible_min_selection_10" type="BIGINT"/>
-            <column name="visible_min_selection_11" type="BIGINT"/>
-            <column name="visible_minority_response" type="VARCHAR(255)"/>
             <column name="create_user_id" type="VARCHAR(3)"/>
         </addColumn>
     </changeSet>
@@ -491,7 +474,83 @@
                     baseTableName="system_funding_opportunity_history" referencedColumnNames="revision" 
                     onDelete="NO ACTION" onUpdate="NO ACTION"/>
     </changeSet>
-    
+    <changeSet id="00000000000044" author="dev_aha">
+        <createSequence sequenceName="seq_gender" startValue="1" incrementBy="1"/>
+    </changeSet>
+    <changeSet id="00000000000045" author="dev_aha">
+        <createTable tableName="gender">
+            <column name="id" type="BIGINT" valueSequenceNext="seq_gender">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name_en" type="VARCHAR(255)"/>
+            <column name="name_fr" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="00000000000046" author="dev_aha">
+        <addColumn tableName="application_participation">
+            <column name="gender_id" type="BIGINT"/>
+        </addColumn>
+        <addForeignKeyConstraint constraintName="fk_application_participation_gender_id" 
+                referencedTableName="gender" baseColumnNames="gender_id" 
+                baseTableName="application_participation" referencedColumnNames="id"/>
+    </changeSet>
+    <changeSet id="00000000000047" author="dev_aha">
+        <createSequence sequenceName="seq_indigenous_identity" startValue="1" incrementBy="1"/>
+    </changeSet>
+    <changeSet id="00000000000048" author="dev_aha">
+        <createTable tableName="indigenous_identity">
+            <column name="id" type="BIGINT" valueSequenceNext="seq_indigenous_identity">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name_en" type="VARCHAR(255)"/>
+            <column name="name_fr" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="0000000000049" author="dev_aha">
+        <createSequence sequenceName="seq_app_part_indigenous_identity" startValue="1" incrementBy="1"/>
+    </changeSet>
+    <changeSet id="0000000000050" author="dev_aha">
+        <createTable tableName="app_part_indigenous_identity">
+            <column name="id" type="BIGINT" valueSequenceNext="seq_app_part_indigenous_identity">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="application_participation_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="indigenous_identity_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="00000000000051" author="dev_aha">
+        <createSequence sequenceName="seq_visible_minority" startValue="1" incrementBy="1"/>
+    </changeSet>
+    <changeSet id="00000000000052" author="dev_aha">
+        <createTable tableName="visible_minority">
+            <column name="id" type="BIGINT" valueSequenceNext="seq_visible_minority">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name_en" type="VARCHAR(255)"/>
+            <column name="name_fr" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="0000000000053" author="dev_aha">
+        <createSequence sequenceName="seq_app_part_visible_minority" startValue="1" incrementBy="1"/>
+    </changeSet>
+    <changeSet id="0000000000054" author="dev_aha">
+        <createTable tableName="app_part_visible_minority">
+            <column name="id" type="BIGINT" valueSequenceNext="seq_app_part_indigenous_identity">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="application_participation_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="visible_minority_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+        
     <!-- 
     <changeSet author="dev_yab (generated)" id="1574353543232-28">
         <createIndex indexName="FK14tr15getkq8fb5kjrrjptvjr" tableName="system_funding_opportunity">
