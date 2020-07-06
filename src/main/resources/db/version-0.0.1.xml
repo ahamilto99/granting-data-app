@@ -507,25 +507,19 @@
         </createTable>
     </changeSet>
     <changeSet id="0000000000049" author="dev_aha">
-        <createSequence sequenceName="seq_app_part_indigenous_identity" startValue="1" incrementBy="1"/>
-    </changeSet>
-    <changeSet id="0000000000050" author="dev_aha">
         <createTable tableName="app_part_indigenous_identity">
-            <column name="id" type="BIGINT" valueSequenceNext="seq_app_part_indigenous_identity">
+            <column name="application_participation_id" type="BIGINT">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="application_participation_id" type="BIGINT">
-                <constraints nullable="false"/>
-            </column>
             <column name="indigenous_identity_id" type="BIGINT">
-                <constraints nullable="false"/>
+                <constraints primaryKey="true" nullable="false"/>
             </column>
         </createTable>
     </changeSet>
-    <changeSet id="00000000000051" author="dev_aha">
+    <changeSet id="00000000000050" author="dev_aha">
         <createSequence sequenceName="seq_visible_minority" startValue="1" incrementBy="1"/>
     </changeSet>
-    <changeSet id="00000000000052" author="dev_aha">
+    <changeSet id="00000000000051" author="dev_aha">
         <createTable tableName="visible_minority">
             <column name="id" type="BIGINT" valueSequenceNext="seq_visible_minority">
                 <constraints primaryKey="true" nullable="false"/>
@@ -534,19 +528,13 @@
             <column name="name_fr" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet id="0000000000053" author="dev_aha">
-        <createSequence sequenceName="seq_app_part_visible_minority" startValue="1" incrementBy="1"/>
-    </changeSet>
-    <changeSet id="0000000000054" author="dev_aha">
+    <changeSet id="0000000000052" author="dev_aha">
         <createTable tableName="app_part_visible_minority">
-            <column name="id" type="BIGINT" valueSequenceNext="seq_app_part_indigenous_identity">
+            <column name="application_participation_id" type="BIGINT">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="application_participation_id" type="BIGINT">
-                <constraints nullable="false"/>
-            </column>
             <column name="visible_minority_id" type="BIGINT">
-                <constraints nullable="false"/>
+                <constraints primaryKey="true" nullable="false"/>
             </column>
         </createTable>
     </changeSet>
