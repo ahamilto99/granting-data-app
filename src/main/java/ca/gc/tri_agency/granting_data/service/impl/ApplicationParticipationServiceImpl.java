@@ -257,17 +257,17 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 	private List<ApplicationParticipation> generateEdiData(List<ApplicationParticipation> appParts) {
 		setAppPartDisability(appParts);
 		setAppPartGender(appParts);
-		setAppPartEthnicity(appParts);
 		setAppPartIndigenous(appParts);
+		setAppPartEthnicity(appParts);
 
 		return appParts;
 	}
 
 	@Transactional
 	private List<ApplicationParticipation> setAppPartGender(List<ApplicationParticipation> appParts) {
-		Gender male = genderService.findGenderByNameEn("male");
-		Gender female = genderService.findGenderByNameEn("female");
-		Gender nonBinary = genderService.findGenderByNameEn("non-binary");
+		Gender male = genderService.findGenderByNameEn("Male");
+		Gender female = genderService.findGenderByNameEn("Female");
+		Gender nonBinary = genderService.findGenderByNameEn("Non-Binary");
 		
 		Collections.shuffle(appParts);
 		int i = 0;
@@ -290,16 +290,16 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 
 		int i = 0;
 		for (; i < (int) (appParts.size() * 0.04); i++) {
-			appParts.get(i).setDisabilityResponse("physical");
+			appParts.get(i).setDisabilityResponse("Physical");
 		}
 		for (; i < (int) (appParts.size() * 0.06); i++) {
-			appParts.get(i).setDisabilityResponse("deaf");
+			appParts.get(i).setDisabilityResponse("Deaf");
 		}
 		for (; i < (int) (appParts.size() * 0.08); i++) {
-			appParts.get(i).setDisabilityResponse("other");
+			appParts.get(i).setDisabilityResponse("Other");
 		}
 		for (; i < (int) (appParts.size() * 0.09); i++) {
-			appParts.get(i).setDisabilityResponse("blind");
+			appParts.get(i).setDisabilityResponse("Blind");
 		}
 		return appParts;
 	}
@@ -307,7 +307,7 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 	@Transactional
 	private List<ApplicationParticipation> setAppPartIndigenous(List<ApplicationParticipation> appParts) {
 		Collections.shuffle(appParts);
-				
+		
 		int i = 0;
 		IndigenousIdentity identity = indIdentityService.findIndigenousIdentityByNameEn("Métis");
 		for (; i < (int) (appParts.size() * 0.05); i++) {
@@ -339,43 +339,41 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 
 	@Transactional
 	private List<ApplicationParticipation> setAppPartEthnicity(List<ApplicationParticipation> appParts) {
-		Collections.shuffle(appParts);
-
-		int i = 0;
-		VisibleMinority minority = vMinorityService.findVisibleMinorityByNameEn("Latin-American");
-		for (; i < (int) (appParts.size() * 0.06); i++) {
+		int i = (int) (0.12 * appParts.size());
+		VisibleMinority minority = vMinorityService.findVisibleMinorityByNameEn("Latin American");
+		for (; i < (int) (appParts.size() * 0.18); i++) {
 			appParts.get(i).addVisibleMinority(minority);
 		}
 		minority = vMinorityService.findVisibleMinorityByNameEn("Caribbean");
-		for (; i < (int) (appParts.size() * 0.12); i++) {
-			appParts.get(i).addVisibleMinority(minority);
-		}
-		minority = vMinorityService.findVisibleMinorityByNameEn("Middle Eastern");
-		for (; i < (int) (appParts.size() * 0.20); i++) {
-			appParts.get(i).addVisibleMinority(minority);
-		}
-		minority = vMinorityService.findVisibleMinorityByNameEn("Central Asian");
 		for (; i < (int) (appParts.size() * 0.24); i++) {
 			appParts.get(i).addVisibleMinority(minority);
 		}
+		minority = vMinorityService.findVisibleMinorityByNameEn("Middle Eastern");
+		for (; i < (int) (appParts.size() * 0.32); i++) {
+			appParts.get(i).addVisibleMinority(minority);
+		}
+		minority = vMinorityService.findVisibleMinorityByNameEn("Central Asian");
+		for (; i < (int) (appParts.size() * 0.36); i++) {
+			appParts.get(i).addVisibleMinority(minority);
+		}
 		minority = vMinorityService.findVisibleMinorityByNameEn("East Asian");
-		for (; i < (int) (appParts.size() * 0.39); i++) {
+		for (; i < (int) (appParts.size() * 0.51); i++) {
 			appParts.get(i).addVisibleMinority(minority);
 		}
 		minority = vMinorityService.findVisibleMinorityByNameEn("South Asian");
-		for (; i < (int) (appParts.size() * 0.46); i++) {
+		for (; i < (int) (appParts.size() * 0.58); i++) {
 			appParts.get(i).addVisibleMinority(minority);
 		}
 		minority = vMinorityService.findVisibleMinorityByNameEn("South East Asian");
-		for (; i < (int) (appParts.size() * 0.49); i++) {
+		for (; i < (int) (appParts.size() * 0.61); i++) {
 			appParts.get(i).addVisibleMinority(minority);
 		}
 		minority = vMinorityService.findVisibleMinorityByNameEn("West Asian");
-		for (; i < (int) (appParts.size() * 0.50); i++) {
+		for (; i < (int) (appParts.size() * 0.62); i++) {
 			appParts.get(i).addVisibleMinority(minority);
 		}
 		minority = vMinorityService.findVisibleMinorityByNameEn("African");
-		for (; i < (int) (appParts.size() * 0.60); i++) {
+		for (; i < (int) (appParts.size() * 0.72); i++) {
 			appParts.get(i).addVisibleMinority(minority);
 		}
 

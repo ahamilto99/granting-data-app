@@ -3,6 +3,7 @@ package ca.gc.tri_agency.granting_data.genderintegrationtest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,14 +29,14 @@ public class GenderServiceTest {
 	@WithAnonymousUser
 	@Test
 	public void test_anonUserCanFindGenderByNameEn() {
-		assertEquals(new Long(1L), genderService.findGenderByNameEn("female").getId());
+		assertEquals(new Long(1L), genderService.findGenderByNameEn("Female").getId());
 
 	}
 	
 	@WithAnonymousUser
 	@Test
 	public void test_anonUserCanFindGenderByNameFr() {
-		assertEquals(new Long(1L), genderService.findGenderByNameFr("femme").getId());
+		assertEquals(new Long(2L), genderService.findGenderByNameFr("Homme").getId());
 	}
 
 	@WithAnonymousUser
@@ -47,8 +48,8 @@ public class GenderServiceTest {
 	@WithMockUser(username = "mock_admin", roles = "MDM ADMIN")
 	@Test
 	public void test_adminCanSaveGender() {
-		String nameEn = "gender neutral";
-		String nameFr = "genre neutre";
+		String nameEn = RandomStringUtils.randomAlphabetic(10);
+		String nameFr = RandomStringUtils.randomAlphabetic(10);
 		Gender gender = new Gender();
 		gender.setNameEn(nameEn);
 		gender.setNameFr(nameFr);

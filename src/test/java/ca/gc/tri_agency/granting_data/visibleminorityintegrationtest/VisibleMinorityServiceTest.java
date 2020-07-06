@@ -33,7 +33,7 @@ public class VisibleMinorityServiceTest {
 	@WithAnonymousUser
 	@Test
 	public void test_anonUserCanFindVisibleMinorityById() {
-		assertEquals("Latin-American", vMinorityService.findVisibleMinorityById(1L).getNameEn());
+		assertEquals("Latin American", vMinorityService.findVisibleMinorityById(1L).getNameEn());
 	}
 
 	@WithAnonymousUser
@@ -45,7 +45,7 @@ public class VisibleMinorityServiceTest {
 	@WithAnonymousUser
 	@Test
 	public void test_anonUserCanFindVisibleMinorityByNameFr() {
-		assertEquals(new Long(3L), vMinorityService.findVisibleMinorityByNameFr("Moyen-Orient").getId());
+		assertEquals(new Long(3L), vMinorityService.findVisibleMinorityByNameFr("Moyen Orient").getId());
 	}
 	
 	@WithAnonymousUser

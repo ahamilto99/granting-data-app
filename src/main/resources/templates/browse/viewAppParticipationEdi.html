@@ -21,152 +21,66 @@
 			<div class="panel-body">
 
 				<div class="form-group row">
-					<label class="col-sm-3 col-form-label" th:utext="#{form.applicationIdentifier}"></label>
-					<div class="col-sm-9" th:text="${appParticipation.applicationIdentifier}"></div>
+					<label class="col-sm-4 col-form-label" th:utext="#{form.applicationIdentifier}"></label>
+					<div class="col-sm-8" th:text="${appParticipation.applicationIdentifier}"></div>
 				</div>
-				
+
 				<div class="form-group row">
-					<label class="col-sm-3 col-form-label" th:utext="#{form.applId}"></label>
-					<div class="col-sm-9" th:text="${appParticipation.applId}"></div>
+					<label class="col-sm-4 col-form-label" th:utext="#{form.applId}"></label>
+					<div class="col-sm-8" th:text="${appParticipation.applId}"></div>
 				</div>
-				
-				<!-- <div class="form-group row">
-					<label class="col-sm-3 col-form-label" th:utext="#{form.dateOfBirthIndicator}"></label>
-					<div class="col-sm-9" th:text="${appParticipation.dateOfBirthIndicator}"></div>
-				</div> -->
-				
+
+
 				<div class="form-group row">
-					<label class="col-sm-3 col-form-label" th:utext="#{form.dateOfBirth}"></label>
-					<div class="col-sm-9" th:text="${appParticipation.dateOfBirth}"></div>
+					<label class="col-sm-4 col-form-label" th:utext="#{form.dateOfBirth}"></label>
+					<div class="col-sm-8" th:text="${appParticipation.dateOfBirth}"></div>
 				</div>
-				
+
 				<div class="form-group row">
-					<label class="col-sm-3 col-form-label" th:utext="#{form.genderSelection}"></label>
-					<div class="col-sm-9" th:text="${appParticipation.genderSelection}"></div>
+					<label class="col-sm-4 col-form-label" th:utext="#{form.genderSelection}"></label>
+					<div class="col-sm-8" th:text="${appParticipation.gender.getLocalizedAttribute('name')}"></div>
 				</div>
-				
+
 				<div class="form-group row">
-					<label class="col-sm-3 col-form-label" th:utext="#{form.indIdentityResponse}"></label>
-					<div class="col-sm-9" th:text="${appParticipation.indIdentityResponse} ne null ? ${appParticipation.indIdentityResponse} : 'n/a'"></div>
+					<label class="col-sm-4 col-form-label" th:utext="#{form.indIdentityPrefNotTo}"></label>
+					<div class="col-sm-8" th:text="${#strings.capitalize(appParticipation.indIdentityPrefNotTo)}"></div>
 				</div>
-				
+
+				<div class="form-group row"
+					th:if="${appParticipation.indIdentityPrefNotTo} eq false and not ${appParticipation.indigenousIdentities.isEmpty()}"
+					th:each="ind, stats : ${appParticipation.indigenousIdentities}">
+					<label class="col-sm-4 col-form-label" th:text="#{form.indIdentityResponse} + ' ' + ${stats.index + 1}"></label>
+					<div class="col-sm-8" th:text="${ind.getLocalizedAttribute('name')}"></div>
+				</div>
+
+				<div class="form-group row"
+					th:if="${appParticipation.indIdentityPrefNotTo} eq false and ${appParticipation.indigenousIdentities.isEmpty()}">
+					<label class="col-sm-4 col-form-label" th:text="#{form.indIdentityResponse}"></label>
+					<div class="col-sm-8" th:text="#{msg.none}"></div>
+				</div>
+
 				<div class="form-group row">
-					<label class="col-sm-3 col-form-label" th:utext="#{form.indIdentityPrefNotTo}"></label>
-					<div class="col-sm-9" th:text="${appParticipation.indIdentityPrefNotTo}"></div>
+					<label class="col-sm-4 col-form-label" th:utext="#{form.disabilityResponse}"></label>
+					<div class="col-sm-8" th:text="${appParticipation.disabilityResponse} ne null ? ${appParticipation.disabilityResponse} : #{msg.none}"></div>
 				</div>
-				
+
 				<div class="form-group row">
-					<label class="col-sm-3 col-form-label">
-						<span th:utext="#{form.indIdentitySelection}"></span> 1
-					</label>
-					<div class="col-sm-9" th:text="${appParticipation.indIdentitySelection1} ne null ? ${appParticipation.indIdentitySelection1} : 'n/a'"></div>
+					<label class="col-sm-4 col-form-label" th:utext="#{form.visibleMinPrefNotTo}"></label>
+					<div class="col-sm-8" th:text="${#strings.capitalize(appParticipation.visibleMinPrefNotTo)}"></div>
 				</div>
-				
-				<div class="form-group row">
-					<label class="col-sm-3 col-form-label">
-						<span th:utext="#{form.indIdentitySelection}"></span> 2
-					</label>
-					<div class="col-sm-9" th:text="${appParticipation.indIdentitySelection2} ne null ? ${appParticipation.indIdentitySelection2} : 'n/a'"></div>
+
+				<div class="form-group row"
+					th:if="${appParticipation.visibleMinPrefNotTo} eq false and not ${appParticipation.visibleMinorities.isEmpty()}"
+					th:each="minority, stats : ${appParticipation.visibleMinorities}">
+					<label class="col-sm-4 col-form-label" th:text="#{form.visibleMinorityResponse} + ' ' + ${stats.index + 1}"></label>
+					<div class="col-sm-8" th:text="${minority.getLocalizedAttribute('name')}"></div>
 				</div>
-				
-				<div class="form-group row">
-					<label class="col-sm-3 col-form-label">
-						<span th:utext="#{form.indIdentitySelection}"></span> 3
-					</label>
-					<div class="col-sm-9" th:text="${appParticipation.indIdentitySelection3} ne null ? ${appParticipation.indIdentitySelection3} : 'n/a'"></div>
+
+				<div class="form-group row" th:if="${appParticipation.visibleMinPrefNotTo} eq false and ${appParticipation.visibleMinorities.isEmpty()}">
+					<label class="col-sm-4 col-form-label" th:text="#{form.visibleMinorityResponse}"></label>
+					<div class="col-sm-8" th:text="#{msg.none}"></div>
 				</div>
-				<div class="form-group row">
-					<label class="col-sm-3 col-form-label" th:utext="#{form.disabilityResponse}"></label>
-					<div class="col-sm-9" th:text="${appParticipation.disabilityResponse} ne null ? ${appParticipation.disabilityResponse} : 'n/a'"></div>
-				</div>
-				
-				<div class="form-group row">
-					<label class="col-sm-3 col-form-label" th:utext="#{form.visibleMinPrefNotTo}"></label>
-					<div class="col-sm-9" th:text="${appParticipation.visibleMinPrefNotTo}"></div>
-				</div>
-				
-				<div class="form-group row">
-					<label class="col-sm-3 col-form-label">
-						<span th:utext="#{form.visibleMinSelection}"></span> 1
-					</label>
-					<div class="col-sm-9" th:text="${appParticipation.visibleMinSelection1} ne null ? ${appParticipation.visibleMinSelection1} : 'n/a'"></div>
-				</div>
-				
-				<div class="form-group row">
-					<label class="col-sm-3 col-form-label">
-						<span th:utext="#{form.visibleMinSelection}"></span> 2
-					</label>
-					<div class="col-sm-9" th:text="${appParticipation.visibleMinSelection2} ne null ? ${appParticipation.visibleMinSelection2} : 'n/a'"></div>
-				</div>
-				
-				<div class="form-group row">
-					<label class="col-sm-3 col-form-label">
-						<span th:utext="#{form.visibleMinSelection}"></span> 3
-					</label>
-					<div class="col-sm-9" th:text="${appParticipation.visibleMinSelection3} ne null ? ${appParticipation.visibleMinSelection4} : 'n/a'"></div>
-				</div>
-				
-				<div class="form-group row">
-					<label class="col-sm-3 col-form-label">
-						<span th:utext="#{form.visibleMinSelection}"></span> 4
-					</label>
-					<div class="col-sm-9" th:text="${appParticipation.visibleMinSelection4} ne null ? ${appParticipation.visibleMinSelection4} : 'n/a'"></div>
-				</div>
-				
-				<div class="form-group row">
-					<label class="col-sm-3 col-form-label">
-						<span th:utext="#{form.visibleMinSelection}"></span> 5
-					</label>
-					<div class="col-sm-9" th:text="${appParticipation.visibleMinSelection5} ne null ? ${appParticipation.visibleMinSelection5} : 'n/a'"></div>
-				</div>
-				
-				<div class="form-group row">
-					<label class="col-sm-3 col-form-label">
-						<span th:utext="#{form.visibleMinSelection}"></span> 6
-					</label>
-					<div class="col-sm-9" th:text="${appParticipation.visibleMinSelection6} ne null ? ${appParticipation.visibleMinSelection6} : 'n/a'"></div>
-				</div>
-				
-				<div class="form-group row">
-					<label class="col-sm-3 col-form-label">
-						<span th:utext="#{form.visibleMinSelection}"></span> 7
-					</label>
-					<div class="col-sm-9" th:text="${appParticipation.visibleMinSelection7} ne null ? ${appParticipation.visibleMinSelection7} : 'n/a'"></div>
-				</div>
-				
-				<div class="form-group row">
-					<label class="col-sm-3 col-form-label">
-						<span th:utext="#{form.visibleMinSelection}"></span> 8
-					</label>
-					<div class="col-sm-9" th:text="${appParticipation.visibleMinSelection8} ne null ? ${appParticipation.visibleMinSelection8} : 'n/a'"></div>
-				</div>
-				
-				<div class="form-group row">
-					<label class="col-sm-3 col-form-label">
-						<span th:utext="#{form.visibleMinSelection}"></span> 9
-					</label>
-					<div class="col-sm-9" th:text="${appParticipation.visibleMinSelection9} ne null ? ${appParticipation.visibleMinSelection9} : 'n/a'"></div>
-				</div>
-				
-				<div class="form-group row">
-					<label class="col-sm-3 col-form-label">
-						<span th:utext="#{form.visibleMinSelection}"></span> 10
-					</label>
-					<div class="col-sm-9" th:text="${appParticipation.visibleMinSelection10} ne null ? ${appParticipation.visibleMinSelection10} : 'n/a'"></div>
-				</div>
-				
-				<div class="form-group row">
-					<label class="col-sm-3 col-form-label">
-						<span th:utext="#{form.visibleMinSelection}"></span> 11
-					</label>
-					<div class="col-sm-9" th:text="${appParticipation.visibleMinSelection11} ne null ? ${appParticipation.visibleMinSelection11} : 'n/a'"></div>
-				</div>
-				
-				<div class="form-group row">
-					<label class="col-sm-3 col-form-label" th:utext="#{form.visibleMinorityResponse}"></label>
-					<div class="col-sm-9" th:text="${appParticipation.visibleMinorityResponse} ne null ? ${appParticipation.visibleMinorityResponse} : 'n/a'"></div>
-				</div>
-				
+
 			</div>
 
 			<div th:replace="fragments/general :: returnHome"></div>
