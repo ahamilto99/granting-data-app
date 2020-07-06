@@ -541,6 +541,9 @@
     <changeSet id="0000000000053" author="dev_aha">
         <addColumn tableName="award">
             <column name="requested_amount" type="DOUBLE"/>
+            <column name="program_id" type="VARCHAR(255)"/>
+            <column name="program_name_en" type="VARCHAR(255)"/>
+            <column name="program_name_fr" type="VARCHAR(255)"/>
         </addColumn>
     </changeSet>
         
