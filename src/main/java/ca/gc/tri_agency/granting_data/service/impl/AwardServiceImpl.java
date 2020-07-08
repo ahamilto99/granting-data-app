@@ -23,7 +23,7 @@ public class AwardServiceImpl implements AwardService {
 	private static final String MAIN_APPLICANT = "Applicant";
 
 	private AwardRepository awardRepo;
-	
+
 	private ApplicationParticipationService appPartService;
 
 	@Autowired
@@ -68,8 +68,10 @@ public class AwardServiceImpl implements AwardService {
 				.map((ApplicationParticipation appPart) -> new Award(sRand.nextDouble() * 100_000,
 						sRand.nextInt(5) + 2017L, appPart.getApplId(), appPart.getFamilyName(),
 						appPart.getGivenName(), appPart.getRoleCode(), appPart.getRoleEn(),
-						appPart.getRoleFr()))
+						appPart.getRoleFr(), appPart.getProgramId(), appPart.getProgramEn(), appPart.getProgramFr()))
 				.collect(Collectors.toList());
+
+		testAwards.forEach(award -> award.setRequestedAmount((sRand.nextDouble() + 1.0) * award.getAwardedAmount()));
 
 		appPartService.saveAllApplicationParticipations(appParts);
 

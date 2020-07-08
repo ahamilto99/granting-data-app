@@ -28,7 +28,7 @@ public class ApplicationParticipationController {
 	}
 
 	@GetMapping("/browse/viewAppParticipationEdi")
-	public String seeAppParticipationEdi(@RequestParam("id") Long id, Model model) {
+	public String appParticipationEdi(@RequestParam("id") Long id, Model model) {
 		model.addAttribute("appParticipation", appParticipationService.getAllowdRecord(id));
 		return "browse/viewAppParticipationEdi";
 	}

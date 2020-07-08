@@ -35,14 +35,7 @@
 						<form class="wb-tables-filter" data-bind-to="fundingOpportunitiesTable">
 
 							<div class="form-group">
-								<label for="dt_leadAgency" th:text="#{form.leadAgency}"></label> <select class="form-control" id="dt_leadAgency" data-column="0">
-									<option th:text="#{msg.all}" th:value="#{msg.all}"></option>
-									<option th:each="agency : ${distinctAgencies}" th:text="${agency}" th:value="${agency}"></option>
-								</select>
-							</div>
-
-							<div class="form-group">
-								<label for="dt_leadAgency" th:text="#{form.division}"></label> <select class="form-control" id="dt_division" data-column="1">
+								<label for="dt_division" th:text="#{form.division}"></label> <select class="form-control" id="dt_division" data-column="1">
 									<option th:text="#{msg.all}" th:value="#{msg.all}"></option>
 									<!-- th:each below will become the buStream's divisions when the model changes -->
 									<option th:each="bu : ${distinctBUs}" th:text="${bu}" th:value="${bu}"></option>
@@ -83,7 +76,6 @@
 						<thead>
 							<tr>
 								<th th:text="#{th.foName}"></th>
-								<th th:text="#{th.leadAgency}"></th>
 								<th th:text="#{th.division}"></th>
 								<th th:text="#{th.applySystem}"></th>
 								<th th:text="#{th.awardSystem}"></th>
@@ -93,7 +85,6 @@
 						<tbody>
 							<tr th:each="fo : ${fundingOpportunities}">
 								<td><a th:href="@{viewFo(id=${fo.id})}"><span th:text="${fo.getLocalizedAttribute('name')}"></span></a></td>
-								<td><span th:text="${fo.businessUnit == null} ? 'None' : ${fo.businessUnit.agency.getLocalizedAttribute('acronym')}"></span></td>
 								<td><span th:text="${fo.businessUnit == null} ? 'None' : ${fo.businessUnit.getLocalizedAttribute('acronym')}"></span></td>
 								<td><span th:text="${applySystemByFoMap.get(fo.id) == null} ? 'None' : ${applySystemByFoMap.get(fo.id).acronym}"></span></td>
 								<td><span th:if="${awardSystemsByFoMap.get(fo.id) == null}" th:value="None"></span> <span
@@ -141,7 +132,7 @@
 		function resetTableFilters() {
 			var dTable = $('#fundingOpportunitiesTable').DataTable();
 			dTable
-		 		.columns([1, 2, 3, 4])
+		 		.columns([1, 2, 3])
 		 		.search('.*', true)
 		 		.draw();
 		};
@@ -151,10 +142,9 @@
 			 $("#filterBtn").click(function(){
 					resetTableFilters();				 	
 				 
-					filterTable(1, document.getElementById("dt_leadAgency").value);
-					filterTable(2, document.getElementById("dt_division").value);
-					filterTable(3, document.getElementById("dt_applySystem").value);
-					filterTable(4, document.getElementById("dt_awardSystem").value);
+					filterTable(1, document.getElementById("dt_division").value);
+					filterTable(2, document.getElementById("dt_applySystem").value);
+					filterTable(3, document.getElementById("dt_awardSystem").value);
 			}); 
 			 
 			$("#resetBtn").click(function() {

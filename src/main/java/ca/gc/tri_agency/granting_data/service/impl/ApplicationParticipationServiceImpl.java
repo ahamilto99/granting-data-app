@@ -17,14 +17,20 @@ import org.springframework.transaction.annotation.Transactional;
 import com.github.javafaker.Faker;
 
 import ca.gc.tri_agency.granting_data.model.ApplicationParticipation;
+import ca.gc.tri_agency.granting_data.model.Gender;
 import ca.gc.tri_agency.granting_data.model.GrantingSystem;
+import ca.gc.tri_agency.granting_data.model.IndigenousIdentity;
 import ca.gc.tri_agency.granting_data.model.MemberRole;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
+import ca.gc.tri_agency.granting_data.model.VisibleMinority;
 import ca.gc.tri_agency.granting_data.repo.ApplicationParticipationRepository;
 import ca.gc.tri_agency.granting_data.security.SecurityUtils;
 import ca.gc.tri_agency.granting_data.service.ApplicationParticipationService;
+import ca.gc.tri_agency.granting_data.service.GenderService;
+import ca.gc.tri_agency.granting_data.service.IndigenousIdentitySerivce;
 import ca.gc.tri_agency.granting_data.service.MemberRoleService;
 import ca.gc.tri_agency.granting_data.service.SystemFundingOpportunityService;
+import ca.gc.tri_agency.granting_data.service.VisibleMinorityService;
 
 @Service
 public class ApplicationParticipationServiceImpl implements ApplicationParticipationService {
@@ -38,17 +44,27 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 	private SystemFundingOpportunityService sfoService;
 
 	private MemberRoleService mrService;
+	
+	private GenderService genderService;
+	
+	private IndigenousIdentitySerivce indIdentityService;
+	
+	private VisibleMinorityService vMinorityService;
 
 	private static int applIdIncrementer = 0;
 
 	@Autowired
 	public ApplicationParticipationServiceImpl(ApplicationParticipationRepository appParticipationRepo,
-			SystemFundingOpportunityService sfoService, MemberRoleService mrService) {
+			SystemFundingOpportunityService sfoService, MemberRoleService mrService, GenderService genderService, IndigenousIdentitySerivce indIdentityService, VisibleMinorityService vMinorityService) {
 		this.appParticipationRepo = appParticipationRepo;
 		this.sfoService = sfoService;
 		this.mrService = mrService;
+		this.genderService = genderService;
+		this.indIdentityService = indIdentityService;
+		this.vMinorityService = vMinorityService;
 	}
 
+	@Transactional
 	@Override
 	public List<ApplicationParticipation> generateTestAppParticipations(SystemFundingOpportunity sfo, Instant createDate,
 			long maxApplications, long maxParticipants) {
@@ -239,106 +255,126 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 	}
 
 	private List<ApplicationParticipation> generateEdiData(List<ApplicationParticipation> appParts) {
-		setAppPartGender(appParts);
 		setAppPartDisability(appParts);
+		setAppPartGender(appParts);
+		setAppPartIndigenous(appParts);
 		setAppPartEthnicity(appParts);
-		setAppPartIndiginous(appParts);
 
 		return appParts;
 	}
 
+	@Transactional
 	private List<ApplicationParticipation> setAppPartGender(List<ApplicationParticipation> appParts) {
+		Gender male = genderService.findGenderByNameEn("Male");
+		Gender female = genderService.findGenderByNameEn("Female");
+		Gender nonBinary = genderService.findGenderByNameEn("Non-Binary");
+		
 		Collections.shuffle(appParts);
-
 		int i = 0;
 		for (; i < (int) (appParts.size() * 0.5); i++) {
-			appParts.get(i).setGenderSelection("female");
+			appParts.get(i).setGender(female);
 		}
 		for (; i < (int) (appParts.size() * 0.93); i++) {
-			appParts.get(i).setGenderSelection("male");
+			appParts.get(i).setGender(male);
 		}
 		for (; i < (int) appParts.size(); i++) {
-			appParts.get(i).setGenderSelection("non-binary");
+			appParts.get(i).setGender(nonBinary);
 		}
 
 		return appParts;
 	}
 
+	@Transactional
 	private List<ApplicationParticipation> setAppPartDisability(List<ApplicationParticipation> appParts) {
 		Collections.shuffle(appParts);
 
 		int i = 0;
 		for (; i < (int) (appParts.size() * 0.04); i++) {
-			appParts.get(i).setDisabilityResponse("physical");
+			appParts.get(i).setDisabilityResponse("Physical");
 		}
 		for (; i < (int) (appParts.size() * 0.06); i++) {
-			appParts.get(i).setDisabilityResponse("deaf");
+			appParts.get(i).setDisabilityResponse("Deaf");
 		}
 		for (; i < (int) (appParts.size() * 0.08); i++) {
-			appParts.get(i).setDisabilityResponse("other");
+			appParts.get(i).setDisabilityResponse("Other");
 		}
 		for (; i < (int) (appParts.size() * 0.09); i++) {
-			appParts.get(i).setDisabilityResponse("blind");
+			appParts.get(i).setDisabilityResponse("Blind");
 		}
 		return appParts;
 	}
 
-	private List<ApplicationParticipation> setAppPartIndiginous(List<ApplicationParticipation> appParts) {
+	@Transactional
+	private List<ApplicationParticipation> setAppPartIndigenous(List<ApplicationParticipation> appParts) {
 		Collections.shuffle(appParts);
-
+		
 		int i = 0;
+		IndigenousIdentity identity = indIdentityService.findIndigenousIdentityByNameEn("Métis");
 		for (; i < (int) (appParts.size() * 0.05); i++) {
-			appParts.get(i).setIndIdentityResponse("Métis");
+			appParts.get(i).addIndigenousIdentity(identity);
 		}
+		identity = indIdentityService.findIndigenousIdentityByNameEn("Inuit");
 		for (; i < (int) (appParts.size() * 0.08); i++) {
-			appParts.get(i).setIndIdentityResponse("Inuit");
+			appParts.get(i).addIndigenousIdentity(identity);
 		}
+		identity = indIdentityService.findIndigenousIdentityByNameEn("Mi'kmaq");
 		for (; i < (int) (appParts.size() * 0.10); i++) {
-			appParts.get(i).setIndIdentityResponse("Mi'kmaq");
+			appParts.get(i).addIndigenousIdentity(identity);
 		}
+		identity = indIdentityService.findIndigenousIdentityByNameEn("Iroquois");
 		for (; i < (int) (appParts.size() * 0.11); i++) {
-			appParts.get(i).setIndIdentityResponse("Iroquois");
+			appParts.get(i).addIndigenousIdentity(identity);
 		}
+		identity = indIdentityService.findIndigenousIdentityByNameEn("Haida");
 		for (; i < (int) (appParts.size() * 0.12); i++) {
-			appParts.get(i).setIndIdentityResponse("Haida");
+			appParts.get(i).addIndigenousIdentity(identity);
 		}
+		identity = indIdentityService.findIndigenousIdentityByNameEn("Dalelh");
 		for (; i < (int) (appParts.size() * 0.13); i++) {
-			appParts.get(i).setIndIdentityResponse("Dalelh");
+			appParts.get(i).addIndigenousIdentity(identity);
 		}
 
 		return appParts;
 	}
 
+	@Transactional
 	private List<ApplicationParticipation> setAppPartEthnicity(List<ApplicationParticipation> appParts) {
-		Collections.shuffle(appParts);
-
-		int i = 0;
-		for (; i < (int) (appParts.size() * 0.06); i++) {
-			appParts.get(i).setVisibleMinorityResponse("Latin American");
+		int i = (int) (0.12 * appParts.size());
+		VisibleMinority minority = vMinorityService.findVisibleMinorityByNameEn("Latin American");
+		for (; i < (int) (appParts.size() * 0.18); i++) {
+			appParts.get(i).addVisibleMinority(minority);
 		}
-		for (; i < (int) (appParts.size() * 0.12); i++) {
-			appParts.get(i).setVisibleMinorityResponse("Caribbean");
-		}
-		for (; i < (int) (appParts.size() * 0.20); i++) {
-			appParts.get(i).setVisibleMinorityResponse("Middle Eastern");
-		}
+		minority = vMinorityService.findVisibleMinorityByNameEn("Caribbean");
 		for (; i < (int) (appParts.size() * 0.24); i++) {
-			appParts.get(i).setVisibleMinorityResponse("Central Asian");
+			appParts.get(i).addVisibleMinority(minority);
 		}
-		for (; i < (int) (appParts.size() * 0.39); i++) {
-			appParts.get(i).setVisibleMinorityResponse("East Asian");
+		minority = vMinorityService.findVisibleMinorityByNameEn("Middle Eastern");
+		for (; i < (int) (appParts.size() * 0.32); i++) {
+			appParts.get(i).addVisibleMinority(minority);
 		}
-		for (; i < (int) (appParts.size() * 0.46); i++) {
-			appParts.get(i).setVisibleMinorityResponse("South Asian");
+		minority = vMinorityService.findVisibleMinorityByNameEn("Central Asian");
+		for (; i < (int) (appParts.size() * 0.36); i++) {
+			appParts.get(i).addVisibleMinority(minority);
 		}
-		for (; i < (int) (appParts.size() * 0.49); i++) {
-			appParts.get(i).setVisibleMinorityResponse("South East Asian");
+		minority = vMinorityService.findVisibleMinorityByNameEn("East Asian");
+		for (; i < (int) (appParts.size() * 0.51); i++) {
+			appParts.get(i).addVisibleMinority(minority);
 		}
-		for (; i < (int) (appParts.size() * 0.50); i++) {
-			appParts.get(i).setVisibleMinorityResponse("West Asian");
+		minority = vMinorityService.findVisibleMinorityByNameEn("South Asian");
+		for (; i < (int) (appParts.size() * 0.58); i++) {
+			appParts.get(i).addVisibleMinority(minority);
 		}
-		for (; i < (int) (appParts.size() * 0.60); i++) {
-			appParts.get(i).setVisibleMinorityResponse("African");
+		minority = vMinorityService.findVisibleMinorityByNameEn("South East Asian");
+		for (; i < (int) (appParts.size() * 0.61); i++) {
+			appParts.get(i).addVisibleMinority(minority);
+		}
+		minority = vMinorityService.findVisibleMinorityByNameEn("West Asian");
+		for (; i < (int) (appParts.size() * 0.62); i++) {
+			appParts.get(i).addVisibleMinority(minority);
+		}
+		minority = vMinorityService.findVisibleMinorityByNameEn("African");
+		for (; i < (int) (appParts.size() * 0.72); i++) {
+			appParts.get(i).addVisibleMinority(minority);
 		}
 
 		return appParts;
@@ -385,89 +421,5 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 	private int generateRandNumBtw(int start, int end) {
 		return sRand.nextInt(end) + start;
 	}
-
-//	private String[] createAuditedApplicationParticipationStrArr(ApplicationParticipation ap, String revType,
-//			UsernameRevisionEntity revEntity) {
-//		switch (revType) {
-//		case "ADD":
-//			revType = "INSERT";
-//			break;
-//		case "MOD":
-//			revType = "UPDATE";
-//			break;
-//		case "DEL":
-//			revType = "DELETE";
-//		}
-//
-//		return new String[] { revEntity.getUsername(), revType, ap.getApplicationIdentifier(), ap.getApplId(),
-//				(ap.getCompetitionYear() != null) ? ap.getCompetitionYear().toString() : null, ap.getCountry(),
-//				(ap.getCreateDate() != null) ? ap.getCreateDate().toString() : null, ap.getCreateUserId(),
-//				(ap.getDateOfBirth() != null) ? ap.getDateOfBirth().toString() : null,
-//				ap.getDateOfBirthIndicator().toString(), ap.getDisabilityResponse(),
-//				ap.getEdiNotApplicable().toString(), ap.getFamilyName(), ap.getFreeformAddress1(),
-//				ap.getFreeformAddress2(), ap.getFreeformAddress3(), ap.getFreeformAddress4(), ap.getGenderSelection(),
-//				ap.getGivenName(), ap.getIndIdentityPrefNotTo().toString(), ap.getIndIdentityResponse(),
-//				(ap.getIndIdentitySelection1() != null) ? ap.getIndIdentitySelection1().toString() : null,
-//				(ap.getIndIdentitySelection2() != null) ? ap.getIndIdentitySelection2().toString() : null,
-//				(ap.getIndIdentitySelection3() != null) ? ap.getIndIdentitySelection3().toString() : null,
-//				ap.getMunicipality(), ap.getOrganizationId(), ap.getOrganizationNameEn(), ap.getOrganizationNameFr(),
-//				(ap.getPersonIdentifier() != null) ? ap.getPersonIdentifier().toString() : null, ap.getPostalZipCode(),
-//				ap.getProgramEn(), ap.getProgramFr(), ap.getProgramId(), ap.getProvinceStateCode(), ap.getRoleCode(),
-//				ap.getRoleEn(), ap.getRoleEn(), ap.getRoleFr(), ap.getVisibleMinorityResponse(),
-//				ap.getVisibleMinPrefNotTo().toString(),
-//				(ap.getVisibleMinSelection1() != null) ? ap.getVisibleMinSelection1().toString() : null,
-//				(ap.getVisibleMinSelection2() != null) ? ap.getVisibleMinSelection2().toString() : null,
-//				(ap.getVisibleMinSelection3() != null) ? ap.getVisibleMinSelection3().toString() : null,
-//				(ap.getVisibleMinSelection4() != null) ? ap.getVisibleMinSelection4().toString() : null,
-//				(ap.getVisibleMinSelection5() != null) ? ap.getVisibleMinSelection5().toString() : null,
-//				(ap.getVisibleMinSelection6() != null) ? ap.getVisibleMinSelection6().toString() : null,
-//				(ap.getVisibleMinSelection7() != null) ? ap.getVisibleMinSelection7().toString() : null,
-//				(ap.getVisibleMinSelection8() != null) ? ap.getVisibleMinSelection8().toString() : null,
-//				(ap.getVisibleMinSelection9() != null) ? ap.getVisibleMinSelection9().toString() : null,
-//				(ap.getVisibleMinSelection10() != null) ? ap.getVisibleMinSelection10().toString() : null,
-//				(ap.getVisibleMinSelection11() != null) ? ap.getVisibleMinSelection11().toString() : null,
-//				revEntity.getRevTimestamp().toString() };
-//	}
-//
-//	@AdminOnly
-//	@Override
-//	public List<String[]> findApplicationParticipationRevisionsById(Long apId) {
-//		List<String[]> auditedArrList = new ArrayList<>();
-//
-//		List<Revision<Long, ApplicationParticipation>> revisionList = appParticipationRepo.findRevisions(apId).getContent();
-//		if (!revisionList.isEmpty()) {
-//			revisionList.forEach(rev -> {
-//				ApplicationParticipation ap = rev.getEntity();
-//				UsernameRevisionEntity revEntity = (UsernameRevisionEntity) rev.getMetadata().getDelegate();
-//				auditedArrList.add(createAuditedApplicationParticipationStrArr(ap,
-//						rev.getMetadata().getRevisionType().toString(), revEntity));
-//			});
-//		}
-//
-//		auditedArrList.sort(Comparator.comparing(strArr -> strArr[51]));
-//		return auditedArrList;
-//	}
-//
-//	@AdminOnly
-//	@Transactional(readOnly = true)
-//	@SuppressWarnings("unchecked")
-//	@Override
-//	public List<String[]> findAllApplicationParticipationRevisions() {
-//		AuditReader auditReader = AuditReaderFactory.get(em);
-//		AuditQuery auditQuery = auditReader.createQuery().forRevisionsOfEntity(ApplicationParticipation.class, false, true);
-//
-//		List<String[]> auditedArrList = new ArrayList<>();
-//
-//		List<Object[]> revisionList = auditQuery.getResultList();
-//		revisionList.forEach(objArr -> {
-//			ApplicationParticipation ap = (ApplicationParticipation) objArr[0];
-//			UsernameRevisionEntity revEntity = (UsernameRevisionEntity) objArr[1];
-//			RevisionType revType = (RevisionType) objArr[2];
-//			auditedArrList.add(createAuditedApplicationParticipationStrArr(ap, revType.toString(), revEntity));
-//		});
-//
-//		auditedArrList.sort(Comparator.comparing(strArr -> strArr[51]));
-//		return auditedArrList;
-//	}
 
 }
