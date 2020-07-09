@@ -1,0 +1,20 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd 
+   http://www.liquibase.org/xml/ns/dbchangelog 
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <!-- Constructs the database -->
+    <include file="db/schema-test.xml" />
+
+    <!-- Populates the database -->
+    <changeSet id="00000000000001" author="dev_aha">
+        <sqlFile path="db/data-test.sql" relativeToChangelogFile="true" />
+    </changeSet>
+
+    <!-- FUNNY THAT USING SEQUENCES DIFFERS IN H2 AND MSSQL, BUT NOT WHEN RESETTING IT -->
+    <changeSet id="fixRevisionInfoSequence" author="dev_aha">
+        <sql>ALTER SEQUENCE seq_revision_info RESTART WITH 8</sql>
+    </changeSet>
+
+</databaseChangeLog>
