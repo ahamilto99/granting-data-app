@@ -96,11 +96,15 @@ public class FundingOpportunityController {
 				buList.stream().map(bu -> bu.getLocalizedAttribute("acronym")).distinct().sorted().iterator());
 		model.addAttribute("distinctAgencies", buList.stream().map(bu -> bu.getAgency().getLocalizedAttribute("acronym"))
 				.distinct().sorted().iterator());
-		model.addAttribute("distinctApplySystems",
-				applyMap.values().stream().distinct().map(GrantingSystem::getAcronym).sorted().iterator());
+		model.addAttribute("distinctApplySystems", applyMap.values().stream().distinct()
+				.filter(gs -> !gs.getAcronym().equals("N/A")).map(GrantingSystem::getAcronym).sorted().iterator());
 		model.addAttribute("distinctAwardSystems", awardMap.values().stream().flatMap(List::stream).distinct()
-				.map(GrantingSystem::getAcronym).sorted().iterator());
-
+				.filter(gs -> !gs.getAcronym().equals("N/A")).map(GrantingSystem::getAcronym).sorted().iterator());
+		// Since the code above sorts the GrantingSystems, we have to remove the GrantingSystem with the
+		// acronym "N/A" and create a separate model attribute for it so that we can add it to the bottom of
+		// the list of filtering options.
+		model.addAttribute("notApplicableGS",
+				applyMap.values().stream().filter(gs -> gs.getAcronym().equals("N/A")).findFirst().get().getAcronym());
 		return "browse/fundingOpportunities";
 	}
 

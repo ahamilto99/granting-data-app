@@ -46,6 +46,7 @@
 								<label for="dt_applySystem" th:text="#{th.applySystem}"></label> <select class="form-control" id="dt_applySystem" data-column="2">
 									<option th:text="#{msg.all}" th:value="#{msg.all}"></option>
 									<option th:each="sys : ${distinctApplySystems}" th:value="${sys}" th:text="${sys}"></option>
+									<option th:value="${notApplicableGS}" th:text="${notApplicableGS}"></option>
 								</select>
 							</div>
 
@@ -53,6 +54,7 @@
 								<label for="dt_awardSystem" th:text="#{th.awardSystem}"></label> <select class="form-control" id="dt_awardSystem" data-column="3">
 									<option th:text="#{msg.all}" th:value="#{msg.all}"></option>
 									<option th:each="sys : ${distinctAwardSystems}" th:value="${sys}" th:text="${sys}"></option>
+									<option th:value="${notApplicableGS}" th:text="${notApplicableGS}"></option>
 								</select>
 							</div>
 
