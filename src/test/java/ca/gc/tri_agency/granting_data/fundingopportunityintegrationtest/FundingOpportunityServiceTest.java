@@ -28,7 +28,7 @@ public class FundingOpportunityServiceTest {
 
 	@Autowired
 	private FundingOpportunityService foService;
-	
+
 	@Autowired
 	private AgencyService agencyService;
 
@@ -89,9 +89,9 @@ public class FundingOpportunityServiceTest {
 
 		List<String[]> foRevs = foService.findAllFundingOpportunitiesRevisions();
 		for (String[] strArr : foRevs) {
-			if (strArr[1].equals("ADD"))
-				;
-			++numAdds;
+			if (strArr[2].equals("ADD")) {
+				++numAdds;
+			}
 		}
 
 		assertTrue(numAdds >= 141);
@@ -102,11 +102,11 @@ public class FundingOpportunityServiceTest {
 	public void test_nonAdminCannotFindAllFundingOpportunitiesRevisions() {
 		foService.findAllFundingOpportunitiesRevisions();
 	}
-	
+
 	@WithAnonymousUser
 	@Test
 	public void test_anonUserCanFindFundingOpportunitiesByAgency() {
-		assertEquals(35, foService.findFundingOpportunitiesByAgency(agencyService.findAgencyById(1L)).size());
+		assertEquals(43, foService.findFundingOpportunitiesByAgency(agencyService.findAgencyById(1L)).size());
 	}
 
 }

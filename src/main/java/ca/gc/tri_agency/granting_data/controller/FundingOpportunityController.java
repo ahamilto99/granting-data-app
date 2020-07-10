@@ -86,7 +86,7 @@ public class FundingOpportunityController {
 		model.addAttribute("allAgencies", agencyService.findAllAgencies());
 		model.addAttribute("allDivisions", buService.findAllBusinessUnits());
 		model.addAttribute("allGrantingSystems", gSystemService.findAllGrantingSystems());
-		model.addAttribute("applySystemByFoMap", applyMap);
+		model.addAttribute("applySystemsByFoMap", applyMap);
 		model.addAttribute("awardSystemsByFoMap", awardMap);
 
 		// filtering options
