@@ -150,7 +150,7 @@ public class BusinessUnitServiceTest {
 			}
 		}
 		
-		assertTrue(numAdds >= 44);
+		assertTrue(numAdds >= 14);
 	}
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })

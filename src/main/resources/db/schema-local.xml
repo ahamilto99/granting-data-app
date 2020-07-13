@@ -5,11 +5,10 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
     http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
     
-    
-	<changeSet id="00000000000002" author="jfs">
-    	<createSequence sequenceName="seq_agency" startValue="1" incrementBy="1"/>
-	</changeSet>
-	<changeSet id="00000000000003" author="jfs">
+    <changeSet id="00000000000002" author="jfs">
+        <createSequence sequenceName="seq_agency" startValue="1" incrementBy="1"/>
+    </changeSet>
+    <changeSet id="00000000000003" author="jfs">
         <createTable tableName="agency">
             <column name="id" type="BIGINT" valueSequenceNext="seq_agency">
                  <constraints primaryKey="true" nullable="false"/>
@@ -20,10 +19,10 @@
             <column name="name_fr" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-	<changeSet id="00000000000004" author="jfs">
-    	<createSequence sequenceName="seq_fiscal_year" startValue="1" incrementBy="1"/>
-	</changeSet>
-	<changeSet id="00000000000005" author="jfs">
+    <changeSet id="00000000000004" author="jfs">
+        <createSequence sequenceName="seq_fiscal_year" startValue="1" incrementBy="1"/>
+    </changeSet>
+    <changeSet id="00000000000005" author="jfs">
         <createTable tableName="fiscal_year">
             <column name="id" type="BIGINT" valueSequenceNext="seq_fiscal_year">
                  <constraints primaryKey="true" nullable="false"/>
@@ -33,10 +32,10 @@
             </column>
         </createTable>
     </changeSet>
-	<changeSet id="00000000000006" author="jfs">
-    	<createSequence sequenceName="seq_funding_opportunity" startValue="1" incrementBy="1"/>
-	</changeSet>
-	<changeSet id="00000000000007" author="jfs">
+    <changeSet id="00000000000006" author="jfs">
+        <createSequence sequenceName="seq_funding_opportunity" startValue="1" incrementBy="1"/>
+    </changeSet>
+    <changeSet id="00000000000007" author="jfs">
         <createTable tableName="funding_opportunity">
             <column name="id" type="BIGINT" valueSequenceNext="seq_funding_opportunity">
                  <constraints primaryKey="true" nullable="false"/>
@@ -63,10 +62,10 @@
             </column>
         </createTable>
     </changeSet>
-	<changeSet id="00000000000008" author="jfs">
-    	<createSequence sequenceName="seq_funding_cycle" startValue="1" incrementBy="1"/>
-	</changeSet>
-	<changeSet id="00000000000009" author="jfs">
+    <changeSet id="00000000000008" author="jfs">
+        <createSequence sequenceName="seq_funding_cycle" startValue="1" incrementBy="1"/>
+    </changeSet>
+    <changeSet id="00000000000009" author="jfs">
         <createTable tableName="funding_cycle">
             <column name="id" type="BIGINT" valueSequenceNext="seq_funding_cycle">
                  <constraints primaryKey="true" nullable="false"/>
@@ -80,10 +79,10 @@
             </column>
             <column name="start_date" type="date"/>
             <column name="fiscal_year_id" type="BIGINT">
-            	<constraints nullable="false" foreignKeyName="fk_funding_cycle_fiscal_year" references="fiscal_year(id)"/>
+                <constraints nullable="false" foreignKeyName="fk_funding_cycle_fiscal_year" references="fiscal_year(id)"/>
             </column>
             <column name="funding_opportunity_id" type="BIGINT">
-            	<constraints nullable="false" foreignKeyName="fk_funding_cycle_funding_opportunity" references="funding_opportunity(id)"/>
+                <constraints nullable="false" foreignKeyName="fk_funding_cycle_funding_opportunity" references="funding_opportunity(id)"/>
             </column>
             <column name="end_dateloi" type="date"/>
             <column name="end_datenoi" type="date"/>
@@ -91,7 +90,7 @@
             <column name="start_datenoi" type="date"/>
         </createTable>
     </changeSet>
-	<changeSet id="00000000000010" author="jfs">
+    <changeSet id="00000000000010" author="jfs">
         <createTable tableName="funding_opportunity_participating_agencies">
             <column name="funding_opportunity_id" type="BIGINT">
                 <constraints nullable="false" foreignKeyName="fk_funding_opportunity_participating_agencies_funding_opportunity" references="funding_opportunity(id)"/>
@@ -101,10 +100,10 @@
             </column>
         </createTable>
     </changeSet>
-	<changeSet id="00000000000011" author="jfs">
-    	<createSequence sequenceName="seq_granting_capability" startValue="1" incrementBy="1"/>
-	</changeSet>
-	<changeSet id="00000000000012" author="jfs">
+    <changeSet id="00000000000011" author="jfs">
+        <createSequence sequenceName="seq_granting_capability" startValue="1" incrementBy="1"/>
+    </changeSet>
+    <changeSet id="00000000000012" author="jfs">
         <createTable tableName="granting_capability">
             <column name="id" type="BIGINT"  valueSequenceNext="seq_granting_capability">
                  <constraints primaryKey="true" nullable="false"/>
@@ -118,10 +117,10 @@
             <column name="granting_system_id" type="BIGINT"/>
         </createTable>
     </changeSet>
-	<changeSet id="00000000000013" author="jfs">
-		<createSequence sequenceName="seq_granting_stage" startValue="1" incrementBy="1"/>
+    <changeSet id="00000000000013" author="jfs">
+        <createSequence sequenceName="seq_granting_stage" startValue="1" incrementBy="1"/>
     </changeSet>
-	<changeSet id="00000000000014" author="jfs">
+    <changeSet id="00000000000014" author="jfs">
         <createTable tableName="granting_stage">
             <column name="id" type="BIGINT" valueSequenceNext="seq_granting_stage">
                  <constraints primaryKey="true" nullable="false"/>
@@ -130,10 +129,10 @@
             <column name="name_fr" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-	<changeSet id="00000000000015" author="jfs">
-    	<createSequence sequenceName="seq_granting_system" startValue="1" incrementBy="1" />
+    <changeSet id="00000000000015" author="jfs">
+        <createSequence sequenceName="seq_granting_system" startValue="1" incrementBy="1" />
     </changeSet>
-	<changeSet id="00000000000016" author="jfs">
+    <changeSet id="00000000000016" author="jfs">
         <createTable tableName="granting_system">
             <column name="id" type="BIGINT" valueSequenceNext="seq_granting_system">
                  <constraints primaryKey="true" nullable="false"/>
@@ -143,10 +142,10 @@
             <column name="name_fr" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-	<changeSet id="00000000000017" author="jfs">
-    	<createSequence sequenceName="seq_system_funding_opportunity" startValue="1" incrementBy="1"/>
+    <changeSet id="00000000000017" author="jfs">
+        <createSequence sequenceName="seq_system_funding_opportunity" startValue="1" incrementBy="1"/>
     </changeSet>
-	<changeSet id="00000000000018" author="jfs">
+    <changeSet id="00000000000018" author="jfs">
         <createTable tableName="system_funding_opportunity">
             <column name="id" type="BIGINT" valueSequenceNext="seq_system_funding_opportunity">
                  <constraints primaryKey="true" nullable="false"/>
@@ -162,10 +161,10 @@
             </column>
         </createTable>
     </changeSet>
-	<changeSet id="00000000000019" author="jfs">
-    	<createSequence sequenceName="seq_system_funding_cycle" startValue="1" incrementBy="1"/>
-	</changeSet>
-	<changeSet id="00000000000020" author="jfs">
+    <changeSet id="00000000000019" author="jfs">
+        <createSequence sequenceName="seq_system_funding_cycle" startValue="1" incrementBy="1"/>
+    </changeSet>
+    <changeSet id="00000000000020" author="jfs">
         <createTable tableName="system_funding_cycle">
             <column name="id" type="BIGINT" valueSequenceNext="seq_system_funding_cycle">
                  <constraints primaryKey="true" nullable="false"/>
@@ -178,7 +177,7 @@
             </column>
         </createTable>
     </changeSet>
-	<changeSet id="00000000000021" author="jfs">
+    <changeSet id="00000000000021" author="jfs">
         <addPrimaryKey columnNames="funding_opportunity_id, participating_agencies_id" constraintName="PRIMARY5" tableName="funding_opportunity_participating_agencies"/>
     </changeSet>
     <changeSet id="00000000000022" author="dev_aha">
@@ -546,61 +545,5 @@
             <column name="program_name_fr" type="VARCHAR(255)"/>
         </addColumn>
     </changeSet>
-        
-    <!-- 
-    <changeSet author="dev_yab (generated)" id="1574353543232-28">
-        <createIndex indexName="FK14tr15getkq8fb5kjrrjptvjr" tableName="system_funding_opportunity">
-            <column name="linked_funding_opportunity_id"/>
-        </createIndex>
-    </changeSet>
-    <changeSet author="dev_yab (generated)" id="1574353543232-29">
-        <createIndex indexName="FK528n91tiwm42hbh9296moiphq" tableName="funding_opportunity">
-            <column name="lead_agency_id"/>
-        </createIndex>
-    </changeSet>
-    <changeSet author="dev_yab (generated)" id="1574353543232-30">
-        <createIndex indexName="FK63indjk5hvfqt20nl6yjhe4qi" tableName="granting_capability">
-            <column name="funding_opportunity_id"/>
-        </createIndex>
-    </changeSet>
-    <changeSet author="dev_yab (generated)" id="1574353543232-31">
-        <createIndex indexName="FK6bwbn2qevrkb0xtgfw7372cy" tableName="funding_cycle">
-            <column name="funding_opportunity_id"/>
-        </createIndex>
-    </changeSet>
-    <changeSet author="dev_yab (generated)" id="1574353543232-32">
-        <createIndex indexName="FK9n4a2q2pki6vjp6ghsv02ngv3" tableName="granting_capability">
-            <column name="granting_stage_id"/>
-        </createIndex>
-    </changeSet>
-    <changeSet author="dev_yab (generated)" id="1574353543232-33">
-        <createIndex indexName="FKbsasob7skpngyxtdeg9j9ierw" tableName="system_funding_opportunity">
-            <column name="granting_system_id"/>
-        </createIndex>
-    </changeSet>
-    <changeSet author="dev_yab (generated)" id="1574353543232-34">
-        <createIndex indexName="FKhigr6os32l974jwtwgojgohhv" tableName="funding_cycle">
-            <column name="fiscal_year_id"/>
-        </createIndex>
-    </changeSet>
-    <changeSet author="dev_yab (generated)" id="1574353543232-35">
-        <createIndex indexName="FKhq04tuapjciro02x3knac3hlt" tableName="granting_capability">
-            <column name="granting_system_id"/>
-        </createIndex>
-    </changeSet>
-    <changeSet author="dev_yab (generated)" id="1574353543232-36">
-        <createIndex indexName="FKikhvk8ji466d7w30b6wqhmees" tableName="system_funding_cycle">
-            <column name="system_funding_opportunity_id"/>
-        </createIndex>
-    </changeSet>
-    <changeSet author="dev_yab (generated)" id="1574353543232-38">
-        <createIndex indexName="FKuip0ni018fonghd8p7e326g8" tableName="funding_opportunity_participating_agencies">
-            <column name="participating_agencies_id"/>
-        </createIndex>
-    </changeSet>
-     -->
     
-
 </databaseChangeLog>
-
-
