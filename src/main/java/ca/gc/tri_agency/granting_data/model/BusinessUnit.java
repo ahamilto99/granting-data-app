@@ -3,6 +3,7 @@ package ca.gc.tri_agency.granting_data.model;
 import java.util.Objects;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -39,7 +40,7 @@ public class BusinessUnit implements LocalizedParametersModel {
 	private String acronymFr;
 
 	@NotAudited
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "agency_id")
 	@NotNull
 	private Agency agency;

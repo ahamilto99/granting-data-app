@@ -13,7 +13,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
 import ca.gc.tri_agency.granting_data.model.GrantingCapability;
-import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = GrantingDataApp.class)
@@ -25,7 +24,7 @@ public class RestrictedDataServiceIntegrationTest {
 	@Autowired
 	private GrantingStageService gStageService;
 	@Autowired
-	private FundingOpportunityRepository foRepo;
+	private FundingOpportunityService foService;
 	@Autowired
 	private GrantingCapabilityService gcService;
 
@@ -35,16 +34,16 @@ public class RestrictedDataServiceIntegrationTest {
 		GrantingCapability newGc = new GrantingCapability();
 		newGc.setDescription("TEST GRANTING CAPABILITY");
 		newGc.setUrl("www.testGrantingCapability.com");
-		newGc.setGrantingStage(gStageService.findAllGrantingStages().get(0));
-		newGc.setGrantingSystem(gSystemService.findAllGrantingSystems().get(0));
-		newGc.setFundingOpportunity(foRepo.findAll().get(0));
+		newGc.setGrantingStage(gStageService.findGrantingStageById(1L));
+		newGc.setGrantingSystem(gSystemService.findGrantingSystemById(1L));
+		newGc.setFundingOpportunity(foService.findFundingOpportunityById(1L));
 
 		GrantingCapability addedGc = gcService.saveGrantingCapability(newGc);
 
 		assertNotNull(addedGc);
 
 		Long addedGcId = addedGc.getId();
-		assertEquals(gcService.findGrantingCapabilityById(addedGcId).getFundingOpportunity().getNameEn(),
+		assertEquals(foService.findFundingOpportunityById(gcService.findGrantingCapabilityById(addedGcId).getFundingOpportunity().getId()).getNameEn(),
 				newGc.getFundingOpportunity().getNameEn());
 		assertEquals(gcService.findGrantingCapabilityById(addedGcId).getDescription(), newGc.getDescription());
 	}
