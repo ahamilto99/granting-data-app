@@ -46,7 +46,6 @@
 								<label for="dt_applySystem" th:text="#{th.applySystem}"></label> <select class="form-control" id="dt_applySystem" data-column="2">
 									<option th:text="#{msg.all}" th:value="#{msg.all}"></option>
 									<option th:each="sys : ${distinctApplySystems}" th:value="${sys}" th:text="${sys}"></option>
-									<option th:value="${notApplicableGS}" th:text="${notApplicableGS}"></option>
 								</select>
 							</div>
 
@@ -54,7 +53,6 @@
 								<label for="dt_awardSystem" th:text="#{th.awardSystem}"></label> <select class="form-control" id="dt_awardSystem" data-column="3">
 									<option th:text="#{msg.all}" th:value="#{msg.all}"></option>
 									<option th:each="sys : ${distinctAwardSystems}" th:value="${sys}" th:text="${sys}"></option>
-									<option th:value="${notApplicableGS}" th:text="${notApplicableGS}"></option>
 								</select>
 							</div>
 
@@ -86,11 +84,10 @@
 
 						<tbody>
 							<tr th:each="fo : ${fundingOpportunities}">
-								<td><a th:href="@{viewFo(id=${fo.id})}"><span th:text="${fo.getLocalizedAttribute('name')}"></span></a></td>
-								<td><span th:text="${fo.businessUnit ne null} ? ${fo.businessUnit.getLocalizedAttribute('acronym')}"></span></td>
-								<td><span th:text="${applySystemsByFoMap.get(fo.id) ne null} ? ${applySystemsByFoMap.get(fo.id).acronym}"></span></td>
-								<td><span th:if="${awardSystemsByFoMap.get(fo.id) ne null}" th:each="sys, stats : ${awardSystemsByFoMap.get(fo.id)}"><span
-											th:text="${stats.last} ? ${sys.acronym} : ${sys.acronym} + ' / '"></span></span></td>
+								<td><a th:href="@{viewFo(id=${fo[0]})}"><span th:text="${fo[1]}"></span></a></td>
+								<td><span th:text="${fo[2]}"></span></td>
+								<td><span th:text="${fo[3]}"></span></td>
+								<td><span th:text="${fo[4]}"></span></td>
 							</tr>
 						</tbody>
 					</table>

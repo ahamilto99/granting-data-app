@@ -1,9 +1,13 @@
 package ca.gc.tri_agency.granting_data.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.SequenceGenerator;
 
 import org.hibernate.envers.Audited;
@@ -26,6 +30,9 @@ public class Agency implements LocalizedParametersModel {
 	private String acronymFr;
 
 	private String acronymEn;
+	
+	@ManyToMany(mappedBy = "participatingAgencies")
+	private Set<FundingOpportunity> fundingOpportunities = new HashSet<>();
 
 	public Agency() {
 
@@ -76,6 +83,49 @@ public class Agency implements LocalizedParametersModel {
 	
 	public Long getId() {
 		return id;
+	}
+
+	public Set<FundingOpportunity> getFundingOpportunities() {
+		return fundingOpportunities;
+	}
+
+	public void setFundingOpportunities(Set<FundingOpportunity> fundingOpportunities) {
+		this.fundingOpportunities = fundingOpportunities;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		
+		if (obj == null || getClass() != obj.getClass()) {
+			return false;
+		}
+		
+		return id != null && id.equals(((Agency) obj).id);
+	}
+	
+	@Override
+	public int hashCode() {
+		return 2020;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Agency [id=");
+		builder.append(id);
+		builder.append(", nameEn=");
+		builder.append(nameEn);
+		builder.append(", nameFr=");
+		builder.append(nameFr);
+		builder.append(", acronymFr=");
+		builder.append(acronymFr);
+		builder.append(", acronymEn=");
+		builder.append(acronymEn);
+		builder.append("]");
+		return builder.toString();
 	}
 
 }

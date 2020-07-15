@@ -2,9 +2,7 @@ package ca.gc.tri_agency.granting_data.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -26,16 +24,13 @@ import ca.gc.tri_agency.granting_data.form.FundingOpportunityFilterForm;
 import ca.gc.tri_agency.granting_data.ldap.ADUser;
 import ca.gc.tri_agency.granting_data.ldap.ADUserService;
 import ca.gc.tri_agency.granting_data.model.Agency;
-import ca.gc.tri_agency.granting_data.model.BusinessUnit;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
-import ca.gc.tri_agency.granting_data.model.GrantingSystem;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.AgencyService;
 import ca.gc.tri_agency.granting_data.service.BusinessUnitService;
 import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
 import ca.gc.tri_agency.granting_data.service.GrantingCapabilityService;
-import ca.gc.tri_agency.granting_data.service.GrantingSystemService;
 import ca.gc.tri_agency.granting_data.service.SystemFundingCycleService;
 import ca.gc.tri_agency.granting_data.service.SystemFundingOpportunityService;
 
@@ -43,8 +38,6 @@ import ca.gc.tri_agency.granting_data.service.SystemFundingOpportunityService;
 public class FundingOpportunityController {
 
 	private FundingOpportunityService foService;
-
-	private GrantingSystemService gSystemService;
 
 	private GrantingCapabilityService gcService;
 
@@ -61,12 +54,10 @@ public class FundingOpportunityController {
 	private ADUserService adUserService;
 
 	@Autowired
-	public FundingOpportunityController(FundingOpportunityService foService, GrantingSystemService gSystemService,
-			GrantingCapabilityService gcService, SystemFundingCycleService sfcService, AgencyService agencyService,
-			SystemFundingOpportunityService sfoService, BusinessUnitService buService, MessageSource msgSource,
-			ADUserService adUserService) {
+	public FundingOpportunityController(FundingOpportunityService foService, GrantingCapabilityService gcService,
+			SystemFundingCycleService sfcService, AgencyService agencyService, SystemFundingOpportunityService sfoService,
+			BusinessUnitService buService, MessageSource msgSource, ADUserService adUserService) {
 		this.foService = foService;
-		this.gSystemService = gSystemService;
 		this.gcService = gcService;
 		this.sfcService = sfcService;
 		this.adUserService = adUserService;
@@ -78,36 +69,20 @@ public class FundingOpportunityController {
 
 	@GetMapping("/browse/fundingOpportunities")
 	public String viewGoldenList(@ModelAttribute("filter") FundingOpportunityFilterForm filter, Model model) {
-		Map<Long, GrantingSystem> applyMap = gSystemService.findApplySystemsByFundingOpportunityMap();
-		Map<Long, List<GrantingSystem>> awardMap = gSystemService.findAwardSystemsByFundingOpportunityMap();
-		List<FundingOpportunity> filteredFOs = foService.getFilteredFundingOpportunities(filter, applyMap, awardMap);
-
-		model.addAttribute("fundingOpportunities", filteredFOs);
-		model.addAttribute("allAgencies", agencyService.findAllAgencies());
-		model.addAttribute("allDivisions", buService.findAllBusinessUnits());
-		model.addAttribute("allGrantingSystems", gSystemService.findAllGrantingSystems());
-		model.addAttribute("applySystemsByFoMap", applyMap);
-		model.addAttribute("awardSystemsByFoMap", awardMap);
+		List<String[]> fos = foService.findGoldenListTableResults();
+		model.addAttribute("fundingOpportunities", fos);
 
 		// filtering options
-		List<BusinessUnit> buList = filteredFOs.stream().map(FundingOpportunity::getBusinessUnit).distinct()
-				.collect(Collectors.toList());
-		model.addAttribute("distinctBUs",
-				buList.stream().map(bu -> bu.getLocalizedAttribute("acronym")).distinct().sorted().iterator());
-		model.addAttribute("distinctAgencies", buList.stream().map(bu -> bu.getAgency().getLocalizedAttribute("acronym"))
-				.distinct().sorted().iterator());
-		model.addAttribute("distinctApplySystems", applyMap.values().stream().distinct()
-				.filter(gs -> !gs.getAcronym().equals("N/A")).map(GrantingSystem::getAcronym).sorted().iterator());
-		model.addAttribute("distinctAwardSystems", awardMap.values().stream().flatMap(List::stream).distinct()
-				.filter(gs -> !gs.getAcronym().equals("N/A")).map(GrantingSystem::getAcronym).sorted().iterator());
-		// Since the code above sorts the GrantingSystems, we have to remove the GrantingSystem with the
-		// acronym "N/A" and create a separate model attribute for it so that we can add it to the bottom of
-		// the list of filtering options.
-		model.addAttribute("notApplicableGS",
-				applyMap.values().stream().filter(gs -> gs.getAcronym().equals("N/A")).findFirst().get().getAcronym());
+		model.addAttribute("distinctBUs", fos.stream().map(fo -> fo[2]).distinct()
+				.filter(bu -> bu != null && !bu.trim().isEmpty()).sorted().iterator());
+		model.addAttribute("distinctApplySystems", fos.stream().map(fo -> fo[3]).distinct()
+				.filter(appSys -> appSys != null && !appSys.trim().isEmpty()).sorted().iterator());
+		model.addAttribute("distinctAwardSystems", fos.stream().map(fo -> fo[4]).distinct()
+				.filter(awdSys -> awdSys != null && !awdSys.trim().isEmpty()).sorted().iterator());
+
 		return "browse/fundingOpportunities";
 	}
-
+	
 	@GetMapping("/browse/viewFo")
 	public String viewFundingOpportunity(@RequestParam("id") Long id, Model model) {
 		model.addAttribute("fo", foService.findFundingOpportunityById(id));

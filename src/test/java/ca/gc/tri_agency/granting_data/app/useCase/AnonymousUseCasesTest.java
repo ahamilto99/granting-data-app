@@ -11,6 +11,8 @@ import java.util.regex.Pattern;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -41,6 +43,11 @@ public class AnonymousUseCasesTest {
 
 	@Before
 	public void setup() {
+		mvc = MockMvcBuilders.webAppContextSetup(ctx).apply(SecurityMockMvcConfigurers.springSecurity()).build();
+	}
+	
+	@BeforeEach
+	public void setupJUnit5() {
 		mvc = MockMvcBuilders.webAppContextSetup(ctx).apply(SecurityMockMvcConfigurers.springSecurity()).build();
 	}
 
@@ -75,7 +82,8 @@ public class AnonymousUseCasesTest {
 	}
 
 	@WithAnonymousUser
-	@Test
+	@org.junit.jupiter.api.Test
+	@Tag("User_Story_14627")
 	public void test_anonUserCanAccessViewGoldenListPage_shouldSucceedWith200() throws Exception {
 		mvc.perform(get("/browse/fundingOpportunities")).andExpect(status().isOk())
 				.andExpect(content().string(containsString("id=\"fundingOpportunitiesPage\"")));

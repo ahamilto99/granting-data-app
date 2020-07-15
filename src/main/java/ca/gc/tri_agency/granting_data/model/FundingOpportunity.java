@@ -1,9 +1,9 @@
 package ca.gc.tri_agency.granting_data.model;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,6 +16,7 @@ import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotBlank;
 
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import ca.gc.tri_agency.granting_data.model.util.LocalizedParametersModel;
 
@@ -34,20 +35,23 @@ public class FundingOpportunity implements LocalizedParametersModel {
 	@NotBlank
 	private String nameFr;
 
-	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable
+	@NotAudited
+	@ManyToMany
+	@JoinTable(name = "FUNDING_OPPORTUNITY_PARTICIPATING_AGENCIES", 
+		joinColumns = @JoinColumn(name = "funding_opportunity_id"), 
+		inverseJoinColumns = @JoinColumn(name = "participating_agency_id"))
 	private Set<Agency> participatingAgencies;
 
 	private String fundingType; // could be dropped
 
 	private String frequency;
-	
+
 	private Boolean isJointInitiative = false;
 
 	public Boolean isNOI = false;
 
 	private Boolean isLOI = false;
-	
+
 	private String partnerOrg;
 
 	private Boolean isEdiRequired = false;
@@ -177,4 +181,24 @@ public class FundingOpportunity implements LocalizedParametersModel {
 		this.businessUnit = businessUnit;
 	}
 
+	public void addAgency(Agency agency) {
+		participatingAgencies.add(agency);
+		agency.getFundingOpportunities().add(this);
+	}
+	
+	public void removeAgency(Agency agency) {
+		participatingAgencies.remove(agency);
+		agency.getFundingOpportunities().remove(this);
+	}
+	
+	public void removeAllAgencies() {
+		Iterator<Agency> agencyIter = participatingAgencies.iterator();
+		
+		while (agencyIter.hasNext()) {
+			Agency agency = agencyIter.next();
+			agency.getFundingOpportunities().remove(this);
+			agencyIter.remove();
+		}
+	}
+	
 }

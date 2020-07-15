@@ -1,6 +1,7 @@
 package ca.gc.tri_agency.granting_data.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,14 +15,17 @@ import org.hibernate.envers.RevisionType;
 import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.envers.query.AuditQuery;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import ca.gc.tri_agency.granting_data.form.FundingOpportunityFilterForm;
 import ca.gc.tri_agency.granting_data.model.Agency;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.GrantingSystem;
 import ca.gc.tri_agency.granting_data.model.auditing.UsernameRevisionEntity;
+import ca.gc.tri_agency.granting_data.model.projection.FundingOpportunityProjection;
 import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
@@ -31,6 +35,8 @@ public class FundingOpportunityServiceImpl implements FundingOpportunityService 
 
 	private FundingOpportunityRepository foRepo;
 
+	private final String COL_SEPARATOR = "\n~@~\n";
+	
 	@PersistenceUnit
 	private EntityManagerFactory emf;
 
@@ -114,6 +120,78 @@ public class FundingOpportunityServiceImpl implements FundingOpportunityService 
 	@Override
 	public List<FundingOpportunity> findFundingOpportunitiesByAgency(Agency agency) {
 		return foRepo.findByAgency(agency);
+	}
+
+	@Override
+	public List<String[]> findGoldenListTableResults() {
+		List<FundingOpportunityProjection> resultSet;
+		Map<String, String[]> resultSetMapWithoutValues = new HashMap<>();
+
+		if (LocaleContextHolder.getLocale().getLanguage().equals("fr")) {
+			resultSet = findGoldenListTableResultsHelperFr();
+			resultSet.forEach(projection -> {
+				String key = projection.getId().toString() + COL_SEPARATOR + projection.getNameFr() + COL_SEPARATOR
+						+ projection.getBusinessUnitNameFr();
+				resultSetMapWithoutValues.put(key, new String[] { "", "" });
+			});
+		} else {
+			resultSet = findGoldenListTableResultsHelperEn();
+			resultSet.forEach(projection -> {
+				String key = projection.getId().toString() + COL_SEPARATOR + projection.getNameEn() + COL_SEPARATOR
+						+ projection.getBusinessUnitNameEn();
+				resultSetMapWithoutValues.put(key, new String[] { "", "" });
+			});
+		}
+
+		Map<String, String[]> resultSetMapWithValues = extractApplyAndAwardSystemsForGoldenList(resultSet,
+				resultSetMapWithoutValues);
+
+		return convertResultSetMapForGoldenList(resultSetMapWithValues);
+	}
+
+	@Transactional(readOnly = true)
+	private List<FundingOpportunityProjection> findGoldenListTableResultsHelperEn() {
+		return foRepo.findResultsForGoldenListTableEn();
+	}
+
+	@Transactional(readOnly = true)
+	private List<FundingOpportunityProjection> findGoldenListTableResultsHelperFr() {
+		return foRepo.findResultsForGoldenListTableFr();
+	}
+
+	private Map<String, String[]> extractApplyAndAwardSystemsForGoldenList(List<FundingOpportunityProjection> foProjections,
+			Map<String, String[]> resultSetMap) {
+		foProjections.forEach(projection -> {
+
+			String grantingSys = projection.getGrantingSystemAcronym();
+
+			resultSetMap.forEach((k, v) -> {
+				String[] id = k.split(COL_SEPARATOR);
+				if (projection.getGrantingStageId() != null && id[0].equals(projection.getId().toString())) {
+
+					if (projection.getGrantingStageId() == 2L) {
+						v[0] = grantingSys;
+					} else if (projection.getGrantingStageId() == 4L) {
+						v[1] += " / " + grantingSys;
+					}
+
+				}
+			});
+
+		});
+
+		return resultSetMap;
+	}
+
+	private List<String[]> convertResultSetMapForGoldenList(Map<String, String[]> resultSetMap) {
+		List<String[]> retVal = new ArrayList<>();
+
+		resultSetMap.forEach((k, v) -> {
+			String[] idNameBu = k.split(COL_SEPARATOR);
+			retVal.add(new String[] { idNameBu[0], idNameBu[1], idNameBu[2], v[0], v[1].length() > 3 ? v[1].substring(3) : "" });
+		});
+
+		return retVal;
 	}
 
 	private List<String[]> convertAuditResults(List<Object[]> revisionList) {

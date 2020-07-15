@@ -417,10 +417,12 @@ public class ApplicationParticipation implements LocalizedParametersModel {
 
 	public void removeIndigenousIdentities() {
 		Iterator<IndigenousIdentity> iter = indigenousIdentities.iterator();
-		iter.forEachRemaining(identity -> {
+		
+		while (iter.hasNext()) {
+			IndigenousIdentity identity = iter.next();
 			identity.getApplicationParticipations().remove(this);
 			iter.remove();
-		});
+		}
 	}
 
 	public void addVisibleMinority(VisibleMinority visibleMinority) {
@@ -435,10 +437,12 @@ public class ApplicationParticipation implements LocalizedParametersModel {
 
 	public void removeVisibleMinorities() {
 		Iterator<VisibleMinority> iter = visibleMinorities.iterator();
-		iter.forEachRemaining(minority -> {
+		
+		while (iter.hasNext()) {
+			VisibleMinority minority = iter.next();
 			minority.getApplicationParticipations().remove(this);
 			iter.remove();
-		});
+		}
 	}
 
 	@Override

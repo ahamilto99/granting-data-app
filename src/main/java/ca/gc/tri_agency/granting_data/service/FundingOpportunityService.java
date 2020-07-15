@@ -28,5 +28,7 @@ public interface FundingOpportunityService {
 	List<String[]> findFundingOpportunityRevisionsById(Long foId);
 
 	List<String[]> findAllFundingOpportunitiesRevisions();
+
+	List<String[]> findGoldenListTableResults();
 	
 }

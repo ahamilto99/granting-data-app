@@ -95,7 +95,7 @@
             <column name="funding_opportunity_id" type="BIGINT">
                 <constraints nullable="false" foreignKeyName="fk_funding_opportunity_participating_agencies_funding_opportunity" references="funding_opportunity(id)"/>
             </column>
-            <column name="participating_agencies_id" type="BIGINT">
+            <column name="participating_agency_id" type="BIGINT">
                 <constraints nullable="false" foreignKeyName="fk_funding_opportunity_participating_agencies_agency" references="agency(id)"/>
             </column>
         </createTable>
@@ -178,7 +178,7 @@
         </createTable>
     </changeSet>
     <changeSet id="00000000000021" author="jfs">
-        <addPrimaryKey columnNames="funding_opportunity_id, participating_agencies_id" constraintName="PRIMARY5" tableName="funding_opportunity_participating_agencies"/>
+        <addPrimaryKey columnNames="funding_opportunity_id, participating_agency_id" constraintName="PRIMARY5" tableName="funding_opportunity_participating_agencies"/>
     </changeSet>
     <changeSet id="00000000000022" author="dev_aha">
         <createSequence sequenceName="seq_application_participation" startValue="1" incrementBy="1"/>

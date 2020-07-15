@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import ca.gc.tri_agency.granting_data.model.Agency;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
+import ca.gc.tri_agency.granting_data.model.projection.FundingOpportunityProjection;
 
 @Repository
 public interface FundingOpportunityRepository extends JpaRepository<FundingOpportunity, Long> {
@@ -20,4 +21,16 @@ public interface FundingOpportunityRepository extends JpaRepository<FundingOppor
 	@Query("FROM FundingOpportunity fo INNER JOIN fo.businessUnit bu WHERE bu.agency = :agencyId")
 	List<FundingOpportunity> findByAgency(@Param("agencyId") Agency agency);
 	
+	@Query("SELECT fo.id AS id, fo.nameEn AS nameEn, bu.nameEn AS businessUnitNameEn, gc.grantingStage.id AS grantingStageId,"
+			+ " gSys.acronym AS grantingSystemAcronym FROM FundingOpportunity fo LEFT JOIN fo.businessUnit bu"
+			+ " LEFT JOIN GrantingCapability gc ON fo.id = gc.fundingOpportunity"
+			+ " LEFT JOIN GrantingSystem gSys ON gc.grantingSystem = gSys.id ORDER BY nameEn, grantingSystemAcronym")
+	List<FundingOpportunityProjection> findResultsForGoldenListTableEn();
+
+	@Query("SELECT fo.id AS id, fo.nameFr AS nameFr, bu.nameFr AS businessUnitNameFr, gc.grantingStage.id AS grantingStageId,"
+			+ " gSys.acronym AS grantingSystemAcronym FROM FundingOpportunity fo LEFT JOIN fo.businessUnit bu"
+			+ " LEFT JOIN GrantingCapability gc ON fo.id = gc.fundingOpportunity"
+			+ " LEFT JOIN GrantingSystem gSys ON gc.grantingSystem = gSys.id ORDER BY nameFr, grantingSystemAcronym")
+	List<FundingOpportunityProjection> findResultsForGoldenListTableFr();
+
 }

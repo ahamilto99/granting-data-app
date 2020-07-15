@@ -1,6 +1,7 @@
 package ca.gc.tri_agency.granting_data.model;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,15 +21,15 @@ public class GrantingCapability {
 
 	private String url;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "funding_opportunity_id")
 	private FundingOpportunity fundingOpportunity;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "granting_stage_id")
 	private GrantingStage grantingStage;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "granting_system_id")
 	private GrantingSystem grantingSystem;
 
