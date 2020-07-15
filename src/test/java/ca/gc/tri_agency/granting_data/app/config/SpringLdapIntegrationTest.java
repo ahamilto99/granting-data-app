@@ -29,14 +29,14 @@ public class SpringLdapIntegrationTest {
 	public void testFindAllADUsers() {
 		List<ADUser> users = adUserService.findAllADUsers();
 		assertNotNull(users);
-		assertEquals(6, users.size());
+		assertEquals(7, users.size());
 	}
 
 	@Test
 	public void testFindAllADUserFullNames() {
 		List<String> persons = adUserService.findAllADUserFullNames();
 		assertNotNull(persons);
-		assertEquals(6, persons.size());
+		assertEquals(7, persons.size());
 	}
 
 	@Test
@@ -58,7 +58,7 @@ public class SpringLdapIntegrationTest {
 	
 	@Test
 	public void testSearchADUsersForMemberRoleCreation() {
-		assertEquals(5, adUserService.searchADUsers("user").size());
+		assertEquals(6, adUserService.searchADUsers("user").size());
 		assertEquals(0, adUserService.searchADUsers("ZZZZZ").size());
 	}
 
