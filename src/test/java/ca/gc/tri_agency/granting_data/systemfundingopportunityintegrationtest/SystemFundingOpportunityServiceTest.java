@@ -108,7 +108,7 @@ public class SystemFundingOpportunityServiceTest {
 			}
 		}
 
-		assertTrue(numAdds >= 123);
+		assertTrue(numAdds >= 10);
 	}
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })

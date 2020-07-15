@@ -64,7 +64,6 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		this.vMinorityService = vMinorityService;
 	}
 
-	@Transactional
 	@Override
 	public List<ApplicationParticipation> generateTestAppParticipations(SystemFundingOpportunity sfo, Instant createDate,
 			long maxApplications, long maxParticipants) {
@@ -232,7 +231,6 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 
 	}
 
-	@Transactional
 	@Override
 	public long generateTestAppParicipationsForAllSystemFundingOpportunities() {
 		List<ApplicationParticipation> participations = new ArrayList<ApplicationParticipation>();
@@ -249,6 +247,7 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		return participations.size();
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public ApplicationParticipation findAppPartByApplId(String applId) {
 		return appParticipationRepo.findByApplId(applId);
@@ -263,7 +262,6 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		return appParts;
 	}
 
-	@Transactional
 	private List<ApplicationParticipation> setAppPartGender(List<ApplicationParticipation> appParts) {
 		Gender male = genderService.findGenderByNameEn("Male");
 		Gender female = genderService.findGenderByNameEn("Female");
@@ -284,7 +282,6 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		return appParts;
 	}
 
-	@Transactional
 	private List<ApplicationParticipation> setAppPartDisability(List<ApplicationParticipation> appParts) {
 		Collections.shuffle(appParts);
 
@@ -304,7 +301,6 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		return appParts;
 	}
 
-	@Transactional
 	private List<ApplicationParticipation> setAppPartIndigenous(List<ApplicationParticipation> appParts) {
 		Collections.shuffle(appParts);
 		
@@ -337,7 +333,6 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		return appParts;
 	}
 
-	@Transactional
 	private List<ApplicationParticipation> setAppPartEthnicity(List<ApplicationParticipation> appParts) {
 		int i = (int) (0.12 * appParts.size());
 		VisibleMinority minority = vMinorityService.findVisibleMinorityByNameEn("Latin American");
@@ -380,11 +375,13 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		return appParts;
 	}
 
+	@Transactional
 	@Override
 	public void saveAllApplicationParticipations(List<ApplicationParticipation> appParticipations) {
 		appParticipationRepo.saveAll(appParticipations);
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public List<String> getExtIdsQualifiedForEdi() {
 		List<String> retval = new ArrayList<String>();
@@ -405,6 +402,7 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		return retval;
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public ApplicationParticipation getAllowdRecord(Long id) {
 		ApplicationParticipation retval = appParticipationRepo.findById(id).orElseThrow(

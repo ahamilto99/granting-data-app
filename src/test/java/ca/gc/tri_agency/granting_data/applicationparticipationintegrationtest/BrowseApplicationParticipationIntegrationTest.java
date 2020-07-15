@@ -63,7 +63,7 @@ public class BrowseApplicationParticipationIntegrationTest {
 
         apRepo.save(ap);
         
-        ApplicationParticipation savedAp = apRepo.findById(1L).get();
+        ApplicationParticipation savedAp = apRepo.findById(18L).get();
         
         assertEquals(initApRepoCount + 1, apRepo.count());
         assertEquals(appIdentifier, savedAp.getApplicationIdentifier());
