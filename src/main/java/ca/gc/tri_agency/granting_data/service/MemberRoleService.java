@@ -24,6 +24,6 @@ public interface MemberRoleService {
 	
 	List<MemberRole> findMRsByUserLoginAndEdiAuthorizedTrue(String userLogin);
 
-	Long isCurrentUserEdiAuthorized(Long buId) throws AccessDeniedException;
+	void checkIfCurrentUserEdiAuthorized(Long buId) throws AccessDeniedException;
 	
 }

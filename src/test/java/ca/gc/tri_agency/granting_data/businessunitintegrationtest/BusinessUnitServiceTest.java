@@ -164,41 +164,17 @@ public class BusinessUnitServiceTest {
 	@Test
 	public void test_findEdiAppPartDataForAuthorizedBUMember() {
 		Map<String, Long> ediMap = buService.findEdiAppPartDataForAuthorizedBUMember(13L);
-		
-		assertEquals(3L, ediMap.get("numIdigenousApps"));
+
+		assertEquals(3L, ediMap.get("numIndigenousApps"));
 		assertEquals(7L, ediMap.get("numVisMinorityApps"));
-		assertEquals(2L, ediMap.get("numDisabledApps"));
-		assertEquals(8L, ediMap.get("numFemaleApps"));
-		assertEquals(7L, ediMap.get("numMaleApps"));
+		assertEquals(1L, ediMap.get("numDisabledApps"));
+		assertEquals(6L, ediMap.get("numFemaleApps"));
+		assertEquals(3L, ediMap.get("numMaleApps"));
 		assertEquals(2L, ediMap.get("numNonBinaryApps"));
-		
+		assertEquals(11L, ediMap.get("numApps"));
+
+		// user with login "admin" is not authorized to get EDI data associated with BU 1
 		assertThrows(AccessDeniedException.class, () -> buService.findEdiAppPartDataForAuthorizedBUMember(1L));
 	}
-	
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

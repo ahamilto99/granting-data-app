@@ -127,9 +127,9 @@ public class MemberRoleServiceImpl implements MemberRoleService {
 	}
 
 	@Override
-	public Long isCurrentUserEdiAuthorized(Long buId) throws AccessDeniedException {
+	public void checkIfCurrentUserEdiAuthorized(Long buId) throws AccessDeniedException {
 		try {
-			return mrRepo.findEdiAuthorizedByUserLoginBuId(SecurityUtils.getCurrentUsername(), buId).getId();
+			mrRepo.findEdiAuthorizedByUserLoginBuId(SecurityUtils.getCurrentUsername(), buId).getId();
 		} catch (NullPointerException npe) {
 			throw new AccessDeniedException("The logged-in user does not have permission to view the EDI data for the"
 					+ " Business Unit with id=" + buId.toString());

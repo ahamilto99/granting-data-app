@@ -1,6 +1,7 @@
 package ca.gc.tri_agency.granting_data.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,13 +16,16 @@ import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.envers.query.AuditQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import ca.gc.tri_agency.granting_data.model.Agency;
 import ca.gc.tri_agency.granting_data.model.BusinessUnit;
 import ca.gc.tri_agency.granting_data.model.auditing.UsernameRevisionEntity;
 import ca.gc.tri_agency.granting_data.repo.BusinessUnitRepository;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
+import ca.gc.tri_agency.granting_data.service.ApplicationParticipationService;
 import ca.gc.tri_agency.granting_data.service.BusinessUnitService;
 import ca.gc.tri_agency.granting_data.service.MemberRoleService;
 
@@ -32,13 +36,16 @@ public class BusinessUnitServiceImpl implements BusinessUnitService {
 
 	private MemberRoleService mrService;
 
+	private ApplicationParticipationService apService;
+
 	@PersistenceUnit
 	private EntityManagerFactory emf;
 
 	@Autowired
-	public BusinessUnitServiceImpl(BusinessUnitRepository buRepo, MemberRoleService mrService) {
+	public BusinessUnitServiceImpl(BusinessUnitRepository buRepo, MemberRoleService mrService, ApplicationParticipationService apService) {
 		this.buRepo = buRepo;
 		this.mrService = mrService;
+		this.apService = apService;
 	}
 
 	@Override
@@ -116,9 +123,33 @@ public class BusinessUnitServiceImpl implements BusinessUnitService {
 	}
 
 	@Override
-	public Map<String, Long> findEdiAppPartDataForAuthorizedBUMember(Long buId) {
-//		TODO: COMPLETE IMPLEMENTATION
-		return null;
+	public Map<String, Long> findEdiAppPartDataForAuthorizedBUMember(Long buId) throws AccessDeniedException {
+		// throws AccessDeniedException if the current user is not authorized
+		mrService.checkIfCurrentUserEdiAuthorized(buId);
+
+		Long[] ediArr = findAppPartEdiDataForBU(buId);
+
+		Map<String, Long> ediMap = new HashMap<>();
+		ediMap.put("numIndigenousApps", ediArr[0]);
+		ediMap.put("numVisMinorityApps", ediArr[1]);
+		ediMap.put("numDisabledApps", ediArr[2]);
+		ediMap.put("numFemaleApps", ediArr[3]);
+		ediMap.put("numMaleApps", ediArr[4]);
+		ediMap.put("numNonBinaryApps", ediArr[5]);
+		ediMap.put("numApps", ediArr[6]);
+
+		return ediMap;
+	}
+
+	@Transactional(readOnly = true)
+	private Long[] findAppPartEdiDataForBU(Long buId) {
+		Long indigenousCount = apService.findAppPartIndigenousCountForBU(buId);
+		Long minorityCount = apService.findAppMinorityCountForBU(buId);
+		Long disabledCount = apService.findAppPartDisabledCountForBU(buId);
+		Long[] genderCounts = apService.findAppPartGenderCountsForBU(buId);
+		Long appCount = apService.findAppPartCountForBU(buId);
+
+		return new Long[] { indigenousCount, minorityCount, disabledCount, genderCounts[0], genderCounts[1], genderCounts[2], appCount };
 	}
 
 }

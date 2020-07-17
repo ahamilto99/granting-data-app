@@ -8,6 +8,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.Tuple;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.security.access.AccessDeniedException;
@@ -429,6 +431,37 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 	private void linkSFOsToFOs() {
 		sfoService.findAllSystemFundingOpportunities().forEach(sfo -> sfo
 				.setLinkedFundingOpportunity(foService.findFundingOpportunityById(Math.abs(sRand.nextLong() % 141L + 1L))));
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public Long[] findAppPartGenderCountsForBU(Long buId) {
+		List<Tuple> counts = appParticipationRepo.findGenderCounts(buId);
+		return new Long[] { (Long) counts.get(0).get("total"), (Long) counts.get(1).get("total"), (Long) counts.get(2).get("total") };
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public Long findAppPartDisabledCountForBU(Long buId) {
+		return (Long) appParticipationRepo.findDisabledCountForBU(buId).get("total");
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public Long findAppPartIndigenousCountForBU(Long buId) {
+		return (Long) appParticipationRepo.findIndigenousCountForBU(buId).get("total");
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public Long findAppMinorityCountForBU(Long buId) {
+		return (Long) appParticipationRepo.findMinorityCountForBU(buId).get("total");
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public Long findAppPartCountForBU(Long buId) {
+		return (Long) appParticipationRepo.findNumAPsForBU(buId).get("total");
 	}
 
 }

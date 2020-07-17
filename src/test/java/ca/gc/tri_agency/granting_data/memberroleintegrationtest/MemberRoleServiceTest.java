@@ -1,5 +1,6 @@
 package ca.gc.tri_agency.granting_data.memberroleintegrationtest;
 
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -141,10 +142,10 @@ public class MemberRoleServiceTest {
 	@Tag("user_story_19147")
 	@WithMockUser(username = "admin")
 	@Test
-	public void test_isCurrentUserEdiAuthorized() {
-		assertThrows(AccessDeniedException.class, () -> mrService.isCurrentUserEdiAuthorized(1L));
-		assertThrows(AccessDeniedException.class, () -> mrService.isCurrentUserEdiAuthorized(2L));
-		assertEquals(4, mrService.isCurrentUserEdiAuthorized(13L));
+	public void test_checkIfCurrentUserEdiAuthorized() {
+		assertThrows(AccessDeniedException.class, () -> mrService.checkIfCurrentUserEdiAuthorized(1L));
+		assertThrows(AccessDeniedException.class, () -> mrService.checkIfCurrentUserEdiAuthorized(2L));
+		assertThatCode(() -> mrService.checkIfCurrentUserEdiAuthorized(13L)).doesNotThrowAnyException();
 	}
 
 }
