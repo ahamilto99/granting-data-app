@@ -26,6 +26,7 @@ import ca.gc.tri_agency.granting_data.model.VisibleMinority;
 import ca.gc.tri_agency.granting_data.repo.ApplicationParticipationRepository;
 import ca.gc.tri_agency.granting_data.security.SecurityUtils;
 import ca.gc.tri_agency.granting_data.service.ApplicationParticipationService;
+import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
 import ca.gc.tri_agency.granting_data.service.GenderService;
 import ca.gc.tri_agency.granting_data.service.IndigenousIdentitySerivce;
 import ca.gc.tri_agency.granting_data.service.MemberRoleService;
@@ -44,24 +45,29 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 	private SystemFundingOpportunityService sfoService;
 
 	private MemberRoleService mrService;
-	
+
 	private GenderService genderService;
-	
+
 	private IndigenousIdentitySerivce indIdentityService;
-	
+
 	private VisibleMinorityService vMinorityService;
+
+	private FundingOpportunityService foService;
 
 	private static int applIdIncrementer = 0;
 
 	@Autowired
 	public ApplicationParticipationServiceImpl(ApplicationParticipationRepository appParticipationRepo,
-			SystemFundingOpportunityService sfoService, MemberRoleService mrService, GenderService genderService, IndigenousIdentitySerivce indIdentityService, VisibleMinorityService vMinorityService) {
+			SystemFundingOpportunityService sfoService, MemberRoleService mrService, GenderService genderService,
+			IndigenousIdentitySerivce indIdentityService, VisibleMinorityService vMinorityService,
+			FundingOpportunityService foService) {
 		this.appParticipationRepo = appParticipationRepo;
 		this.sfoService = sfoService;
 		this.mrService = mrService;
 		this.genderService = genderService;
 		this.indIdentityService = indIdentityService;
 		this.vMinorityService = vMinorityService;
+		this.foService = foService;
 	}
 
 	@Override
@@ -99,7 +105,7 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 				int month = generateRandNumBtw(1, 12);
 				int year = generateRandNumBtw(1940, 55);
 				app.setDateOfBirth(LocalDate.of(year, month, day));
-				
+
 				appPartList.add(app);
 			}
 
@@ -236,6 +242,8 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		List<ApplicationParticipation> participations = new ArrayList<ApplicationParticipation>();
 		Instant inst = Instant.parse("2020-02-02T00:00:00.00Z");
 
+		linkSFOsToFOs();
+		
 		for (SystemFundingOpportunity sfo : sfoService.findAllSystemFundingOpportunities()) {
 			participations.addAll(generateTestAppParticipations(sfo, inst, 3, 5));
 		}
@@ -266,7 +274,7 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		Gender male = genderService.findGenderByNameEn("Male");
 		Gender female = genderService.findGenderByNameEn("Female");
 		Gender nonBinary = genderService.findGenderByNameEn("Non-Binary");
-		
+
 		Collections.shuffle(appParts);
 		int i = 0;
 		for (; i < (int) (appParts.size() * 0.5); i++) {
@@ -303,7 +311,7 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 
 	private List<ApplicationParticipation> setAppPartIndigenous(List<ApplicationParticipation> appParts) {
 		Collections.shuffle(appParts);
-		
+
 		int i = 0;
 		IndigenousIdentity identity = indIdentityService.findIndigenousIdentityByNameEn("Métis");
 		for (; i < (int) (appParts.size() * 0.05); i++) {
@@ -415,9 +423,15 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		}
 		return retval;
 	}
-	
+
 	private int generateRandNumBtw(int start, int end) {
 		return sRand.nextInt(end) + start;
+	}
+
+	@Transactional
+	private void linkSFOsToFOs() {
+		sfoService.findAllSystemFundingOpportunities().forEach(sfo -> sfo.setLinkedFundingOpportunity(
+				foService.findFundingOpportunityById(Math.abs(sRand.nextLong() % 141L + 1L))));
 	}
 
 }

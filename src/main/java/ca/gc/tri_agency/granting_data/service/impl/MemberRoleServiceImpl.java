@@ -14,11 +14,13 @@ import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.envers.query.AuditQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import ca.gc.tri_agency.granting_data.model.MemberRole;
 import ca.gc.tri_agency.granting_data.model.auditing.UsernameRevisionEntity;
 import ca.gc.tri_agency.granting_data.repo.MemberRoleRepository;
+import ca.gc.tri_agency.granting_data.security.SecurityUtils;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.MemberRoleService;
 
@@ -70,7 +72,8 @@ public class MemberRoleServiceImpl implements MemberRoleService {
 			UsernameRevisionEntity revEntity = (UsernameRevisionEntity) rev[1];
 			RevisionType revType = (RevisionType) rev[2];
 
-			auditedArrList.add(new String[] { mr.getId().toString(), revEntity.getUsername(), revType.toString(), mr.getUserLogin(),
+			auditedArrList.add(new String[] { mr.getId().toString(), revEntity.getUsername(), revType.toString(),
+					mr.getUserLogin(),
 					(mr.getEdiAuthorized() != null) ? mr.getEdiAuthorized().toString().toUpperCase() : null,
 					(mr.getRole() != null) ? mr.getRole().getId().toString() : null,
 					(mr.getBusinessUnit() != null) ? mr.getBusinessUnit().getId().toString() : null,
@@ -122,6 +125,16 @@ public class MemberRoleServiceImpl implements MemberRoleService {
 	@Override
 	public List<MemberRole> findMRsByUserLoginAndEdiAuthorizedTrue(String userLogin) {
 		return mrRepo.findByUserLoginAndEdiAuthorizedTrue(userLogin);
+	}
+
+	@Override
+	public Long isCurrentUserEdiAuthorized(Long buId) throws AccessDeniedException {
+		try {
+			return mrRepo.findEdiAuthorizedByUserLoginBuId(SecurityUtils.getCurrentUsername(), buId).getId();
+		} catch (NullPointerException npe) {
+			throw new AccessDeniedException("The logged-in user does not have permission to view the EDI data for the"
+					+ " Business Unit with id=" + buId.toString());
+		}
 	}
 
 }

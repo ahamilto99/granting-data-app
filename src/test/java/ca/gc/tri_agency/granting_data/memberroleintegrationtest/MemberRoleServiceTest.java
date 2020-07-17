@@ -1,21 +1,21 @@
 package ca.gc.tri_agency.granting_data.memberroleintegrationtest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
 import ca.gc.tri_agency.granting_data.model.BusinessUnit;
@@ -27,14 +27,15 @@ import ca.gc.tri_agency.granting_data.service.MemberRoleService;
 import ca.gc.tri_agency.granting_data.service.RoleService;
 
 @SpringBootTest(classes = GrantingDataApp.class)
-@RunWith(SpringRunner.class)
 @ActiveProfiles("test")
 public class MemberRoleServiceTest {
 
 	@Autowired
 	private MemberRoleService mrService;
+
 	@Autowired
 	private RoleService rService;
+
 	@Autowired
 	private BusinessUnitService buService;
 
@@ -63,7 +64,7 @@ public class MemberRoleServiceTest {
 	}
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	public void test_nonAdminCannotCreateMR_shouldThrowAccessDeniedException() {
 		MemberRole mr = new MemberRole();
 		mr.setUserLogin(RandomStringUtils.randomAlphabetic(3));
@@ -71,7 +72,7 @@ public class MemberRoleServiceTest {
 		mr.setBusinessUnit(buService.findBusinessUnitById(1L));
 		mr.setEdiAuthorized(true);
 
-		mrService.saveMemberRole(mr);
+		assertThrows(AccessDeniedException.class, () -> mrService.saveMemberRole(mr));
 	}
 
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
@@ -86,9 +87,9 @@ public class MemberRoleServiceTest {
 	}
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	public void test_nonAdminCannotDeleteMR_shouldThrowAccessDeniedException() {
-		mrService.deleteMemberRole(mrService.findAllMemberRoles().get(0).getId());
+		assertThrows(AccessDeniedException.class, () -> mrService.deleteMemberRole(2L));
 	}
 
 	@WithMockUser(username = "admin", roles = "MDM ADMIN")
@@ -110,9 +111,9 @@ public class MemberRoleServiceTest {
 	}
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
-	@Test(expected = AccessDeniedException.class)
-	public void test_nonAdminCannotFindMemberRoleRevisionsById() {
-		mrService.findMemberRoleRevisionsById(1L);
+	@Test
+	public void test_nonAdminCannotFindMemberRoleRevisionsById_shouldThrowAccessDeniedException() {
+		assertThrows(AccessDeniedException.class, () -> mrService.findMemberRoleRevisionsById(1L));
 	}
 
 	@WithMockUser(username = "admin", roles = "MDM ADMIN")
@@ -120,20 +121,30 @@ public class MemberRoleServiceTest {
 	public void test_adminCanFindAllMemberRoleRevisions() {
 		List<String[]> auditedArrList = mrService.findAllMemberRoleRevisions();
 		assertNotNull(auditedArrList);
-		
+
 		int numAdds = 0;
 		for (String[] strArr : auditedArrList) {
 			if (strArr[2].equals("ADD")) {
 				++numAdds;
 			}
 		}
-		
+
 		assertTrue(numAdds >= 3);
 	}
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
-	@Test(expected = AccessDeniedException.class)
-	public void test_nonAdminCannotFindAllMemberRoleRevisions() {
-		mrService.findAllMemberRoleRevisions();
+	@Test
+	public void test_nonAdminCannotFindAllMemberRoleRevisions_shouldThrowAccessDeniedException() {
+		assertThrows(AccessDeniedException.class, () -> mrService.findAllMemberRoleRevisions());
 	}
+
+	@Tag("user_story_19147")
+	@WithMockUser(username = "admin")
+	@Test
+	public void test_isCurrentUserEdiAuthorized() {
+		assertThrows(AccessDeniedException.class, () -> mrService.isCurrentUserEdiAuthorized(1L));
+		assertThrows(AccessDeniedException.class, () -> mrService.isCurrentUserEdiAuthorized(2L));
+		assertEquals(4, mrService.isCurrentUserEdiAuthorized(13L));
+	}
+
 }
