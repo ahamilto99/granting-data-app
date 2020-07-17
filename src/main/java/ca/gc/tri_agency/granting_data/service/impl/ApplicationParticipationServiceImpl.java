@@ -143,10 +143,9 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 
 	@Override
 	public void fillInRandomRole(ApplicationParticipation app, GrantingSystem sys) {
-		String[] roleCodeArr = { "1", "2", "147", "8878CE1D-6020-E211-AF1A-005056AD024F",
-				"8F78CE1D-6020-E211-AF1A-005056AD024F", "A878CE1D-6020-E211-AF1A-005056AD024F",
-				"A978CE1D-6020-E211-AF1A-005056AD024F", "A778CE1D-6020-E211-AF1A-005056AD024F",
-				"8C78CE1D-6020-E211-AF1A-005056AD024F" };
+		String[] roleCodeArr = { "1", "2", "147", "8878CE1D-6020-E211-AF1A-005056AD024F", "8F78CE1D-6020-E211-AF1A-005056AD024F",
+				"A878CE1D-6020-E211-AF1A-005056AD024F", "A978CE1D-6020-E211-AF1A-005056AD024F",
+				"A778CE1D-6020-E211-AF1A-005056AD024F", "8C78CE1D-6020-E211-AF1A-005056AD024F" };
 		String[] roleEnArr = { "Scholarship Applicant", "Applicant", "Co-Applicant", "Collaborator", "Reader A", "Reader B",
 				"Reader C" };
 		String[] roleFrArr = { "Candidat à une bourse", "Candidat", "Applicant", "Co-Applicant", "Collaborator", "Lecteur A",
@@ -175,19 +174,17 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		int idx = sRand.nextInt(6);
 		if (acronym.equals("NAMIS")) {
 			String[] idArr = { "27", "28", "24", "89", "43", "9" };
-			String[] nameArr = { "McMaster University", "University of Ottawa", "Guelph University",
-					"Memorial Univ. of Nfld", "Ryerson University", "University of Alberta" };
+			String[] nameArr = { "McMaster University", "University of Ottawa", "Guelph University", "Memorial Univ. of Nfld",
+					"Ryerson University", "University of Alberta" };
 			app.setOrganizationId(idArr[idx]);
 			app.setOrganizationNameEn(nameArr[idx]);
 			app.setOrganizationNameFr(nameArr[idx]);
 		} else if (acronym.equals("AMIS")) {
 			String[] idArr = { "1240613", "3248462", "1591011", "1351411", "1350711", "1350511" };
-			String[] nameEnArr = { "University of Quebec at Montreal",
-					"Consolidation of Native Friendship Centers in Quebec",
+			String[] nameEnArr = { "University of Quebec at Montreal", "Consolidation of Native Friendship Centers in Quebec",
 					"University of Northern British Columbia", "York University", "University of Ottawa",
 					"Laurentian University" };
-			String[] nameFrArr = { "Université du Québec à Montréal",
-					"Regroupement des centres d'amitié autochtones du Québec",
+			String[] nameFrArr = { "Université du Québec à Montréal", "Regroupement des centres d'amitié autochtones du Québec",
 					"University of Northern British Columbia", "Université York", "Université d'Ottawa",
 					"Université Laurentienne" };
 			app.setOrganizationId(idArr[idx]);
@@ -243,7 +240,7 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		Instant inst = Instant.parse("2020-02-02T00:00:00.00Z");
 
 		linkSFOsToFOs();
-		
+
 		for (SystemFundingOpportunity sfo : sfoService.findAllSystemFundingOpportunities()) {
 			participations.addAll(generateTestAppParticipations(sfo, inst, 3, 5));
 		}
@@ -413,8 +410,8 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 	@Transactional(readOnly = true)
 	@Override
 	public ApplicationParticipation getAllowdRecord(Long id) {
-		ApplicationParticipation retval = appParticipationRepo.findById(id).orElseThrow(
-				() -> new DataRetrievalFailureException("That Application Participation record does not exist"));
+		ApplicationParticipation retval = appParticipationRepo.findById(id)
+				.orElseThrow(() -> new DataRetrievalFailureException("That Application Participation record does not exist"));
 		if (SecurityUtils.hasRole("MDM ADMIN") == false) {
 			List<String> allowedExtIds = getExtIdsQualifiedForEdi();
 			if (!allowedExtIds.contains(retval.getProgramId())) {
@@ -430,8 +427,8 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 
 	@Transactional
 	private void linkSFOsToFOs() {
-		sfoService.findAllSystemFundingOpportunities().forEach(sfo -> sfo.setLinkedFundingOpportunity(
-				foService.findFundingOpportunityById(Math.abs(sRand.nextLong() % 141L + 1L))));
+		sfoService.findAllSystemFundingOpportunities().forEach(sfo -> sfo
+				.setLinkedFundingOpportunity(foService.findFundingOpportunityById(Math.abs(sRand.nextLong() % 141L + 1L))));
 	}
 
 }

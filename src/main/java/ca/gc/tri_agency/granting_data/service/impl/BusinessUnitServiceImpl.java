@@ -29,7 +29,7 @@ import ca.gc.tri_agency.granting_data.service.MemberRoleService;
 public class BusinessUnitServiceImpl implements BusinessUnitService {
 
 	private BusinessUnitRepository buRepo;
-	
+
 	private MemberRoleService mrService;
 
 	@PersistenceUnit
@@ -69,9 +69,8 @@ public class BusinessUnitServiceImpl implements BusinessUnitService {
 			BusinessUnit bu = (BusinessUnit) objArr[0];
 			UsernameRevisionEntity revEntity = (UsernameRevisionEntity) objArr[1];
 			RevisionType revType = (RevisionType) objArr[2];
-			auditedArrList.add(new String[] { bu.getId().toString(), revEntity.getUsername(), revType.toString(),
-					bu.getNameEn(), bu.getNameFr(), bu.getAcronymEn(), bu.getAcronymFr(),
-					revEntity.getRevTimestamp().toString() });
+			auditedArrList.add(new String[] { bu.getId().toString(), revEntity.getUsername(), revType.toString(), bu.getNameEn(),
+					bu.getNameFr(), bu.getAcronymEn(), bu.getAcronymFr(), revEntity.getRevTimestamp().toString() });
 		});
 
 		return auditedArrList;
@@ -123,36 +122,3 @@ public class BusinessUnitServiceImpl implements BusinessUnitService {
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

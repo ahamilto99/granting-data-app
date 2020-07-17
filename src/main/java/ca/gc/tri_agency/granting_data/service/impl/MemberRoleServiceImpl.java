@@ -72,8 +72,7 @@ public class MemberRoleServiceImpl implements MemberRoleService {
 			UsernameRevisionEntity revEntity = (UsernameRevisionEntity) rev[1];
 			RevisionType revType = (RevisionType) rev[2];
 
-			auditedArrList.add(new String[] { mr.getId().toString(), revEntity.getUsername(), revType.toString(),
-					mr.getUserLogin(),
+			auditedArrList.add(new String[] { mr.getId().toString(), revEntity.getUsername(), revType.toString(), mr.getUserLogin(),
 					(mr.getEdiAuthorized() != null) ? mr.getEdiAuthorized().toString().toUpperCase() : null,
 					(mr.getRole() != null) ? mr.getRole().getId().toString() : null,
 					(mr.getBusinessUnit() != null) ? mr.getBusinessUnit().getId().toString() : null,
