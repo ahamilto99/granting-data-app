@@ -160,7 +160,7 @@ public class BusinessUnitServiceTest {
 	}
 	
 	@Tag("user_story_19147")
-	@WithMockUser(username = "admin")
+	@WithMockUser(username = "aha")
 	@Test
 	public void test_findEdiAppPartDataForAuthorizedBUMember() {
 		Map<String, Long> ediMap = buService.findEdiAppPartDataForAuthorizedBUMember(13L);
@@ -173,7 +173,7 @@ public class BusinessUnitServiceTest {
 		assertEquals(2L, ediMap.get("numNonBinaryApps"));
 		assertEquals(11L, ediMap.get("numApps"));
 
-		// user with login "admin" is not authorized to get EDI data associated with BU 1
+		// user "aha" is not authorized to get EDI data associated with BU 1
 		assertThrows(AccessDeniedException.class, () -> buService.findEdiAppPartDataForAuthorizedBUMember(1L));
 	}
 

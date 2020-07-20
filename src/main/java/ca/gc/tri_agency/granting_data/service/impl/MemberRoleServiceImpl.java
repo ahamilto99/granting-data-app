@@ -15,6 +15,8 @@ import org.hibernate.envers.query.AuditQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import ca.gc.tri_agency.granting_data.model.MemberRole;
@@ -128,6 +130,14 @@ public class MemberRoleServiceImpl implements MemberRoleService {
 
 	@Override
 	public void checkIfCurrentUserEdiAuthorized(Long buId) throws AccessDeniedException {
+//		Can't use SecurityUtils' hasRole(...) b/c tests don't mock an LDAP user, i.e. tests fail when
+//		using that method b/c we can't cast a User object to a LdapUserDetails object.
+		if (SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+				.contains(new SimpleGrantedAuthority("ROLE_MDM ADMIN"))) {
+			// an admin user can access the EDI data for all BUs
+			return;
+		}
+		
 		try {
 			mrRepo.findEdiAuthorizedByUserLoginBuId(SecurityUtils.getCurrentUsername(), buId).getId();
 		} catch (NullPointerException npe) {

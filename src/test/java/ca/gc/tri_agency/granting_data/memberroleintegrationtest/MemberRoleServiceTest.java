@@ -140,12 +140,44 @@ public class MemberRoleServiceTest {
 	}
 
 	@Tag("user_story_19147")
-	@WithMockUser(username = "admin")
+	@WithMockUser(username = "aha")
 	@Test
 	public void test_checkIfCurrentUserEdiAuthorized() {
+		// user "aha" is a member of BU 1 but does not have EDI permission
 		assertThrows(AccessDeniedException.class, () -> mrService.checkIfCurrentUserEdiAuthorized(1L));
+		// user "aha" is not a member of BU 2
 		assertThrows(AccessDeniedException.class, () -> mrService.checkIfCurrentUserEdiAuthorized(2L));
+		// user "aha" is a member of BU 13 and does have EDI permission
 		assertThatCode(() -> mrService.checkIfCurrentUserEdiAuthorized(13L)).doesNotThrowAnyException();
+	}
+	
+	@Tag("user_story_19147")
+	@WithMockUser(roles = "MDM ADMIN")
+	@Test
+	public void test_adminUserIsAlwaysEdiAuthorized() {
+		assertThatCode(() -> mrService.checkIfCurrentUserEdiAuthorized(1L)).doesNotThrowAnyException();
 	}
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
