@@ -11,6 +11,8 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,8 +25,10 @@ import ca.gc.tri_agency.granting_data.model.IndigenousIdentity;
 import ca.gc.tri_agency.granting_data.model.MemberRole;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.VisibleMinority;
+import ca.gc.tri_agency.granting_data.model.projection.ApplicationParticipationProjection;
 import ca.gc.tri_agency.granting_data.repo.ApplicationParticipationRepository;
 import ca.gc.tri_agency.granting_data.security.SecurityUtils;
+import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.ApplicationParticipationService;
 import ca.gc.tri_agency.granting_data.service.GenderService;
 import ca.gc.tri_agency.granting_data.service.IndigenousIdentitySerivce;
@@ -44,18 +48,19 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 	private SystemFundingOpportunityService sfoService;
 
 	private MemberRoleService mrService;
-	
+
 	private GenderService genderService;
-	
+
 	private IndigenousIdentitySerivce indIdentityService;
-	
+
 	private VisibleMinorityService vMinorityService;
 
 	private static int applIdIncrementer = 0;
 
 	@Autowired
 	public ApplicationParticipationServiceImpl(ApplicationParticipationRepository appParticipationRepo,
-			SystemFundingOpportunityService sfoService, MemberRoleService mrService, GenderService genderService, IndigenousIdentitySerivce indIdentityService, VisibleMinorityService vMinorityService) {
+			SystemFundingOpportunityService sfoService, MemberRoleService mrService, GenderService genderService,
+			IndigenousIdentitySerivce indIdentityService, VisibleMinorityService vMinorityService) {
 		this.appParticipationRepo = appParticipationRepo;
 		this.sfoService = sfoService;
 		this.mrService = mrService;
@@ -100,7 +105,7 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 				int month = generateRandNumBtw(1, 12);
 				int year = generateRandNumBtw(1940, 55);
 				app.setDateOfBirth(LocalDate.of(year, month, day));
-				
+
 				appPartList.add(app);
 			}
 
@@ -268,7 +273,7 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		Gender male = genderService.findGenderByNameEn("Male");
 		Gender female = genderService.findGenderByNameEn("Female");
 		Gender nonBinary = genderService.findGenderByNameEn("Non-Binary");
-		
+
 		Collections.shuffle(appParts);
 		int i = 0;
 		for (; i < (int) (appParts.size() * 0.5); i++) {
@@ -307,7 +312,7 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 	@Transactional
 	private List<ApplicationParticipation> setAppPartIndigenous(List<ApplicationParticipation> appParts) {
 		Collections.shuffle(appParts);
-		
+
 		int i = 0;
 		IndigenousIdentity identity = indIdentityService.findIndigenousIdentityByNameEn("Métis");
 		for (; i < (int) (appParts.size() * 0.05); i++) {
@@ -417,9 +422,19 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		}
 		return retval;
 	}
-	
+
 	private int generateRandNumBtw(int start, int end) {
 		return sRand.nextInt(end) + start;
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public List<ApplicationParticipationProjection> findAppPartsForCurrentUser() {
+		if (SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+				.contains(new SimpleGrantedAuthority("ROLE_MDM ADMIN"))) {
+			return appParticipationRepo.findAllForAdmin();
+		}
+		return appParticipationRepo.findForCurrentUser(SecurityContextHolder.getContext().getAuthentication().getName());
 	}
 
 }

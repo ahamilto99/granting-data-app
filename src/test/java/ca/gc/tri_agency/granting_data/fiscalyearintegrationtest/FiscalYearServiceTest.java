@@ -85,6 +85,6 @@ public class FiscalYearServiceTest {
 		List<Object[]> results = fyService.findNumAppsExpectedForEachFiscalYear();
 		
 		assertEquals(4, results.size());
-		assertEquals(702_527L, results.get(3)[2]);
+		assertEquals(12_467L, results.get(0)[2]);
 	}
 }

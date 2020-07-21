@@ -61,9 +61,9 @@ public class BrowseApplicationParticipationIntegrationTest {
 	ap.setRoleFr(RandomStringUtils.randomAlphabetic(10));
 	ap.setGender(genderService.findGenderByNameEn("Female"));
 
-        apRepo.save(ap);
+        ap = apRepo.save(ap);
         
-        ApplicationParticipation savedAp = apRepo.findById(1L).get();
+        ApplicationParticipation savedAp = apRepo.findById(ap.getId()).get();
         
         assertEquals(initApRepoCount + 1, apRepo.count());
         assertEquals(appIdentifier, savedAp.getApplicationIdentifier());

@@ -15,7 +15,7 @@ import ca.gc.tri_agency.granting_data.service.ApplicationParticipationService;
 @SpringBootTest(classes = GrantingDataApp.class)
 @ActiveProfiles("test")
 public class ApplicationParticipationServiceTest {
-	
+
 	@Autowired
 	private ApplicationParticipationService apService;
 
@@ -23,37 +23,15 @@ public class ApplicationParticipationServiceTest {
 	@WithMockUser(username = "aha")
 	@Test
 	public void test_findAppPartsForCurrentUser() {
-		// user 'aha' is a BU Program Officer for BU id=13
-		assertEquals(11, apService.findAppPartsForCurrentUser(13L).size());
-		// user 'aha' is a member of BU id=1 but is not a Program Officer for it
-		assertEquals(0, apService.findAppPartsForCurrentUser(1L).size());
-		// user 'aha' is not even a member of BU id=2 let alone a Program Officer for it
-		assertEquals(0, apService.findAppPartsForCurrentUser(2L).size());
+		// user 'aha' is a BU Program Officer for BU id=13 and there 11 AppParts linked to that BU
+		assertEquals(11, apService.findAppPartsForCurrentUser().size());
 	}
-	
+
+	@Tag("user_story_19154")
+	@WithMockUser(roles = "MDM ADMIN")
+	@Test
+	public void test_adminCanFindAllAppParts() {
+		// an admin user doesn't have a member or even a Program Officer
+		assertEquals(17, apService.findAppPartsForCurrentUser().size());
+	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
