@@ -17,8 +17,8 @@ public interface MemberRoleRepository extends JpaRepository<MemberRole, Long> {
 
 	List<MemberRole> findByUserLoginAndEdiAuthorizedTrue(String userLogin);
 	
-	@Query("SELECT mr.id AS id FROM MemberRole mr WHERE mr.userLogin = :login AND mr.businessUnit.id = :buId"
-			+ " AND ediAuthorized = TRUE")
+	@Query("SELECT mr.ediAuthorized AS ediAuthorized FROM MemberRole mr WHERE mr.userLogin = :login AND mr.businessUnit.id = :buId"
+			+ " AND mr.ediAuthorized = TRUE")
 	MemberRoleProjection findEdiAuthorizedByUserLoginBuId(@Param("login") String userLogin, @Param("buId") Long buId);
 
 }

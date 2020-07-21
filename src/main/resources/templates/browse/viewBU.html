@@ -49,8 +49,9 @@
 					</div>
 				</div>
 
-				<div sec:authorize="hasRole('MDM ADMIN')" class="form-group">
-					<a th:href="@{/admin/editBU(id=${bu.id})}" id="editBULink" class="btn btn-primary" th:text="#{link.editBU}"></a>
+				<div class="form-group">
+					<a sec:authorize="hasRole('MDM ADMIN')" th:href="@{/admin/editBU(id=${bu.id})}" id="editBULink" class="btn btn-primary" th:text="#{link.editBU}" style="margin-right: 25px;"></a>
+					<a th:if="${@memberRoleServiceImpl.checkIfCurrentUserEdiAuthorized(bu.id)} eq true" th:href="@{/manage/viewBuEdiData(buId=${bu.id})}" id="viewEdiLink" class="btn btn-primary" th:text="#{link.buEdiData}"></a>
 				</div>
 
 				<div class="form-group">
@@ -119,9 +120,9 @@
 					<a class="btn btn-primary" th:href="@{/admin/createMR(buId=${bu.id})}" th:text="#{link.createMR}" id="createMemberRoleLink"></a>
 				</div>
 
-				<div th:replace="fragments/general :: returnHome"></div>
-
 			</div>
+
+			<div th:replace="fragments/general :: returnHome"></div>
 
 		</div>
 

@@ -436,8 +436,8 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 	@Transactional(readOnly = true)
 	@Override
 	public Long[] findAppPartGenderCountsForBU(Long buId) {
-		List<Tuple> counts = appParticipationRepo.findGenderCounts(buId);
-		return new Long[] { (Long) counts.get(0).get("total"), (Long) counts.get(1).get("total"), (Long) counts.get(2).get("total") };
+		Tuple counts = appParticipationRepo.findGenderCounts(buId);
+		return new Long[] { (Long) counts.get("female"), (Long) counts.get("male"), (Long) counts.get("nonbinary") };
 	}
 
 	@Transactional(readOnly = true)

@@ -2,8 +2,6 @@ package ca.gc.tri_agency.granting_data.service;
 
 import java.util.List;
 
-import org.springframework.security.access.AccessDeniedException;
-
 import ca.gc.tri_agency.granting_data.model.MemberRole;
 
 public interface MemberRoleService {
@@ -24,6 +22,6 @@ public interface MemberRoleService {
 	
 	List<MemberRole> findMRsByUserLoginAndEdiAuthorizedTrue(String userLogin);
 
-	void checkIfCurrentUserEdiAuthorized(Long buId) throws AccessDeniedException;
+	boolean checkIfCurrentUserEdiAuthorized(Long buId);
 	
 }

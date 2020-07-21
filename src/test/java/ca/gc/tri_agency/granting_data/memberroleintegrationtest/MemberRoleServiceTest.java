@@ -1,7 +1,7 @@
 package ca.gc.tri_agency.granting_data.memberroleintegrationtest;
 
-import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -144,40 +144,18 @@ public class MemberRoleServiceTest {
 	@Test
 	public void test_checkIfCurrentUserEdiAuthorized() {
 		// user "aha" is a member of BU 1 but does not have EDI permission
-		assertThrows(AccessDeniedException.class, () -> mrService.checkIfCurrentUserEdiAuthorized(1L));
+		assertFalse(mrService.checkIfCurrentUserEdiAuthorized(1L));
 		// user "aha" is not a member of BU 2
-		assertThrows(AccessDeniedException.class, () -> mrService.checkIfCurrentUserEdiAuthorized(2L));
+		assertFalse(mrService.checkIfCurrentUserEdiAuthorized(2L));
 		// user "aha" is a member of BU 13 and does have EDI permission
-		assertThatCode(() -> mrService.checkIfCurrentUserEdiAuthorized(13L)).doesNotThrowAnyException();
+		assertTrue(mrService.checkIfCurrentUserEdiAuthorized(13L));
 	}
-	
+
 	@Tag("user_story_19147")
 	@WithMockUser(roles = "MDM ADMIN")
 	@Test
 	public void test_adminUserIsAlwaysEdiAuthorized() {
-		assertThatCode(() -> mrService.checkIfCurrentUserEdiAuthorized(1L)).doesNotThrowAnyException();
+		assertTrue(mrService.checkIfCurrentUserEdiAuthorized(1L));
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

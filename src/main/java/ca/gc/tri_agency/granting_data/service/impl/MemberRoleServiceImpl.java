@@ -14,13 +14,13 @@ import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.envers.query.AuditQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import ca.gc.tri_agency.granting_data.model.MemberRole;
 import ca.gc.tri_agency.granting_data.model.auditing.UsernameRevisionEntity;
+import ca.gc.tri_agency.granting_data.model.projection.MemberRoleProjection;
 import ca.gc.tri_agency.granting_data.repo.MemberRoleRepository;
 import ca.gc.tri_agency.granting_data.security.SecurityUtils;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
@@ -129,21 +129,18 @@ public class MemberRoleServiceImpl implements MemberRoleService {
 	}
 
 	@Override
-	public void checkIfCurrentUserEdiAuthorized(Long buId) throws AccessDeniedException {
+	public boolean checkIfCurrentUserEdiAuthorized(Long buId) {
 //		Can't use SecurityUtils' hasRole(...) b/c tests don't mock an LDAP user, i.e. tests fail when
 //		using that method b/c we can't cast a User object to a LdapUserDetails object.
 		if (SecurityContextHolder.getContext().getAuthentication().getAuthorities()
 				.contains(new SimpleGrantedAuthority("ROLE_MDM ADMIN"))) {
 			// an admin user can access the EDI data for all BUs
-			return;
+			return true;
 		}
-		
-		try {
-			mrRepo.findEdiAuthorizedByUserLoginBuId(SecurityUtils.getCurrentUsername(), buId).getId();
-		} catch (NullPointerException npe) {
-			throw new AccessDeniedException("The logged-in user does not have permission to view the EDI data for the"
-					+ " Business Unit with id=" + buId.toString());
-		}
+
+		MemberRoleProjection mrProjection = mrRepo.findEdiAuthorizedByUserLoginBuId(SecurityUtils.getCurrentUsername(), buId);
+
+		return mrProjection != null ? mrProjection.getEdiAuthorized() : false;
 	}
 
 }

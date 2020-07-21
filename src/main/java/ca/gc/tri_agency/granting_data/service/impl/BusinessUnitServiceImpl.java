@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ca.gc.tri_agency.granting_data.model.Agency;
 import ca.gc.tri_agency.granting_data.model.BusinessUnit;
 import ca.gc.tri_agency.granting_data.model.auditing.UsernameRevisionEntity;
+import ca.gc.tri_agency.granting_data.model.projection.BusinessUnitProjection;
 import ca.gc.tri_agency.granting_data.repo.BusinessUnitRepository;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.ApplicationParticipationService;
@@ -124,8 +125,9 @@ public class BusinessUnitServiceImpl implements BusinessUnitService {
 
 	@Override
 	public Map<String, Long> findEdiAppPartDataForAuthorizedBUMember(Long buId) throws AccessDeniedException {
-		// throws AccessDeniedException if the current user is not authorized
-		mrService.checkIfCurrentUserEdiAuthorized(buId);
+		if (		mrService.checkIfCurrentUserEdiAuthorized(buId) == false) {
+			throw new AccessDeniedException("Current user does not have permission to view EDI data for BU id=" + buId);
+		}
 
 		Long[] ediArr = findAppPartEdiDataForBU(buId);
 
@@ -150,6 +152,12 @@ public class BusinessUnitServiceImpl implements BusinessUnitService {
 		Long appCount = apService.findAppPartCountForBU(buId);
 
 		return new Long[] { indigenousCount, minorityCount, disabledCount, genderCounts[0], genderCounts[1], genderCounts[2], appCount };
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public BusinessUnitProjection fetchBusinessUnitName(Long buId) {
+		return buRepo.fetchName(buId);
 	}
 
 }

@@ -55,7 +55,7 @@ public class EdiControllerIntegrationTest {
 		assertTrue(mvc.perform(MockMvcRequestBuilders.get("/manage/viewBuEdiData").param("buId", "13"))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("id=\"buEdiDataPage\""))).andReturn()
-				.getFlashMap().containsKey("ediMap"));
+				.getModelAndView().getModelMap().containsAttribute("ediMap"));
 	}
 
 	@Tag("user_story_19147")
@@ -73,8 +73,8 @@ public class EdiControllerIntegrationTest {
 	public void test_adminUserCanViewBuEdiData_shouldSucceedWith200() throws Exception {
 		assertTrue(mvc.perform(MockMvcRequestBuilders.get("/manage/viewBuEdiData").param("buId", "1"))
 				.andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("id=\"viewBuEdiDataPage\"")))
-				.andReturn().getFlashMap().containsKey("ediMap"));
+				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("id=\"buEdiDataPage\""))).andReturn()
+				.getModelAndView().getModelMap().containsAttribute("ediMap"));
 	}
 
 }

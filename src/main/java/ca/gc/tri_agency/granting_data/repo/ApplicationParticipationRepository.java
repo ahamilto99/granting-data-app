@@ -24,12 +24,12 @@ public interface ApplicationParticipationRepository extends JpaRepository<Applic
 
 	ApplicationParticipation findByApplId(String applId);
 
-	@Query("SELECT COUNT(ap.id) AS total, CASE WHEN ap.gender.id = 1 THEN 'female' WHEN ap.gender.id = 2 THEN 'male'"
-			+ " ELSE 'non-binary' END AS gender"
+	@Query("SELECT COUNT(CASE WHEN ap.gender.id = 1 THEN 'female' END) AS female,"
+			+ " COUNT(CASE WHEN ap.gender.id = 2 THEN 'male' END) AS male,"
+			+ " COUNT(CASE WHEN ap.gender.id > 2 THEN 'nonbinary' END) AS nonbinary"
 			+ " FROM ApplicationParticipation ap WHERE" 
-			+ EDI_SUBQUERY_JPQL
-			+ " GROUP BY ap.gender.id ORDER BY gender")
-	List<Tuple> findGenderCounts(@Param("buId") Long buId);
+			+ EDI_SUBQUERY_JPQL)
+	Tuple findGenderCounts(@Param("buId") Long buId);
 
 	@Query("SELECT COUNT(ap.id) AS total FROM ApplicationParticipation ap WHERE ap.disabilityResponse IS NOT NULL AND" + EDI_SUBQUERY_JPQL)
 	Tuple findDisabledCountForBU(@Param("buId") Long buId);

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<!--[if lt IE 9]><html class="no-js lt-ie9" lang="en" dir="ltr"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!--<![endif]-->
+
+<head th:replace="fragments/general.html :: common_header(~{::title},~{})">
+<meta charset="utf-8">
+<title th:text="#{h.viewBuEdi}"></title>
+</head>
+<body id="buEdiDataPage" class="home" vocab="http://schema.org/" typeof="WebPage">
+	<div th:replace="fragments/general.html :: header_nav('home')"></div>
+	<main role="main" property="mainContentOfPage" class="container">
+
+		<h1 th:text="#{h.viewBuEdi} + ' ' + (${#locale.language} eq 'fr' ? ${buName.getNameFr()} : ${buName.getNameEn()})"></h1>
+
+		<div th:replace="fragments/general.html :: profile_info('home')"></div>
+
+		<div class="panel panel-default">
+
+			<div class="panel-body">
+
+				<div class="form-group row">
+					<label class="col-sm-3 col-form-label" th:text="#{label.indApplicants}"></label>
+					<div class="col-sm-2" th:text="${ediMap.get('numIndigenousApps')}"></div>
+					<div th:if="${ediMap.get('numApps')} ne 0" class="col-sm-2"
+						th:text="${#numbers.formatPercent((ediMap.get('numIndigenousApps') * 1.0 / ediMap.get('numApps')), 1, 0)}"></div>
+				</div>
+
+
+				<div class="form-group row">
+					<label class="col-sm-3 col-form-label" th:text="#{label.vMinApplicants}"></label>
+					<div class="col-sm-2" th:text="${ediMap.get('numVisMinorityApps')}"></div>
+					<div th:if="${ediMap.get('numApps')} ne 0" class="col-sm-2"
+						th:text="${#numbers.formatPercent((ediMap.get('numVisMinorityApps') * 1.0 / ediMap.get('numApps')), 1, 0)}"></div>
+				</div>
+
+				<div class="form-group row">
+					<label class="col-sm-3 col-form-label" th:text="#{label.disabledApplicants}"></label>
+					<div class="col-sm-2" th:text="${ediMap.get('numDisabledApps')}"></div>
+					<div th:if="${ediMap.get('numApps')} ne 0" class="col-sm-2"
+						th:text="${#numbers.formatPercent((ediMap.get('numDisabledApps') * 1.0 / ediMap.get('numApps')), 1, 0)}"></div>
+				</div>
+
+				<div class="form-group row">
+					<label class="col-sm-3 col-form-label" th:text="#{label.femaleApplicants}"></label>
+					<div class="col-sm-2" th:text="${ediMap.get('numFemaleApps')}"></div>
+					<div th:if="${ediMap.get('numApps')} ne 0" class="col-sm-2"
+						th:text="${#numbers.formatPercent((ediMap.get('numFemaleApps') * 1.0 / ediMap.get('numApps')), 1, 0)}"></div>
+				</div>
+
+				<div class="form-group row">
+					<label class="col-sm-3 col-form-label" th:text="#{label.maleApplicants}"></label>
+					<div class="col-sm-2" th:text="${ediMap.get('numMaleApps')}"></div>
+					<div th:if="${ediMap.get('numApps')} ne 0" class="col-sm-2"
+						th:text="${#numbers.formatPercent((ediMap.get('numMaleApps') * 1.0 / ediMap.get('numApps')), 1, 0)}"></div>
+				</div>
+
+				<div class="form-group row">
+					<label class="col-sm-3 col-form-label" th:text="#{label.nonBinApplicants}"></label>
+					<div class="col-sm-2" th:text="${ediMap.get('numNonBinaryApps')}"></div>
+					<div th:if="${ediMap.get('numApps')} ne 0" class="col-sm-2"
+						th:text="${#numbers.formatPercent((ediMap.get('numNonBinaryApps') * 1.0 / ediMap.get('numApps')), 1, 0)}"></div>
+				</div>
+
+				<div class="form-group row" style="font-size: larger;">
+					<label class="col-sm-3 col-form-label" th:text="#{label.totalApplicants}"></label>
+					<div class="col-sm-2">
+						<b th:text="${ediMap.get('numApps')}"></b>
+					</div>
+				</div>
+
+			</div>
+
+			<div th:replace="fragments/general :: returnHome"></div>
+
+		</div>
+
+	</main>
+
+	<footer th:replace="fragments/general :: footer(~{})"></footer>
+
+</body>
+</html>

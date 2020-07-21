@@ -12,16 +12,4 @@ public interface BusinessUnitProjection {
 	
 	String getAcronymFr();
 	
-	Long getNumIdigenousApps(); 	// EDI data
-	
-	Long getNumVisMinorityApps();	// EDI data
-	
-	Long getNumDisabledApps();	// EDI data
-	
-	Long getNumFemaleApps();	// EDI data
-	
-	Long getNumMaleApps();		// EDI data
-	
-	Long getNumNonBinaryApps();	// EDI data
-
 }
