@@ -8,6 +8,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.Tuple;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.security.access.AccessDeniedException;
@@ -26,6 +28,7 @@ import ca.gc.tri_agency.granting_data.model.VisibleMinority;
 import ca.gc.tri_agency.granting_data.repo.ApplicationParticipationRepository;
 import ca.gc.tri_agency.granting_data.security.SecurityUtils;
 import ca.gc.tri_agency.granting_data.service.ApplicationParticipationService;
+import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
 import ca.gc.tri_agency.granting_data.service.GenderService;
 import ca.gc.tri_agency.granting_data.service.IndigenousIdentitySerivce;
 import ca.gc.tri_agency.granting_data.service.MemberRoleService;
@@ -44,27 +47,31 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 	private SystemFundingOpportunityService sfoService;
 
 	private MemberRoleService mrService;
-	
+
 	private GenderService genderService;
-	
+
 	private IndigenousIdentitySerivce indIdentityService;
-	
+
 	private VisibleMinorityService vMinorityService;
+
+	private FundingOpportunityService foService;
 
 	private static int applIdIncrementer = 0;
 
 	@Autowired
 	public ApplicationParticipationServiceImpl(ApplicationParticipationRepository appParticipationRepo,
-			SystemFundingOpportunityService sfoService, MemberRoleService mrService, GenderService genderService, IndigenousIdentitySerivce indIdentityService, VisibleMinorityService vMinorityService) {
+			SystemFundingOpportunityService sfoService, MemberRoleService mrService, GenderService genderService,
+			IndigenousIdentitySerivce indIdentityService, VisibleMinorityService vMinorityService,
+			FundingOpportunityService foService) {
 		this.appParticipationRepo = appParticipationRepo;
 		this.sfoService = sfoService;
 		this.mrService = mrService;
 		this.genderService = genderService;
 		this.indIdentityService = indIdentityService;
 		this.vMinorityService = vMinorityService;
+		this.foService = foService;
 	}
 
-	@Transactional
 	@Override
 	public List<ApplicationParticipation> generateTestAppParticipations(SystemFundingOpportunity sfo, Instant createDate,
 			long maxApplications, long maxParticipants) {
@@ -100,7 +107,7 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 				int month = generateRandNumBtw(1, 12);
 				int year = generateRandNumBtw(1940, 55);
 				app.setDateOfBirth(LocalDate.of(year, month, day));
-				
+
 				appPartList.add(app);
 			}
 
@@ -138,10 +145,9 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 
 	@Override
 	public void fillInRandomRole(ApplicationParticipation app, GrantingSystem sys) {
-		String[] roleCodeArr = { "1", "2", "147", "8878CE1D-6020-E211-AF1A-005056AD024F",
-				"8F78CE1D-6020-E211-AF1A-005056AD024F", "A878CE1D-6020-E211-AF1A-005056AD024F",
-				"A978CE1D-6020-E211-AF1A-005056AD024F", "A778CE1D-6020-E211-AF1A-005056AD024F",
-				"8C78CE1D-6020-E211-AF1A-005056AD024F" };
+		String[] roleCodeArr = { "1", "2", "147", "8878CE1D-6020-E211-AF1A-005056AD024F", "8F78CE1D-6020-E211-AF1A-005056AD024F",
+				"A878CE1D-6020-E211-AF1A-005056AD024F", "A978CE1D-6020-E211-AF1A-005056AD024F",
+				"A778CE1D-6020-E211-AF1A-005056AD024F", "8C78CE1D-6020-E211-AF1A-005056AD024F" };
 		String[] roleEnArr = { "Scholarship Applicant", "Applicant", "Co-Applicant", "Collaborator", "Reader A", "Reader B",
 				"Reader C" };
 		String[] roleFrArr = { "Candidat à une bourse", "Candidat", "Applicant", "Co-Applicant", "Collaborator", "Lecteur A",
@@ -170,19 +176,17 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		int idx = sRand.nextInt(6);
 		if (acronym.equals("NAMIS")) {
 			String[] idArr = { "27", "28", "24", "89", "43", "9" };
-			String[] nameArr = { "McMaster University", "University of Ottawa", "Guelph University",
-					"Memorial Univ. of Nfld", "Ryerson University", "University of Alberta" };
+			String[] nameArr = { "McMaster University", "University of Ottawa", "Guelph University", "Memorial Univ. of Nfld",
+					"Ryerson University", "University of Alberta" };
 			app.setOrganizationId(idArr[idx]);
 			app.setOrganizationNameEn(nameArr[idx]);
 			app.setOrganizationNameFr(nameArr[idx]);
 		} else if (acronym.equals("AMIS")) {
 			String[] idArr = { "1240613", "3248462", "1591011", "1351411", "1350711", "1350511" };
-			String[] nameEnArr = { "University of Quebec at Montreal",
-					"Consolidation of Native Friendship Centers in Quebec",
+			String[] nameEnArr = { "University of Quebec at Montreal", "Consolidation of Native Friendship Centers in Quebec",
 					"University of Northern British Columbia", "York University", "University of Ottawa",
 					"Laurentian University" };
-			String[] nameFrArr = { "Université du Québec à Montréal",
-					"Regroupement des centres d'amitié autochtones du Québec",
+			String[] nameFrArr = { "Université du Québec à Montréal", "Regroupement des centres d'amitié autochtones du Québec",
 					"University of Northern British Columbia", "Université York", "Université d'Ottawa",
 					"Université Laurentienne" };
 			app.setOrganizationId(idArr[idx]);
@@ -232,11 +236,12 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 
 	}
 
-	@Transactional
 	@Override
 	public long generateTestAppParicipationsForAllSystemFundingOpportunities() {
 		List<ApplicationParticipation> participations = new ArrayList<ApplicationParticipation>();
 		Instant inst = Instant.parse("2020-02-02T00:00:00.00Z");
+
+		linkSFOsToFOs();
 
 		for (SystemFundingOpportunity sfo : sfoService.findAllSystemFundingOpportunities()) {
 			participations.addAll(generateTestAppParticipations(sfo, inst, 3, 5));
@@ -249,6 +254,7 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		return participations.size();
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public ApplicationParticipation findAppPartByApplId(String applId) {
 		return appParticipationRepo.findByApplId(applId);
@@ -263,12 +269,11 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		return appParts;
 	}
 
-	@Transactional
 	private List<ApplicationParticipation> setAppPartGender(List<ApplicationParticipation> appParts) {
 		Gender male = genderService.findGenderByNameEn("Male");
 		Gender female = genderService.findGenderByNameEn("Female");
 		Gender nonBinary = genderService.findGenderByNameEn("Non-Binary");
-		
+
 		Collections.shuffle(appParts);
 		int i = 0;
 		for (; i < (int) (appParts.size() * 0.5); i++) {
@@ -284,7 +289,6 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		return appParts;
 	}
 
-	@Transactional
 	private List<ApplicationParticipation> setAppPartDisability(List<ApplicationParticipation> appParts) {
 		Collections.shuffle(appParts);
 
@@ -304,10 +308,9 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		return appParts;
 	}
 
-	@Transactional
 	private List<ApplicationParticipation> setAppPartIndigenous(List<ApplicationParticipation> appParts) {
 		Collections.shuffle(appParts);
-		
+
 		int i = 0;
 		IndigenousIdentity identity = indIdentityService.findIndigenousIdentityByNameEn("Métis");
 		for (; i < (int) (appParts.size() * 0.05); i++) {
@@ -337,7 +340,6 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		return appParts;
 	}
 
-	@Transactional
 	private List<ApplicationParticipation> setAppPartEthnicity(List<ApplicationParticipation> appParts) {
 		int i = (int) (0.12 * appParts.size());
 		VisibleMinority minority = vMinorityService.findVisibleMinorityByNameEn("Latin American");
@@ -380,11 +382,13 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		return appParts;
 	}
 
+	@Transactional
 	@Override
 	public void saveAllApplicationParticipations(List<ApplicationParticipation> appParticipations) {
 		appParticipationRepo.saveAll(appParticipations);
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public List<String> getExtIdsQualifiedForEdi() {
 		List<String> retval = new ArrayList<String>();
@@ -405,10 +409,11 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		return retval;
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public ApplicationParticipation getAllowdRecord(Long id) {
-		ApplicationParticipation retval = appParticipationRepo.findById(id).orElseThrow(
-				() -> new DataRetrievalFailureException("That Application Participation record does not exist"));
+		ApplicationParticipation retval = appParticipationRepo.findById(id)
+				.orElseThrow(() -> new DataRetrievalFailureException("That Application Participation record does not exist"));
 		if (SecurityUtils.hasRole("MDM ADMIN") == false) {
 			List<String> allowedExtIds = getExtIdsQualifiedForEdi();
 			if (!allowedExtIds.contains(retval.getProgramId())) {
@@ -417,9 +422,46 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		}
 		return retval;
 	}
-	
+
 	private int generateRandNumBtw(int start, int end) {
 		return sRand.nextInt(end) + start;
+	}
+
+	@Transactional
+	private void linkSFOsToFOs() {
+		sfoService.findAllSystemFundingOpportunities().forEach(sfo -> sfo
+				.setLinkedFundingOpportunity(foService.findFundingOpportunityById(Math.abs(sRand.nextLong() % 141L + 1L))));
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public Long[] findAppPartGenderCountsForBU(Long buId) {
+		Tuple counts = appParticipationRepo.findGenderCounts(buId);
+		return new Long[] { (Long) counts.get("female"), (Long) counts.get("male"), (Long) counts.get("nonbinary") };
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public Long findAppPartDisabledCountForBU(Long buId) {
+		return (Long) appParticipationRepo.findDisabledCountForBU(buId).get("total");
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public Long findAppPartIndigenousCountForBU(Long buId) {
+		return (Long) appParticipationRepo.findIndigenousCountForBU(buId).get("total");
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public Long findAppMinorityCountForBU(Long buId) {
+		return (Long) appParticipationRepo.findMinorityCountForBU(buId).get("total");
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public Long findAppPartCountForBU(Long buId) {
+		return (Long) appParticipationRepo.findNumAPsForBU(buId).get("total");
 	}
 
 }

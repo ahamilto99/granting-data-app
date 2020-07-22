@@ -38,7 +38,7 @@ public class ApplicationParticipationController {
 		return "admin/generateTestParticipations";
 	}
 
-	@PostMapping(value = "/admin/generateTestParticipations")
+	@PostMapping("/admin/generateTestParticipations")
 	public String post_generateTestParticipations(RedirectAttributes redirectAttrs) {
 		long numCreated = appParticipationService.generateTestAppParicipationsForAllSystemFundingOpportunities();
 		redirectAttrs.addFlashAttribute("actionMsg", "Successfully created " + numCreated + " Test App Participations");

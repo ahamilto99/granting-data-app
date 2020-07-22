@@ -9,8 +9,8 @@ import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 
 public interface ApplicationParticipationService {
 
-	List<ApplicationParticipation> generateTestAppParticipations(SystemFundingOpportunity sfo, Instant createDate,
-			long maxApplications, long maxParticipants);
+	List<ApplicationParticipation> generateTestAppParticipations(SystemFundingOpportunity sfo, Instant createDate, long maxApplications,
+			long maxParticipants);
 
 	String generateTestAppId(GrantingSystem system);
 	// private Long applicationId;
@@ -50,5 +50,15 @@ public interface ApplicationParticipationService {
 	void saveAllApplicationParticipations(List<ApplicationParticipation> appParticipations);
 
 	List<String> getExtIdsQualifiedForEdi();
+
+	Long[] findAppPartGenderCountsForBU(Long buId);
+
+	Long findAppPartDisabledCountForBU(Long buId);
+
+	Long findAppPartIndigenousCountForBU(Long buId);
+
+	Long findAppMinorityCountForBU(Long buId);
+	
+	Long findAppPartCountForBU(Long buId);
 
 }
