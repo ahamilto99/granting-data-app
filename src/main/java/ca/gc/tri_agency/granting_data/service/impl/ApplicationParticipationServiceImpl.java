@@ -25,10 +25,10 @@ import ca.gc.tri_agency.granting_data.model.IndigenousIdentity;
 import ca.gc.tri_agency.granting_data.model.MemberRole;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.VisibleMinority;
+import ca.gc.tri_agency.granting_data.model.dto.AppPartEdiAuthorizedDto;
 import ca.gc.tri_agency.granting_data.model.projection.ApplicationParticipationProjection;
 import ca.gc.tri_agency.granting_data.repo.ApplicationParticipationRepository;
 import ca.gc.tri_agency.granting_data.security.SecurityUtils;
-import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.ApplicationParticipationService;
 import ca.gc.tri_agency.granting_data.service.GenderService;
 import ca.gc.tri_agency.granting_data.service.IndigenousIdentitySerivce;
@@ -435,6 +435,50 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 			return appParticipationRepo.findAllForAdmin();
 		}
 		return appParticipationRepo.findForCurrentUser(SecurityContextHolder.getContext().getAuthentication().getName());
+	}
+
+	@Override
+	public List<AppPartEdiAuthorizedDto> findAppPartsForCurrentUserWithEdiAuth() {
+		List<AppPartEdiAuthorizedDto> dtoList = new ArrayList<>();
+
+		List<ApplicationParticipationProjection> projectionList = findAppPartsForCurrentUser();
+		if (SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+				.contains(new SimpleGrantedAuthority("ROLE_MDM ADMIN"))) {
+			projectionList = appParticipationRepo.findAllForAdmin();
+			projectionList.forEach(p -> dtoList.add(new AppPartEdiAuthorizedDto(p.getId(), p.getApplId(),
+					p.getFamilyName(), p.getFirstName(), p.getRoleEn(), p.getRoleFr(), p.getOrganizationNameEn(),
+					p.getOrganizationNameFr(), true)));
+		} else {
+			String userLogin = SecurityContextHolder.getContext().getAuthentication().getName();
+			projectionList = appParticipationRepo.findForCurrentUser(userLogin);
+			List<ApplicationParticipationProjection> idList = appParticipationRepo
+					.findForCurrentUserEdiAuthorized(userLogin);
+
+			// this works b/c the queries that return the idList and the projectionList both order the results
+			// by id
+			int k = 0;
+			outerLoop: for (int i = 0; i < projectionList.size(); ++i) {
+				ApplicationParticipationProjection p = projectionList.get(i);
+
+				innerLoop: for (int j = k; j < idList.size();) {
+					long ediAuthorizedId = idList.get(j).getId();
+					if (ediAuthorizedId == p.getId()) {
+						dtoList.add(new AppPartEdiAuthorizedDto(p.getId(), p.getApplId(), p.getFamilyName(),
+								p.getFirstName(), p.getRoleEn(), p.getRoleFr(),
+								p.getOrganizationNameEn(), p.getOrganizationNameFr(), true));
+						++k;
+						continue outerLoop;
+					}
+					break innerLoop;
+				}
+
+				dtoList.add(new AppPartEdiAuthorizedDto(p.getId(), p.getApplId(), p.getFamilyName(), p.getFirstName(),
+						p.getRoleEn(), p.getRoleFr(), p.getOrganizationNameEn(), p.getOrganizationNameFr(),
+						false));
+			}
+		}
+
+		return dtoList;
 	}
 
 }

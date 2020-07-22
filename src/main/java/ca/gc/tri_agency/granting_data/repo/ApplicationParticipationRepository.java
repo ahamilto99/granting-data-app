@@ -26,13 +26,23 @@ public interface ApplicationParticipationRepository extends JpaRepository<Applic
 			+ " FROM ApplicationParticipation")
 	List<ApplicationParticipationProjection> findAllForAdmin();
 
-	@Query("SELECT DISTINCT ap.id AS id, ap.applId AS applId, ap.familyName AS familyName, ap.givenName AS firstName, ap.roleEn AS roleEN,"
+	@Query("SELECT ap.id AS id, ap.applId AS applId, ap.familyName AS familyName, ap.givenName AS firstName, ap.roleEn AS roleEN,"
 			+ " ap.roleFr AS roleFr, ap.organizationNameEn AS organizationNameEn, ap.organizationNameFr AS organizationNameFr"
 			+ " FROM ApplicationParticipation ap WHERE ap.programId IN"
 			+ " (SELECT sfo.extId FROM SystemFundingOpportunity sfo"
 			+ " JOIN FundingOpportunity fo ON sfo.linkedFundingOpportunity.id = fo.id"
 			+ " JOIN BusinessUnit bu ON fo.businessUnit.id = bu.id"
 			+ " JOIN MemberRole mr ON mr.businessUnit.id = bu.id"
-			+ " WHERE mr.userLogin = :username AND mr.role.id = 2)")
+			+ " WHERE mr.userLogin = :username AND mr.role.id = 2)"
+			+ " ORDER BY ap.id")
 	List<ApplicationParticipationProjection> findForCurrentUser(@Param("username") String userLogin);
+
+	@Query("SELECT ap.id AS id FROM ApplicationParticipation ap WHERE ap.programId IN"
+			+ " (SELECT sfo.extId FROM SystemFundingOpportunity sfo"
+			+ " JOIN FundingOpportunity fo ON sfo.linkedFundingOpportunity.id = fo.id"
+			+ " JOIN BusinessUnit bu ON fo.businessUnit.id = bu.id"
+			+ " JOIN MemberRole mr ON mr.businessUnit.id = bu.id"
+			+ " WHERE mr.userLogin = :username AND mr.role.id = 2 AND mr.ediAuthorized = TRUE)"
+			+ " ORDER BY ap.id")
+	List<ApplicationParticipationProjection> findForCurrentUserEdiAuthorized(@Param("username") String userLogin);
 }

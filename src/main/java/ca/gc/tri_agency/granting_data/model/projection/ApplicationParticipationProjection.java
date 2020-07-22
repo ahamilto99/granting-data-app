@@ -18,7 +18,4 @@ public interface ApplicationParticipationProjection {
 
 	String getOrganizationNameFr();
 	
-	// used verify that only a Program Officer can set AppPart data for his/her BU
-	Long getUserRoleId();
-
 }

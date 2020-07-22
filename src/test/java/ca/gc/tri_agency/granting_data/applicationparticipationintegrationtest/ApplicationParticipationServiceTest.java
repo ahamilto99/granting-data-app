@@ -3,6 +3,7 @@ package ca.gc.tri_agency.granting_data.applicationparticipationintegrationtest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.Instant;
+import java.util.List;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Tag;
@@ -14,6 +15,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
 import ca.gc.tri_agency.granting_data.model.ApplicationParticipation;
+import ca.gc.tri_agency.granting_data.model.dto.AppPartEdiAuthorizedDto;
 import ca.gc.tri_agency.granting_data.repo.ApplicationParticipationRepository;
 import ca.gc.tri_agency.granting_data.service.ApplicationParticipationService;
 import ca.gc.tri_agency.granting_data.service.GenderService;
@@ -45,6 +47,22 @@ public class ApplicationParticipationServiceTest {
 	public void test_adminCanFindAllAppParts() {
 		// an admin user doesn't have a member or even a Program Officer
 		assertEquals(17, apService.findAppPartsForCurrentUser().size());
+	}
+	@Tag("user_story_19154")
+	@WithMockUser(username = "rwi")
+	@Test
+	public void test_ediAuthorizedIsProperlySet() {
+		List<AppPartEdiAuthorizedDto> dtoList = apService.findAppPartsForCurrentUserWithEdiAuth();
+		
+		int ediAuthorized = 0;
+		for (AppPartEdiAuthorizedDto dto : dtoList) {
+			if (dto.getEdiAuthorized()) {
+				++ediAuthorized;
+			}
+		}
+		
+		assertEquals(6, ediAuthorized);
+		assertEquals(17, dtoList.size());
 	}
 
 	@Test
