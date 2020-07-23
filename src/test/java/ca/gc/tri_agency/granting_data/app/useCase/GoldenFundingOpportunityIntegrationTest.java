@@ -74,14 +74,14 @@ public class GoldenFundingOpportunityIntegrationTest {
 
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
-	public void testNameFieldsEmptyOnAddFoPageWhenNewSfoNotLinkedWithSfo() throws Exception {
+	public void test_nameFieldsEmptyOnAddFoPageWhenNewSfoNotLinkedWithSfo() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/admin/createFo")).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(
 				MockMvcResultMatchers.content().string(Matchers.containsString("name=\"nameEn\" value=\"\"")));
 	}
 
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
-	public void testNameFieldsAutoFilledOnAddFoPageWhenLinkingNewFoWithSfo() throws Exception {
+	public void test_nameFieldsAutoFilledOnAddFoPageWhenLinkingNewFoWithSfo() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/admin/createFo").param("sfoId", "4"))
 				.andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.content()
 						.string(Matchers.containsString("value=\"Insight Grants\"")));
@@ -89,7 +89,7 @@ public class GoldenFundingOpportunityIntegrationTest {
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
-	public void test_NonAdminCannotCreateGoldenFo_shouldFailWith403() throws Exception {
+	public void test_nonAdminCannotCreateGoldenFo_shouldFailWith403() throws Exception {
 		boolean cpx = true;
 		String div = RandomStringUtils.randomAlphabetic(10);
 		boolean edi = true;
@@ -117,7 +117,7 @@ public class GoldenFundingOpportunityIntegrationTest {
 
 	@WithMockUser(roles = "MDM ADMIN")
 	@Test
-	public void test_AdminCanCreateGoldenFo_usingMvcPerform_shouldSucceed() throws Exception {
+	public void test_adminCanCreateGoldenFo_usingMvcPerform_shouldSucceedWith302() throws Exception {
 		boolean cpx = true;
 		boolean edi = true;
 		String frequency = RandomStringUtils.randomAlphabetic(10);
@@ -166,20 +166,20 @@ public class GoldenFundingOpportunityIntegrationTest {
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test(expected = AccessDeniedException.class)
-	public void test_NonAdminCannotCreateGoldenFo_shouldThrowDataAccessException() throws Exception {
+	public void test_nonAdminCannotCreateGoldenFo_shouldThrowDataAccessException() throws Exception {
 		foController.createFundingOpportunityPost(new FundingOpportunity(), bindingResult, model, redirectAttributes);
 	}
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test(expected = AccessDeniedException.class)
-	public void test_NonAdminCannotCreateGoldenFo_shouldThrowAccessDeniedException() {
+	public void test_nonAdminCannotCreateGoldenFo_shouldThrowAccessDeniedException() {
 		foService.saveFundingOpportunity(new FundingOpportunity());
 	}
 
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	@Transactional
-	public void test_AdminCanCreateGoldenFo_shouldSucceed() throws Exception {
+	public void test_adminCanCreateGoldenFo_shouldSucceed() throws Exception {
 		long initFoRepoSize = foRepo.count();
 
 		FundingOpportunity gfo = new FundingOpportunity();
