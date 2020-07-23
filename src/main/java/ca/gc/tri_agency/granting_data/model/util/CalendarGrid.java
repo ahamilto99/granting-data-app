@@ -20,7 +20,7 @@ public class CalendarGrid {
 		if (plusMinusMonth == 0) {
 			month = YearMonth.now();
 		} else if (plusMinusMonth < 0) {
-			month = YearMonth.now().minusMonths(plusMinusMonth);
+			month = YearMonth.now().plusMonths(plusMinusMonth);
 		} else {
 			month = YearMonth.now().plusMonths(plusMinusMonth);
 		}
