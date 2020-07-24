@@ -14,11 +14,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.github.javafaker.Faker;
 
 import ca.gc.tri_agency.granting_data.model.ApplicationParticipation;
+import ca.gc.tri_agency.granting_data.model.FiscalYear;
+import ca.gc.tri_agency.granting_data.model.FundingCycle;
+import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.Gender;
 import ca.gc.tri_agency.granting_data.model.GrantingSystem;
 import ca.gc.tri_agency.granting_data.model.IndigenousIdentity;
@@ -26,8 +30,10 @@ import ca.gc.tri_agency.granting_data.model.MemberRole;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.VisibleMinority;
 import ca.gc.tri_agency.granting_data.repo.ApplicationParticipationRepository;
+import ca.gc.tri_agency.granting_data.repo.FundingCycleRepository;
 import ca.gc.tri_agency.granting_data.security.SecurityUtils;
 import ca.gc.tri_agency.granting_data.service.ApplicationParticipationService;
+import ca.gc.tri_agency.granting_data.service.FiscalYearService;
 import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
 import ca.gc.tri_agency.granting_data.service.GenderService;
 import ca.gc.tri_agency.granting_data.service.IndigenousIdentitySerivce;
@@ -56,13 +62,17 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 
 	private FundingOpportunityService foService;
 
+	private FiscalYearService fyService;
+
+	private FundingCycleRepository fcRepo;
+
 	private static int applIdIncrementer = 0;
 
 	@Autowired
 	public ApplicationParticipationServiceImpl(ApplicationParticipationRepository appParticipationRepo,
 			SystemFundingOpportunityService sfoService, MemberRoleService mrService, GenderService genderService,
 			IndigenousIdentitySerivce indIdentityService, VisibleMinorityService vMinorityService,
-			FundingOpportunityService foService) {
+			FundingOpportunityService foService, FiscalYearService fyService, FundingCycleRepository fcRepo) {
 		this.appParticipationRepo = appParticipationRepo;
 		this.sfoService = sfoService;
 		this.mrService = mrService;
@@ -70,6 +80,8 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		this.indIdentityService = indIdentityService;
 		this.vMinorityService = vMinorityService;
 		this.foService = foService;
+		this.fcRepo = fcRepo;
+		this.fyService = fyService;
 	}
 
 	@Override
@@ -242,6 +254,8 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		Instant inst = Instant.parse("2020-02-02T00:00:00.00Z");
 
 		linkSFOsToFOs();
+
+		addFCsForFOs();
 
 		for (SystemFundingOpportunity sfo : sfoService.findAllSystemFundingOpportunities()) {
 			participations.addAll(generateTestAppParticipations(sfo, inst, 3, 5));
@@ -430,7 +444,7 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 	@Transactional
 	private void linkSFOsToFOs() {
 		sfoService.findAllSystemFundingOpportunities().forEach(sfo -> sfo
-				.setLinkedFundingOpportunity(foService.findFundingOpportunityById(Math.abs(sRand.nextLong() % 141L + 1L))));
+				.setLinkedFundingOpportunity(foService.findFundingOpportunityById(Math.abs(sRand.nextInt(141) + 1L))));
 	}
 
 	@Transactional(readOnly = true)
@@ -462,6 +476,58 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 	@Override
 	public Long findAppPartCountForBU(Long buId) {
 		return (Long) appParticipationRepo.findNumAPsForBU(buId).get("total");
+	}
+
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	private void addFCsForFOs() {
+		fcRepo.deleteAllInBatch();
+		List<FundingOpportunity> foList = updateFOsNOIsLOIs();
+		createFCs(foList);
+	}
+
+	@Transactional
+	private List<FundingOpportunity> updateFOsNOIsLOIs() {
+		List<FundingOpportunity> foList = foService.findAllFundingOpportunities();
+		foList.forEach(fo -> {
+			if (fo.getFrequency() != null && !fo.getFrequency().equals("1/YR")) {
+				fo.setIsLOI(true);
+				fo.setIsNOI(true);
+			}
+			if (fo.getNameFr() == null) {
+				fo.setNameFr("Programme");
+			}
+		});
+		return foList;
+	}
+
+	@Transactional
+	private void createFCs(List<FundingOpportunity> foList) {
+		List<FiscalYear> fyList = fyService.findAllFiscalYearsOrderByYearAsc();
+
+		foList.forEach(fo -> {
+			if (fo.getIsNOI() && fo.getIsLOI()) {
+				int day = generateRandNumBtw(1, 28);
+				int month = generateRandNumBtw(1, 12);
+				int year = generateRandNumBtw(2016, 4);
+				LocalDate startDate = LocalDate.of(year, month, day);
+
+				fcRepo.save(new FundingCycle(fyList.get(year - 2016), false, startDate, startDate, startDate.plusMonths(3),
+						startDate.plusMonths(3), startDate.plusMonths(6), startDate.plusYears(1),
+						sRand.nextInt(950) + 51L, fo));
+			} else {
+				int day = generateRandNumBtw(1, 28);
+				int month = generateRandNumBtw(1, 12);
+				LocalDate startDate = LocalDate.of(2016, month, day);
+				fcRepo.save(new FundingCycle(fyList.get(0), false, startDate, null, null, null, null, startDate.plusYears(1),
+						sRand.nextInt(1000) + 1L, fo));
+				fcRepo.save(new FundingCycle(fyList.get(1), false, startDate, null, null, null, null, startDate.plusYears(2),
+						sRand.nextInt(1000) + 1L, fo));
+				fcRepo.save(new FundingCycle(fyList.get(2), false, startDate, null, null, null, null, startDate.plusYears(3),
+						sRand.nextInt(1000) + 1L, fo));
+				fcRepo.save(new FundingCycle(fyList.get(3), false, startDate, null, null, null, null, startDate.plusYears(4),
+						sRand.nextInt(1000) + 1L, fo));
+			}
+		});
 	}
 
 }
