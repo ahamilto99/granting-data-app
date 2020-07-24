@@ -15,7 +15,6 @@ import org.hibernate.envers.RevisionType;
 import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.envers.query.AuditQuery;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,7 +35,7 @@ public class FundingOpportunityServiceImpl implements FundingOpportunityService 
 	private FundingOpportunityRepository foRepo;
 
 	private final String COL_SEPARATOR = "\n~@~\n";
-	
+
 	@PersistenceUnit
 	private EntityManagerFactory emf;
 
@@ -47,8 +46,7 @@ public class FundingOpportunityServiceImpl implements FundingOpportunityService 
 
 	@Override
 	public FundingOpportunity findFundingOpportunityById(Long foId) {
-		return foRepo.findById(foId)
-				.orElseThrow(() -> new DataRetrievalFailureException("That Funding Opportunity does not exist"));
+		return foRepo.findById(foId).orElseThrow(() -> new DataRetrievalFailureException("That Funding Opportunity does not exist"));
 	}
 
 	@Override
@@ -73,8 +71,8 @@ public class FundingOpportunityServiceImpl implements FundingOpportunityService 
 	}
 
 	@Override
-	public List<FundingOpportunity> getFilteredFundingOpportunities(FundingOpportunityFilterForm filter,
-			Map<Long, GrantingSystem> applyMap, Map<Long, List<GrantingSystem>> awardMap) {
+	public List<FundingOpportunity> getFilteredFundingOpportunities(FundingOpportunityFilterForm filter, Map<Long, GrantingSystem> applyMap,
+			Map<Long, List<GrantingSystem>> awardMap) {
 		// RELATIVELY SMALL DATASET (140), SO NO USE PERFORMING A QUERY FOR EACH FILTER. WILL SIMPLY WEED
 		// THEM OUT IN A LOOP.
 		List<FundingOpportunity> fullList = findAllFundingOpportunities();
@@ -83,8 +81,7 @@ public class FundingOpportunityServiceImpl implements FundingOpportunityService 
 		for (FundingOpportunity fo : fullList) {
 			if (filter.getApplySystem() != null) {
 				targetSystem = applyMap.get(fo.getId());
-				if (targetSystem == null
-						|| targetSystem != null && targetSystem.getId() != filter.getApplySystem().getId()) {
+				if (targetSystem == null || targetSystem != null && targetSystem.getId() != filter.getApplySystem().getId()) {
 					continue;
 				}
 			}
@@ -124,39 +121,25 @@ public class FundingOpportunityServiceImpl implements FundingOpportunityService 
 
 	@Override
 	public List<String[]> findGoldenListTableResults() {
-		List<FundingOpportunityProjection> resultSet;
+		List<FundingOpportunityProjection> resultSet = foRepo.findResultsForGoldenListTable();
+
 		Map<String, String[]> resultSetMapWithoutValues = new HashMap<>();
+		
+		resultSet.forEach(projection -> {
+			String key = projection.getId().toString() + COL_SEPARATOR + projection.getNameEn() + COL_SEPARATOR
+					+ projection.getNameFr() + COL_SEPARATOR + projection.getBusinessUnitNameEn() + COL_SEPARATOR
+					+ projection.getBusinessUnitNameFr();
+			resultSetMapWithoutValues.put(key, new String[] { "", "" });
+		});
 
-		if (LocaleContextHolder.getLocale().getLanguage().equals("fr")) {
-			resultSet = findGoldenListTableResultsHelperFr();
-			resultSet.forEach(projection -> {
-				String key = projection.getId().toString() + COL_SEPARATOR + projection.getNameFr() + COL_SEPARATOR
-						+ projection.getBusinessUnitNameFr();
-				resultSetMapWithoutValues.put(key, new String[] { "", "" });
-			});
-		} else {
-			resultSet = findGoldenListTableResultsHelperEn();
-			resultSet.forEach(projection -> {
-				String key = projection.getId().toString() + COL_SEPARATOR + projection.getNameEn() + COL_SEPARATOR
-						+ projection.getBusinessUnitNameEn();
-				resultSetMapWithoutValues.put(key, new String[] { "", "" });
-			});
-		}
-
-		Map<String, String[]> resultSetMapWithValues = extractApplyAndAwardSystemsForGoldenList(resultSet,
-				resultSetMapWithoutValues);
+		Map<String, String[]> resultSetMapWithValues = extractApplyAndAwardSystemsForGoldenList(resultSet, resultSetMapWithoutValues);
 
 		return convertResultSetMapForGoldenList(resultSetMapWithValues);
 	}
 
 	@Transactional(readOnly = true)
-	private List<FundingOpportunityProjection> findGoldenListTableResultsHelperEn() {
-		return foRepo.findResultsForGoldenListTableEn();
-	}
-
-	@Transactional(readOnly = true)
-	private List<FundingOpportunityProjection> findGoldenListTableResultsHelperFr() {
-		return foRepo.findResultsForGoldenListTableFr();
+	private List<FundingOpportunityProjection> findGoldenListTableResultsHelper() {
+		return foRepo.findResultsForGoldenListTable();
 	}
 
 	private Map<String, String[]> extractApplyAndAwardSystemsForGoldenList(List<FundingOpportunityProjection> foProjections,
@@ -188,7 +171,8 @@ public class FundingOpportunityServiceImpl implements FundingOpportunityService 
 
 		resultSetMap.forEach((k, v) -> {
 			String[] idNameBu = k.split(COL_SEPARATOR);
-			retVal.add(new String[] { idNameBu[0], idNameBu[1], idNameBu[2], v[0], v[1].length() > 3 ? v[1].substring(3) : "" });
+			retVal.add(new String[] { idNameBu[0], idNameBu[1], idNameBu[2], idNameBu[3], idNameBu[4], v[0],
+					v[1].length() > 3 ? v[1].substring(3) : "" });
 		});
 
 		return retVal;
@@ -202,8 +186,8 @@ public class FundingOpportunityServiceImpl implements FundingOpportunityService 
 			UsernameRevisionEntity revEntity = (UsernameRevisionEntity) objArr[1];
 			RevisionType revType = (RevisionType) objArr[2];
 
-			auditArrList.add(new String[] { fo.getId().toString(), revEntity.getUsername(), revType.toString(), fo.getNameEn(), fo.getNameFr(),
-					fo.getFrequency(), fo.getFundingType(),
+			auditArrList.add(new String[] { fo.getId().toString(), revEntity.getUsername(), revType.toString(), fo.getNameEn(),
+					fo.getNameFr(), fo.getFrequency(), fo.getFundingType(),
 					(fo.getIsComplex() != null) ? fo.getIsComplex().toString() : null,
 					(fo.getIsEdiRequired() != null) ? fo.getIsEdiRequired().toString() : null,
 					(fo.getIsJointInitiative() != null) ? fo.getIsJointInitiative().toString() : null,

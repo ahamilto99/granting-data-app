@@ -38,7 +38,8 @@
 								<label for="dt_division" th:text="#{form.division}"></label> <select class="form-control" id="dt_division" data-column="1">
 									<option th:text="#{msg.all}" th:value="#{msg.all}"></option>
 									<!-- th:each below will become the buStream's divisions when the model changes -->
-									<option th:each="bu : ${distinctBUs}" th:text="${bu}" th:value="${bu}"></option>
+									<option th:if="${#locale.language} eq 'fr'" th:each="bu : ${distinctBUsFr}" th:text="${bu}" th:value="${bu}"></option>
+									<option th:unless="${#locale.language} eq 'fr'" th:each="bu : ${distinctBUsEn}" th:text="${bu}" th:value="${bu}"></option>
 								</select>
 							</div>
 
@@ -84,10 +85,11 @@
 
 						<tbody>
 							<tr th:each="fo : ${fundingOpportunities}">
-								<td><a th:href="@{viewFo(id=${fo[0]})}"><span th:text="${fo[1]}"></span></a></td>
-								<td><span th:text="${fo[2]}"></span></td>
-								<td><span th:text="${fo[3]}"></span></td>
-								<td><span th:text="${fo[4]}"></span></td>
+								<td><a th:href="@{viewFo(id=${fo[0]})}">
+								<span th:text="${#locale.language eq 'fr' ? fo[2] : fo[1]}"></span></a></td>
+								<td><span th:text="${#locale.language eq 'fr' ? fo[4] : fo[3]}"></span></td>
+								<td><span th:text="${fo[5]}"></span></td>
+								<td><span th:text="${fo[6]}"></span></td>
 							</tr>
 						</tbody>
 					</table>
