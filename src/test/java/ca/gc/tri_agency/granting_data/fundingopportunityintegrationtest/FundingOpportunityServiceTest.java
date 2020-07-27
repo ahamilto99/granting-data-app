@@ -1,16 +1,16 @@
 package ca.gc.tri_agency.granting_data.fundingopportunityintegrationtest;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import org.junit.Test;
 import org.junit.jupiter.api.Tag;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -18,7 +18,6 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
@@ -27,7 +26,6 @@ import ca.gc.tri_agency.granting_data.service.AgencyService;
 import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
 
 @SpringBootTest(classes = GrantingDataApp.class)
-@RunWith(SpringRunner.class)
 @ActiveProfiles("test")
 public class FundingOpportunityServiceTest {
 
@@ -85,9 +83,9 @@ public class FundingOpportunityServiceTest {
 	}
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	public void test_nonAdminCannotFindFundingOpportunityRevisionsById_shouldThrowException() {
-		foService.findFundingOpportunityRevisionsById(1L);
+		assertThrows(AccessDeniedException.class, () -> foService.findFundingOpportunityRevisionsById(1L));
 	}
 
 	@WithMockUser(username = "admin", roles = "MDM ADMIN")
@@ -106,9 +104,9 @@ public class FundingOpportunityServiceTest {
 	}
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	public void test_nonAdminCannotFindAllFundingOpportunitiesRevisions() {
-		foService.findAllFundingOpportunitiesRevisions();
+		assertThrows(AccessDeniedException.class, () -> foService.findAllFundingOpportunitiesRevisions());
 	}
 
 	@WithAnonymousUser
@@ -118,7 +116,7 @@ public class FundingOpportunityServiceTest {
 	}
 
 	@WithAnonymousUser
-	@org.junit.jupiter.api.Test
+	@Test
 	@Tag("User_Story_14627")
 	public void test_anonUserCanFindResultsForGoldenListTable() {
 		long foCount = foRepo.count();
