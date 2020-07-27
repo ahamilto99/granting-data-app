@@ -6,6 +6,8 @@ public interface ApplicationParticipationProjection {
 	
 	String getApplId();
 	
+	String getProgramId();
+	
 	String getFamilyName();
 	
 	String getFirstName();

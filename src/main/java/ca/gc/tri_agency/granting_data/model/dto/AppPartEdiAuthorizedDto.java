@@ -14,6 +14,8 @@ public class AppPartEdiAuthorizedDto {
 	private Long id;
 
 	private String applId;
+	
+	private String programId;
 
 	private String familyName;
 
@@ -30,10 +32,11 @@ public class AppPartEdiAuthorizedDto {
 	// unless user is an admin, he/she can only see the AppPart EDI data if authorized
 	private boolean ediAuthorized;
 
-	public AppPartEdiAuthorizedDto(Long id, String applId, String familyName, String firstName, String roleEn, String roleFr,
+	public AppPartEdiAuthorizedDto(Long id, String applId, String programId, String familyName, String firstName, String roleEn, String roleFr,
 			String organziationNameEn, String organizationNameFr, boolean ediAuthorized) {
 		this.id = id;
 		this.applId = applId;
+		this.programId = programId;
 		this.familyName = familyName;
 		this.firstName = firstName;
 		this.roleEn = roleEn;
@@ -49,6 +52,10 @@ public class AppPartEdiAuthorizedDto {
 
 	public String getApplId() {
 		return applId;
+	}
+	
+	public String getProgramId() {
+		return programId;
 	}
 
 	public String getFamilyName() {

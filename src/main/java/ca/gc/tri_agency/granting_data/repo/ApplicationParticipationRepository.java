@@ -21,19 +21,19 @@ public interface ApplicationParticipationRepository extends JpaRepository<Applic
 	ApplicationParticipation findByApplId(String applId);
 
 	@AdminOnly
-	@Query("SELECT id AS id, applId AS applId, familyName AS familyName, givenName AS firstName, roleEn AS roleEn, roleFr AS roleFr,"
-			+ " organizationNameEn AS organizationNameEn, organizationNameFr AS organizationNameFr"
+	@Query("SELECT id AS id, applId AS applId, programId AS programId, familyName AS familyName, givenName AS firstName, roleEn AS roleEn,"
+			+ " roleFr AS roleFr, organizationNameEn AS organizationNameEn, organizationNameFr AS organizationNameFr"
 			+ " FROM ApplicationParticipation")
 	List<ApplicationParticipationProjection> findAllForAdmin();
 
-	@Query("SELECT ap.id AS id, ap.applId AS applId, ap.familyName AS familyName, ap.givenName AS firstName, ap.roleEn AS roleEN,"
+	@Query("SELECT ap.id AS id, ap.applId AS applId, ap.programId AS programId, ap.familyName AS familyName, ap.givenName AS firstName, ap.roleEn AS roleEn,"
 			+ " ap.roleFr AS roleFr, ap.organizationNameEn AS organizationNameEn, ap.organizationNameFr AS organizationNameFr"
 			+ " FROM ApplicationParticipation ap WHERE ap.programId IN"
 			+ " (SELECT sfo.extId FROM SystemFundingOpportunity sfo"
 			+ " JOIN FundingOpportunity fo ON sfo.linkedFundingOpportunity.id = fo.id"
 			+ " JOIN BusinessUnit bu ON fo.businessUnit.id = bu.id"
 			+ " JOIN MemberRole mr ON mr.businessUnit.id = bu.id"
-			+ " WHERE mr.userLogin = :username AND mr.role.id = 2)"
+			+ " WHERE mr.userLogin = :username)"
 			+ " ORDER BY ap.id")
 	List<ApplicationParticipationProjection> findForCurrentUser(@Param("username") String userLogin);
 
@@ -42,7 +42,7 @@ public interface ApplicationParticipationRepository extends JpaRepository<Applic
 			+ " JOIN FundingOpportunity fo ON sfo.linkedFundingOpportunity.id = fo.id"
 			+ " JOIN BusinessUnit bu ON fo.businessUnit.id = bu.id"
 			+ " JOIN MemberRole mr ON mr.businessUnit.id = bu.id"
-			+ " WHERE mr.userLogin = :username AND mr.role.id = 2 AND mr.ediAuthorized = TRUE)"
+			+ " WHERE mr.userLogin = :username AND mr.ediAuthorized = TRUE)"
 			+ " ORDER BY ap.id")
 	List<ApplicationParticipationProjection> findForCurrentUserEdiAuthorized(@Param("username") String userLogin);
 }

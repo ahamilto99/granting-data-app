@@ -221,11 +221,12 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 	@Override
 	public List<ApplicationParticipation> getAllowedRecords() {
 		List<ApplicationParticipation> retval = null;
-		if (SecurityUtils.hasRole("MDM ADMIN")) {
+		if (SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+				.contains(new SimpleGrantedAuthority("ROLE_MDM ADMIN"))) {
 			retval = appParticipationRepo.findAll();
 		} else {
-			String username = SecurityUtils.getCurrentUsername();
-			retval = appParticipationRepo.findAllowedRecords(SecurityUtils.getCurrentUsername());
+			String username = SecurityContextHolder.getContext().getAuthentication().getName();
+			retval = appParticipationRepo.findAllowedRecords(username);
 		}
 		return retval;
 	}
@@ -428,8 +429,7 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 	}
 
 	@Transactional(readOnly = true)
-	@Override
-	public List<ApplicationParticipationProjection> findAppPartsForCurrentUser() {
+	private List<ApplicationParticipationProjection> findAppPartsForCurrentUser() {
 		if (SecurityContextHolder.getContext().getAuthentication().getAuthorities()
 				.contains(new SimpleGrantedAuthority("ROLE_MDM ADMIN"))) {
 			return appParticipationRepo.findAllForAdmin();
@@ -445,7 +445,7 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		if (SecurityContextHolder.getContext().getAuthentication().getAuthorities()
 				.contains(new SimpleGrantedAuthority("ROLE_MDM ADMIN"))) {
 			projectionList = appParticipationRepo.findAllForAdmin();
-			projectionList.forEach(p -> dtoList.add(new AppPartEdiAuthorizedDto(p.getId(), p.getApplId(),
+			projectionList.forEach(p -> dtoList.add(new AppPartEdiAuthorizedDto(p.getId(), p.getApplId(), p.getProgramId(),
 					p.getFamilyName(), p.getFirstName(), p.getRoleEn(), p.getRoleFr(), p.getOrganizationNameEn(),
 					p.getOrganizationNameFr(), true)));
 		} else {
@@ -463,8 +463,8 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 				innerLoop: for (int j = k; j < idList.size();) {
 					long ediAuthorizedId = idList.get(j).getId();
 					if (ediAuthorizedId == p.getId()) {
-						dtoList.add(new AppPartEdiAuthorizedDto(p.getId(), p.getApplId(), p.getFamilyName(),
-								p.getFirstName(), p.getRoleEn(), p.getRoleFr(),
+						dtoList.add(new AppPartEdiAuthorizedDto(p.getId(), p.getApplId(), p.getProgramId(),
+								p.getFamilyName(), p.getFirstName(), p.getRoleEn(), p.getRoleFr(),
 								p.getOrganizationNameEn(), p.getOrganizationNameFr(), true));
 						++k;
 						continue outerLoop;
@@ -472,9 +472,9 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 					break innerLoop;
 				}
 
-				dtoList.add(new AppPartEdiAuthorizedDto(p.getId(), p.getApplId(), p.getFamilyName(), p.getFirstName(),
-						p.getRoleEn(), p.getRoleFr(), p.getOrganizationNameEn(), p.getOrganizationNameFr(),
-						false));
+				dtoList.add(new AppPartEdiAuthorizedDto(p.getId(), p.getApplId(), p.getProgramId(), p.getFamilyName(),
+						p.getFirstName(), p.getRoleEn(), p.getRoleFr(), p.getOrganizationNameEn(),
+						p.getOrganizationNameFr(), false));
 			}
 		}
 

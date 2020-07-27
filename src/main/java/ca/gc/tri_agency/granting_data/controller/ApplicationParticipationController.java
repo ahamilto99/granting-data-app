@@ -22,8 +22,11 @@ public class ApplicationParticipationController {
 
 	@GetMapping("/browse/appParticipations")
 	public String appParticipations(Model model) {
-		model.addAttribute("appParticipations", appParticipationService.getAllowedRecords());
-		model.addAttribute("ediExtIds", appParticipationService.getExtIdsQualifiedForEdi());
+//		model.addAttribute("appParticipations", appParticipationService.getAllowedRecords());
+//		model.addAttribute("ediExtIds", appParticipationService.getExtIdsQualifiedForEdi());
+		
+		model.addAttribute("appParticipations", appParticipationService.findAppPartsForCurrentUserWithEdiAuth());
+		
 		return "browse/appParticipations";
 	}
 

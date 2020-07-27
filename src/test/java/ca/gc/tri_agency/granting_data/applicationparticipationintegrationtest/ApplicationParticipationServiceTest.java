@@ -38,7 +38,7 @@ public class ApplicationParticipationServiceTest {
 	@Test
 	public void test_findAppPartsForCurrentUser() {
 		// user 'aha' is a BU Program Officer for BU id=13 and there 11 AppParts linked to that BU
-		assertEquals(11, apService.findAppPartsForCurrentUser().size());
+		assertEquals(11, apService.findAppPartsForCurrentUserWithEdiAuth().size());
 	}
 
 	@Tag("user_story_19154")
@@ -46,7 +46,7 @@ public class ApplicationParticipationServiceTest {
 	@Test
 	public void test_adminCanFindAllAppParts() {
 		// an admin user doesn't have a member or even a Program Officer
-		assertEquals(17, apService.findAppPartsForCurrentUser().size());
+		assertEquals(17, apService.findAppPartsForCurrentUserWithEdiAuth().size());
 	}
 	@Tag("user_story_19154")
 	@WithMockUser(username = "rwi")

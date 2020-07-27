@@ -7,7 +7,6 @@ import ca.gc.tri_agency.granting_data.model.ApplicationParticipation;
 import ca.gc.tri_agency.granting_data.model.GrantingSystem;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.dto.AppPartEdiAuthorizedDto;
-import ca.gc.tri_agency.granting_data.model.projection.ApplicationParticipationProjection;
 
 public interface ApplicationParticipationService {
 
@@ -52,8 +51,6 @@ public interface ApplicationParticipationService {
 	void saveAllApplicationParticipations(List<ApplicationParticipation> appParticipations);
 
 	List<String> getExtIdsQualifiedForEdi();
-
-	List<ApplicationParticipationProjection> findAppPartsForCurrentUser();
 
 	List<AppPartEdiAuthorizedDto> findAppPartsForCurrentUserWithEdiAuth();
 
