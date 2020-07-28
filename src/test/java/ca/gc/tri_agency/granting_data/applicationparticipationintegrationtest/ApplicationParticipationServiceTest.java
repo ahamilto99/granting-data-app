@@ -1,21 +1,24 @@
 package ca.gc.tri_agency.granting_data.applicationparticipationintegrationtest;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.Instant;
 import java.util.List;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
 import ca.gc.tri_agency.granting_data.model.ApplicationParticipation;
 import ca.gc.tri_agency.granting_data.model.dto.AppPartEdiAuthorizedDto;
+import ca.gc.tri_agency.granting_data.model.projection.ApplicationParticipationProjection;
 import ca.gc.tri_agency.granting_data.repo.ApplicationParticipationRepository;
 import ca.gc.tri_agency.granting_data.service.ApplicationParticipationService;
 import ca.gc.tri_agency.granting_data.service.GenderService;
@@ -48,6 +51,7 @@ public class ApplicationParticipationServiceTest {
 		// an admin user doesn't have a member or even a Program Officer
 		assertEquals(17, apService.findAppPartsForCurrentUserWithEdiAuth().size());
 	}
+	
 	@Tag("user_story_19154")
 	@WithMockUser(username = "rwi")
 	@Test
@@ -63,6 +67,17 @@ public class ApplicationParticipationServiceTest {
 		
 		assertEquals(6, ediAuthorized);
 		assertEquals(17, dtoList.size());
+	}
+	
+	@Tag("user_story_19154")
+	@WithMockUser(username = "aha")
+	@Test
+	public void test_buMemberCanRetrieveDataForOneLinkedAppPart() {
+		// verifies that a member can retrieve AP data for one that is linked to her/his BU
+		assertNotNull(apService.findAppPartById(1L));
+		
+		// verifies that a member cannot retrieve AP data for one that is not linked to her/his BU
+		assertThrows(AccessDeniedException.class, () -> apService.findAppPartById(5L));
 	}
 
 	@Test

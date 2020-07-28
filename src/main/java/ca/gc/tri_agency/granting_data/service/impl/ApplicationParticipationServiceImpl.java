@@ -7,10 +7,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -452,7 +454,7 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 			String userLogin = SecurityContextHolder.getContext().getAuthentication().getName();
 			projectionList = appParticipationRepo.findForCurrentUser(userLogin);
 			List<ApplicationParticipationProjection> idList = appParticipationRepo
-					.findForCurrentUserEdiAuthorized(userLogin);
+					.findIdsForCurrentUserEdiAuthorized(userLogin);
 
 			// this works b/c the queries that return the idList and the projectionList both order the results
 			// by id
@@ -479,6 +481,19 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		}
 
 		return dtoList;
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public ApplicationParticipationProjection findAppPartById(Long apId) throws AccessDeniedException {
+		Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();
+		if (currentUser.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_MDM ADMIN"))) {
+			return appParticipationRepo.findOneAppPartByIdForAdminOnly(apId).orElseThrow(
+					() -> new DataRetrievalFailureException("That ApplicationParticipation does not exist"));
+		} 
+		
+		return appParticipationRepo.findOneAppPartById(apId, currentUser.getName()).orElseThrow(() -> new AccessDeniedException("FORBIDDEN: "
+				+ currentUser.getName() + " cannot access ApplicationParticipation id=" + apId));
 	}
 
 }

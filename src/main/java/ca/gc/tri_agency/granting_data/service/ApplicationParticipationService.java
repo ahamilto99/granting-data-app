@@ -2,11 +2,15 @@ package ca.gc.tri_agency.granting_data.service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
+
+import org.springframework.security.access.AccessDeniedException;
 
 import ca.gc.tri_agency.granting_data.model.ApplicationParticipation;
 import ca.gc.tri_agency.granting_data.model.GrantingSystem;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.dto.AppPartEdiAuthorizedDto;
+import ca.gc.tri_agency.granting_data.model.projection.ApplicationParticipationProjection;
 
 public interface ApplicationParticipationService {
 
@@ -53,5 +57,7 @@ public interface ApplicationParticipationService {
 	List<String> getExtIdsQualifiedForEdi();
 
 	List<AppPartEdiAuthorizedDto> findAppPartsForCurrentUserWithEdiAuth();
+
+	ApplicationParticipationProjection findAppPartById(Long apId) throws AccessDeniedException;
 
 }
