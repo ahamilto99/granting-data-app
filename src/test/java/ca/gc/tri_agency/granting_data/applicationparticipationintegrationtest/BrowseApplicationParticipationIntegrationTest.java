@@ -80,4 +80,24 @@ public class BrowseApplicationParticipationIntegrationTest {
 		assertEquals(12, numRows);
 	}
 
+	@Tag("user_story_19154")
+	@WithMockUser(username = "aha")
+	@Test
+	public void test_buMemberCanViewOneLinkedAppPart_shouldSucceedWith200() throws Exception {
+		mvc.perform(MockMvcRequestBuilders.get("/browse/viewAP").param("id", "2"))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.content()
+						.string(Matchers.containsString("id=\"viewOneAppPartPage\"")))
+				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("Stevie")));
+	}
+
+	@Tag("user_story_19154")
+	@WithMockUser(username = "aha")
+	@Test
+	public void test_nonBuMemberCannotViewOneLinkedAppPart_shouldReturn403() throws Exception {
+		mvc.perform(MockMvcRequestBuilders.get("/browse/viewAP").param("id", "3"))
+				.andExpect(MockMvcResultMatchers.status().isForbidden()).andExpect(MockMvcResultMatchers.content()
+						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
+	}
+
 }
