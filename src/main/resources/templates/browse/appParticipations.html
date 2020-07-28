@@ -34,7 +34,9 @@
 					</thead>
 					<tbody>
 						<tr th:each="ap : ${appParticipations}">
-							<td style="width: 175px;"><span th:text="${ap.applId}"></span><a th:if="${ap.ediAuthorized} eq true" th:href="@{/browse/viewAppParticipationEdi(id=${ap.id})}" style="margin-left: 10px;"><span class="glyphicon glyphicon-eye-open"></span></a></td>
+							<td style="width: 175px;"><a th:text="${ap.applId}" th:href="@{/browse/viewAP(id=${ap.id})}"></a><a
+								th:if="${ap.ediAuthorized} eq true" th:href="@{/browse/viewAppParticipationEdi(id=${ap.id})}" style="margin-left: 10px;"><span
+									class="glyphicon glyphicon-eye-open"></span></a></td>
 							<td><span th:text="${ap.programId}"></span></td>
 							<td><span th:text="${ap.familyName} + ', ' + ${ap.firstName}"></span></td>
 							<td><span th:text="${#locale.language eq 'fr' ? ap.roleFr : ap.roleEn}"></span></td>

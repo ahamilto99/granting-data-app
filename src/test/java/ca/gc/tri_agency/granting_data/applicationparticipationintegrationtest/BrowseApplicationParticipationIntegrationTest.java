@@ -88,7 +88,7 @@ public class BrowseApplicationParticipationIntegrationTest {
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.content()
 						.string(Matchers.containsString("id=\"viewOneAppPartPage\"")))
-				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("Stevie")));
+				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("Stevie Satterfield")));
 	}
 
 	@Tag("user_story_19154")
