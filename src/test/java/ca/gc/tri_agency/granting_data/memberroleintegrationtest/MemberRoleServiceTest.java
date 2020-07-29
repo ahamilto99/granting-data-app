@@ -77,6 +77,7 @@ public class MemberRoleServiceTest {
 		assertThrows(AccessDeniedException.class, () -> mrService.saveMemberRole(mr));
 	}
 
+	@Tag("user_story_19193")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Rollback
 	@Test
@@ -88,6 +89,7 @@ public class MemberRoleServiceTest {
 		assertEquals(initMRCount - 1, mrRepo.count());
 	}
 
+	@Tag("user_story_19193")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotDeleteMR_shouldThrowAccessDeniedException() {
