@@ -7,27 +7,39 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.persistence.Tuple;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.github.javafaker.Faker;
 
 import ca.gc.tri_agency.granting_data.model.ApplicationParticipation;
+import ca.gc.tri_agency.granting_data.model.FiscalYear;
+import ca.gc.tri_agency.granting_data.model.FundingCycle;
+import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.Gender;
 import ca.gc.tri_agency.granting_data.model.GrantingSystem;
 import ca.gc.tri_agency.granting_data.model.IndigenousIdentity;
 import ca.gc.tri_agency.granting_data.model.MemberRole;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.VisibleMinority;
+import ca.gc.tri_agency.granting_data.model.dto.AppPartEdiAuthorizedDto;
+import ca.gc.tri_agency.granting_data.model.projection.ApplicationParticipationProjection;
 import ca.gc.tri_agency.granting_data.repo.ApplicationParticipationRepository;
+import ca.gc.tri_agency.granting_data.repo.FundingCycleRepository;
 import ca.gc.tri_agency.granting_data.security.SecurityUtils;
 import ca.gc.tri_agency.granting_data.service.ApplicationParticipationService;
+import ca.gc.tri_agency.granting_data.service.FiscalYearService;
 import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
 import ca.gc.tri_agency.granting_data.service.GenderService;
 import ca.gc.tri_agency.granting_data.service.IndigenousIdentitySerivce;
@@ -56,13 +68,17 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 
 	private FundingOpportunityService foService;
 
+	private FiscalYearService fyService;
+
+	private FundingCycleRepository fcRepo;
+
 	private static int applIdIncrementer = 0;
 
 	@Autowired
 	public ApplicationParticipationServiceImpl(ApplicationParticipationRepository appParticipationRepo,
 			SystemFundingOpportunityService sfoService, MemberRoleService mrService, GenderService genderService,
 			IndigenousIdentitySerivce indIdentityService, VisibleMinorityService vMinorityService,
-			FundingOpportunityService foService) {
+			FundingOpportunityService foService, FiscalYearService fyService, FundingCycleRepository fcRepo) {
 		this.appParticipationRepo = appParticipationRepo;
 		this.sfoService = sfoService;
 		this.mrService = mrService;
@@ -70,6 +86,8 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		this.indIdentityService = indIdentityService;
 		this.vMinorityService = vMinorityService;
 		this.foService = foService;
+		this.fcRepo = fcRepo;
+		this.fyService = fyService;
 	}
 
 	@Override
@@ -220,11 +238,12 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 	@Override
 	public List<ApplicationParticipation> getAllowedRecords() {
 		List<ApplicationParticipation> retval = null;
-		if (SecurityUtils.hasRole("MDM ADMIN")) {
+		if (SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+				.contains(new SimpleGrantedAuthority("ROLE_MDM ADMIN"))) {
 			retval = appParticipationRepo.findAll();
 		} else {
-			String username = SecurityUtils.getCurrentUsername();
-			retval = appParticipationRepo.findAllowedRecords(SecurityUtils.getCurrentUsername());
+			String username = SecurityContextHolder.getContext().getAuthentication().getName();
+			retval = appParticipationRepo.findAllowedRecords(username);
 		}
 		return retval;
 	}
@@ -242,6 +261,8 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		Instant inst = Instant.parse("2020-02-02T00:00:00.00Z");
 
 		linkSFOsToFOs();
+
+		addFCsForFOs();
 
 		for (SystemFundingOpportunity sfo : sfoService.findAllSystemFundingOpportunities()) {
 			participations.addAll(generateTestAppParticipations(sfo, inst, 3, 5));
@@ -427,10 +448,76 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		return sRand.nextInt(end) + start;
 	}
 
+	@Transactional(readOnly = true)
+	private List<ApplicationParticipationProjection> findAppPartsForCurrentUser() {
+		if (SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+				.contains(new SimpleGrantedAuthority("ROLE_MDM ADMIN"))) {
+			return appParticipationRepo.findAllForAdmin();
+		}
+		return appParticipationRepo.findForCurrentUser(SecurityContextHolder.getContext().getAuthentication().getName());
+	}
+
+	@Override
+	public List<AppPartEdiAuthorizedDto> findAppPartsForCurrentUserWithEdiAuth() {
+		List<AppPartEdiAuthorizedDto> dtoList = new ArrayList<>();
+
+		List<ApplicationParticipationProjection> projectionList = findAppPartsForCurrentUser();
+		if (SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+				.contains(new SimpleGrantedAuthority("ROLE_MDM ADMIN"))) {
+			projectionList = appParticipationRepo.findAllForAdmin();
+			projectionList.forEach(p -> dtoList.add(new AppPartEdiAuthorizedDto(p.getId(), p.getApplId(), p.getProgramId(),
+					p.getFamilyName(), p.getFirstName(), p.getRoleEn(), p.getRoleFr(), p.getOrganizationNameEn(),
+					p.getOrganizationNameFr(), true)));
+		} else {
+			String userLogin = SecurityContextHolder.getContext().getAuthentication().getName();
+			projectionList = appParticipationRepo.findForCurrentUser(userLogin);
+			List<ApplicationParticipationProjection> idList = appParticipationRepo
+					.findIdsForCurrentUserEdiAuthorized(userLogin);
+
+			// this works b/c the queries that return the idList and the projectionList both order the results
+			// by id
+			int k = 0;
+			outerLoop: for (int i = 0; i < projectionList.size(); ++i) {
+				ApplicationParticipationProjection p = projectionList.get(i);
+
+				innerLoop: for (int j = k; j < idList.size();) {
+					long ediAuthorizedId = idList.get(j).getId();
+					if (ediAuthorizedId == p.getId()) {
+						dtoList.add(new AppPartEdiAuthorizedDto(p.getId(), p.getApplId(), p.getProgramId(),
+								p.getFamilyName(), p.getFirstName(), p.getRoleEn(), p.getRoleFr(),
+								p.getOrganizationNameEn(), p.getOrganizationNameFr(), true));
+						++k;
+						continue outerLoop;
+					}
+					break innerLoop;
+				}
+
+				dtoList.add(new AppPartEdiAuthorizedDto(p.getId(), p.getApplId(), p.getProgramId(), p.getFamilyName(),
+						p.getFirstName(), p.getRoleEn(), p.getRoleFr(), p.getOrganizationNameEn(),
+						p.getOrganizationNameFr(), false));
+			}
+		}
+
+		return dtoList;
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public ApplicationParticipationProjection findAppPartById(Long apId) throws AccessDeniedException {
+		Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();
+		if (currentUser.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_MDM ADMIN"))) {
+			return appParticipationRepo.findOneAppPartByIdForAdminOnly(apId).orElseThrow(
+					() -> new DataRetrievalFailureException("That ApplicationParticipation does not exist"));
+		} 
+		
+		return appParticipationRepo.findOneAppPartById(apId, currentUser.getName()).orElseThrow(() -> new AccessDeniedException("FORBIDDEN: "
+				+ currentUser.getName() + " cannot access ApplicationParticipation id=" + apId));
+	}
+	
 	@Transactional
 	private void linkSFOsToFOs() {
 		sfoService.findAllSystemFundingOpportunities().forEach(sfo -> sfo
-				.setLinkedFundingOpportunity(foService.findFundingOpportunityById(Math.abs(sRand.nextLong() % 141L + 1L))));
+				.setLinkedFundingOpportunity(foService.findFundingOpportunityById(Math.abs(sRand.nextInt(141) + 1L))));
 	}
 
 	@Transactional(readOnly = true)
@@ -462,6 +549,58 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 	@Override
 	public Long findAppPartCountForBU(Long buId) {
 		return (Long) appParticipationRepo.findNumAPsForBU(buId).get("total");
+	}
+
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	private void addFCsForFOs() {
+		fcRepo.deleteAllInBatch();
+		List<FundingOpportunity> foList = updateFOsNOIsLOIs();
+		createFCs(foList);
+	}
+
+	@Transactional
+	private List<FundingOpportunity> updateFOsNOIsLOIs() {
+		List<FundingOpportunity> foList = foService.findAllFundingOpportunities();
+		foList.forEach(fo -> {
+			if (fo.getFrequency() != null && !fo.getFrequency().equals("1/YR")) {
+				fo.setIsLOI(true);
+				fo.setIsNOI(true);
+			}
+			if (fo.getNameFr() == null) {
+				fo.setNameFr("Programme");
+			}
+		});
+		return foList;
+	}
+
+	@Transactional
+	private void createFCs(List<FundingOpportunity> foList) {
+		List<FiscalYear> fyList = fyService.findAllFiscalYearsOrderByYearAsc();
+
+		foList.forEach(fo -> {
+			if (fo.getIsNOI() && fo.getIsLOI()) {
+				int day = generateRandNumBtw(1, 28);
+				int month = generateRandNumBtw(1, 12);
+				int year = generateRandNumBtw(2016, 4);
+				LocalDate startDate = LocalDate.of(year, month, day);
+
+				fcRepo.save(new FundingCycle(fyList.get(year - 2016), false, startDate, startDate, startDate.plusMonths(3),
+						startDate.plusMonths(3), startDate.plusMonths(6), startDate.plusYears(1),
+						sRand.nextInt(950) + 51L, fo));
+			} else {
+				int day = generateRandNumBtw(1, 28);
+				int month = generateRandNumBtw(1, 12);
+				LocalDate startDate = LocalDate.of(2016, month, day);
+				fcRepo.save(new FundingCycle(fyList.get(0), false, startDate, null, null, null, null, startDate.plusYears(1),
+						sRand.nextInt(1000) + 1L, fo));
+				fcRepo.save(new FundingCycle(fyList.get(1), false, startDate, null, null, null, null, startDate.plusYears(2),
+						sRand.nextInt(1000) + 1L, fo));
+				fcRepo.save(new FundingCycle(fyList.get(2), false, startDate, null, null, null, null, startDate.plusYears(3),
+						sRand.nextInt(1000) + 1L, fo));
+				fcRepo.save(new FundingCycle(fyList.get(3), false, startDate, null, null, null, null, startDate.plusYears(4),
+						sRand.nextInt(1000) + 1L, fo));
+			}
+		});
 	}
 
 }

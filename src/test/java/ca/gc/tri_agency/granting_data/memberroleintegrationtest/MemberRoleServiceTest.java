@@ -43,6 +43,7 @@ public class MemberRoleServiceTest {
 	@Autowired
 	private MemberRoleRepository mrRepo;
 
+	@Tag("user_story_19187")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_adminCanCreateMR() {
@@ -58,12 +59,12 @@ public class MemberRoleServiceTest {
 		memberRole.setBusinessUnit(bu);
 		memberRole.setEdiAuthorized(true);
 
-		MemberRole mr = mrService.saveMemberRole(memberRole);
+		mrService.saveMemberRole(memberRole);
 
 		assertEquals(initMRCount + 1, mrRepo.count());
-		assertNotNull(mr.getId());
 	}
 
+	@Tag("user_story_19187")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotCreateMR_shouldThrowAccessDeniedException() {
@@ -76,6 +77,7 @@ public class MemberRoleServiceTest {
 		assertThrows(AccessDeniedException.class, () -> mrService.saveMemberRole(mr));
 	}
 
+	@Tag("user_story_19193")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Rollback
 	@Test
@@ -87,6 +89,7 @@ public class MemberRoleServiceTest {
 		assertEquals(initMRCount - 1, mrRepo.count());
 	}
 
+	@Tag("user_story_19193")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotDeleteMR_shouldThrowAccessDeniedException() {

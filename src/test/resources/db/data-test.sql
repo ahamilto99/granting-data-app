@@ -206,7 +206,7 @@ INSERT INTO FUNDING_OPPORTUNITY VALUES (SEQ_FUNDING_OPPORTUNITY.NEXTVAL, '1/YR',
 INSERT INTO FUNDING_OPPORTUNITY VALUES (SEQ_FUNDING_OPPORTUNITY.NEXTVAL, '1/YR', 'Partnerships Programs', FALSE, FALSE, FALSE, 'Queen Elizabeth (774)', NULL, NULL, FALSE, FALSE, 13);
 INSERT INTO FUNDING_OPPORTUNITY VALUES (SEQ_FUNDING_OPPORTUNITY.NEXTVAL, '1/YR', NULL, FALSE, FALSE, FALSE, 'Special Initiatives Fund For Research Support And Collaboration', NULL, NULL, FALSE, FALSE, 11);
 INSERT INTO FUNDING_OPPORTUNITY VALUES (SEQ_FUNDING_OPPORTUNITY.NEXTVAL, '1/YR', NULL, FALSE, FALSE, FALSE, 'Research Support Fund (RSF)', NULL, NULL, FALSE, FALSE, 11);
-INSERT INTO FUNDING_OPPORTUNITY VALUES (SEQ_FUNDING_OPPORTUNITY.NEXTVAL, NULL, 'Partnerships Programs', FALSE, FALSE, FALSE, 'CECR Centres of Excellence for Commercialization and Research', ' Programme des centres d''excellence en commercialisation et en recherche', NULL, FALSE, FALSE, 7);
+INSERT INTO FUNDING_OPPORTUNITY VALUES (SEQ_FUNDING_OPPORTUNITY.NEXTVAL, NULL, 'Partnerships Programs', FALSE, FALSE, FALSE, 'CECR Centres of Excellence for Commercialization and Research', 'Programme des centres d''excellence en commercialisation et en recherche', NULL, FALSE, FALSE, 7);
 INSERT INTO FUNDING_OPPORTUNITY VALUES (SEQ_FUNDING_OPPORTUNITY.NEXTVAL, '1+/YR', 'Scholarships', FALSE, FALSE, FALSE, 'Canada Graduate Scholarships Michael Smith Foreign Study Supplements (MSFSS)', STRINGDECODE('Programme de bourses d''\u00e9tudes sup\u00e9rieures du Canada \u2013 Suppl\u00e9ments pour \u00e9tudes \u00e0 l''\u00e9tranger Michael-Smith'), NULL, FALSE, FALSE, 4);
 INSERT INTO FUNDING_OPPORTUNITY VALUES (SEQ_FUNDING_OPPORTUNITY.NEXTVAL, 'Open', 'Partnerships Programs', FALSE, FALSE, FALSE, 'Applied Research and Development Grants - Colleges (ARD)', NULL, NULL, FALSE, FALSE, 6);
 INSERT INTO FUNDING_OPPORTUNITY VALUES (SEQ_FUNDING_OPPORTUNITY.NEXTVAL, '1/YR', 'Partnerships Programs', FALSE, FALSE, FALSE, 'College - University Idea to Innovation Grants (CU-I2I)', NULL, NULL, FALSE, FALSE, 6);
@@ -350,7 +350,7 @@ INSERT INTO FUNDING_OPPORTUNITY_HISTORY VALUES (118, 4, 0, '1/YR', 'Partnerships
 INSERT INTO FUNDING_OPPORTUNITY_HISTORY VALUES (119, 4, 0, '1/YR', 'Partnerships Programs', FALSE, FALSE, FALSE, 'Queen Elizabeth (774)', NULL, NULL, FALSE, FALSE, 13);
 INSERT INTO FUNDING_OPPORTUNITY_HISTORY VALUES (120, 4, 0, '1/YR', NULL, FALSE, FALSE, FALSE, 'Special Initiatives Fund For Research Support And Collaboration', NULL, NULL, FALSE, FALSE, 11);
 INSERT INTO FUNDING_OPPORTUNITY_HISTORY VALUES (121, 4, 0, '1/YR', NULL, FALSE, FALSE, FALSE, 'Research Support Fund (RSF)', NULL, NULL, FALSE, FALSE, 11);
-INSERT INTO FUNDING_OPPORTUNITY_HISTORY VALUES (122, 4, 0, NULL, 'Partnerships Programs', FALSE, FALSE, FALSE, 'CECR Centres of Excellence for Commercialization and Research', ' Programme des centres d''excellence en commercialisation et en recherche', NULL, FALSE, FALSE, 7);
+INSERT INTO FUNDING_OPPORTUNITY_HISTORY VALUES (122, 4, 0, NULL, 'Partnerships Programs', FALSE, FALSE, FALSE, 'CECR Centres of Excellence for Commercialization and Research', 'Programme des centres d''excellence en commercialisation et en recherche', NULL, FALSE, FALSE, 7);
 INSERT INTO FUNDING_OPPORTUNITY_HISTORY VALUES (123, 4, 0, '1+/YR', 'Scholarships', FALSE, FALSE, FALSE, 'Canada Graduate Scholarships Michael Smith Foreign Study Supplements (MSFSS)', STRINGDECODE('Programme de bourses d''\u00e9tudes sup\u00e9rieures du Canada \u2013 Suppl\u00e9ments pour \u00e9tudes \u00e0 l''\u00e9tranger Michael-Smith'), NULL, FALSE, FALSE, 4);
 INSERT INTO FUNDING_OPPORTUNITY_HISTORY VALUES (124, 4, 0, 'Open', 'Partnerships Programs', FALSE, FALSE, FALSE, 'Applied Research and Development Grants - Colleges (ARD)', NULL, NULL, FALSE, FALSE, 6);
 INSERT INTO FUNDING_OPPORTUNITY_HISTORY VALUES (125, 4, 0, '1/YR', 'Partnerships Programs', FALSE, FALSE, FALSE, 'College - University Idea to Innovation Grants (CU-I2I)', NULL, NULL, FALSE, FALSE, 6);
@@ -883,6 +883,8 @@ INSERT INTO MEMBER_ROLE VALUES (SEQ_MEMBER_ROLE.NEXTVAL, 'aha', 1, 1, FALSE);
 INSERT INTO MEMBER_ROLE VALUES (SEQ_MEMBER_ROLE.NEXTVAL, 'jfs', 2, 1, FALSE);
 INSERT INTO MEMBER_ROLE VALUES (SEQ_MEMBER_ROLE.NEXTVAL, 'rwi', 2, 1, FALSE);
 INSERT INTO MEMBER_ROLE VALUES (SEQ_MEMBER_ROLE.NEXTVAL, 'aha', 2, 13, TRUE);
+INSERT INTO MEMBER_ROLE VALUES (SEQ_MEMBER_ROLE.NEXTVAL, 'rwi', 2, 4, TRUE);
+INSERT INTO MEMBER_ROLE VALUES (SEQ_MEMBER_ROLE.NEXTVAL, 'rwi', 2, 13, FALSE);
 
 --POPULATES MEMBER_ROLE AUDITING TABLE AND INSERTS THE CORRESPONDING METADATA INTO REVISION_INFO TABLE
 INSERT INTO REVISION_INFO VALUES (SEQ_REVISION_INFO.NEXTVAL, '2020-01-01 00:00:00.00', 'N/A (PREPOPULATED)');
@@ -890,6 +892,8 @@ INSERT INTO MEMBER_ROLE_HISTORY VALUES (1, 7, 0, 'aha', FALSE, 1, 1);
 INSERT INTO MEMBER_ROLE_HISTORY VALUES (2, 7, 0, 'jfs', FALSE, 2, 1);
 INSERT INTO MEMBER_ROLE_HISTORY VALUES (3, 7, 0, 'rwi', FALSE, 2, 1);
 INSERT INTO MEMBER_ROLE_HISTORY VALUES (4, 7, 0, 'aha', TRUE, 2, 13);
+INSERT INTO MEMBER_ROLE_HISTORY VALUES (5, 7, 0, 'rwi', TRUE, 2, 4);
+INSERT INTO MEMBER_ROLE_HISTORY VALUES (6, 7, 0, 'rwi', FALSE, 2, 13);
 
 --POPULATES APPLICATION_PARTICIPATION TABLE
 INSERT INTO APPLICATION_PARTICIPATION VALUES (SEQ_APPLICATION_PARTICIPATION.NEXTVAL, '47-2017', '470017', NULL, '767', 'Joseph-Armand Bombardier Canada Graduate Scholarships - Doctoral', STRINGDECODE('Bourses d''\u00e9tudes sup\u00e9rieures du Canada Joseph-Armand-Bombardier - Doctorat'), TIMESTAMP '2020-02-01 19:00:00', '2', 'Applicant', 'Candidat', 'Hills', 'Ned', 722281673, '9', 'University of Alberta', 'University of Alberta', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, FALSE, FALSE, DATE '1973-05-26', FALSE, NULL, FALSE, NULL, TRUE, 1);

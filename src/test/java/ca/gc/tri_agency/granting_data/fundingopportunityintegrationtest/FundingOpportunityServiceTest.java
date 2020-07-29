@@ -6,14 +6,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
-import java.util.Locale;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -115,27 +113,19 @@ public class FundingOpportunityServiceTest {
 		assertEquals(43, foService.findFundingOpportunitiesByAgency(agencyService.findAgencyById(1L)).size());
 	}
 
+	@Tag("User_Story_14627")
 	@WithAnonymousUser
 	@Test
-	@Tag("User_Story_14627")
 	public void test_anonUserCanFindResultsForGoldenListTable() {
 		long foCount = foRepo.count();
 
-		LocaleContextHolder.setDefaultLocale(Locale.CANADA_FRENCH);
-		List<String[]> frResultSet = foService.findGoldenListTableResults();
-		String[] frRow = frResultSet.stream().filter(arr -> arr[0].equals("9")).findFirst().get();
+		List<String[]> resultSet = foService.findGoldenListTableResults();
+		String[] tableRow = resultSet.stream().filter(arr -> arr[0].equals("9")).findFirst().get();
 
-		assertEquals(foCount, frResultSet.size());
-		assertArrayEquals(new String[] { "9", "Bourse pour ambassadeurs autochtones des sciences naturelles et du génie", "FR ICSP",
-				"SP Secure Upload", "NAMIS" }, frRow);
-
-		LocaleContextHolder.setDefaultLocale(Locale.ENGLISH);
-		List<String[]> enResultSet = foService.findGoldenListTableResults();
-		String[] enRow = enResultSet.stream().filter(arr -> arr[0].equals("131")).findFirst().get();
-
-		assertEquals(foCount, enResultSet.size());
-		assertArrayEquals(new String[] { "131", "Business-Led Networks of Centres of Excellence program", "NCE", "SP Secure Upload",
-				"AMIS / NAMIS / ResearchNet" }, enRow);
+		assertEquals(foCount, resultSet.size());
+		assertArrayEquals(new String[] { "9", "Aboriginal Ambassadors in the Natural Sciences and Engineering (AANSE) (6610)",
+				"Bourse pour ambassadeurs autochtones des sciences naturelles et du génie", "ICSP", "FR ICSP",
+				"SP Secure Upload", "NAMIS" }, tableRow);
 	}
 
 }

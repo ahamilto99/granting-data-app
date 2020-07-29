@@ -73,11 +73,13 @@ public class FundingOpportunityController {
 		model.addAttribute("fundingOpportunities", fos);
 
 		// filtering options
-		model.addAttribute("distinctBUs", fos.stream().map(fo -> fo[2]).distinct()
+		model.addAttribute("distinctBUsEn", fos.stream().map(fo -> fo[3]).distinct()
 				.filter(bu -> bu != null && !bu.trim().isEmpty()).sorted().iterator());
-		model.addAttribute("distinctApplySystems", fos.stream().map(fo -> fo[3]).distinct()
+		model.addAttribute("distinctBUsFr", fos.stream().map(fo -> fo[4]).distinct()
+				.filter(bu -> bu != null && !bu.trim().isEmpty()).sorted().iterator());
+		model.addAttribute("distinctApplySystems", fos.stream().map(fo -> fo[5]).distinct()
 				.filter(appSys -> appSys != null && !appSys.trim().isEmpty()).sorted().iterator());
-		model.addAttribute("distinctAwardSystems", fos.stream().map(fo -> fo[4]).distinct()
+		model.addAttribute("distinctAwardSystems", fos.stream().map(fo -> fo[6]).distinct()
 				.filter(awdSys -> awdSys != null && !awdSys.trim().isEmpty()).sorted().iterator());
 
 		return "browse/fundingOpportunities";
