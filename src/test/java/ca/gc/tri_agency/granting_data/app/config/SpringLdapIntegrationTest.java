@@ -29,14 +29,14 @@ public class SpringLdapIntegrationTest {
 	public void testFindAllADUsers() {
 		List<ADUser> users = adUserService.findAllADUsers();
 		assertNotNull(users);
-		assertEquals(7, users.size());
+		assertEquals(9, users.size());
 	}
 
 	@Test
 	public void testFindAllADUserFullNames() {
 		List<String> persons = adUserService.findAllADUserFullNames();
 		assertNotNull(persons);
-		assertEquals(7, persons.size());
+		assertEquals(9, persons.size());
 	}
 
 	@Test

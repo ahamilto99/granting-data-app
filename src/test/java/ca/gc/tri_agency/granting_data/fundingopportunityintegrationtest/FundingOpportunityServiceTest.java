@@ -113,9 +113,9 @@ public class FundingOpportunityServiceTest {
 		assertEquals(43, foService.findFundingOpportunitiesByAgency(agencyService.findAgencyById(1L)).size());
 	}
 
+	@Tag("User_Story_14627")
 	@WithAnonymousUser
 	@Test
-	@Tag("User_Story_14627")
 	public void test_anonUserCanFindResultsForGoldenListTable() {
 		long foCount = foRepo.count();
 

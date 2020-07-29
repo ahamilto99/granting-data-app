@@ -7,12 +7,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.persistence.Tuple;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +33,8 @@ import ca.gc.tri_agency.granting_data.model.IndigenousIdentity;
 import ca.gc.tri_agency.granting_data.model.MemberRole;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.VisibleMinority;
+import ca.gc.tri_agency.granting_data.model.dto.AppPartEdiAuthorizedDto;
+import ca.gc.tri_agency.granting_data.model.projection.ApplicationParticipationProjection;
 import ca.gc.tri_agency.granting_data.repo.ApplicationParticipationRepository;
 import ca.gc.tri_agency.granting_data.repo.FundingCycleRepository;
 import ca.gc.tri_agency.granting_data.security.SecurityUtils;
@@ -232,11 +238,12 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 	@Override
 	public List<ApplicationParticipation> getAllowedRecords() {
 		List<ApplicationParticipation> retval = null;
-		if (SecurityUtils.hasRole("MDM ADMIN")) {
+		if (SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+				.contains(new SimpleGrantedAuthority("ROLE_MDM ADMIN"))) {
 			retval = appParticipationRepo.findAll();
 		} else {
-			String username = SecurityUtils.getCurrentUsername();
-			retval = appParticipationRepo.findAllowedRecords(SecurityUtils.getCurrentUsername());
+			String username = SecurityContextHolder.getContext().getAuthentication().getName();
+			retval = appParticipationRepo.findAllowedRecords(username);
 		}
 		return retval;
 	}
@@ -441,6 +448,72 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		return sRand.nextInt(end) + start;
 	}
 
+	@Transactional(readOnly = true)
+	private List<ApplicationParticipationProjection> findAppPartsForCurrentUser() {
+		if (SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+				.contains(new SimpleGrantedAuthority("ROLE_MDM ADMIN"))) {
+			return appParticipationRepo.findAllForAdmin();
+		}
+		return appParticipationRepo.findForCurrentUser(SecurityContextHolder.getContext().getAuthentication().getName());
+	}
+
+	@Override
+	public List<AppPartEdiAuthorizedDto> findAppPartsForCurrentUserWithEdiAuth() {
+		List<AppPartEdiAuthorizedDto> dtoList = new ArrayList<>();
+
+		List<ApplicationParticipationProjection> projectionList = findAppPartsForCurrentUser();
+		if (SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+				.contains(new SimpleGrantedAuthority("ROLE_MDM ADMIN"))) {
+			projectionList = appParticipationRepo.findAllForAdmin();
+			projectionList.forEach(p -> dtoList.add(new AppPartEdiAuthorizedDto(p.getId(), p.getApplId(), p.getProgramId(),
+					p.getFamilyName(), p.getFirstName(), p.getRoleEn(), p.getRoleFr(), p.getOrganizationNameEn(),
+					p.getOrganizationNameFr(), true)));
+		} else {
+			String userLogin = SecurityContextHolder.getContext().getAuthentication().getName();
+			projectionList = appParticipationRepo.findForCurrentUser(userLogin);
+			List<ApplicationParticipationProjection> idList = appParticipationRepo
+					.findIdsForCurrentUserEdiAuthorized(userLogin);
+
+			// this works b/c the queries that return the idList and the projectionList both order the results
+			// by id
+			int k = 0;
+			outerLoop: for (int i = 0; i < projectionList.size(); ++i) {
+				ApplicationParticipationProjection p = projectionList.get(i);
+
+				innerLoop: for (int j = k; j < idList.size();) {
+					long ediAuthorizedId = idList.get(j).getId();
+					if (ediAuthorizedId == p.getId()) {
+						dtoList.add(new AppPartEdiAuthorizedDto(p.getId(), p.getApplId(), p.getProgramId(),
+								p.getFamilyName(), p.getFirstName(), p.getRoleEn(), p.getRoleFr(),
+								p.getOrganizationNameEn(), p.getOrganizationNameFr(), true));
+						++k;
+						continue outerLoop;
+					}
+					break innerLoop;
+				}
+
+				dtoList.add(new AppPartEdiAuthorizedDto(p.getId(), p.getApplId(), p.getProgramId(), p.getFamilyName(),
+						p.getFirstName(), p.getRoleEn(), p.getRoleFr(), p.getOrganizationNameEn(),
+						p.getOrganizationNameFr(), false));
+			}
+		}
+
+		return dtoList;
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public ApplicationParticipationProjection findAppPartById(Long apId) throws AccessDeniedException {
+		Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();
+		if (currentUser.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_MDM ADMIN"))) {
+			return appParticipationRepo.findOneAppPartByIdForAdminOnly(apId).orElseThrow(
+					() -> new DataRetrievalFailureException("That ApplicationParticipation does not exist"));
+		} 
+		
+		return appParticipationRepo.findOneAppPartById(apId, currentUser.getName()).orElseThrow(() -> new AccessDeniedException("FORBIDDEN: "
+				+ currentUser.getName() + " cannot access ApplicationParticipation id=" + apId));
+	}
+	
 	@Transactional
 	private void linkSFOsToFOs() {
 		sfoService.findAllSystemFundingOpportunities().forEach(sfo -> sfo
