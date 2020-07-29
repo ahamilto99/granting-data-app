@@ -1,10 +1,6 @@
 package ca.gc.tri_agency.granting_data.systemfundingopportunityintegrationtest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,16 +8,15 @@ import java.util.regex.Pattern;
 import javax.transaction.Transactional;
 
 import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -33,7 +28,6 @@ import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.repo.SystemFundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.service.SystemFundingOpportunityService;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = GrantingDataApp.class)
 @ActiveProfiles("test")
 public class SystemFundingOpportunityControllerTest {
@@ -49,11 +43,12 @@ public class SystemFundingOpportunityControllerTest {
 
 	private MockMvc mvc;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		mvc = MockMvcBuilders.webAppContextSetup(ctx).apply(SecurityMockMvcConfigurers.springSecurity()).build();
 	}
 
+	@Tag("user_story_14659")
 	@Transactional
 	@Rollback
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
@@ -74,6 +69,7 @@ public class SystemFundingOpportunityControllerTest {
 				.andExpect(MockMvcResultMatchers.flash().attributeCount(0));
 	}
 
+	@Tag("user_story_14659")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_unlinkFoConfirmationPageAccessableByAdmin_shouldSucceedWith200() throws Exception {
@@ -85,19 +81,17 @@ public class SystemFundingOpportunityControllerTest {
 						+ " from the Funding Opportunity named " + foName + '?'));
 	}
 
+	@Tag("user_story_14659")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_unlinkFoConfirmationPageNotAccessableByNonAdminUsers_shouldReturn403() throws Exception {
 		assertNotNull(sfoService.findSystemFundingOpportunityById(1L).getLinkedFundingOpportunity());
 		assertTrue(mvc.perform(MockMvcRequestBuilders.get("/admin/confirmUnlink").param("sfoId", "1"))
-				/*
-				 * If status().isForbidden() is changed to status().isOk() then this test will pass but is that what
-				 * you want?
-				 */
 				.andExpect(MockMvcResultMatchers.status().isForbidden()).andReturn().getResponse().getContentAsString()
 				.contains("id=\"forbiddenByRoleErrorPage\""));
 	}
 
+	@Tag("user_story_14659")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Transactional
 	@Rollback
@@ -118,6 +112,7 @@ public class SystemFundingOpportunityControllerTest {
 				.contains("id=\"generalErrorPage\""));
 	}
 
+	@Tag("user_story_14659")
 	@WithMockUser(roles = { "MDM ADMIN" })
 	@Transactional
 	@Rollback
@@ -133,6 +128,7 @@ public class SystemFundingOpportunityControllerTest {
 				.contains("id=\"unlinkSfoBtn\""));
 	}
 
+	@Tag("user_story_14659")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_unlinkFoBtnNotVisibleToNonAdminUsers() throws Exception {
@@ -142,6 +138,7 @@ public class SystemFundingOpportunityControllerTest {
 				.contains("id=\"unlinkSfoBtn\""));
 	}
 
+	@Tag("user_story_14659")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_unlinkFoBtnVisibleToAdminWhenFoLinkedToSfo() throws Exception {
@@ -150,6 +147,7 @@ public class SystemFundingOpportunityControllerTest {
 				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("id=\"unlinkSfoBtn\"")));
 	}
 
+	@Tag("user_story_14659")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_adminCanAccessAnalyzeSystemFOsPage_shouldSucceedWith200() throws Exception {
@@ -158,6 +156,7 @@ public class SystemFundingOpportunityControllerTest {
 						.string(Matchers.containsString("id=\"analyzeSystemFundingOpportunitiesPage\"")));
 	}
 
+	@Tag("user_story_14659")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotAccessAnalyzeSystemFundingOpportunitiesPage_shouldReturn403() throws Exception {

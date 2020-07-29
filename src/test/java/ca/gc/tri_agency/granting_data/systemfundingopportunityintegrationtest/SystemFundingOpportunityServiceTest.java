@@ -1,15 +1,12 @@
 package ca.gc.tri_agency.granting_data.systemfundingopportunityintegrationtest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataRetrievalFailureException;
@@ -17,7 +14,6 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
@@ -25,7 +21,6 @@ import ca.gc.tri_agency.granting_data.service.GrantingSystemService;
 import ca.gc.tri_agency.granting_data.service.SystemFundingOpportunityService;
 
 @SpringBootTest(classes = GrantingDataApp.class)
-@RunWith(SpringRunner.class)
 @ActiveProfiles("test")
 public class SystemFundingOpportunityServiceTest {
 
@@ -42,9 +37,9 @@ public class SystemFundingOpportunityServiceTest {
 	}
 
 	@WithAnonymousUser
-	@Test(expected = DataRetrievalFailureException.class)
+	@Test
 	public void test_findSystemFundingOpportunityById_shouldThrowDataRetrievalFailureException() {
-		sfoService.findSystemFundingOpportunityById(Long.MAX_VALUE);
+		assertThrows(DataRetrievalFailureException.class, () -> sfoService.findSystemFundingOpportunityById(Long.MAX_VALUE));
 	}
 
 	@WithAnonymousUser
@@ -71,6 +66,7 @@ public class SystemFundingOpportunityServiceTest {
 		assertTrue(0 < sfoService.findSystemFundingOpportunitiesByNameEn("Technology Access Centre").size());
 	}
 
+	@Tag("user_story_14659")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_linkSystemFundingOpportunity() {
@@ -89,10 +85,11 @@ public class SystemFundingOpportunityServiceTest {
 		assertEquals(1L, (long) sfoService.findSystemFundingOpportunityById(sfoId).getLinkedFundingOpportunity().getId());
 	}
 
+	@Tag("user_story_14659")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
-	@Test(expected = DataRetrievalFailureException.class)
+	@Test
 	public void test_unlinkSystemFundingOpportunity_shouldThrowDataRetrievalFailureException() {
-		sfoService.unlinkSystemFundingOpportunity(1L, 100L);
+		assertThrows(DataRetrievalFailureException.class, () -> sfoService.unlinkSystemFundingOpportunity(1L, 100L));
 	}
 
 	@WithMockUser(username = "admin", roles = "MDM ADMIN")
@@ -112,9 +109,9 @@ public class SystemFundingOpportunityServiceTest {
 	}
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	public void test_nonAdminCannotFindAllSystemFundingOpportunityRevisionsShouldThrowsException() {
-		sfoService.findAllSystemFundingOpportunityRevisions();
+		assertThrows(AccessDeniedException.class, () -> sfoService.findAllSystemFundingOpportunityRevisions());
 	}
 
 	@WithMockUser(username = "admin", roles = "MDM ADMIN")
@@ -134,8 +131,8 @@ public class SystemFundingOpportunityServiceTest {
 	}
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	public void test_nonAdminCannotFindSystemFundingOpportunityRevisionByIdShouldThrowException() {
-		sfoService.findSystemFundingOpportunityRevisionById(1L);
+		assertThrows(AccessDeniedException.class, () -> sfoService.findSystemFundingOpportunityRevisionById(1L));
 	}
 }
