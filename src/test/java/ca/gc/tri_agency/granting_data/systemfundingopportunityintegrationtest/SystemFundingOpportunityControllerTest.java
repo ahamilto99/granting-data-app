@@ -48,7 +48,7 @@ public class SystemFundingOpportunityControllerTest {
 		mvc = MockMvcBuilders.webAppContextSetup(ctx).apply(SecurityMockMvcConfigurers.springSecurity()).build();
 	}
 
-	@Tag("user_story_14591")
+	@Tag("user_story_14659")
 	@Transactional
 	@Rollback
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
@@ -69,7 +69,7 @@ public class SystemFundingOpportunityControllerTest {
 				.andExpect(MockMvcResultMatchers.flash().attributeCount(0));
 	}
 
-	@Tag("user_story_14591")
+	@Tag("user_story_14659")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_unlinkFoConfirmationPageAccessableByAdmin_shouldSucceedWith200() throws Exception {
@@ -81,7 +81,7 @@ public class SystemFundingOpportunityControllerTest {
 						+ " from the Funding Opportunity named " + foName + '?'));
 	}
 
-	@Tag("user_story_14591")
+	@Tag("user_story_14659")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_unlinkFoConfirmationPageNotAccessableByNonAdminUsers_shouldReturn403() throws Exception {
@@ -91,7 +91,7 @@ public class SystemFundingOpportunityControllerTest {
 				.contains("id=\"forbiddenByRoleErrorPage\""));
 	}
 
-	@Tag("user_story_14591")
+	@Tag("user_story_14659")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Transactional
 	@Rollback
@@ -112,7 +112,7 @@ public class SystemFundingOpportunityControllerTest {
 				.contains("id=\"generalErrorPage\""));
 	}
 
-	@Tag("user_story_14591")
+	@Tag("user_story_14659")
 	@WithMockUser(roles = { "MDM ADMIN" })
 	@Transactional
 	@Rollback
@@ -128,7 +128,7 @@ public class SystemFundingOpportunityControllerTest {
 				.contains("id=\"unlinkSfoBtn\""));
 	}
 
-	@Tag("user_story_14591")
+	@Tag("user_story_14659")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_unlinkFoBtnNotVisibleToNonAdminUsers() throws Exception {
@@ -138,7 +138,7 @@ public class SystemFundingOpportunityControllerTest {
 				.contains("id=\"unlinkSfoBtn\""));
 	}
 
-	@Tag("user_story_14591")
+	@Tag("user_story_14659")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_unlinkFoBtnVisibleToAdminWhenFoLinkedToSfo() throws Exception {
@@ -147,7 +147,7 @@ public class SystemFundingOpportunityControllerTest {
 				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("id=\"unlinkSfoBtn\"")));
 	}
 
-	@Tag("user_story_14659")
+	@Tag("user_story_14592")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_adminCanAccessAnalyzeSystemFOsPage_shouldSucceedWith200() throws Exception {
@@ -156,7 +156,7 @@ public class SystemFundingOpportunityControllerTest {
 						.string(Matchers.containsString("id=\"analyzeSystemFundingOpportunitiesPage\"")));
 	}
 
-	@Tag("user_story_14659")
+	@Tag("user_story_14592")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotAccessAnalyzeSystemFundingOpportunitiesPage_shouldReturn403() throws Exception {

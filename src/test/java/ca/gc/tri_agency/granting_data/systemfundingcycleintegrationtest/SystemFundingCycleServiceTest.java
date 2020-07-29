@@ -1,22 +1,21 @@
 package ca.gc.tri_agency.granting_data.systemfundingcycleintegrationtest;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.Test;
+
 import static org.junit.Assert.assertTrue;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
 import ca.gc.tri_agency.granting_data.service.SystemFundingCycleService;
 
 @SpringBootTest(classes = GrantingDataApp.class)
-@RunWith(SpringRunner.class)
 @ActiveProfiles("test")
 public class SystemFundingCycleServiceTest {
 
@@ -30,9 +29,9 @@ public class SystemFundingCycleServiceTest {
 	}
 
 	@WithAnonymousUser
-	@Test(expected = DataRetrievalFailureException.class)
+	@Test
 	public void test_findSystemFundingCycleById_shouldThrowDataRetrievalFailureException() {
-		sfcService.findSystemFundingCycleById(Long.MAX_VALUE);
+		assertThrows(DataRetrievalFailureException.class, () -> sfcService.findSystemFundingCycleById(Long.MAX_VALUE));
 	}
 
 	@WithAnonymousUser

@@ -42,12 +42,14 @@ public class SystemFundingOpportunityServiceTest {
 		assertThrows(DataRetrievalFailureException.class, () -> sfoService.findSystemFundingOpportunityById(Long.MAX_VALUE));
 	}
 
+	@Tag("user_story_14592")
 	@WithAnonymousUser
 	@Test
 	public void test_findAllSystemFundingOpportunities() {
 		assertTrue(0 < sfoService.findAllSystemFundingOpportunities().size());
 	}
 
+	@Tag("user_story_14591")
 	@WithAnonymousUser
 	@Test
 	public void test_findSystemFundingOpportunitiesByLinkedFOid() {
@@ -85,7 +87,7 @@ public class SystemFundingOpportunityServiceTest {
 		assertEquals(1L, (long) sfoService.findSystemFundingOpportunityById(sfoId).getLinkedFundingOpportunity().getId());
 	}
 
-	@Tag("user_story_14591")
+	@Tag("user_story_14659")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_unlinkSystemFundingOpportunity_shouldThrowDataRetrievalFailureException() {
