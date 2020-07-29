@@ -46,7 +46,7 @@ public class GrantingCapabilityServiceTest {
 		assertThrows(AccessDeniedException.class, () -> gcService.deleteGrantingCapabilityById(101L));
 	}
 
-	@Tag("user_story_14572")
+	@Tag("user_story_19004")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void testService_adminCanEditGC() {
@@ -61,7 +61,7 @@ public class GrantingCapabilityServiceTest {
 		assertEquals(initGcRepoCount, gcRepo.count());
 	}
 
-	@Tag("user_story_14572")
+	@Tag("user_story_19004")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void testService_nonAdminCannotEditGC_shouldThrowAccessDeniedException() {

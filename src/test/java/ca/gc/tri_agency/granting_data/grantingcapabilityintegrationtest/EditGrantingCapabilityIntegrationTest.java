@@ -47,7 +47,7 @@ public class EditGrantingCapabilityIntegrationTest {
 		mvc = MockMvcBuilders.webAppContextSetup(ctx).apply(SecurityMockMvcConfigurers.springSecurity()).build();
 	}
 
-	@Tag("user_story_14572")
+	@Tag("user_story_19004")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_editGCLinkVisibleToAdmin_shouldSucceedWith200() throws Exception {
@@ -62,7 +62,7 @@ public class EditGrantingCapabilityIntegrationTest {
 		assertEquals(numGCs, numEditGCLinks);
 	}
 
-	@Tag("user_story_14572")
+	@Tag("user_story_19004")
 	@WithMockUser(username = "admin", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_editGCLinkNotVisibleToNonAdmin_shouldReturn200() throws Exception {
@@ -78,7 +78,7 @@ public class EditGrantingCapabilityIntegrationTest {
 		assertEquals(0, numEditGCLinks);
 	}
 
-	@Tag("user_story_14572")
+	@Tag("user_story_19004")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_adminCanAccessEditGCPage_shouldSucceedWith200() throws Exception {
@@ -87,7 +87,7 @@ public class EditGrantingCapabilityIntegrationTest {
 						.string(Matchers.containsString("id=\"editGrantingCapabilityPage\"")));
 	}
 
-	@Tag("user_story_14572")
+	@Tag("user_story_19004")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotAccessEditGCPage_shouldReturn403() throws Exception {
@@ -96,7 +96,7 @@ public class EditGrantingCapabilityIntegrationTest {
 						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
 	}
 
-	@Tag("user_story_14572")
+	@Tag("user_story_19004")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_adminCanEditGC_shouldSucceedWith302() throws Exception {
@@ -132,7 +132,7 @@ public class EditGrantingCapabilityIntegrationTest {
 		assertEquals(initGcRepoCount, gcRepo.count());
 	}
 
-	@Tag("user_story_14572")
+	@Tag("user_story_19004")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotEditGC_shouldReturn403() throws Exception {
