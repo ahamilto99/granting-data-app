@@ -72,14 +72,15 @@ public class AnonymousUseCasesTest {
 				.andExpect(content().string(containsString("id=\"viewFundingOpportunityPage\"")));
 	}
 
+	@Tag("user_story_14627")
 	@WithAnonymousUser
 	@Test
-	@Tag("User_Story_14627")
 	public void test_anonUserCanAccessViewGoldenListPage_shouldSucceedWith200() throws Exception {
 		mvc.perform(get("/browse/fundingOpportunities")).andExpect(status().isOk())
 				.andExpect(content().string(containsString("id=\"fundingOpportunitiesPage\"")));
 	}
 
+	@Tag("user_story_14627")
 	@WithAnonymousUser
 	@Test
 	public void test_anonUserCanViewAllFosOnGoldenListPage_shouldSucceedWith200() throws Exception {
