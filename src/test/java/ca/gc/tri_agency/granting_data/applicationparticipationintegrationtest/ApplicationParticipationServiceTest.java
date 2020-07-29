@@ -3,6 +3,7 @@ package ca.gc.tri_agency.granting_data.applicationparticipationintegrationtest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Instant;
 import java.util.List;
@@ -39,7 +40,7 @@ public class ApplicationParticipationServiceTest {
 	@Tag("user_story_19154")
 	@WithMockUser(username = "aha")
 	@Test
-	public void test_findAppPartsForCurrentUser() {
+	public void test_findAppPartsWithEdiForCurrentUser() {
 		// user 'aha' is a BU Program Officer for BU id=13 and there 11 AppParts linked to that BU
 		assertEquals(11, apService.findAppPartsForCurrentUserWithEdiAuth().size());
 	}
@@ -47,35 +48,37 @@ public class ApplicationParticipationServiceTest {
 	@Tag("user_story_19154")
 	@WithMockUser(roles = "MDM ADMIN")
 	@Test
-	public void test_adminCanFindAllAppParts() {
+	public void test_adminCanFindAllAppPartsWithEdi() {
 		// an admin user doesn't have a member or even a Program Officer
-		assertEquals(17, apService.findAppPartsForCurrentUserWithEdiAuth().size());
+		int numAppParts = apService.findAppPartsForCurrentUserWithEdiAuth().size();
+		assertTrue(17 <= numAppParts && numAppParts <= 19,
+				"The number of AppParts found will vary depending on the test execution ordering.");
 	}
-	
+
 	@Tag("user_story_19154")
 	@WithMockUser(username = "rwi")
 	@Test
 	public void test_ediAuthorizedIsProperlySet() {
 		List<AppPartEdiAuthorizedDto> dtoList = apService.findAppPartsForCurrentUserWithEdiAuth();
-		
+
 		int ediAuthorized = 0;
 		for (AppPartEdiAuthorizedDto dto : dtoList) {
 			if (dto.getEdiAuthorized()) {
 				++ediAuthorized;
 			}
 		}
-		
+
 		assertEquals(6, ediAuthorized);
 		assertEquals(17, dtoList.size());
 	}
-	
+
 	@Tag("user_story_19154")
 	@WithMockUser(username = "aha")
 	@Test
 	public void test_buMemberCanRetrieveDataForOneLinkedAppPart() {
 		// verifies that a member can retrieve AP data for one that is linked to her/his BU
 		assertNotNull(apService.findAppPartById(1L));
-		
+
 		// verifies that a member cannot retrieve AP data for one that is not linked to her/his BU
 		assertThrows(AccessDeniedException.class, () -> apService.findAppPartById(5L));
 	}

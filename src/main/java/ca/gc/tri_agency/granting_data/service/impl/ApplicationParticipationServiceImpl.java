@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.persistence.Tuple;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.security.access.AccessDeniedException;
@@ -16,11 +18,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.github.javafaker.Faker;
 
 import ca.gc.tri_agency.granting_data.model.ApplicationParticipation;
+import ca.gc.tri_agency.granting_data.model.FiscalYear;
+import ca.gc.tri_agency.granting_data.model.FundingCycle;
+import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.Gender;
 import ca.gc.tri_agency.granting_data.model.GrantingSystem;
 import ca.gc.tri_agency.granting_data.model.IndigenousIdentity;
@@ -30,8 +36,11 @@ import ca.gc.tri_agency.granting_data.model.VisibleMinority;
 import ca.gc.tri_agency.granting_data.model.dto.AppPartEdiAuthorizedDto;
 import ca.gc.tri_agency.granting_data.model.projection.ApplicationParticipationProjection;
 import ca.gc.tri_agency.granting_data.repo.ApplicationParticipationRepository;
+import ca.gc.tri_agency.granting_data.repo.FundingCycleRepository;
 import ca.gc.tri_agency.granting_data.security.SecurityUtils;
 import ca.gc.tri_agency.granting_data.service.ApplicationParticipationService;
+import ca.gc.tri_agency.granting_data.service.FiscalYearService;
+import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
 import ca.gc.tri_agency.granting_data.service.GenderService;
 import ca.gc.tri_agency.granting_data.service.IndigenousIdentitySerivce;
 import ca.gc.tri_agency.granting_data.service.MemberRoleService;
@@ -57,21 +66,30 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 
 	private VisibleMinorityService vMinorityService;
 
+	private FundingOpportunityService foService;
+
+	private FiscalYearService fyService;
+
+	private FundingCycleRepository fcRepo;
+
 	private static int applIdIncrementer = 0;
 
 	@Autowired
 	public ApplicationParticipationServiceImpl(ApplicationParticipationRepository appParticipationRepo,
 			SystemFundingOpportunityService sfoService, MemberRoleService mrService, GenderService genderService,
-			IndigenousIdentitySerivce indIdentityService, VisibleMinorityService vMinorityService) {
+			IndigenousIdentitySerivce indIdentityService, VisibleMinorityService vMinorityService,
+			FundingOpportunityService foService, FiscalYearService fyService, FundingCycleRepository fcRepo) {
 		this.appParticipationRepo = appParticipationRepo;
 		this.sfoService = sfoService;
 		this.mrService = mrService;
 		this.genderService = genderService;
 		this.indIdentityService = indIdentityService;
 		this.vMinorityService = vMinorityService;
+		this.foService = foService;
+		this.fcRepo = fcRepo;
+		this.fyService = fyService;
 	}
 
-	@Transactional
 	@Override
 	public List<ApplicationParticipation> generateTestAppParticipations(SystemFundingOpportunity sfo, Instant createDate,
 			long maxApplications, long maxParticipants) {
@@ -145,10 +163,9 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 
 	@Override
 	public void fillInRandomRole(ApplicationParticipation app, GrantingSystem sys) {
-		String[] roleCodeArr = { "1", "2", "147", "8878CE1D-6020-E211-AF1A-005056AD024F",
-				"8F78CE1D-6020-E211-AF1A-005056AD024F", "A878CE1D-6020-E211-AF1A-005056AD024F",
-				"A978CE1D-6020-E211-AF1A-005056AD024F", "A778CE1D-6020-E211-AF1A-005056AD024F",
-				"8C78CE1D-6020-E211-AF1A-005056AD024F" };
+		String[] roleCodeArr = { "1", "2", "147", "8878CE1D-6020-E211-AF1A-005056AD024F", "8F78CE1D-6020-E211-AF1A-005056AD024F",
+				"A878CE1D-6020-E211-AF1A-005056AD024F", "A978CE1D-6020-E211-AF1A-005056AD024F",
+				"A778CE1D-6020-E211-AF1A-005056AD024F", "8C78CE1D-6020-E211-AF1A-005056AD024F" };
 		String[] roleEnArr = { "Scholarship Applicant", "Applicant", "Co-Applicant", "Collaborator", "Reader A", "Reader B",
 				"Reader C" };
 		String[] roleFrArr = { "Candidat à une bourse", "Candidat", "Applicant", "Co-Applicant", "Collaborator", "Lecteur A",
@@ -177,19 +194,17 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		int idx = sRand.nextInt(6);
 		if (acronym.equals("NAMIS")) {
 			String[] idArr = { "27", "28", "24", "89", "43", "9" };
-			String[] nameArr = { "McMaster University", "University of Ottawa", "Guelph University",
-					"Memorial Univ. of Nfld", "Ryerson University", "University of Alberta" };
+			String[] nameArr = { "McMaster University", "University of Ottawa", "Guelph University", "Memorial Univ. of Nfld",
+					"Ryerson University", "University of Alberta" };
 			app.setOrganizationId(idArr[idx]);
 			app.setOrganizationNameEn(nameArr[idx]);
 			app.setOrganizationNameFr(nameArr[idx]);
 		} else if (acronym.equals("AMIS")) {
 			String[] idArr = { "1240613", "3248462", "1591011", "1351411", "1350711", "1350511" };
-			String[] nameEnArr = { "University of Quebec at Montreal",
-					"Consolidation of Native Friendship Centers in Quebec",
+			String[] nameEnArr = { "University of Quebec at Montreal", "Consolidation of Native Friendship Centers in Quebec",
 					"University of Northern British Columbia", "York University", "University of Ottawa",
 					"Laurentian University" };
-			String[] nameFrArr = { "Université du Québec à Montréal",
-					"Regroupement des centres d'amitié autochtones du Québec",
+			String[] nameFrArr = { "Université du Québec à Montréal", "Regroupement des centres d'amitié autochtones du Québec",
 					"University of Northern British Columbia", "Université York", "Université d'Ottawa",
 					"Université Laurentienne" };
 			app.setOrganizationId(idArr[idx]);
@@ -240,11 +255,14 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 
 	}
 
-	@Transactional
 	@Override
 	public long generateTestAppParicipationsForAllSystemFundingOpportunities() {
 		List<ApplicationParticipation> participations = new ArrayList<ApplicationParticipation>();
 		Instant inst = Instant.parse("2020-02-02T00:00:00.00Z");
+
+		linkSFOsToFOs();
+
+		addFCsForFOs();
 
 		for (SystemFundingOpportunity sfo : sfoService.findAllSystemFundingOpportunities()) {
 			participations.addAll(generateTestAppParticipations(sfo, inst, 3, 5));
@@ -257,6 +275,7 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		return participations.size();
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public ApplicationParticipation findAppPartByApplId(String applId) {
 		return appParticipationRepo.findByApplId(applId);
@@ -271,7 +290,6 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		return appParts;
 	}
 
-	@Transactional
 	private List<ApplicationParticipation> setAppPartGender(List<ApplicationParticipation> appParts) {
 		Gender male = genderService.findGenderByNameEn("Male");
 		Gender female = genderService.findGenderByNameEn("Female");
@@ -292,7 +310,6 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		return appParts;
 	}
 
-	@Transactional
 	private List<ApplicationParticipation> setAppPartDisability(List<ApplicationParticipation> appParts) {
 		Collections.shuffle(appParts);
 
@@ -312,7 +329,6 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		return appParts;
 	}
 
-	@Transactional
 	private List<ApplicationParticipation> setAppPartIndigenous(List<ApplicationParticipation> appParts) {
 		Collections.shuffle(appParts);
 
@@ -345,7 +361,6 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		return appParts;
 	}
 
-	@Transactional
 	private List<ApplicationParticipation> setAppPartEthnicity(List<ApplicationParticipation> appParts) {
 		int i = (int) (0.12 * appParts.size());
 		VisibleMinority minority = vMinorityService.findVisibleMinorityByNameEn("Latin American");
@@ -388,11 +403,13 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		return appParts;
 	}
 
+	@Transactional
 	@Override
 	public void saveAllApplicationParticipations(List<ApplicationParticipation> appParticipations) {
 		appParticipationRepo.saveAll(appParticipations);
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public List<String> getExtIdsQualifiedForEdi() {
 		List<String> retval = new ArrayList<String>();
@@ -413,10 +430,11 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		return retval;
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public ApplicationParticipation getAllowdRecord(Long id) {
-		ApplicationParticipation retval = appParticipationRepo.findById(id).orElseThrow(
-				() -> new DataRetrievalFailureException("That Application Participation record does not exist"));
+		ApplicationParticipation retval = appParticipationRepo.findById(id)
+				.orElseThrow(() -> new DataRetrievalFailureException("That Application Participation record does not exist"));
 		if (SecurityUtils.hasRole("MDM ADMIN") == false) {
 			List<String> allowedExtIds = getExtIdsQualifiedForEdi();
 			if (!allowedExtIds.contains(retval.getProgramId())) {
@@ -494,6 +512,95 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		
 		return appParticipationRepo.findOneAppPartById(apId, currentUser.getName()).orElseThrow(() -> new AccessDeniedException("FORBIDDEN: "
 				+ currentUser.getName() + " cannot access ApplicationParticipation id=" + apId));
+	}
+	
+	@Transactional
+	private void linkSFOsToFOs() {
+		sfoService.findAllSystemFundingOpportunities().forEach(sfo -> sfo
+				.setLinkedFundingOpportunity(foService.findFundingOpportunityById(Math.abs(sRand.nextInt(141) + 1L))));
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public Long[] findAppPartGenderCountsForBU(Long buId) {
+		Tuple counts = appParticipationRepo.findGenderCounts(buId);
+		return new Long[] { (Long) counts.get("female"), (Long) counts.get("male"), (Long) counts.get("nonbinary") };
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public Long findAppPartDisabledCountForBU(Long buId) {
+		return (Long) appParticipationRepo.findDisabledCountForBU(buId).get("total");
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public Long findAppPartIndigenousCountForBU(Long buId) {
+		return (Long) appParticipationRepo.findIndigenousCountForBU(buId).get("total");
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public Long findAppMinorityCountForBU(Long buId) {
+		return (Long) appParticipationRepo.findMinorityCountForBU(buId).get("total");
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public Long findAppPartCountForBU(Long buId) {
+		return (Long) appParticipationRepo.findNumAPsForBU(buId).get("total");
+	}
+
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	private void addFCsForFOs() {
+		fcRepo.deleteAllInBatch();
+		List<FundingOpportunity> foList = updateFOsNOIsLOIs();
+		createFCs(foList);
+	}
+
+	@Transactional
+	private List<FundingOpportunity> updateFOsNOIsLOIs() {
+		List<FundingOpportunity> foList = foService.findAllFundingOpportunities();
+		foList.forEach(fo -> {
+			if (fo.getFrequency() != null && !fo.getFrequency().equals("1/YR")) {
+				fo.setIsLOI(true);
+				fo.setIsNOI(true);
+			}
+			if (fo.getNameFr() == null) {
+				fo.setNameFr("Programme");
+			}
+		});
+		return foList;
+	}
+
+	@Transactional
+	private void createFCs(List<FundingOpportunity> foList) {
+		List<FiscalYear> fyList = fyService.findAllFiscalYearsOrderByYearAsc();
+
+		foList.forEach(fo -> {
+			if (fo.getIsNOI() && fo.getIsLOI()) {
+				int day = generateRandNumBtw(1, 28);
+				int month = generateRandNumBtw(1, 12);
+				int year = generateRandNumBtw(2016, 4);
+				LocalDate startDate = LocalDate.of(year, month, day);
+
+				fcRepo.save(new FundingCycle(fyList.get(year - 2016), false, startDate, startDate, startDate.plusMonths(3),
+						startDate.plusMonths(3), startDate.plusMonths(6), startDate.plusYears(1),
+						sRand.nextInt(950) + 51L, fo));
+			} else {
+				int day = generateRandNumBtw(1, 28);
+				int month = generateRandNumBtw(1, 12);
+				LocalDate startDate = LocalDate.of(2016, month, day);
+				fcRepo.save(new FundingCycle(fyList.get(0), false, startDate, null, null, null, null, startDate.plusYears(1),
+						sRand.nextInt(1000) + 1L, fo));
+				fcRepo.save(new FundingCycle(fyList.get(1), false, startDate, null, null, null, null, startDate.plusYears(2),
+						sRand.nextInt(1000) + 1L, fo));
+				fcRepo.save(new FundingCycle(fyList.get(2), false, startDate, null, null, null, null, startDate.plusYears(3),
+						sRand.nextInt(1000) + 1L, fo));
+				fcRepo.save(new FundingCycle(fyList.get(3), false, startDate, null, null, null, null, startDate.plusYears(4),
+						sRand.nextInt(1000) + 1L, fo));
+			}
+		});
 	}
 
 }

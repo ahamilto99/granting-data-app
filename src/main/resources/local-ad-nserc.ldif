@@ -36,6 +36,16 @@ objectclass: organizationalPerson
 objectclass: inetOrgPerson
 cn: NSERC1 User
 sn: NSERC1
+uid: nserc1-user
+userPassword: password
+
+dn: uid=nserc-user1,ou=NSERC_Users,dc=nserc,dc=ca
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+cn: NSERC User1
+sn: NSERC
 uid: nserc-user1
 userPassword: password
 

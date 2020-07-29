@@ -14,11 +14,15 @@ import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.envers.query.AuditQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import ca.gc.tri_agency.granting_data.model.MemberRole;
 import ca.gc.tri_agency.granting_data.model.auditing.UsernameRevisionEntity;
+import ca.gc.tri_agency.granting_data.model.projection.MemberRoleProjection;
 import ca.gc.tri_agency.granting_data.repo.MemberRoleRepository;
+import ca.gc.tri_agency.granting_data.security.SecurityUtils;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.MemberRoleService;
 
@@ -122,6 +126,21 @@ public class MemberRoleServiceImpl implements MemberRoleService {
 	@Override
 	public List<MemberRole> findMRsByUserLoginAndEdiAuthorizedTrue(String userLogin) {
 		return mrRepo.findByUserLoginAndEdiAuthorizedTrue(userLogin);
+	}
+
+	@Override
+	public boolean checkIfCurrentUserEdiAuthorized(Long buId) {
+//		Can't use SecurityUtils' hasRole(...) b/c tests don't mock an LDAP user, i.e. tests fail when
+//		using that method b/c we can't cast a User object to a LdapUserDetails object.
+		if (SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+				.contains(new SimpleGrantedAuthority("ROLE_MDM ADMIN"))) {
+			// an admin user can access the EDI data for all BUs
+			return true;
+		}
+
+		MemberRoleProjection mrProjection = mrRepo.findEdiAuthorizedByUserLoginBuId(SecurityUtils.getCurrentUsername(), buId);
+
+		return mrProjection != null ? mrProjection.getEdiAuthorized() : false;
 	}
 
 }

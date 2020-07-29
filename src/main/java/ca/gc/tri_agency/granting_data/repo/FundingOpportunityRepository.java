@@ -21,16 +21,12 @@ public interface FundingOpportunityRepository extends JpaRepository<FundingOppor
 	@Query("FROM FundingOpportunity fo INNER JOIN fo.businessUnit bu WHERE bu.agency = :agencyId")
 	List<FundingOpportunity> findByAgency(@Param("agencyId") Agency agency);
 	
-	@Query("SELECT fo.id AS id, fo.nameEn AS nameEn, bu.nameEn AS businessUnitNameEn, gc.grantingStage.id AS grantingStageId,"
-			+ " gSys.acronym AS grantingSystemAcronym FROM FundingOpportunity fo LEFT JOIN fo.businessUnit bu"
+	@Query("SELECT fo.id AS id, fo.nameEn AS nameEn, fo.nameFr AS nameFr, bu.nameEn AS businessUnitNameEn, bu.nameFr AS businessUnitNameFr,"
+			+ " gc.grantingStage.id AS grantingStageId, gSys.acronym AS grantingSystemAcronym"
+			+ " FROM FundingOpportunity fo"
+			+ " LEFT JOIN fo.businessUnit bu"
 			+ " LEFT JOIN GrantingCapability gc ON fo.id = gc.fundingOpportunity"
 			+ " LEFT JOIN GrantingSystem gSys ON gc.grantingSystem = gSys.id ORDER BY nameEn, grantingSystemAcronym")
-	List<FundingOpportunityProjection> findResultsForGoldenListTableEn();
-
-	@Query("SELECT fo.id AS id, fo.nameFr AS nameFr, bu.nameFr AS businessUnitNameFr, gc.grantingStage.id AS grantingStageId,"
-			+ " gSys.acronym AS grantingSystemAcronym FROM FundingOpportunity fo LEFT JOIN fo.businessUnit bu"
-			+ " LEFT JOIN GrantingCapability gc ON fo.id = gc.fundingOpportunity"
-			+ " LEFT JOIN GrantingSystem gSys ON gc.grantingSystem = gSys.id ORDER BY nameFr, grantingSystemAcronym")
-	List<FundingOpportunityProjection> findResultsForGoldenListTableFr();
+	List<FundingOpportunityProjection> findResultsForGoldenListTable();
 
 }

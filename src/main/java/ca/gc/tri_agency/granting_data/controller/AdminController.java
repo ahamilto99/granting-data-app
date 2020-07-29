@@ -57,7 +57,7 @@ public class AdminController {
 	public String compareData_uploadSelectedNames_post(@RequestParam String filename,
 			@RequestParam("idToAction") String[] idsToAction, final RedirectAttributes redirectAttrs) {
 		long numChances = adminService.applyChangesFromFileByIds(filename, idsToAction);
-		String actionMsg = msgSource.getMessage("msg.successfullyApplied", new Object[] { new Long(numChances) },
+		String actionMsg = msgSource.getMessage("msg.successfullyRegisteredFCs", new Object[] { new Long(numChances) },
 				LocaleContextHolder.getLocale());
 		redirectAttrs.addFlashAttribute("actionMsg", actionMsg);
 		return "redirect:/admin/home";

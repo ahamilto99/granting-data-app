@@ -18,7 +18,7 @@ import ca.gc.tri_agency.granting_data.model.util.LocalizedParametersModel;
 
 @Entity
 public class FundingCycle implements LocalizedParametersModel {
-	
+
 	@Id
 	@SequenceGenerator(name = "SEQ_FUNDING_CYCLE", sequenceName = "SEQ_FUNDING_CYCLE", initialValue = 1, allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_FUNDING_CYCLE")
@@ -67,6 +67,24 @@ public class FundingCycle implements LocalizedParametersModel {
 	/*
 	 * could add: private SimpleDateFormat applyDeadlineDate;
 	 */
+
+	public FundingCycle() {
+	}
+
+	public FundingCycle(FiscalYear fiscalYear, boolean isOpen, LocalDate startDate, LocalDate startDateNOI, LocalDate startDateLOI,
+			LocalDate endDateNOI, LocalDate endDateLOI, LocalDate endDate, @Min(1) @NotNull Long expectedApplications,
+			FundingOpportunity fundingOpportunity) {
+		this.fiscalYear = fiscalYear;
+		this.isOpen = isOpen;
+		this.startDate = startDate;
+		this.startDateNOI = startDateNOI;
+		this.startDateLOI = startDateLOI;
+		this.endDateNOI = endDateNOI;
+		this.endDateLOI = endDateLOI;
+		this.endDate = endDate;
+		this.expectedApplications = expectedApplications;
+		this.fundingOpportunity = fundingOpportunity;
+	}
 
 	public Long getId() {
 		return id;
@@ -181,5 +199,4 @@ public class FundingCycle implements LocalizedParametersModel {
 		return builder.toString();
 	}
 
-	
 }
