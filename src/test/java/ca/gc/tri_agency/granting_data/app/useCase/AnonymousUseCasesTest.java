@@ -42,6 +42,7 @@ public class AnonymousUseCasesTest {
 		mvc = MockMvcBuilders.webAppContextSetup(ctx).apply(SecurityMockMvcConfigurers.springSecurity()).build();
 	}
 
+	@Tag("user_story_14594")
 	@WithAnonymousUser
 	@Test
 	public void test_anonUserCanViewFieldsOnViewFoPage_shouldSucceedWith200() throws Exception {
@@ -50,6 +51,7 @@ public class AnonymousUseCasesTest {
 				.andExpect(content().string(containsString("id=\"fundingTypeRow\"")));
 	}
 
+	@Tag("user_story_14594")
 	@WithAnonymousUser
 	@Test
 	public void test_anonUserCanViewFoPageInEnglish_shouldSucceed200() throws Exception {
@@ -57,6 +59,7 @@ public class AnonymousUseCasesTest {
 				.andExpect(content().string(containsString("Collaborative Health Research Projects (CHRP) (5640)")));
 	}
 
+	@Tag("user_story_14594")
 	@WithAnonymousUser
 	@Test
 	public void test_anonUserCanViewFoPageInFrench_shouldSucceed200() throws Exception {
@@ -65,6 +68,7 @@ public class AnonymousUseCasesTest {
 						"Chaires en génie de la conception")));
 	}
 
+	@Tag("user_story_14594")
 	@WithAnonymousUser
 	@Test
 	public void test_anonUserCanAccessViewFoPage_shouldSucceedWith200() throws Exception {

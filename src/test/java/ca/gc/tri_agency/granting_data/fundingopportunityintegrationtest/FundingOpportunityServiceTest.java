@@ -36,6 +36,7 @@ public class FundingOpportunityServiceTest {
 	@Autowired
 	private FundingOpportunityRepository foRepo;
 
+	@Tag("user_story_14594")
 	@WithAnonymousUser
 	@Test
 	public void test_findFundingOpportunitiesByNameEn() {
@@ -43,6 +44,7 @@ public class FundingOpportunityServiceTest {
 		assertEquals(1, foService.findFundingOpportunitiesByNameEn("Digging into Data").size());
 	}
 
+	@Tag("user_story_14594")
 	@WithAnonymousUser
 	@Test
 	public void test_findFundingOpportunitiesByBusinessUnit() {
