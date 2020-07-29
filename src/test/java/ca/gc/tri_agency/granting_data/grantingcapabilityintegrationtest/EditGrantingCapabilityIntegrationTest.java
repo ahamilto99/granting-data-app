@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -46,6 +47,7 @@ public class EditGrantingCapabilityIntegrationTest {
 		mvc = MockMvcBuilders.webAppContextSetup(ctx).apply(SecurityMockMvcConfigurers.springSecurity()).build();
 	}
 
+	@Tag("user_story_14572")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_editGCLinkVisibleToAdmin_shouldSucceedWith200() throws Exception {
@@ -60,6 +62,7 @@ public class EditGrantingCapabilityIntegrationTest {
 		assertEquals(numGCs, numEditGCLinks);
 	}
 
+	@Tag("user_story_14572")
 	@WithMockUser(username = "admin", roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_editGCLinkNotVisibleToNonAdmin_shouldReturn200() throws Exception {
@@ -75,6 +78,7 @@ public class EditGrantingCapabilityIntegrationTest {
 		assertEquals(0, numEditGCLinks);
 	}
 
+	@Tag("user_story_14572")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_adminCanAccessEditGCPage_shouldSucceedWith200() throws Exception {
@@ -83,6 +87,7 @@ public class EditGrantingCapabilityIntegrationTest {
 						.string(Matchers.containsString("id=\"editGrantingCapabilityPage\"")));
 	}
 
+	@Tag("user_story_14572")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotAccessEditGCPage_shouldReturn403() throws Exception {
@@ -91,6 +96,7 @@ public class EditGrantingCapabilityIntegrationTest {
 						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
 	}
 
+	@Tag("user_story_14572")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_adminCanEditGC_shouldSucceedWith302() throws Exception {
@@ -126,6 +132,7 @@ public class EditGrantingCapabilityIntegrationTest {
 		assertEquals(initGcRepoCount, gcRepo.count());
 	}
 
+	@Tag("user_story_14572")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotEditGC_shouldReturn403() throws Exception {

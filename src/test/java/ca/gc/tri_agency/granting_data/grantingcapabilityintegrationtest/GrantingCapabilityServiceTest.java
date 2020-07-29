@@ -2,6 +2,7 @@ package ca.gc.tri_agency.granting_data.grantingcapabilityintegrationtest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -44,6 +45,7 @@ public class GrantingCapabilityServiceTest {
 		assertThrows(AccessDeniedException.class, () -> gcService.deleteGrantingCapabilityById(101L));
 	}
 
+	@Tag("user_story_14572")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void testService_adminCanEditGC() {
@@ -58,6 +60,7 @@ public class GrantingCapabilityServiceTest {
 		assertEquals(initGcRepoCount, gcRepo.count());
 	}
 
+	@Tag("user_story_14572")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void testService_nonAdminCannotEditGC_shouldThrowAccessDeniedException() {
