@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -48,6 +49,7 @@ public class AdminControllerIntegrationTest {
 		mvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
 	}
 
+	@Tag("user_story_14593")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminUserCannotAddFundingOpportunities_shouldFailWith403() throws Exception {
@@ -65,6 +67,7 @@ public class AdminControllerIntegrationTest {
 		assertEquals(numFos, foRepo.count());
 	}
 
+	@Tag("user_story_14593")
 	@WithAnonymousUser
 	@Test
 	public void test_anonUserCannotAddFundingOpportunities_shouldRedirectToLoginWith302() throws Exception {
@@ -82,6 +85,7 @@ public class AdminControllerIntegrationTest {
 		assertEquals(numFos, foRepo.count());
 	}
 
+	@Tag("user_story_14593")
 	@WithMockUser(roles = { "MDM ADMIN" })
 	@Test
 	public void test_onlyAdminCanAddFundingOpportunities_shouldSucceedWith302() throws Exception {

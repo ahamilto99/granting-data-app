@@ -62,6 +62,7 @@ public class AdminUseCasesTest {
 				.andExpect(status().isOk());
 	}
 
+	@Tag("user_story_14627")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_databaseIsPopulatedOnInstall() {
