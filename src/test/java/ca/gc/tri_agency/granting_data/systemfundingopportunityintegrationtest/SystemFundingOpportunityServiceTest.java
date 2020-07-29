@@ -66,7 +66,7 @@ public class SystemFundingOpportunityServiceTest {
 		assertTrue(0 < sfoService.findSystemFundingOpportunitiesByNameEn("Technology Access Centre").size());
 	}
 
-	@Tag("user_story_14659")
+	@Tag("user_story_14591")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_linkSystemFundingOpportunity() {
@@ -85,7 +85,7 @@ public class SystemFundingOpportunityServiceTest {
 		assertEquals(1L, (long) sfoService.findSystemFundingOpportunityById(sfoId).getLinkedFundingOpportunity().getId());
 	}
 
-	@Tag("user_story_14659")
+	@Tag("user_story_14591")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_unlinkSystemFundingOpportunity_shouldThrowDataRetrievalFailureException() {
