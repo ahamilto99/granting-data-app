@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -45,6 +46,7 @@ public class DeleteGrantingCapabilityIntegrationTest {
 		mvc = MockMvcBuilders.webAppContextSetup(ctx).apply(SecurityMockMvcConfigurers.springSecurity()).build();
 	}
 
+	@Tag("user_story_19005")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_deleteGCLinkVisibleToAdmin_shouldSucceedWith200() throws Exception {
@@ -60,6 +62,7 @@ public class DeleteGrantingCapabilityIntegrationTest {
 		assertEquals(numGCs, numDeleteGCLinks);
 	}
 
+	@Tag("user_story_19005")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_deleteGCLinkNotVisibleToNonAdmin_shouldReturn200() throws Exception {
@@ -76,6 +79,7 @@ public class DeleteGrantingCapabilityIntegrationTest {
 		assertEquals(0L, numDeleteGCLinks);
 	}
 
+	@Tag("user_story_19005")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_adminCanAccessDeleteGCPage_shouldSucceedWith200() throws Exception {
@@ -84,6 +88,7 @@ public class DeleteGrantingCapabilityIntegrationTest {
 						.string(Matchers.containsString("id=\"deleteGrantingCapabilityPage\"")));
 	}
 
+	@Tag("user_story_19005")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotAccessDeleteGCPage_shouldReturn403() throws Exception {
@@ -92,6 +97,7 @@ public class DeleteGrantingCapabilityIntegrationTest {
 						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
 	}
 
+	@Tag("user_story_19005")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Rollback
 	@Test
@@ -112,6 +118,7 @@ public class DeleteGrantingCapabilityIntegrationTest {
 		assertEquals(numGCs - 1, gcRepo.count());
 	}
 
+	@Tag("user_story_19005")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotDeleteGC_shouldReturn403() throws Exception {

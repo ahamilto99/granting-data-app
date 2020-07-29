@@ -28,6 +28,7 @@ public class GrantingCapabilityServiceTest {
 	@Autowired
 	private GrantingCapabilityRepository gcRepo;
 
+	@Tag("user_story_19005")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void testService_adminCanDeleteGC() {
@@ -40,6 +41,7 @@ public class GrantingCapabilityServiceTest {
 		assertThrows(DataRetrievalFailureException.class, () -> gcService.findGrantingCapabilityById(100L));
 	}
 
+	@Tag("user_story_19005")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void testService_nonAdminCannotDeleteGC_shouldThrowAccessDeniedExcepction() {
