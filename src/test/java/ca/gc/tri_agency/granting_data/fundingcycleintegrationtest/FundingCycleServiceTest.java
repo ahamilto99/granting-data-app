@@ -1,14 +1,15 @@
 package ca.gc.tri_agency.granting_data.fundingcycleintegrationtest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
 import java.util.Map;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataRetrievalFailureException;
@@ -16,17 +17,15 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
 import ca.gc.tri_agency.granting_data.model.FundingCycle;
 import ca.gc.tri_agency.granting_data.repo.FundingCycleRepository;
-import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.service.FiscalYearService;
 import ca.gc.tri_agency.granting_data.service.FundingCycleService;
+import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
 
 @SpringBootTest(classes = GrantingDataApp.class)
-@RunWith(SpringRunner.class)
 @ActiveProfiles("test")
 public class FundingCycleServiceTest {
 
@@ -37,17 +36,17 @@ public class FundingCycleServiceTest {
 	private FiscalYearService fyService;
 
 	@Autowired
-	private FundingOpportunityRepository foRepo;
+	private FundingOpportunityService foService;
 
 	@Autowired
 	private FundingCycleRepository fcRepo;
 
 	@WithAnonymousUser
-	@Test(expected = DataRetrievalFailureException.class)
+	@Test
 	public void test_findFundingCycleById() {
 		assertNotNull(fcService.findFundingCycleById(1L));
 
-		fcService.findFundingCycleById(Long.MIN_VALUE);
+		assertThrows(DataRetrievalFailureException.class, () -> fcService.findFundingCycleById(Long.MIN_VALUE));
 	}
 
 	@WithAnonymousUser
@@ -148,6 +147,7 @@ public class FundingCycleServiceTest {
 		assertTrue(0 < fcService.findMonthlyFundingCyclesByEndDateNOI(8).size());
 	}
 
+	@Tag("user_story_19201")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_adminCanCreateFundingCycle() {
@@ -161,7 +161,7 @@ public class FundingCycleServiceTest {
 		fc.setStartDateNOI(LocalDate.of(2030, 1, 1));
 		fc.setEndDateNOI(LocalDate.of(2030, 1, 1));
 		fc.setFiscalYear(fyService.findFiscalYearById(1L));
-		fc.setFundingOpportunity(foRepo.findById(1L).get());
+		fc.setFundingOpportunity(foService.findFundingOpportunityById(1L));
 		fc.setIsOpen(false);
 		fc.setExpectedApplications(100L);
 
@@ -169,10 +169,30 @@ public class FundingCycleServiceTest {
 		assertEquals(initFCCount + 1, fcRepo.count());
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
-	@Test(expected = AccessDeniedException.class)
-	public void test_nonAdminCannotCreateFundingCycle() {
-		fcService.saveFundingCycle(new FundingCycle());
+	@Tag("user_story_19201")
+	@WithMockUser(username = "jfs")
+	@Test
+	public void test_buProgramLeadCanCreateFundingCycle() {
+		long initFCCount = fcRepo.count();
+
+		FundingCycle fc = new FundingCycle();
+		fc.setIsOpen(true);
+		fc.setStartDate(LocalDate.of(2020, 1, 1));
+		fc.setExpectedApplications(1_000L);
+		fc.setFiscalYear(fyService.findFiscalYearById(4L));
+		fc.setFundingOpportunity(foService.findFundingOpportunityById(77L));
+
+		// jfs can create a FC for FO id=77 since he's a Program Lead for BU id=2
+		fcService.saveFundingCycle(fc);
+		assertEquals(initFCCount + 1, fcRepo.count());
+
+		// jfs cannot create a FC for FO id=17 since he's a Program Officer for BU id=3
+		fc.setFundingOpportunity(foService.findFundingOpportunityById(17L));
+		assertThrows(AccessDeniedException.class, () -> fcService.saveFundingCycle(fc));
+
+		// jfs cannot create a FC for FO id=35 since he's not even a member of BU id=4
+		fc.setFundingOpportunity(foService.findFundingOpportunityById(35L));
+		assertThrows(AccessDeniedException.class, () -> fcService.saveFundingCycle(fc));
 	}
 
 	@WithAnonymousUser
