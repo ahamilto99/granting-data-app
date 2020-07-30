@@ -17,6 +17,7 @@ import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import ca.gc.tri_agency.granting_data.model.MemberRole;
 import ca.gc.tri_agency.granting_data.model.auditing.UsernameRevisionEntity;
@@ -123,11 +124,13 @@ public class MemberRoleServiceImpl implements MemberRoleService {
 		return convertAuditResults(revisionList);
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public List<MemberRole> findMRsByUserLoginAndEdiAuthorizedTrue(String userLogin) {
 		return mrRepo.findByUserLoginAndEdiAuthorizedTrue(userLogin);
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public boolean checkIfCurrentUserEdiAuthorized(Long buId) {
 //		Can't use SecurityUtils' hasRole(...) b/c tests don't mock an LDAP user, i.e. tests fail when
@@ -141,6 +144,17 @@ public class MemberRoleServiceImpl implements MemberRoleService {
 		MemberRoleProjection mrProjection = mrRepo.findEdiAuthorizedByUserLoginBuId(SecurityUtils.getCurrentUsername(), buId);
 
 		return mrProjection != null ? mrProjection.getEdiAuthorized() : false;
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public boolean checkIfCurrentUserCanCreateFCs(String userLogin, Long foId) {
+		if (SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains(
+				new SimpleGrantedAuthority("ROLE_MDM ADMIN"))) {
+			return true;
+		}
+		
+		return mrRepo.findIfCanCreateFC(userLogin, foId) != null;
 	}
 
 }

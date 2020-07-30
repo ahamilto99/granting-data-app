@@ -8,6 +8,8 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import ca.gc.tri_agency.granting_data.model.FundingCycle;
@@ -15,15 +17,19 @@ import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
 import ca.gc.tri_agency.granting_data.repo.FundingCycleRepository;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.FundingCycleService;
+import ca.gc.tri_agency.granting_data.service.MemberRoleService;
 
 @Service
 public class FundingCycleServiceImpl implements FundingCycleService {
 
 	private FundingCycleRepository fcRepo;
 
+	private MemberRoleService mrService;
+
 	@Autowired
-	public FundingCycleServiceImpl(FundingCycleRepository fcRepo) {
+	public FundingCycleServiceImpl(FundingCycleRepository fcRepo, MemberRoleService mrService) {
 		this.fcRepo = fcRepo;
+		this.mrService = mrService;
 	}
 
 	@Override
@@ -143,9 +149,14 @@ public class FundingCycleServiceImpl implements FundingCycleService {
 		return fcRepo.findByEndDateNOIBetween(dates[0], dates[1]);
 	}
 
-	@AdminOnly
 	@Override
-	public FundingCycle saveFundingCycle(FundingCycle fc) {
+	public FundingCycle saveFundingCycle(FundingCycle fc) throws AccessDeniedException {
+		String currentUserLogin = SecurityContextHolder.getContext().getAuthentication().getName();
+		Long foId = fc.getFundingOpportunity().getId();
+		if (!mrService.checkIfCurrentUserCanCreateFCs(currentUserLogin, foId)) {
+			throw new AccessDeniedException(currentUserLogin
+					+ " does not have permission to create a FundingCycle for FundingOpportunty id=" + foId);
+		}
 		return fcRepo.save(fc);
 	}
 
