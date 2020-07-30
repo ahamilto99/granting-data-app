@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import ca.gc.tri_agency.granting_data.model.FundingCycle;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
 import ca.gc.tri_agency.granting_data.repo.FundingCycleRepository;
-import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.FundingCycleService;
 import ca.gc.tri_agency.granting_data.service.MemberRoleService;
 
