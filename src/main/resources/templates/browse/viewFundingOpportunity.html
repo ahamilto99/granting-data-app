@@ -20,7 +20,9 @@
 
 			<div class="panel-body">
 
-				<p th:if="${actionMsg != null}" th:utext="${actionMsg}" style="font-weight: bold;"></p>
+				<div class="form-group" th:if="${actionMsg != null}">
+					<h4 th:utext="${actionMsg}" style="margin-bottom: 40px;"></h4>
+				</div>
 
 				<div class="form-group row" id="nameRow">
 					<label class="col-sm-2 col-form-label" th:utext="#{form.name}"></label>
@@ -68,10 +70,6 @@
 					<div>
 						<h3 th:text="#{h.grantingCapabilities}" style="margin: 25px 0px;"></h3>
 					</div>
-				</div>
-
-				<div th:if="${actionMsg != null}" class="form-group">
-					<h4 th:text="#{h.createdGc}"></h4>
 				</div>
 
 				<table id="grantingCapabilitiesTable" class="wb-tables table table-striped table-hover dataTable" aria-live="polite">
@@ -126,8 +124,8 @@
 					<h3 th:text="#{h.auditLog}"></h3>
 				</div>
 
-				<table id="auditTable" sec:authorize="hasRole('MDM ADMIN')" class="wb-tables table table-striped table-hover dataTable" aria-live="polite"
-					data-wb-tables='{"scrollX" : "true" }'>
+				<table id="auditTable" sec:authorize="hasRole('MDM ADMIN')" class="wb-tables table table-striped table-hover dataTable"
+					aria-live="polite" data-wb-tables='{"scrollX" : "true" }'>
 					<thead>
 						<tr>
 							<th th:text="#{th.user}"></th>
@@ -166,12 +164,16 @@
 					</tbody>
 				</table>
 
+				<div sec:authorize="isAuthenticated()" th:if="${@memberRoleServiceImpl.checkIfCurrentUserCanCreateFC(param.id)}" class="form-group">
+					<a class="btn btn-primary" th:text="#{link.createFC}" th:href="@{/manage/createFC(foId=${param.id})}"></a>
+				</div>
+
 			</div>
-			
+
 			<div th:replace="fragments/general :: returnHome"></div>
 
 		</div>
-		
+
 	</main>
 
 	<footer th:replace="fragments/general :: footer(~{})"></footer>

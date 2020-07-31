@@ -9,12 +9,12 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import ca.gc.tri_agency.granting_data.model.FundingCycle;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
 import ca.gc.tri_agency.granting_data.repo.FundingCycleRepository;
+import ca.gc.tri_agency.granting_data.security.SecurityUtils;
 import ca.gc.tri_agency.granting_data.service.FundingCycleService;
 import ca.gc.tri_agency.granting_data.service.MemberRoleService;
 
@@ -150,10 +150,9 @@ public class FundingCycleServiceImpl implements FundingCycleService {
 
 	@Override
 	public FundingCycle saveFundingCycle(FundingCycle fc) throws AccessDeniedException {
-		String currentUserLogin = SecurityContextHolder.getContext().getAuthentication().getName();
 		Long foId = fc.getFundingOpportunity().getId();
-		if (!mrService.checkIfCurrentUserCanCreateFCs(currentUserLogin, foId)) {
-			throw new AccessDeniedException(currentUserLogin
+		if (!mrService.checkIfCurrentUserCanCreateFC(foId)) {
+			throw new AccessDeniedException(SecurityUtils.getCurrentUsername()
 					+ " does not have permission to create a FundingCycle for FundingOpportunty id=" + foId);
 		}
 		return fcRepo.save(fc);

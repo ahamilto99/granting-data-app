@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.persistence.Tuple;
 
@@ -36,10 +35,10 @@ import ca.gc.tri_agency.granting_data.model.VisibleMinority;
 import ca.gc.tri_agency.granting_data.model.dto.AppPartEdiAuthorizedDto;
 import ca.gc.tri_agency.granting_data.model.projection.ApplicationParticipationProjection;
 import ca.gc.tri_agency.granting_data.repo.ApplicationParticipationRepository;
+import ca.gc.tri_agency.granting_data.repo.FiscalYearRepository;
 import ca.gc.tri_agency.granting_data.repo.FundingCycleRepository;
 import ca.gc.tri_agency.granting_data.security.SecurityUtils;
 import ca.gc.tri_agency.granting_data.service.ApplicationParticipationService;
-import ca.gc.tri_agency.granting_data.service.FiscalYearService;
 import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
 import ca.gc.tri_agency.granting_data.service.GenderService;
 import ca.gc.tri_agency.granting_data.service.IndigenousIdentitySerivce;
@@ -68,7 +67,7 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 
 	private FundingOpportunityService foService;
 
-	private FiscalYearService fyService;
+	private FiscalYearRepository fyRepo;
 
 	private FundingCycleRepository fcRepo;
 
@@ -78,7 +77,7 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 	public ApplicationParticipationServiceImpl(ApplicationParticipationRepository appParticipationRepo,
 			SystemFundingOpportunityService sfoService, MemberRoleService mrService, GenderService genderService,
 			IndigenousIdentitySerivce indIdentityService, VisibleMinorityService vMinorityService,
-			FundingOpportunityService foService, FiscalYearService fyService, FundingCycleRepository fcRepo) {
+			FundingOpportunityService foService, FiscalYearRepository fyRepo, FundingCycleRepository fcRepo) {
 		this.appParticipationRepo = appParticipationRepo;
 		this.sfoService = sfoService;
 		this.mrService = mrService;
@@ -87,7 +86,7 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		this.vMinorityService = vMinorityService;
 		this.foService = foService;
 		this.fcRepo = fcRepo;
-		this.fyService = fyService;
+		this.fyRepo = fyRepo;
 	}
 
 	@Override
@@ -575,7 +574,7 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 
 	@Transactional
 	private void createFCs(List<FundingOpportunity> foList) {
-		List<FiscalYear> fyList = fyService.findAllFiscalYearsOrderByYearAsc();
+		List<FiscalYear> fyList = fyRepo.findAll();
 
 		foList.forEach(fo -> {
 			if (fo.getIsNOI() && fo.getIsLOI()) {

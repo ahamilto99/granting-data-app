@@ -1,14 +1,11 @@
 package ca.gc.tri_agency.granting_data.fiscalyearintegrationtest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataRetrievalFailureException;
@@ -17,7 +14,6 @@ import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
 import ca.gc.tri_agency.granting_data.app.exception.UniqueColumnException;
@@ -26,9 +22,7 @@ import ca.gc.tri_agency.granting_data.repo.FiscalYearRepository;
 import ca.gc.tri_agency.granting_data.service.FiscalYearService;
 
 @SpringBootTest(classes = GrantingDataApp.class)
-@RunWith(SpringRunner.class)
 @ActiveProfiles("test")
-//@Ignore(value = "The FiscalYear functionality is not required for Version 1")
 public class FiscalYearServiceTest {
 
 	@Autowired
@@ -38,17 +32,18 @@ public class FiscalYearServiceTest {
 	private FiscalYearRepository fyRepo;
 	
 	@WithAnonymousUser
-	@Test(expected = DataRetrievalFailureException.class)
+	@Test
 	public void test_findFiscalYearById() {
 		assertNotNull(fyService.findFiscalYearById(1L));
 		
-		fyService.findFiscalYearById(Long.MAX_VALUE);
+		assertThrows(DataRetrievalFailureException.class, () -> fyService.findFiscalYearById(Long.MAX_VALUE));
 	}
 
+	@Tag("user_story_19201")
 	@WithAnonymousUser
 	@Test
-	public void test_findAllFiscalYears() {
-		assertTrue(0 < fyService.findAllFiscalYearsOrderByYearAsc().size());
+	public void test_findAllFiscalYearsOrderedByYear() {
+		assertTrue(4 <= fyService.findAllFiscalYearsOrderByYearAsc().size());
 	}
 
 	@WithAnonymousUser
@@ -60,7 +55,7 @@ public class FiscalYearServiceTest {
 
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Rollback
-	@Test(expected = UniqueColumnException.class)
+	@Test
 	public void test_adminCanCreateFiscalYear() {
 		long initFYCount = fyRepo.count();
 
@@ -70,13 +65,13 @@ public class FiscalYearServiceTest {
 		assertNotNull(newFy.getId());
 		assertEquals(initFYCount + 1, fyRepo.count());
 		
-		fyService.saveFiscalYear(new FiscalYear(2040L));
+		assertThrows(UniqueColumnException.class, () -> fyService.saveFiscalYear(new FiscalYear(2040L)));
 	}
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	public void test_nonAdminCannotCreateFiscalYear() {
-		fyService.saveFiscalYear(new FiscalYear(2041L));
+		assertThrows(AccessDeniedException.class, () -> fyService.saveFiscalYear(new FiscalYear(2041L)));
 	}
 	
 	@WithAnonymousUser

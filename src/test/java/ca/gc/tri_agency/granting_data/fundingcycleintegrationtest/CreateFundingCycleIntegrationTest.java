@@ -1,6 +1,7 @@
 package ca.gc.tri_agency.granting_data.fundingcycleintegrationtest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,42 +38,30 @@ public class CreateFundingCycleIntegrationTest {
 		mvc = MockMvcBuilders.webAppContextSetup(ctx).apply(SecurityMockMvcConfigurers.springSecurity()).build();
 	}
 
-	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
-	@Test
-	public void test_adminCanAccessCreateFCPage_shouldSucceedWith200() throws Exception {
-	}
-
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
-	@Test
-	public void test_nonAdminCannotAccessCreateFCPage_shouldReturn403() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get("/manage/createFundingCycle").param("foId", "1"))
-				.andExpect(MockMvcResultMatchers.status().isForbidden())
-				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
-	}
-
 	@Tag("user_story_19201")
-	@WithMockUser(username = "aha")
+	@WithMockUser(username = "dev")
 	@Test
 	public void test_buProgramLeadCanCreateFC_shouldSucceedWith302() throws Exception {
 		long initFCCount = fcRepo.count();
 
 		// verify "Create Funding Cycle" is visible to Program Lead
-		mvc.perform(MockMvcRequestBuilders.get("/browse/Fo").param("id", "108")).andExpect(MockMvcResultMatchers.status().isOk())
+		mvc.perform(MockMvcRequestBuilders.get("/browse/viewFo").param("id", "35")).andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString(">Create Funding Cycle</a>")));
 
 		// verify Program Lead can access createFC page
-		mvc.perform(MockMvcRequestBuilders.get("/manage/createFC").param("foId", "108")).andExpect(MockMvcResultMatchers.status().isOk())
+		mvc.perform(MockMvcRequestBuilders.get("/manage/createFC").param("foId", "35")).andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("id=\"createFundingCyclePage\"")));
 
 		// verify Program Lead can create a FundingCycle
-		mvc.perform(MockMvcRequestBuilders.post("/manage/createFC").param("foId", "108").param("open", "false")
-				.param("fundingOpportunity", "108").param("fiscalYear", "2").param("startDate", "2017-01-01")
+		assertTrue(mvc.perform(MockMvcRequestBuilders.post("/manage/createFC").param("foId", "35").param("open", "false")
+				.param("fundingOpportunity", "35").param("fiscalYear", "2").param("startDate", "2017-01-01")
 				.param("endDate", "2017-12-31").param("expectedApplications", "99"))
 				.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-				.andExpect(MockMvcResultMatchers.redirectedUrl("/browse/viewFo?id=108")).andReturn().getFlashMap()
-				.containsValue("Successfully created a Funding Cycle for this Funding Opportunity");
+				.andExpect(MockMvcResultMatchers.redirectedUrl("/browse/viewFo?id=35")).andReturn().getFlashMap()
+				.containsValue("Successfully created a Funding Cycle for this Funding Opportunity"),
+				"Created FundingCycle flash attribute is missing");
 
-		assertEquals(initFCCount, fcRepo.count());
+		assertEquals(initFCCount + 1, fcRepo.count());
 	}
 
 	@Tag("user_story_19201")
@@ -113,26 +102,14 @@ public class CreateFundingCycleIntegrationTest {
 				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("id=\"createFundingCyclePage\"")));
 
 		// verify Admin can create a FundingCycle
-		mvc.perform(MockMvcRequestBuilders.post("/manage/createFC").param("foId", "1").param("fiscalYear", "1").param("open", "true")
-				.param("expectedApplications", "123").param("fundingOpportunity", "1"))
+		assertTrue(mvc.perform(MockMvcRequestBuilders.post("/manage/createFC").param("foId", "1").param("fiscalYear", "1")
+				.param("open", "true").param("expectedApplications", "123").param("fundingOpportunity", "1"))
 				.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
 				.andExpect(MockMvcResultMatchers.redirectedUrl("/browse/viewFo?id=1")).andReturn().getFlashMap()
-				.containsValue("Successfully create a Funding Cycle for this Funding Opportunity");
+				.containsValue("Successfully created a Funding Cycle for this Funding Opportunity"),
+				"Created FundingCycle flash attribute is missing");
 
 		assertEquals(initFCCount + 1, fcRepo.count());
-	}
-
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
-	@Test
-	public void test_nonAdminCannotCreateFC_shouldReturn403() throws Exception {
-		long initFCCount = fcRepo.count();
-
-		mvc.perform(MockMvcRequestBuilders.post("/manage/createFundingCycle").param("foId", "1").param("fundingOpportunity", "1")
-				.param("expectedApplications", "123").param("open", "true"))
-				.andExpect(MockMvcResultMatchers.status().isForbidden())
-				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
-
-		assertEquals(initFCCount, fcRepo.count());
 	}
 
 }

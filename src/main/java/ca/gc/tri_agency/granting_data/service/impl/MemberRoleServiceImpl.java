@@ -14,8 +14,6 @@ import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.envers.query.AuditQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -135,8 +133,7 @@ public class MemberRoleServiceImpl implements MemberRoleService {
 	public boolean checkIfCurrentUserEdiAuthorized(Long buId) {
 //		Can't use SecurityUtils' hasRole(...) b/c tests don't mock an LDAP user, i.e. tests fail when
 //		using that method b/c we can't cast a User object to a LdapUserDetails object.
-		if (SecurityContextHolder.getContext().getAuthentication().getAuthorities()
-				.contains(new SimpleGrantedAuthority("ROLE_MDM ADMIN"))) {
+		if (SecurityUtils.isCurrentUserAdmin()) {
 			// an admin user can access the EDI data for all BUs
 			return true;
 		}
@@ -148,13 +145,12 @@ public class MemberRoleServiceImpl implements MemberRoleService {
 
 	@Transactional(readOnly = true)
 	@Override
-	public boolean checkIfCurrentUserCanCreateFCs(String userLogin, Long foId) {
-		if (SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains(
-				new SimpleGrantedAuthority("ROLE_MDM ADMIN"))) {
+	public boolean checkIfCurrentUserCanCreateFC(Long foId) {
+		if (SecurityUtils.isCurrentUserAdmin()) {
 			return true;
 		}
 		
-		return mrRepo.findIfCanCreateFC(userLogin, foId) != null;
+		return mrRepo.findIfCanCreateFC(SecurityUtils.getCurrentUsername(), foId) != null;
 	}
 
 }
