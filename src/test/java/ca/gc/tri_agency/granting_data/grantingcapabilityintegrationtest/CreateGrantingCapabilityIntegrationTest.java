@@ -1,18 +1,17 @@
 package ca.gc.tri_agency.granting_data.grantingcapabilityintegrationtest;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -25,7 +24,6 @@ import ca.gc.tri_agency.granting_data.repo.GrantingCapabilityRepository;
 import ca.gc.tri_agency.granting_data.service.GrantingCapabilityService;
 
 @SpringBootTest(classes = GrantingDataApp.class)
-@RunWith(SpringRunner.class)
 @ActiveProfiles("test")
 public class CreateGrantingCapabilityIntegrationTest {
 
@@ -40,11 +38,12 @@ public class CreateGrantingCapabilityIntegrationTest {
 
 	private MockMvc mvc;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		mvc = MockMvcBuilders.webAppContextSetup(ctx).apply(SecurityMockMvcConfigurers.springSecurity()).build();
 	}
 
+	@Tag("user_story_14572")
 	@WithMockUser(username = "admin", roles = "MDM ADMIN")
 	@Test
 	public void test_createGCLinkVisibleToAdmin_shouldSucceedWith200() throws Exception {
@@ -53,6 +52,7 @@ public class CreateGrantingCapabilityIntegrationTest {
 						.string(Matchers.containsString("id=\"createGrantingCapabilityLink\"")));
 	}
 
+	@Tag("user_story_14572")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_createGCLinkNotVisibleToNonAdmin_shouldReturn200() throws Exception {
@@ -61,6 +61,7 @@ public class CreateGrantingCapabilityIntegrationTest {
 						.string(Matchers.not(Matchers.containsString("id=\"createGrantingCapabilityLink\""))));
 	}
 
+	@Tag("user_story_14572")
 	@WithMockUser(username = "admin", roles = "MDM ADMIN")
 	@Test
 	public void test_adminCanAccessCreateGCPage_shouldSucceedWith200() throws Exception {
@@ -69,6 +70,7 @@ public class CreateGrantingCapabilityIntegrationTest {
 						.string(Matchers.containsString("id=\"createGrantingCapabilityPage\"")));
 	}
 
+	@Tag("user_story_14572")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotAccessCreateGCPage_shouldReturn403() throws Exception {
@@ -77,6 +79,7 @@ public class CreateGrantingCapabilityIntegrationTest {
 						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
 	}
 
+	@Tag("user_story_14572")
 	@WithMockUser(username = "admin", roles = "MDM ADMIN")
 	@Test
 	public void test_adminCanCreateGC_shouldSucceedWith302() throws Exception {
@@ -103,6 +106,7 @@ public class CreateGrantingCapabilityIntegrationTest {
 		assertEquals(url, newGc.getUrl());
 	}
 
+	@Tag("user_story_14572")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotCreateGC_shouldReturn403() throws Exception {

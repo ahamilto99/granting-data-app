@@ -1,17 +1,15 @@
 package ca.gc.tri_agency.granting_data.fundingcycleintegrationtest;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -22,7 +20,6 @@ import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
 import ca.gc.tri_agency.granting_data.repo.FundingCycleRepository;
 
 @SpringBootTest(classes = GrantingDataApp.class)
-@RunWith(SpringRunner.class)
 @ActiveProfiles("test")
 public class CreateFundingCycleIntegrationTest {
 
@@ -34,7 +31,7 @@ public class CreateFundingCycleIntegrationTest {
 
 	private MockMvc mvc;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		mvc = MockMvcBuilders.webAppContextSetup(ctx).apply(SecurityMockMvcConfigurers.springSecurity()).build();
 	}
@@ -43,16 +40,16 @@ public class CreateFundingCycleIntegrationTest {
 	@Test
 	public void test_adminCanAccessCreateFCPage_shouldSucceedWith200() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/manage/createFundingCycle").param("foId", "1"))
-				.andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.content()
-						.string(Matchers.containsString("id=\"createFundingCyclePage\"")));
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("id=\"createFundingCyclePage\"")));
 	}
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotAccessCreateFCPage_shouldReturn403() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/manage/createFundingCycle").param("foId", "1"))
-				.andExpect(MockMvcResultMatchers.status().isForbidden()).andExpect(MockMvcResultMatchers.content()
-						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
+				.andExpect(MockMvcResultMatchers.status().isForbidden())
+				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
 	}
 
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
@@ -73,10 +70,10 @@ public class CreateFundingCycleIntegrationTest {
 	public void test_nonAdminCannotCreateFC_shouldReturn403() throws Exception {
 		long initFCCount = fcRepo.count();
 
-		mvc.perform(MockMvcRequestBuilders.post("/manage/createFundingCycle").param("foId", "1")
-				.param("fundingOpportunity", "1").param("expectedApplications", "123").param("open", "true"))
-				.andExpect(MockMvcResultMatchers.status().isForbidden()).andExpect(MockMvcResultMatchers.content()
-						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
+		mvc.perform(MockMvcRequestBuilders.post("/manage/createFundingCycle").param("foId", "1").param("fundingOpportunity", "1")
+				.param("expectedApplications", "123").param("open", "true"))
+				.andExpect(MockMvcResultMatchers.status().isForbidden())
+				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
 
 		assertEquals(initFCCount, fcRepo.count());
 	}

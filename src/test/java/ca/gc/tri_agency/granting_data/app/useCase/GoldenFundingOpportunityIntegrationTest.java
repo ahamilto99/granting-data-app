@@ -1,14 +1,15 @@
 package ca.gc.tri_agency.granting_data.app.useCase;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,12 +17,10 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.context.WebApplicationContext;
@@ -36,7 +35,6 @@ import ca.gc.tri_agency.granting_data.repo.SystemFundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.service.BusinessUnitService;
 import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = GrantingDataApp.class)
 @ActiveProfiles("test")
 public class GoldenFundingOpportunityIntegrationTest {
@@ -67,29 +65,32 @@ public class GoldenFundingOpportunityIntegrationTest {
 
 	private MockMvc mvc;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		mvc = MockMvcBuilders.webAppContextSetup(ctx).apply(SecurityMockMvcConfigurers.springSecurity()).build();
 	}
 
+	@Tag("user_story_14593")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
-	public void testNameFieldsEmptyOnAddFoPageWhenNewSfoNotLinkedWithSfo() throws Exception {
+	public void test_nameFieldsEmptyOnAddFoPageWhenNewSfoNotLinkedWithSfo() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/admin/createFo")).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(
 				MockMvcResultMatchers.content().string(Matchers.containsString("name=\"nameEn\" value=\"\"")));
 	}
 
+	@Tag("user_story_14593")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
-	public void testNameFieldsAutoFilledOnAddFoPageWhenLinkingNewFoWithSfo() throws Exception {
+	public void test_nameFieldsAutoFilledOnAddFoPageWhenLinkingNewFoWithSfo() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/admin/createFo").param("sfoId", "4"))
 				.andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.content()
 						.string(Matchers.containsString("value=\"Insight Grants\"")));
 	}
 
+	@Tag("user_story_14593")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
-	public void test_NonAdminCannotCreateGoldenFo_shouldFailWith403() throws Exception {
+	public void test_nonAdminCannotCreateGoldenFo_shouldFailWith403() throws Exception {
 		boolean cpx = true;
 		String div = RandomStringUtils.randomAlphabetic(10);
 		boolean edi = true;
@@ -115,9 +116,10 @@ public class GoldenFundingOpportunityIntegrationTest {
 						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
 	}
 
+	@Tag("user_story_14593")
 	@WithMockUser(roles = "MDM ADMIN")
 	@Test
-	public void test_AdminCanCreateGoldenFo_usingMvcPerform_shouldSucceed() throws Exception {
+	public void test_adminCanCreateGoldenFo_usingMvcPerform_shouldSucceedWith302() throws Exception {
 		boolean cpx = true;
 		boolean edi = true;
 		String frequency = RandomStringUtils.randomAlphabetic(10);
@@ -164,22 +166,24 @@ public class GoldenFundingOpportunityIntegrationTest {
 		assertEquals(po, newGfo.getPartnerOrg());
 	}
 
+	@Tag("user_story_14593")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
-	@Test(expected = AccessDeniedException.class)
-	public void test_NonAdminCannotCreateGoldenFo_shouldThrowDataAccessException() throws Exception {
-		foController.createFundingOpportunityPost(new FundingOpportunity(), bindingResult, model, redirectAttributes);
+	@Test
+	public void test_nonAdminCannotCreateGoldenFo_shouldThrowDataAccessException() throws Exception {
+		assertThrows(AccessDeniedException.class, () -> foController.createFundingOpportunityPost(new FundingOpportunity(), bindingResult, model, redirectAttributes));
 	}
 
+	@Tag("user_story_14593")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
-	@Test(expected = AccessDeniedException.class)
-	public void test_NonAdminCannotCreateGoldenFo_shouldThrowAccessDeniedException() {
-		foService.saveFundingOpportunity(new FundingOpportunity());
+	@Test 
+	public void test_nonAdminCannotCreateGoldenFo_shouldThrowAccessDeniedException() {
+		assertThrows(AccessDeniedException.class, () -> foService.saveFundingOpportunity(new FundingOpportunity()));
 	}
 
+	@Tag("user_story_14593")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
-	@Transactional
-	public void test_AdminCanCreateGoldenFo_shouldSucceed() throws Exception {
+	public void test_adminCanCreateGoldenFo_shouldSucceed() throws Exception {
 		long initFoRepoSize = foRepo.count();
 
 		FundingOpportunity gfo = new FundingOpportunity();

@@ -36,6 +36,7 @@ public class FundingOpportunityServiceTest {
 	@Autowired
 	private FundingOpportunityRepository foRepo;
 
+	@Tag("user_story_14594")
 	@WithAnonymousUser
 	@Test
 	public void test_findFundingOpportunitiesByNameEn() {
@@ -43,6 +44,7 @@ public class FundingOpportunityServiceTest {
 		assertEquals(1, foService.findFundingOpportunitiesByNameEn("Digging into Data").size());
 	}
 
+	@Tag("user_story_14594")
 	@WithAnonymousUser
 	@Test
 	public void test_findFundingOpportunitiesByBusinessUnit() {
@@ -113,7 +115,7 @@ public class FundingOpportunityServiceTest {
 		assertEquals(43, foService.findFundingOpportunitiesByAgency(agencyService.findAgencyById(1L)).size());
 	}
 
-	@Tag("User_Story_14627")
+	@Tag("user_story_14627")
 	@WithAnonymousUser
 	@Test
 	public void test_anonUserCanFindResultsForGoldenListTable() {
