@@ -1,20 +1,18 @@
 package ca.gc.tri_agency.granting_data.service;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
 import ca.gc.tri_agency.granting_data.model.GrantingCapability;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = GrantingDataApp.class)
 @ActiveProfiles("test")
 public class RestrictedDataServiceIntegrationTest {
@@ -28,6 +26,7 @@ public class RestrictedDataServiceIntegrationTest {
 	@Autowired
 	private GrantingCapabilityService gcService;
 
+	@Tag("user_story_14572")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_createGrantingCapabaility() {

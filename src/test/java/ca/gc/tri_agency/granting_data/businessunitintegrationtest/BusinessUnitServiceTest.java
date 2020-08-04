@@ -39,6 +39,7 @@ public class BusinessUnitServiceTest {
 	@Autowired
 	private BusinessUnitRepository buRepo;
 
+	@Tag("user_story_19048")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_adminCanCreateBU() {
@@ -51,6 +52,7 @@ public class BusinessUnitServiceTest {
 		assertEquals(initBuCount + 1, buRepo.count());
 	}
 
+	@Tag("user_story_19048")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotCreateBU_shouldthrowAccessDeniedException() {

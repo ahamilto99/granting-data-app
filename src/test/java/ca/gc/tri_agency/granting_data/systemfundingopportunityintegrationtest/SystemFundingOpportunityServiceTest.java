@@ -1,15 +1,12 @@
 package ca.gc.tri_agency.granting_data.systemfundingopportunityintegrationtest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataRetrievalFailureException;
@@ -17,7 +14,6 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
@@ -25,7 +21,6 @@ import ca.gc.tri_agency.granting_data.service.GrantingSystemService;
 import ca.gc.tri_agency.granting_data.service.SystemFundingOpportunityService;
 
 @SpringBootTest(classes = GrantingDataApp.class)
-@RunWith(SpringRunner.class)
 @ActiveProfiles("test")
 public class SystemFundingOpportunityServiceTest {
 
@@ -37,43 +32,46 @@ public class SystemFundingOpportunityServiceTest {
 
 	@WithAnonymousUser
 	@Test
-	public void testFindSystemFundingOpportunityById_shouldSucceed() {
+	public void test_findSystemFundingOpportunityById_shouldSucceed() {
 		assertNotNull(sfoService.findSystemFundingOpportunityById(1L));
 	}
 
 	@WithAnonymousUser
-	@Test(expected = DataRetrievalFailureException.class)
-	public void testFindSystemFundingOpportunityById_shouldThrowDataRetrievalFailureException() {
-		sfoService.findSystemFundingOpportunityById(Long.MAX_VALUE);
+	@Test
+	public void test_findSystemFundingOpportunityById_shouldThrowDataRetrievalFailureException() {
+		assertThrows(DataRetrievalFailureException.class, () -> sfoService.findSystemFundingOpportunityById(Long.MAX_VALUE));
 	}
 
+	@Tag("user_story_14592")
 	@WithAnonymousUser
 	@Test
-	public void testFindAllSystemFundingOpportunities() {
+	public void test_findAllSystemFundingOpportunities() {
 		assertTrue(0 < sfoService.findAllSystemFundingOpportunities().size());
 	}
 
+	@Tag("user_story_14591")
 	@WithAnonymousUser
 	@Test
-	public void testFindSystemFundingOpportunitiesByLinkedFOid() {
+	public void test_findSystemFundingOpportunitiesByLinkedFOid() {
 		assertTrue(0 < sfoService.findSystemFundingOpportunitiesByLinkedFOid(1L).size());
 	}
 
 	@WithAnonymousUser
 	@Test
-	public void testFindSystemFundingOpportunitiesByExtId() {
+	public void test_findSystemFundingOpportunitiesByExtId() {
 		assertTrue(0 < sfoService.findSystemFundingOpportunitiesByExtId("CTAC").size());
 	}
 
 	@WithAnonymousUser
 	@Test
-	public void testFindSystemFundingOpportunitiesByNameEn() {
+	public void test_findSystemFundingOpportunitiesByNameEn() {
 		assertTrue(0 < sfoService.findSystemFundingOpportunitiesByNameEn("Technology Access Centre").size());
 	}
 
+	@Tag("user_story_14591")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
-	public void testLinkSystemFundingOpportunity() {
+	public void test_linkSystemFundingOpportunity() {
 		SystemFundingOpportunity sfo = new SystemFundingOpportunity();
 		sfo.setExtId(RandomStringUtils.randomAlphabetic(10));
 		sfo.setNameEn(RandomStringUtils.randomAlphabetic(25));
@@ -89,15 +87,16 @@ public class SystemFundingOpportunityServiceTest {
 		assertEquals(1L, (long) sfoService.findSystemFundingOpportunityById(sfoId).getLinkedFundingOpportunity().getId());
 	}
 
+	@Tag("user_story_14659")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
-	@Test(expected = DataRetrievalFailureException.class)
-	public void testUnlinkSystemFundingOpportunity_shouldThrowDataRetrievalFailureException() {
-		sfoService.unlinkSystemFundingOpportunity(1L, 100L);
+	@Test
+	public void test_unlinkSystemFundingOpportunity_shouldThrowDataRetrievalFailureException() {
+		assertThrows(DataRetrievalFailureException.class, () -> sfoService.unlinkSystemFundingOpportunity(1L, 100L));
 	}
 
 	@WithMockUser(username = "admin", roles = "MDM ADMIN")
 	@Test
-	public void testAdminCanFindAllSystemFundingOpportunityRevisions() {
+	public void test_adminCanFindAllSystemFundingOpportunityRevisions() {
 		List<String[]> revisionList = sfoService.findAllSystemFundingOpportunityRevisions();
 
 		int numAdds = 0;
@@ -112,14 +111,14 @@ public class SystemFundingOpportunityServiceTest {
 	}
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
-	@Test(expected = AccessDeniedException.class)
-	public void testNonAdminCannotFindAllSystemFundingOpportunityRevisionsShouldThrowsException() {
-		sfoService.findAllSystemFundingOpportunityRevisions();
+	@Test
+	public void test_nonAdminCannotFindAllSystemFundingOpportunityRevisionsShouldThrowsException() {
+		assertThrows(AccessDeniedException.class, () -> sfoService.findAllSystemFundingOpportunityRevisions());
 	}
 
 	@WithMockUser(username = "admin", roles = "MDM ADMIN")
 	@Test
-	public void testAdminCanFindSystemFundingOpportunityRevisionById() {
+	public void test_adminCanFindSystemFundingOpportunityRevisionById() {
 		List<String[]> revisionList = sfoService.findSystemFundingOpportunityRevisionById(1L);
 
 		int numAdds = 0;
@@ -134,8 +133,8 @@ public class SystemFundingOpportunityServiceTest {
 	}
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
-	@Test(expected = AccessDeniedException.class)
-	public void testNonAdminCannotFindSystemFundingOpportunityRevisionByIdShouldThrowException() {
-		sfoService.findSystemFundingOpportunityRevisionById(1L);
+	@Test
+	public void test_nonAdminCannotFindSystemFundingOpportunityRevisionByIdShouldThrowException() {
+		assertThrows(AccessDeniedException.class, () -> sfoService.findSystemFundingOpportunityRevisionById(1L));
 	}
 }

@@ -1,7 +1,7 @@
 package ca.gc.tri_agency.granting_data.app.useCase;
 
 import static org.hamcrest.Matchers.containsString;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -9,17 +9,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.regex.Pattern;
 
 import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -28,7 +25,6 @@ import org.springframework.web.context.WebApplicationContext;
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
 import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = GrantingDataApp.class)
 @ActiveProfiles("test")
 public class AnonymousUseCasesTest {
@@ -41,16 +37,12 @@ public class AnonymousUseCasesTest {
 
 	private MockMvc mvc;
 
-	@Before
-	public void setup() {
-		mvc = MockMvcBuilders.webAppContextSetup(ctx).apply(SecurityMockMvcConfigurers.springSecurity()).build();
-	}
-	
 	@BeforeEach
 	public void setupJUnit5() {
 		mvc = MockMvcBuilders.webAppContextSetup(ctx).apply(SecurityMockMvcConfigurers.springSecurity()).build();
 	}
 
+	@Tag("user_story_14594")
 	@WithAnonymousUser
 	@Test
 	public void test_anonUserCanViewFieldsOnViewFoPage_shouldSucceedWith200() throws Exception {
@@ -59,6 +51,7 @@ public class AnonymousUseCasesTest {
 				.andExpect(content().string(containsString("id=\"fundingTypeRow\"")));
 	}
 
+	@Tag("user_story_14594")
 	@WithAnonymousUser
 	@Test
 	public void test_anonUserCanViewFoPageInEnglish_shouldSucceed200() throws Exception {
@@ -66,6 +59,7 @@ public class AnonymousUseCasesTest {
 				.andExpect(content().string(containsString("Collaborative Health Research Projects (CHRP) (5640)")));
 	}
 
+	@Tag("user_story_14594")
 	@WithAnonymousUser
 	@Test
 	public void test_anonUserCanViewFoPageInFrench_shouldSucceed200() throws Exception {
@@ -74,6 +68,7 @@ public class AnonymousUseCasesTest {
 						"Chaires en génie de la conception")));
 	}
 
+	@Tag("user_story_14594")
 	@WithAnonymousUser
 	@Test
 	public void test_anonUserCanAccessViewFoPage_shouldSucceedWith200() throws Exception {
@@ -81,14 +76,15 @@ public class AnonymousUseCasesTest {
 				.andExpect(content().string(containsString("id=\"viewFundingOpportunityPage\"")));
 	}
 
+	@Tag("user_story_14627")
 	@WithAnonymousUser
-	@org.junit.jupiter.api.Test
-	@Tag("User_Story_14627")
+	@Test
 	public void test_anonUserCanAccessViewGoldenListPage_shouldSucceedWith200() throws Exception {
 		mvc.perform(get("/browse/fundingOpportunities")).andExpect(status().isOk())
 				.andExpect(content().string(containsString("id=\"fundingOpportunitiesPage\"")));
 	}
 
+	@Tag("user_story_14627")
 	@WithAnonymousUser
 	@Test
 	public void test_anonUserCanViewAllFosOnGoldenListPage_shouldSucceedWith200() throws Exception {

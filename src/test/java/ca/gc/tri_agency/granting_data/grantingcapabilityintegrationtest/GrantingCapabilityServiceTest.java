@@ -1,18 +1,17 @@
 package ca.gc.tri_agency.granting_data.grantingcapabilityintegrationtest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
 import ca.gc.tri_agency.granting_data.model.GrantingCapability;
@@ -20,7 +19,6 @@ import ca.gc.tri_agency.granting_data.repo.GrantingCapabilityRepository;
 import ca.gc.tri_agency.granting_data.service.GrantingCapabilityService;
 
 @SpringBootTest(classes = GrantingDataApp.class)
-@RunWith(SpringRunner.class)
 @ActiveProfiles("test")
 public class GrantingCapabilityServiceTest {
 
@@ -30,9 +28,9 @@ public class GrantingCapabilityServiceTest {
 	@Autowired
 	private GrantingCapabilityRepository gcRepo;
 
+	@Tag("user_story_19005")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
-	@Rollback
-	@Test(expected = DataRetrievalFailureException.class)
+	@Test
 	public void testService_adminCanDeleteGC() {
 		long numGCs = gcRepo.count();
 
@@ -40,15 +38,17 @@ public class GrantingCapabilityServiceTest {
 
 		assertEquals(numGCs - 1, gcRepo.count());
 
-		gcService.findGrantingCapabilityById(100L);
+		assertThrows(DataRetrievalFailureException.class, () -> gcService.findGrantingCapabilityById(100L));
 	}
 
+	@Tag("user_story_19005")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	public void testService_nonAdminCannotDeleteGC_shouldThrowAccessDeniedExcepction() {
-		gcService.deleteGrantingCapabilityById(101L);
+		assertThrows(AccessDeniedException.class, () -> gcService.deleteGrantingCapabilityById(101L));
 	}
 
+	@Tag("user_story_19004")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void testService_adminCanEditGC() {
@@ -63,13 +63,14 @@ public class GrantingCapabilityServiceTest {
 		assertEquals(initGcRepoCount, gcRepo.count());
 	}
 
+	@Tag("user_story_19004")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	public void testService_nonAdminCannotEditGC_shouldThrowAccessDeniedException() {
 		GrantingCapability gc = gcService.findGrantingCapabilityById(1L);
 		String editDescription = "TEST DESCRIPTION EDIT";
 		gc.setDescription(editDescription);
-		gcService.saveGrantingCapability(gc);
+		assertThrows(AccessDeniedException.class, () -> gcService.saveGrantingCapability(gc));
 	}
 
 }

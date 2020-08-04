@@ -1,8 +1,6 @@
 package ca.gc.tri_agency.granting_data.service;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -11,14 +9,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -33,7 +30,6 @@ import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.file.FundingCycleDatasetRow;
 import ca.gc.tri_agency.granting_data.repo.SystemFundingCycleRepository;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = GrantingDataApp.class)
 @ActiveProfiles("test")
 public class AdminServiceIntegrationTest {
@@ -63,7 +59,7 @@ public class AdminServiceIntegrationTest {
 	private static final String TEST_FILE = "NAMIS-TestFile.xlsx";
 
 	/* TEST UTIL FUNCTION */
-	FundingCycleDatasetRow createFcDatasetRow(String foName, String year) {
+	private FundingCycleDatasetRow createFcDatasetRow(String foName, String year) {
 		FundingCycleDatasetRow retval = new FundingCycleDatasetRow();
 		retval.setCompetitionYear(2019L);
 		retval.setFoCycle(foName + "-" + year);
@@ -74,6 +70,7 @@ public class AdminServiceIntegrationTest {
 		return retval;
 	}
 
+	@Tag("user_story_18225")
 	@Test
 	@WithAnonymousUser
 	/*
@@ -91,6 +88,7 @@ public class AdminServiceIntegrationTest {
 				.andExpect(MockMvcResultMatchers.redirectedUrl("http://localhost/login"));
 	}
 
+	@Tag("user_story_18225")
 	@Test
 	@WithMockUser(username = "admin", roles = "MDM ADMIN")
 	@Transactional
@@ -108,10 +106,10 @@ public class AdminServiceIntegrationTest {
 		newSfo.setGrantingSystem(gsSystem.findGrantingSystemByAcronym("NAMIS"));
 		newSfo = sfoService.saveSystemFundingOpportunity(newSfo);
 		List<SystemFundingOpportunity> sfoMatchingNames = sfoService.findSystemFundingOpportunitiesByNameEn(sfoName + " EN");
-		assertTrue("i think the process and test requires unique SFO names", sfoMatchingNames.size() == 1);
+		assertTrue(sfoMatchingNames.size() == 1, "i think the process and test requires unique SFO names");
 
 		int origCountOfSFCsLinkedToSFO = sfcRepo.findBySystemFundingOpportunityId(newSfo.getId()).size();
-		assertTrue("logic says new SFO shoudl ahve no SFCs", origCountOfSFCsLinkedToSFO == 0);
+		assertTrue(origCountOfSFCsLinkedToSFO == 0, "logic says new SFO shoudl ahve no SFCs");
 
 		// ADD A CYCLE TO "SAMPLE" thought the service
 		final String testFileName = "NAMIS-TestCase_registerSFCwhenSFOalreadyExists.xlsx";
@@ -119,9 +117,10 @@ public class AdminServiceIntegrationTest {
 
 		int newCountOfSFCsLinkedToSFO = sfcRepo.findBySystemFundingOpportunityId(newSfo.getId()).size();
 
-		assertTrue("new count of SFCs linked to SFO should now be 1", newCountOfSFCsLinkedToSFO == 1);
+		assertTrue(newCountOfSFCsLinkedToSFO == 1, "new count of SFCs linked to SFO should now be 1");
 	}
 
+	@Tag("user_story_18225")
 	@Test
 	@WithMockUser(username = "admin", roles = "MDM ADMIN")
 	public void test_applyChangesFromFileByIds_adminCanRegisterSFOandSFC() throws Exception {
@@ -130,6 +129,7 @@ public class AdminServiceIntegrationTest {
 		assertEquals(1, adminService.applyChangesFromFileByIds(TEST_FILE, idsToAction));
 	}
 
+	@Tag("user_story_18225")
 	@Test
 	public void test_getDatasetFiles_expectNonEmptyList() {
 		List<File> myFiles = adminService.getDatasetFiles();
@@ -137,12 +137,14 @@ public class AdminServiceIntegrationTest {
 
 	}
 
+	@Tag("user_story_18225")
 	@Test
 	public void test_getFundingCyclesFromFile_expect24Rows() {
 		List<FundingCycleDatasetRow> rows = adminService.getFundingCyclesFromFile("NAMIS-TestFileBase1.xlsx");
 		assertEquals(rows.size(), 24, "expected 24 rows from TestFileBase1.xlsx");
 	}
 
+	@Tag("user_story_18225")
 	@Test
 	public void test_generateActionableFoCycleIds_actionDueToNewSfoAndSfc() {
 		List<FundingCycleDatasetRow> analyzeRows = new ArrayList<FundingCycleDatasetRow>();
@@ -152,6 +154,7 @@ public class AdminServiceIntegrationTest {
 
 	}
 
+	@Tag("user_story_18225")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_generateActionableFoCycleIds_actionDueToNewSfc() {
@@ -168,6 +171,7 @@ public class AdminServiceIntegrationTest {
 
 	}
 
+	@Tag("user_story_18225")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_generateActionableFoCycleIds_noActionCauseSfcAndSfoExists() {

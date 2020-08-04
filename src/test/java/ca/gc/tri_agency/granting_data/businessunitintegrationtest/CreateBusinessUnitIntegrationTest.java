@@ -1,22 +1,21 @@
 package ca.gc.tri_agency.granting_data.businessunitintegrationtest;
 
 import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -28,7 +27,6 @@ import ca.gc.tri_agency.granting_data.model.BusinessUnit;
 import ca.gc.tri_agency.granting_data.repo.BusinessUnitRepository;
 import ca.gc.tri_agency.granting_data.service.AgencyService;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = GrantingDataApp.class)
 @ActiveProfiles("test")
 public class CreateBusinessUnitIntegrationTest {
@@ -43,19 +41,21 @@ public class CreateBusinessUnitIntegrationTest {
 
 	private MockMvc mvc;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		mvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
 	}
 
-	// CREATE LINK ACCESSIBLE VROM VIEW AGENCY PAGE, ONLY ACCESSIBLE BY ADMIN
+	@Tag("user_story_19048")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_createBULinkVisibleToAdmin_shouldSucceedWith200() throws Exception {
+		// CREATE LINK ACCESSIBLE VROM VIEW AGENCY PAGE, ONLY ACCESSIBLE BY ADMIN
 		mvc.perform(get("/browse/viewAgency?id=1")).andExpect(status().isOk()).andExpect(
 				MockMvcResultMatchers.content().string(Matchers.containsString("id=\"createBusinessUnit\"")));
 	}
 
+	@Tag("user_story_19048")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_createBULinkNotVisibleToNonAdmin_shouldReturn200() throws Exception {
@@ -63,7 +63,7 @@ public class CreateBusinessUnitIntegrationTest {
 				MockMvcResultMatchers.content().string(not(Matchers.containsString("id=\"createBusinessUnit\""))));
 	}
 
-	// CREATE PAGE CAN ONLY BE ACCESSED BY ADMIN
+	@Tag("user_story_19048")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_adminCanAccessCreateBUPage_shouldSucceedWith200() throws Exception {
@@ -72,7 +72,7 @@ public class CreateBusinessUnitIntegrationTest {
 				.getContentAsString().contains('>' + agencyName + "</label>"));
 	}
 
-	// CREATE PAGE CANNOT BE ACCESSED BY NON-ADMIN
+	@Tag("user_story_19048")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdmminCannotAccessCreateBUPage_Return403() throws Exception {
@@ -80,7 +80,7 @@ public class CreateBusinessUnitIntegrationTest {
 				.getContentAsString().contains("id=\"forbiddenByRoleErrorPage\""));
 	}
 
-	// CREATE POST ACTION CAN ONLY BE EXECUTED BY ADMIN
+	@Tag("user_story_19048")
 	@WithMockUser(roles = { "MDM ADMIN" })
 	@Test
 	public void testController_adminCanCreateBU_shouldSucceedWith302() throws Exception {
@@ -114,7 +114,7 @@ public class CreateBusinessUnitIntegrationTest {
 		assertEquals(agencyId, addedBu.getAgency().getId());
 	}
 
-	// CREATE POST ACTION CANNOT BE EXECUTED BY NON-ADMIN
+	@Tag("user_story_19048")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void testController_nonAdminCannotCreateBU_shouldReturn403() throws Exception {

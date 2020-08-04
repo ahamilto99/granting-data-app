@@ -1,22 +1,21 @@
 package ca.gc.tri_agency.granting_data.systemfundingcycleintegrationtest;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
 import ca.gc.tri_agency.granting_data.service.SystemFundingCycleService;
 
 @SpringBootTest(classes = GrantingDataApp.class)
-@RunWith(SpringRunner.class)
 @ActiveProfiles("test")
 public class SystemFundingCycleServiceTest {
 
@@ -25,25 +24,25 @@ public class SystemFundingCycleServiceTest {
 
 	@WithAnonymousUser
 	@Test
-	public void testFindSystemFundingCycleById_shouldSucceed() {
+	public void test_findSystemFundingCycleById_shouldSucceed() {
 		assertNotNull(sfcService.findSystemFundingCycleById(1L));
 	}
 
 	@WithAnonymousUser
-	@Test(expected = DataRetrievalFailureException.class)
-	public void testFindSystemFundingCycleById_shouldThrowDataRetrievalFailureException() {
-		sfcService.findSystemFundingCycleById(Long.MAX_VALUE);
+	@Test
+	public void test_findSystemFundingCycleById_shouldThrowDataRetrievalFailureException() {
+		assertThrows(DataRetrievalFailureException.class, () -> sfcService.findSystemFundingCycleById(Long.MAX_VALUE));
 	}
 
 	@WithAnonymousUser
 	@Test
-	public void testFindAllSystemFundingCycles() {
+	public void test_findAllSystemFundingCycles() {
 		assertTrue(0 < sfcService.findAllSystemFundingCycles().size());
 	}
 
 	@WithAnonymousUser
 	@Test
-	public void testFindSFCsByFOid() {
+	public void test_findSFCsByFOid() {
 		assertTrue(0 < sfcService.findSFCsBySFOid(1L).size());
 	}
 
