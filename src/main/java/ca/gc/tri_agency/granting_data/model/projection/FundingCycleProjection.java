@@ -1,5 +1,26 @@
 package ca.gc.tri_agency.granting_data.model.projection;
 
-public class FundingCycleProjection {
+import java.time.LocalDate;
 
+public interface FundingCycleProjection {
+
+	Long getId();
+	
+	Long numExpectedApps();
+	
+	LocalDate getStartDate();
+	
+	LocalDate getEndDate();
+	
+	LocalDate getStartDateNOI();
+	
+	LocalDate getEndDateNOI();
+	
+	LocalDate getStartDateLOI();
+	
+	LocalDate getEndDateLOI();
+	
+	Long getFiscalYearId();
+	
+	Long getFiscalYear();
 }

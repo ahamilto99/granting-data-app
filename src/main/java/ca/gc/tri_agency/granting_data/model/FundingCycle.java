@@ -36,7 +36,7 @@ public class FundingCycle implements LocalizedParametersModel {
 		this.fiscalYear = fiscalYear;
 	}
 
-	private boolean isOpen;
+	private Boolean isOpen;
 
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private LocalDate startDate;
