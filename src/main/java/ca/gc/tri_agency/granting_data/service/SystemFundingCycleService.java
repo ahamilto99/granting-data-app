@@ -5,6 +5,7 @@ import java.util.List;
 import ca.gc.tri_agency.granting_data.model.SystemFundingCycle;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.file.FundingCycleDatasetRow;
+import ca.gc.tri_agency.granting_data.model.projection.SystemFundingCycleProjection;
 
 public interface SystemFundingCycleService {
 	
@@ -16,6 +17,6 @@ public interface SystemFundingCycleService {
 	
 	SystemFundingCycle registerSystemFundingCycle(FundingCycleDatasetRow row, SystemFundingOpportunity targetSfo);
 	
-	List<SystemFundingCycle> findSystemFundingCyclesByLinkedFundingOpportunity(Long foId);
+	List<SystemFundingCycleProjection> findSystemFundingCyclesByLinkedFundingOpportunity(Long foId);
 	
 }

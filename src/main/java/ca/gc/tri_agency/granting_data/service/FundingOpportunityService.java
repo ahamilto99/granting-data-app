@@ -7,6 +7,7 @@ import ca.gc.tri_agency.granting_data.form.FundingOpportunityFilterForm;
 import ca.gc.tri_agency.granting_data.model.Agency;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.GrantingSystem;
+import ca.gc.tri_agency.granting_data.model.projection.FundingOpportunityProjection;
 
 public interface FundingOpportunityService {
 	
@@ -31,4 +32,5 @@ public interface FundingOpportunityService {
 
 	List<String[]> findGoldenListTableResults();
 	
+	List<FundingOpportunityProjection> findBrowseViewFoResult(Long foId);
 }

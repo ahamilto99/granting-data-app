@@ -3,6 +3,7 @@ package ca.gc.tri_agency.granting_data.service;
 import java.util.List;
 
 import ca.gc.tri_agency.granting_data.model.GrantingCapability;
+import ca.gc.tri_agency.granting_data.model.projection.GrantingCapabilityProjection;
 
 public interface GrantingCapabilityService {
 
@@ -18,4 +19,5 @@ public interface GrantingCapabilityService {
 	
 	List<GrantingCapability> findGrantingCapabilitiesByGrantingStageNameEn(String nameEn);
 	
+	List<GrantingCapabilityProjection> findGrantingCapabilitiesForBrowseViewFO(Long foId);
 }
