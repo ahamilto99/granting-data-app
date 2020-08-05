@@ -1,5 +1,6 @@
 package ca.gc.tri_agency.granting_data.fundingcycleintegrationtest;
 
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -213,5 +214,50 @@ public class FundingCycleServiceTest {
 
 		assertEquals(1, fcProjections.size());
 		assertEquals(9_162, fcProjections.get(0).getNumAppsExpected());
+	}
+
+	@Tag("user_story_19207")
+	@WithMockUser(username = "dev")
+	@Test
+	public void test_buProgramLeadCanEditLinkedFC() {
+		LocalDate newStartDate = LocalDate.now();
+
+		// verify a Program Lead can edit a FC
+		FundingCycle fc1 = fcService.findFundingCycleById(13L);
+		fc1.setStartDate(newStartDate);
+
+		fcService.saveFundingCycle(fc1);
+
+		assertEquals(newStartDate, fcService.findFundingCycleById(13L).getStartDate());
+
+		// verify a Program Officer cannot edit a FC
+		FundingCycle fc2 = fcService.findFundingCycleById(41L);
+		fc2.setStartDate(newStartDate);
+
+		assertThrows(AccessDeniedException.class, () -> fcService.saveFundingCycle(fc2));
+
+		assertNotEquals(newStartDate, fcService.findFundingCycleById(41L).getStartDate());
+
+		// verify a non-BU member cannot edit a FC
+		FundingCycle fc3 = fcService.findFundingCycleById(102L);
+		fc3.setStartDate(newStartDate);
+
+		assertThrows(AccessDeniedException.class, () -> fcService.saveFundingCycle(fc3));
+
+		assertNotEquals(newStartDate, fcService.findFundingCycleById(102L).getStartDate());
+	}
+
+	@Tag("user_story_19207")
+	@WithMockUser(roles = "MDM ADMIN")
+	@Test
+	public void test_adminCanEditFC() {
+		LocalDate newEndDate = LocalDate.now().plusYears(1);
+
+		FundingCycle fc = fcService.findFundingCycleById(1L);
+		fc.setEndDate(newEndDate);
+
+		fcService.saveFundingCycle(fc);
+
+		assertEquals(newEndDate, fcService.findFundingCycleById(1L).getEndDate());
 	}
 }
