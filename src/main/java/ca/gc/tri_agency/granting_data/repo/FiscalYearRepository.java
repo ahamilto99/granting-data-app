@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import ca.gc.tri_agency.granting_data.model.FiscalYear;
+import ca.gc.tri_agency.granting_data.model.projection.FiscalYearProjection;
 
 @Repository
 public interface FiscalYearRepository extends JpaRepository<FiscalYear, Long> {
@@ -19,5 +20,8 @@ public interface FiscalYearRepository extends JpaRepository<FiscalYear, Long> {
 			+ " GROUP BY sfc.fiscalYear, fy.id"
 			+ " ORDER BY fy.year")
 	List<Object[]> findNumAppsExpectedForEachYear();
+	
+	@Query("SELECT id AS id, year AS year FROM FiscalYear ORDER BY year")
+	List<FiscalYearProjection> findAllOrderedByYear();
 
 }

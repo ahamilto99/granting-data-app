@@ -1,9 +1,14 @@
 package ca.gc.tri_agency.granting_data.fiscalyearintegrationtest;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -38,10 +43,11 @@ public class FiscalYearServiceTest {
 		assertThrows(DataRetrievalFailureException.class, () -> fyService.findFiscalYearById(Long.MAX_VALUE));
 	}
 
+	@Tag("user_story_19201")
 	@WithAnonymousUser
 	@Test
-	public void test_findAllFiscalYears() {
-		assertTrue(0 < fyService.findAllFiscalYearsOrderByYearAsc().size());
+	public void test_findAllFiscalYearsOrderedByYear() {
+		assertTrue(4 <= fyService.findAllFiscalYearsOrderByYearAsc().size());
 	}
 
 	@WithAnonymousUser

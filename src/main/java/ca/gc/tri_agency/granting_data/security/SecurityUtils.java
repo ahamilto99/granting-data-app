@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.ldap.userdetails.LdapUserDetails;
 
@@ -48,6 +49,11 @@ public class SecurityUtils {
 
 	public static String getCurrentUsername() {
 		return SecurityContextHolder.getContext().getAuthentication().getName();
+	}
+	
+	public static boolean isCurrentUserAdmin() {
+		return SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+				.contains(new SimpleGrantedAuthority("ROLE_MDM ADMIN"));
 	}
 
 	// boolean validateUserRole(String role) {

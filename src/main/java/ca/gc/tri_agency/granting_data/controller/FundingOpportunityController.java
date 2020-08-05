@@ -9,8 +9,6 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -26,9 +24,11 @@ import ca.gc.tri_agency.granting_data.ldap.ADUserService;
 import ca.gc.tri_agency.granting_data.model.Agency;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
+import ca.gc.tri_agency.granting_data.security.SecurityUtils;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.AgencyService;
 import ca.gc.tri_agency.granting_data.service.BusinessUnitService;
+import ca.gc.tri_agency.granting_data.service.FundingCycleService;
 import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
 import ca.gc.tri_agency.granting_data.service.GrantingCapabilityService;
 import ca.gc.tri_agency.granting_data.service.SystemFundingCycleService;
@@ -49,20 +49,23 @@ public class FundingOpportunityController {
 
 	private BusinessUnitService buService;
 
-	private MessageSource msgSource;
+	private FundingCycleService fcService;
 
 	private ADUserService adUserService;
+
+	private MessageSource msgSource;
 
 	@Autowired
 	public FundingOpportunityController(FundingOpportunityService foService, GrantingCapabilityService gcService,
 			SystemFundingCycleService sfcService, AgencyService agencyService, SystemFundingOpportunityService sfoService,
-			BusinessUnitService buService, MessageSource msgSource, ADUserService adUserService) {
+			BusinessUnitService buService, FundingCycleService fcService, MessageSource msgSource, ADUserService adUserService) {
 		this.foService = foService;
 		this.gcService = gcService;
 		this.sfcService = sfcService;
 		this.adUserService = adUserService;
 		this.agencyService = agencyService;
 		this.sfoService = sfoService;
+		this.fcService = fcService;
 		this.buService = buService;
 		this.msgSource = msgSource;
 	}
@@ -73,10 +76,10 @@ public class FundingOpportunityController {
 		model.addAttribute("fundingOpportunities", fos);
 
 		// filtering options
-		model.addAttribute("distinctBUsEn", fos.stream().map(fo -> fo[3]).distinct()
-				.filter(bu -> bu != null && !bu.trim().isEmpty()).sorted().iterator());
-		model.addAttribute("distinctBUsFr", fos.stream().map(fo -> fo[4]).distinct()
-				.filter(bu -> bu != null && !bu.trim().isEmpty()).sorted().iterator());
+		model.addAttribute("distinctBUsEn",
+				fos.stream().map(fo -> fo[3]).distinct().filter(bu -> bu != null && !bu.trim().isEmpty()).sorted().iterator());
+		model.addAttribute("distinctBUsFr",
+				fos.stream().map(fo -> fo[4]).distinct().filter(bu -> bu != null && !bu.trim().isEmpty()).sorted().iterator());
 		model.addAttribute("distinctApplySystems", fos.stream().map(fo -> fo[5]).distinct()
 				.filter(appSys -> appSys != null && !appSys.trim().isEmpty()).sorted().iterator());
 		model.addAttribute("distinctAwardSystems", fos.stream().map(fo -> fo[6]).distinct()
@@ -84,17 +87,15 @@ public class FundingOpportunityController {
 
 		return "browse/fundingOpportunities";
 	}
-	
+
 	@GetMapping("/browse/viewFo")
 	public String viewFundingOpportunity(@RequestParam("id") Long id, Model model) {
-		model.addAttribute("fo", foService.findFundingOpportunityById(id));
-		model.addAttribute("grantingCapabilities", gcService.findGrantingCapabilitiesByFoId(id));
-		model.addAttribute("linkedSystemFundingCycles", sfcService.findSystemFundingCyclesByLinkedFundingOpportunity(id));
+		model.addAttribute("foProjections", foService.findBrowseViewFoResult(id)); // returns List b/c one FO can have multiple Agencies
+		model.addAttribute("gcProjections", gcService.findGrantingCapabilitiesForBrowseViewFO(id));
+		model.addAttribute("sfcProjections", sfcService.findSystemFundingCyclesByLinkedFundingOpportunity(id));
+		model.addAttribute("fcProjections", fcService.findFCsForBrowseViewFO(id));
 
-//		Can't use SecurityUtils' hasRole(...) b/c tests don't mock an LDAP user, i.e. tests fail when
-//		using that method b/c we can't cast a User object to a LdapUserDetails object.
-		if (SecurityContextHolder.getContext().getAuthentication().getAuthorities()
-				.contains(new SimpleGrantedAuthority("ROLE_MDM ADMIN"))) {
+		if (SecurityUtils.isCurrentUserAdmin()) {
 			model.addAttribute("revisionList", foService.findFundingOpportunityRevisionsById(id));
 		}
 
@@ -112,10 +113,9 @@ public class FundingOpportunityController {
 
 	@GetMapping("/manage/manageFo")
 	public String manageFundingOpportunity(@RequestParam("id") Long id, Model model) {
-		FundingOpportunity fo = foService.findFundingOpportunityById(id);
-		model.addAttribute("fo", fo);
-		model.addAttribute("linkedSystemFundingCycles", sfcService.findSystemFundingCyclesByLinkedFundingOpportunity(id));
-		model.addAttribute("grantingCapabilities", gcService.findGrantingCapabilitiesByFoId(id));
+		model.addAttribute("foProjections", foService.findBrowseViewFoResult(id));
+		model.addAttribute("sfcProjections", sfcService.findSystemFundingCyclesByLinkedFundingOpportunity(id));
+		model.addAttribute("gcProjections", gcService.findGrantingCapabilitiesForBrowseViewFO(id));
 		return "manage/manageFundingOpportunity";
 	}
 
@@ -130,8 +130,8 @@ public class FundingOpportunityController {
 
 	@AdminOnly
 	@PostMapping("/manage/editFo")
-	public String editFundingOpportunityPost(@Valid @ModelAttribute("programForm") FundingOpportunity fo,
-			BindingResult bindingResult, Model model) {
+	public String editFundingOpportunityPost(@Valid @ModelAttribute("programForm") FundingOpportunity fo, BindingResult bindingResult,
+			Model model) {
 		if (bindingResult.hasErrors()) {
 			model = populateAgencyOptions(model, fo);
 			return "/manage/editFundingOpportunity";
@@ -155,8 +155,8 @@ public class FundingOpportunityController {
 	}
 
 	@PostMapping("/admin/createFo")
-	public String createFundingOpportunityPost(@Valid @ModelAttribute("fo") FundingOpportunity command,
-			BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) throws Exception {
+	public String createFundingOpportunityPost(@Valid @ModelAttribute("fo") FundingOpportunity command, BindingResult bindingResult,
+			Model model, RedirectAttributes redirectAttributes) throws Exception {
 		if (bindingResult.hasErrors()) {
 			model.addAttribute("allAgencies", agencyService.findAllAgencies());
 			return "admin/createFo";

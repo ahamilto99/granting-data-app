@@ -36,7 +36,7 @@ public class FundingCycle implements LocalizedParametersModel {
 		this.fiscalYear = fiscalYear;
 	}
 
-	private boolean isOpen;
+	private Boolean isOpen = false;
 
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private LocalDate startDate;
@@ -122,15 +122,11 @@ public class FundingCycle implements LocalizedParametersModel {
 		this.expectedApplications = expectedApplications;
 	}
 
-	public boolean isOpen() {
+	public Boolean getIsOpen() {
 		return isOpen;
 	}
 
-	public boolean getIsOpen() {
-		return isOpen;
-	}
-
-	public void setIsOpen(boolean isOpen) {
+	public void setIsOpen(Boolean isOpen) {
 		this.isOpen = isOpen;
 	}
 
@@ -175,8 +171,6 @@ public class FundingCycle implements LocalizedParametersModel {
 		StringBuilder builder = new StringBuilder();
 		builder.append("FundingCycle [id=");
 		builder.append(id);
-		builder.append(", fiscalYear=");
-		builder.append(fiscalYear.getYear());
 		builder.append(", isOpen=");
 		builder.append(isOpen);
 		builder.append(", startDate=");
@@ -193,8 +187,6 @@ public class FundingCycle implements LocalizedParametersModel {
 		builder.append(endDate);
 		builder.append(", expectedApplications=");
 		builder.append(expectedApplications);
-		builder.append(", fundingOpportunity=");
-		builder.append(fundingOpportunity.getLocalizedAttribute("name"));
 		builder.append("]");
 		return builder.toString();
 	}

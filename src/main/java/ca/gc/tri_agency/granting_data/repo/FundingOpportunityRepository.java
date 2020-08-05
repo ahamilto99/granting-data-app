@@ -28,5 +28,13 @@ public interface FundingOpportunityRepository extends JpaRepository<FundingOppor
 			+ " LEFT JOIN GrantingCapability gc ON fo.id = gc.fundingOpportunity"
 			+ " LEFT JOIN GrantingSystem gSys ON gc.grantingSystem = gSys.id ORDER BY nameEn, grantingSystemAcronym")
 	List<FundingOpportunityProjection> findResultsForGoldenListTable();
+	
+	@Query("SELECT fo.nameEn AS nameEn, fo.nameFr AS nameFr, fo.frequency AS frequency, fo.fundingType AS fundingType, bu.id AS businessUnitId,"
+			+ " bu.nameEn AS businessUnitNameEn, bu.nameFr AS businessUnitFr, pa.acronymEn AS agencyAcronymEn, pa.acronymFr AS agencyAcronymFr"
+			+ " FROM FundingOpportunity fo"
+			+ " LEFT JOIN fo.participatingAgencies pa"
+			+ " LEFT JOIN BusinessUnit bu ON fo.businessUnit = bu.id"
+			+ " WHERE fo.id = :foId")
+	List<FundingOpportunityProjection> findResultsForViewFO(@Param("foId") Long foId);
 
 }

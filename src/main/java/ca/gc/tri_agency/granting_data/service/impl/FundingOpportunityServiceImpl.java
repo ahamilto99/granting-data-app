@@ -178,6 +178,21 @@ public class FundingOpportunityServiceImpl implements FundingOpportunityService 
 		return retVal;
 	}
 
+	/*
+	 * This returns a List b/c a FO can have multiple participating Agencies
+	 */
+	@Transactional(readOnly = true)
+	@Override
+	public List<FundingOpportunityProjection> findBrowseViewFoResult(Long foId) throws DataRetrievalFailureException {
+		List<FundingOpportunityProjection> foProjections = foRepo.findResultsForViewFO(foId);
+		
+		if (foProjections.size() == 0) {
+			throw new DataRetrievalFailureException("That Funding Opportunity does not exist");
+		}
+		
+		return foProjections;
+	}
+
 	private List<String[]> convertAuditResults(List<Object[]> revisionList) {
 		List<String[]> auditArrList = new ArrayList<>();
 

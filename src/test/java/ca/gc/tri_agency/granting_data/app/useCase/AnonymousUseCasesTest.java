@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.hamcrest.Matchers;
@@ -69,11 +70,24 @@ public class AnonymousUseCasesTest {
 	}
 
 	@Tag("user_story_14594")
+	@Tag("user_story_14750")
 	@WithAnonymousUser
 	@Test
 	public void test_anonUserCanAccessViewFoPage_shouldSucceedWith200() throws Exception {
-		mvc.perform(get("/browse/viewFo").param("id", "1")).andExpect(status().isOk())
-				.andExpect(content().string(containsString("id=\"viewFundingOpportunityPage\"")));
+		String response = mvc.perform(get("/browse/viewFo").param("id", "100")).andExpect(status().isOk())
+				.andExpect(content().string(containsString("id=\"viewFundingOpportunityPage\"")))
+				.andReturn().getResponse().getContentAsString();
+		
+		// verify the linked FCs table appears
+		int numFCs = 0;
+		
+		Pattern regex = Pattern.compile("<a href=\"\\/browse\\/viewFcFromFy\\?fyId=");
+		Matcher regexMatcher = regex.matcher(response);
+		while (regexMatcher.find()) {
+			++numFCs;
+		}
+		
+		assertEquals(1, numFCs, "The FCs table should contain 1 linked FC for FO id=100");
 	}
 
 	@Tag("user_story_14627")

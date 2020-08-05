@@ -6,8 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,10 +21,11 @@ import org.springframework.test.context.ActiveProfiles;
 
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
 import ca.gc.tri_agency.granting_data.model.FundingCycle;
+import ca.gc.tri_agency.granting_data.model.projection.FundingCycleProjection;
 import ca.gc.tri_agency.granting_data.repo.FundingCycleRepository;
-import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.service.FiscalYearService;
 import ca.gc.tri_agency.granting_data.service.FundingCycleService;
+import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
 
 @SpringBootTest(classes = GrantingDataApp.class)
 @ActiveProfiles("test")
@@ -35,7 +38,7 @@ public class FundingCycleServiceTest {
 	private FiscalYearService fyService;
 
 	@Autowired
-	private FundingOpportunityRepository foRepo;
+	private FundingOpportunityService foService;
 
 	@Autowired
 	private FundingCycleRepository fcRepo;
@@ -146,6 +149,7 @@ public class FundingCycleServiceTest {
 		assertTrue(0 < fcService.findMonthlyFundingCyclesByEndDateNOI(8).size());
 	}
 
+	@Tag("user_story_19201")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_adminCanCreateFundingCycle() {
@@ -159,7 +163,7 @@ public class FundingCycleServiceTest {
 		fc.setStartDateNOI(LocalDate.of(2030, 1, 1));
 		fc.setEndDateNOI(LocalDate.of(2030, 1, 1));
 		fc.setFiscalYear(fyService.findFiscalYearById(1L));
-		fc.setFundingOpportunity(foRepo.findById(1L).get());
+		fc.setFundingOpportunity(foService.findFundingOpportunityById(1L));
 		fc.setIsOpen(false);
 		fc.setExpectedApplications(100L);
 
@@ -167,18 +171,47 @@ public class FundingCycleServiceTest {
 		assertEquals(initFCCount + 1, fcRepo.count());
 	}
 
-	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
+	@Tag("user_story_19201")
+	@WithMockUser(username = "jfs")
 	@Test
-	public void test_nonAdminCannotCreateFundingCycle() {
-		assertThrows(AccessDeniedException.class, () -> fcService.saveFundingCycle(new FundingCycle()));
+	public void test_buProgramLeadCanCreateFundingCycle() {
+		long initFCCount = fcRepo.count();
+
+		FundingCycle fc = new FundingCycle();
+		fc.setIsOpen(true);
+		fc.setStartDate(LocalDate.of(2020, 1, 1));
+		fc.setExpectedApplications(1_000L);
+		fc.setFiscalYear(fyService.findFiscalYearById(4L));
+		fc.setFundingOpportunity(foService.findFundingOpportunityById(77L));
+
+		// jfs can create a FC for FO id=77 since he's a Program Lead for BU id=2
+		fcService.saveFundingCycle(fc);
+		assertEquals(initFCCount + 1, fcRepo.count());
+
+		// jfs cannot create a FC for FO id=17 since he's a Program Officer for BU id=3
+		fc.setFundingOpportunity(foService.findFundingOpportunityById(17L));
+		assertThrows(AccessDeniedException.class, () -> fcService.saveFundingCycle(fc));
+
+		// jfs cannot create a FC for FO id=35 since he's not even a member of BU id=4
+		fc.setFundingOpportunity(foService.findFundingOpportunityById(35L));
+		assertThrows(AccessDeniedException.class, () -> fcService.saveFundingCycle(fc));
 	}
 
 	@WithAnonymousUser
 	@Test
-	public void testFindFundingCyclesByFundingOpportunityMap() {
+	public void test_findFundingCyclesByFundingOpportunityMap() {
 		Map<Long, FundingCycle> fcsByFosMap = fcService.findFundingCyclesByFundingOpportunityMap();
 		assertNotNull(fcsByFosMap);
 		assertTrue(0 < fcsByFosMap.size());
 	}
 
+	@Tag("user_story_14750")
+	@WithAnonymousUser
+	@Test
+	public void test_anonUserCanFindAllFCsForOneFO() {
+		List<FundingCycleProjection> fcProjections = fcService.findFCsForBrowseViewFO(100L);
+
+		assertEquals(1, fcProjections.size());
+		assertEquals(9_162, fcProjections.get(0).getNumAppsExpected());
+	}
 }

@@ -22,7 +22,7 @@
 
 				<div class="web-frmvld">
 
-					<form action="#" th:action="@{createFundingCycle(foId=${param.foId})}" th:object="${fundingCycle}" method="post">
+					<form action="#" th:action="@{createFC(foId=${param.foId})}" th:object="${fundingCycle}" method="post">
 
 						<div class="form-group">
 							<label for="fiscalYearDropdown" class="required"><span class="field-name" th:text="#{form.fy}"></span><strong
@@ -35,12 +35,12 @@
 						</div>
 
 						<label for="isOpen"><span class="field-name" th:text="#{form.isOpenEnded}"></span></label> <input id="isOpen" type="checkbox"
-							th:field="*{open}" class="form-control" />
+							th:field="*{isOpen}" class="form-control" />
 
 						<div class="form-group">
 							<label for="startDate" class="required"><span class="field-name" th:text="#{form.startDate}"></span><strong class="required"
 								th:utext="#{form.required}"></strong></label> <input id="startDate" type="date" th:field="*{startDate}" class="form-control"
-								data-rule-dateISO="true" style="height: 100%;" required/>
+								data-rule-dateISO="true" style="height: 100%;" required />
 						</div>
 
 						<div class="form-group ">
@@ -48,44 +48,39 @@
 								th:field="*{endDate}" class="form-control" style="height: 100%;" data-rule-dateISO="true" />
 						</div>
 
-						<div th:if="${fo.isNOI}">
+						<!-- <div th:if="${fo.isNOI}"> -->
 
-							<div class="form-group">
-								<label for="startDateNOI" class="required"><span class="field-name" th:text="#{form.startDateNOI}"></span><strong
-									class="required" th:utext="#{form.required}"></strong></label> <input id="startDateNOI" type="date" th:field="*{startDateNOI}"
-									class="form-control" style="height: 100%;" data-rule-dateISO="true" required />
-							</div>
-
-							<div class="form-group">
-								<label for="endDateNOI" class="required"><span class="field-name" th:text="#{form.endDateNOI}"></span><strong
-									class="required" th:utext="#{form.required}"></strong></label> <input id="endDateNOI" type="date" th:field="*{endDateNOI}"
-									class="form-control" style="height: 100%;" data-rule-dateISO="true" required />
-							</div>
-
+						<div class="form-group">
+							<label for="startDateNOI"><span class="field-name" th:text="#{form.startDateNOI}"></span></label> <input
+								id="startDateNOI" type="date" th:field="*{startDateNOI}" class="form-control" style="height: 100%;" data-rule-dateISO="true" />
 						</div>
 
-
-						<div th:if="${fo.isLOI}">
-
-							<div class="form-group">
-								<label for="startDateLOI" class="required"><span class="field-name" th:text="#{form.startDateLOI}"></span><strong
-									class="required" th:utext="#{form.required}"></strong></label> <input id="startDateLOI" type="date" th:field="*{startDateLOI}"
-									class="form-control" style="height: 100%;" data-rule-dateISO="true" required />
-							</div>
-
-							<div class="form-group">
-								<label for="endDateLOI" class="required"><span class="field-name" th:text="#{form.endDateLOI}"></span><strong class="required"
-									th:utext="#{form.required}"></strong></label> <input id="endDateLOI" type="date" th:field="*{endDateLOI}" class="form-control"
-									style="height: 100%;" data-rule-dateISO="true" required />
-							</div>
-
+						<div class="form-group">
+							<label for="endDateNOI"><span class="field-name" th:text="#{form.endDateNOI}"></span></label> <input id="endDateNOI" type="date"
+								th:field="*{endDateNOI}" class="form-control" style="height: 100%;" data-rule-dateISO="true" />
 						</div>
+
+						<!-- </div> -->
+
+
+						<!-- <div th:if="${fo.isLOI}"> -->
+
+						<div class="form-group">
+							<label for="startDateLOI"><span class="field-name" th:text="#{form.startDateLOI}"></span></label> <input id="startDateLOI"
+								type="date" th:field="*{startDateLOI}" class="form-control" style="height: 100%;" data-rule-dateISO="true" />
+						</div>
+
+						<div class="form-group">
+							<label for="endDateLOI"><span class="field-name" th:text="#{form.endDateLOI}"></span></label> <input id="endDateLOI" type="date"
+								th:field="*{endDateLOI}" class="form-control" style="height: 100%;" data-rule-dateISO="true" />
+						</div>
+
+						<!-- </div> -->
 
 						<div class="form-group">
 							<label for="numAppsInput" class="required"><span class="field-name" th:text="#{form.numAppsExpected}"></span><strong
 								class="required" th:utext="#{form.required}"></strong></label> <input id="numAppsInput" th:field="*{expectedApplications}"
 								class="form-control" th:type="number" min="1" required />
-							<!-- <div th:if="${#fields.hasErrors('expectedApplications')}" th:errors="*{expectedApplications}" th:text="#{err.expectedApps}"></div> -->
 						</div>
 
 						<input type="hidden" name="fundingOpportunity" th:value="${param.foId}" />
@@ -94,7 +89,7 @@
 							<input type="submit" class="btn btn-primary" role="button" th:value="#{input.submit}" /> <a
 								th:href="@{/browse/viewFo(id=${param.foId})}" class="btn btn-link" th:text="#{msg.cancel}"></a>
 						</div>
-						
+
 					</form>
 
 				</div>
@@ -108,6 +103,40 @@
 	</main>
 
 	<footer th:insert="fragments/general :: footer(~{})"></footer>
+	
+	<script type="text/javascript">
+			$(document).ready(function(){
+				
+				  $('#isOpen').click(function(){
+				    
+					  if($(this).is(":checked")) {
+				       
+						  $("#endDate").val("");
+				          $("#endDate").attr("disabled" , "disabled");
+				      
+				          $("#startDateNOI").val("");
+			  	          $("#startDateNOI").attr("disabled", "disabled");
+				       
+				          $("#endDateNOI").val("");
+				          $("#endDateNOI").attr("disabled" , "disabled");
+				       
+				          $("#startDateLOI").val("");
+			   	          $("#startDateLOI").attr("disabled", "disabled");
+				       
+				          $("#endDateLOI").val("");
+				          $("#endDateLOI").attr("disabled" , "disabled");
+				          
+				      } else {
+					    
+				          $("#endDate").removeAttr("disabled");
+				          $("#startDateNOI").removeAttr("disabled");
+			   	          $("#endDateNOI").removeAttr("disabled");
+				          $("#startDateLOI").removeAttr("disabled");
+				          $("#endDateLOI").removeAttr("disabled");
+				      }   
+				  });
+			});
+	</script>
 
 </body>
 </html>

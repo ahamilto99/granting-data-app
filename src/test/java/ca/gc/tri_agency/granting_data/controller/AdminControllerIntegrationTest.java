@@ -216,7 +216,7 @@ public class AdminControllerIntegrationTest {
 			++numAdds;
 		}
 
-		assertTrue(response.contains("<h3>Audit Log</h3>"));
+		assertTrue(response.contains("<span>Audit Log</span>"));
 		assertEquals(1, numAdds);
 	}
 

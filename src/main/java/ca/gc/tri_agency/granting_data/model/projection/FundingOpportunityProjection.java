@@ -8,9 +8,21 @@ public interface FundingOpportunityProjection {
 	
 	String getNameFr();
 	
+	String getFundingType();
+	
+	String getFrequency();
+	
+	String getPartnerOrg();
+	
+	Long getBusinessUnitId();
+	
 	String getBusinessUnitNameEn();
 
 	String getBusinessUnitNameFr();
+	
+	String getAgencyAcronymEn();		// for /browse/viewFO
+	
+	String getAgencyAcronymFr();		// for /browse/viewFO
 	
 	Long getGrantingStageId();		// for Golden List table
 	

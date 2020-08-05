@@ -20,161 +20,209 @@
 
 			<div class="panel-body">
 
-				<p th:if="${actionMsg != null}" th:utext="${actionMsg}" style="font-weight: bold;"></p>
+				<div class="form-group" th:if="${actionMsg != null}">
+					<h4 th:utext="${actionMsg}" style="margin-bottom: 40px;"></h4>
+				</div>
 
 				<div class="form-group row" id="nameRow">
 					<label class="col-sm-2 col-form-label" th:utext="#{form.name}"></label>
-					<div class="col-sm-10" th:text="${fo.getLocalizedAttribute('name')}"></div>
+					<div class="col-sm-10" th:text="${#locale.language eq 'fr' ? foProjections.get(0).getNameFr() : foProjections.get(0).getNameEn()}"></div>
 				</div>
 
 				<div class="form-group row">
 					<label class="col-sm-2 col-form-label" th:utext="#{form.businessUnit}"></label>
 					<div class="col-sm-10">
-						<a th:if="${fo.businessUnit != null}" th:href="@{/browse/viewBU(id=${fo.businessUnit.id})}"
-							th:text="${fo.businessUnit.getLocalizedAttribute('acronym')}"></a>
+						<a th:if="${foProjections.get(0).getBusinessUnitNameEn() ne null or foProjections.get(0).getBusinessUnitNameFr() ne null}"
+							th:href="@{/browse/viewBU(id=${foProjections.get(0).getBusinessUnitId()})}"
+							th:text="${#locale.language eq 'fr' ? foProjections.get(0).getBusinessUnitNameFr() : foProjections.get(0).getBusinessUnitNameEn()}"></a>
 					</div>
 				</div>
 
 				<div class="form-group row" id="fundingTypeRow">
 					<label class="col-sm-2 col-form-label" th:utext="#{form.fundingType}"></label>
-					<div class="col-sm-10" th:text="${fo.fundingType}"></div>
-				</div>
-
-				<div class="form-group row">
-					<label class="col-sm-2 col-form-label" th:text="#{form.numAgencies}"></label>
-					<div class="col-sm-10" th:text="${fo.participatingAgencies.size()}"></div>
+					<div class="col-sm-10" th:text="${foProjections.get(0).getFundingType()}"></div>
 				</div>
 
 				<div class="form-group row">
 					<label class="col-sm-2 col-form-label" th:utext="#{form.frequency}"></label>
-					<div class="col-sm-10" th:text="${fo.frequency}"></div>
+					<div class="col-sm-10" th:text="${foProjections.get(0).getFrequency()}"></div>
+				</div>
+
+				<div class="form-group row">
+					<label class="col-sm-2 col-form-label" th:text="#{form.numAgencies}"></label>
+					<div class="col-sm-10"
+						th:text="${foProjections.get(0).getAgencyAcronymEn() eq null and foProjections.get(0).getAgencyAcronymFr() eq null ? 0 : foProjections.size()}"></div>
 				</div>
 
 				<div class="form-group row">
 					<label class="col-sm-2 col-form-label" th:utext="#{form.participatingAgencies}"></label>
-					<div class="col-sm-10">
-						<span th:if="${fo.participatingAgencies.size() eq 0}" th:text="#{msg.none}"></span>
-						<ul th:each="agency : ${fo.participatingAgencies}">
-							<li class="col-sm-10" th:text="${agency.getLocalizedAttribute('acronym')}"></li>
-						</ul>
+					<div class="col-sm-10" th:each="fo : ${foProjections}"
+						th:text="${fo.getAgencyAcronymEn() ne null or fo.getAgencyAcronymFr() ne null ? 
+										(#locale.language eq 'fr' ? fo.getAgencyAcronymFr() : fo.getAgencyAcronymEn()) : 'N/A'}">
 					</div>
 				</div>
 
 				<div class="form-group">
-					<a class="btn btn-primary" th:href="@{/manage/manageFo(id=${fo.id})}" role="button" th:text="#{link.manageFo}"></a>
+					<a class="btn btn-primary" th:href="@{/manage/manageFo(id=${param.id})}" role="button" th:text="#{link.manageFo}"></a>
 				</div>
 
-				<div class="form-group">
-					<div>
-						<h3 th:text="#{h.grantingCapabilities}" style="margin: 25px 0px;"></h3>
-					</div>
+				<div class="expd-clps-div">
+					<span th:text="#{h.grantingCapabilities}"></span>
+					<button id="collapseExpandGCsBtn" class="btn-xs expd-clps-btn" th:title="#{msg.expandCollapse(#{h.linkedSfcs})}"
+						onclick="expandCollapseTable('grantingCapabilitiesTable', 'collapseExpandGCsBtn')">+</button>
 				</div>
 
-				<div th:if="${actionMsg != null}" class="form-group">
-					<h4 th:text="#{h.createdGc}"></h4>
+				<div id="grantingCapabilitiesTable" hidden="true">
+					<table class="wb-tables table table-striped table-hover dataTable" aria-live="polite">
+						<thead>
+							<tr>
+								<th th:text="#{th.grantingStage}"></th>
+								<th th:text="#{th.gs}"></th>
+								<th th:text="#{th.description}"></th>
+								<th th:text="#{th.url}"></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="gc : ${gcProjections}">
+								<td th:text="${#locale.language eq 'fr' ? gc.getGrantingStageNameFr() : gc.getGrantingStageNameEn()}"></td>
+								<td th:text="${#locale.language eq 'fr' ? gc.getGrantingSystemNameFr() : gc.getGrantingSystemNameEn()}"></td>
+								<td th:text="${gc.getDescription()}"></td>
+								<td th:text="${gc.getUrl()}"></td>
+							</tr>
+						</tbody>
+					</table>
 				</div>
 
-				<table id="grantingCapabilitiesTable" class="wb-tables table table-striped table-hover dataTable" aria-live="polite">
-					<thead>
-						<tr>
-							<th th:text="#{th.grantingStage}"></th>
-							<th th:text="#{th.gs}"></th>
-							<th th:text="#{th.description}"></th>
-							<th th:text="#{th.url}"></th>
-						</tr>
-					</thead>
-					<tbody th:if="${grantingCapabilities!=null}">
-						<tr th:each="gc : ${grantingCapabilities}">
-							<td th:text="${gc.grantingStage.getLocalizedAttribute('name')}"></td>
-							<td th:text="${gc.grantingSystem.getLocalizedAttribute('name')}"></td>
-							<td th:text="${gc.description}"></td>
-							<td th:text="${gc.url}"></td>
-						</tr>
-
-					</tbody>
-				</table>
-
-				<div class="form-group">
-					<div>
-						<h3 th:text="#{h.linkedSfcs}" style="margin: 25px 0px;"></h3>
-					</div>
+				<div class="expd-clps-div">
+					<span th:text="#{h.linkedSfcs}"></span>
+					<button id="collapseExpandSFCsBtn" class="btn-xs expd-clps-btn" th:title="#{msg.expandCollapse(#{h.linkedSfcs})}"
+						onclick="expandCollapseTable('systemFundingCyclesTable', 'collapseExpandSFCsBtn')">+</button>
 				</div>
 
-				<table id="fundingCycles" class="wb-tables table table-striped table-hover dataTable" aria-live="polite">
-					<thead>
-						<tr>
-							<th th:text="#{th.grantingSystem}"></th>
-							<th th:text="#{th.systemFo}"></th>
-							<th th:text="#{th.yr}"></th>
-							<!-- 						<th th:text="#{th.startDateSystemPlanned}"></th> -->
-							<!-- 						<th th:text="#{th.endDateSystemPlanned}"></th> -->
-							<th th:text="#{th.numApps}"></th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr th:each="row : ${linkedSystemFundingCycles}">
-							<td th:text="${row.systemFundingOpportunity.grantingSystem.acronym}"></td>
-							<td th:text="${row.systemFundingOpportunity.getLocalizedAttribute('name')}"></td>
-							<td th:text="${row.fiscalYear}"></td>
-							<td th:text="${#numbers.formatInteger(row.numAppsReceived, 1, 'COMMA')}"></td>
-						</tr>
-					</tbody>
-				</table>
-
-
-				<div sec:authorize="hasRole('MDM ADMIN')" class="form-group">
-					<h3 th:text="#{h.auditLog}"></h3>
+				<div id="systemFundingCyclesTable" hidden="true">
+					<table class="wb-tables table table-striped table-hover dataTable" aria-live="polite">
+						<thead>
+							<tr>
+								<th th:text="#{th.extId}"></th>
+								<th th:text="#{th.systemFo}"></th>
+								<!-- 						<th th:text="#{th.startDateSystemPlanned}"></th> -->
+								<!-- 						<th th:text="#{th.endDateSystemPlanned}"></th> -->
+								<th th:text="#{th.numAppsExpected}"></th>
+								<th th:text="#{th.fyr}"></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="sfc : ${sfcProjections}">
+								<td th:text="${sfc.getExtId()}"></td>
+								<td th:text="${#locale.language eq 'fr' ? sfc.getSystemFundingOpportunityNameFr() : sfc.getSystemFundingOpportunityNameEn()}"></td>
+								<td th:text="${#numbers.formatInteger(sfc.getNumAppsReceived(), 1, 'COMMA')}"></td>
+								<td th:text="${sfc.getFiscalYear()}"></td>
+							</tr>
+						</tbody>
+					</table>
 				</div>
 
-				<table id="auditTable" sec:authorize="hasRole('MDM ADMIN')" class="wb-tables table table-striped table-hover dataTable" aria-live="polite"
-					data-wb-tables='{"scrollX" : "true" }'>
-					<thead>
-						<tr>
-							<th th:text="#{th.user}"></th>
-							<th th:text="#{th.type}"></th>
-							<th th:text="#{form.nameEn}"></th>
-							<th th:text="#{form.nameFr}"></th>
-							<th th:text="#{form.frequency}"></th>
-							<th th:text="#{form.fundingType}"></th>
-							<th th:text="#{th.complex}"></th>
-							<th th:text="#{th.edi}"></th>
-							<th th:text="#{th.jointInitiative}"></th>
-							<th th:text="#{form.loi}"></th>
-							<th th:text="#{form.noi}"></th>
-							<th th:text="#{th.partnerOrg}"></th>
-							<th th:text="#{th.bu}"></th>
-							<th th:text="#{th.date}"></th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr th:each="revision : ${revisionList}">
-							<td th:text="${revision[1]}"></td>
-							<td th:text="${revision[2]}"></td>
-							<td th:text="${revision[3]}"></td>
-							<td th:text="${revision[4]}"></td>
-							<td th:text="${revision[5]}"></td>
-							<td th:text="${revision[6]}"></td>
-							<td th:text="${revision[7]}"></td>
-							<td th:text="${revision[8]}"></td>
-							<td th:text="${revision[9]}"></td>
-							<td th:text="${revision[10]}"></td>
-							<td th:text="${revision[11]}"></td>
-							<td th:text="${revision[12]}"></td>
-							<td><a th:text="${revision[13]}" th:href="@{/browse/viewBU(id=${revision[13]})}"></a></td>
-							<td th:text="${revision[14]}"></td>
-						</tr>
-					</tbody>
-				</table>
+				<div class="expd-clps-div">
+					<span th:text="#{h.linkedFCs}"></span>
+					<button id="collapseExpandFCsBtn" class="btn-xs expd-clps-btn" th:title="#{msg.expandCollapse(#{h.linkedFCs})}"
+						onclick="expandCollapseTable('fundingCyclesTable', 'collapseExpandFCsBtn')">+</button>
+				</div>
+
+				<div id="fundingCyclesTable" hidden="true">
+					<table class="wb-tables table table-striped table-hover" aria-live="polite">
+						<thead>
+							<tr>
+								<th th:text="#{th.startDate}"></th>
+								<th th:text="#{th.openEnded}"></th>
+								<th th:text="#{th.endDate}"></th>
+								<th th:text="#{th.startDateNOI}"></th>
+								<th th:text="#{th.endDateNOI}"></th>
+								<th th:text="#{th.startDateLOI}"></th>
+								<th th:text="#{th.endDateLOI}"></th>
+								<th th:text="#{th.numAppsExpected}"></th>
+								<th th:text="#{th.fyr}"></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="fc : ${fcProjections}">
+								<td th:text="${fc.getStartDate()}"></td>
+								<td th:if="${fc.getIsOpenEnded()}" th:text="#{msg.yes}"></td>
+								<td th:if="${fc.getIsOpenEnded()} eq false" th:text="#{msg.no}"></td>
+								<td th:text="${fc.getEndDate()}"></td>
+								<td th:text="${fc.getStartDateNOI()}"></td>
+								<td th:text="${fc.getEndDateNOI()}"></td>
+								<td th:text="${fc.getStartDateLOI()}"></td>
+								<td th:text="${fc.getEndDateLOI()}"></td>
+								<td th:text="${#numbers.formatInteger(fc.getNumAppsExpected(), 1, 'COMMA')}"></td>
+								<td><a th:href="@{/browse/viewFcFromFy(fyId=${fc.getFiscalYearId()})}" th:text="${fc.getFiscalYear()}"></a></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<div sec:authorize="hasRole('MDM ADMIN')" class="expd-clps-div">
+					<span th:text="#{h.auditLog}"></span>
+					<button id="collapseExpandAuditTableBtn" class="btn-xs expd-clps-btn" th:title="#{msg.expandCollapse(#{h.auditLog})}"
+						onclick="expandCollapseTable('auditTable', 'collapseExpandAuditTableBtn')">+</button>
+				</div>
+
+				<div id="auditTable" hidden="true">
+					<table sec:authorize="hasRole('MDM ADMIN')" class="wb-tables table table-striped table-hover dataTable" aria-live="polite"
+						data-wb-tables='{"scrollX" : "true" }'>
+						<thead>
+							<tr>
+								<th th:text="#{th.user}"></th>
+								<th th:text="#{th.type}"></th>
+								<th th:text="#{form.nameEn}"></th>
+								<th th:text="#{form.nameFr}"></th>
+								<th th:text="#{form.frequency}"></th>
+								<th th:text="#{form.fundingType}"></th>
+								<th th:text="#{th.complex}"></th>
+								<th th:text="#{th.edi}"></th>
+								<th th:text="#{th.jointInitiative}"></th>
+								<th th:text="#{form.loi}"></th>
+								<th th:text="#{form.noi}"></th>
+								<th th:text="#{th.partnerOrg}"></th>
+								<th th:text="#{th.bu}"></th>
+								<th th:text="#{th.date}"></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="revision : ${revisionList}">
+								<td th:text="${revision[1]}"></td>
+								<td th:text="${revision[2]}"></td>
+								<td th:text="${revision[3]}"></td>
+								<td th:text="${revision[4]}"></td>
+								<td th:text="${revision[5]}"></td>
+								<td th:text="${revision[6]}"></td>
+								<td th:text="${revision[7]}"></td>
+								<td th:text="${revision[8]}"></td>
+								<td th:text="${revision[9]}"></td>
+								<td th:text="${revision[10]}"></td>
+								<td th:text="${revision[11]}"></td>
+								<td th:text="${revision[12]}"></td>
+								<td><a th:text="${revision[13]}" th:href="@{/browse/viewBU(id=${revision[13]})}"></a></td>
+								<td th:text="${revision[14]}"></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<div sec:authorize="isAuthenticated()" th:if="${@memberRoleServiceImpl.checkIfCurrentUserCanCreateFC(param.id)}" class="form-group">
+					<a class="btn btn-primary" th:text="#{link.createFC}" th:href="@{/manage/createFC(foId=${param.id})}"></a>
+				</div>
 
 			</div>
-			
+
 			<div th:replace="fragments/general :: returnHome"></div>
 
 		</div>
-		
+
 	</main>
 
 	<footer th:replace="fragments/general :: footer(~{})"></footer>
+
+	<script type="text/javascript" th:src="@{/js/custom.js}"></script>
 
 </body>
 </html>

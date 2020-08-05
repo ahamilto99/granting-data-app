@@ -20,46 +20,46 @@
 
 			<div class="panel-body">
 
-				<div class="form-group row">
+				<div class="form-group row" id="nameRow">
 					<label class="col-sm-2 col-form-label" th:utext="#{form.name}"></label>
-					<div class="col-sm-10" th:text="${fo.getLocalizedAttribute('name')}"></div>
+					<div class="col-sm-10" th:text="${#locale.language eq 'fr' ? foProjections.get(0).getNameFr() : foProjections.get(0).getNameEn()}"></div>
 				</div>
 
 				<div class="form-group row">
 					<label class="col-sm-2 col-form-label" th:utext="#{form.businessUnit}"></label>
 					<div class="col-sm-10">
-						<a th:if="${fo.businessUnit ne null}" th:href="@{/browse/viewBU(id=${fo.businessUnit.id})}"
-							th:text="${fo.businessUnit.getLocalizedAttribute('acronym')}"></a>
+						<a th:if="${foProjections.get(0).getBusinessUnitNameEn() ne null or foProjections.get(0).getBusinessUnitNameFr() ne null}"
+							th:href="@{/browse/viewBU(id=${foProjections.get(0).getBusinessUnitId()})}"
+							th:text="${#locale.language eq 'fr' ? foProjections.get(0).getBusinessUnitNameFr() : foProjections.get(0).getBusinessUnitNameEn()}"></a>
 					</div>
 				</div>
 
-				<div class="form-group row">
+				<div class="form-group row" id="fundingTypeRow">
 					<label class="col-sm-2 col-form-label" th:utext="#{form.fundingType}"></label>
-					<div class="col-sm-10" th:text="${fo.fundingType}"></div>
+					<div class="col-sm-10" th:text="${foProjections.get(0).getFundingType()}"></div>
+				</div>
+				
+				<div class="form-group row">
+					<label class="col-sm-2 col-form-label" th:utext="#{form.frequency}"></label>
+					<div class="col-sm-10" th:text="${foProjections.get(0).getFrequency()}"></div>
 				</div>
 
 				<div class="form-group row">
 					<label class="col-sm-2 col-form-label" th:text="#{form.numAgencies}"></label>
-					<div class="col-sm-10" th:text="${fo.participatingAgencies.size()}"></div>
-				</div>
-
-				<div class="form-group row">
-					<label class="col-sm-2 col-form-label" th:utext="#{form.frequency}"></label>
-					<div class="col-sm-10" th:text="${fo.frequency}"></div>
+					<div class="col-sm-10"
+						th:text="${foProjections.get(0).getAgencyAcronymEn() eq null and foProjections.get(0).getAgencyAcronymFr() eq null ? 0 : foProjections.size()}"></div>
 				</div>
 
 				<div class="form-group row">
 					<label class="col-sm-2 col-form-label" th:utext="#{form.participatingAgencies}"></label>
-					<div class="col-sm-10">
-						<span th:if="${fo.participatingAgencies.size() eq 0}" th:text="#{msg.none}"></span>
-						<ul th:each="agency : ${fo.participatingAgencies}">
-							<li class="col-sm-10" th:text="${agency.getLocalizedAttribute('acronym')}"></li>
-						</ul>
+					<div class="col-sm-10" th:each="fo : ${foProjections}"
+						th:text="${fo.getAgencyAcronymEn() ne null or fo.getAgencyAcronymFr() ne null ? 
+										(#locale.language eq 'fr' ? fo.getAgencyAcronymFr() : fo.getAgencyAcronymEn()) : 'N/A'}">
 					</div>
 				</div>
 
 				<div class="form-group">
-					<a class="btn btn-primary" th:href="@{editFo(id=${fo.id})}" role="button" th:text="#{link.editFo}"></a>
+					<a class="btn btn-primary" th:href="@{editFo(id=${param.id})}" role="button" th:text="#{link.editFo}"></a>
 				</div>
 
 				<div class="form-group">
@@ -71,23 +71,23 @@
 				<table id="grantingCapabilitiesTable" class="wb-tables table table-striped table-hover dataTable" aria-live="polite">
 					<thead>
 						<tr>
-							<th th:text="#{form.gs}"></th>
-							<th th:text="#{form.gSys}"></th>
-							<th th:text="#{form.description}"></th>
-							<th th:text="#{form.url}"></th>
+							<th th:text="#{th.grantingStage}"></th>
+							<th th:text="#{th.gs}"></th>
+							<th th:text="#{th.description}"></th>
+							<th th:text="#{th.url}"></th>
 							<th sec:authorize="hasRole('MDM ADMIN')" th:text="#{form.edit}"></th>
 							<th sec:authorize="hasRole('MDM ADMIN')" th:text="#{form.delete}"></th>
 						</tr>
 					</thead>
-					<tbody th:if="${grantingCapabilities ne null}">
-						<tr th:each="gc : ${grantingCapabilities}">
-							<td th:text="${gc.grantingStage.getLocalizedAttribute('name')}"></td>
-							<td th:text="${gc.grantingSystem.getLocalizedAttribute('name')}"></td>
-							<td th:text="${gc.description}"></td>
-							<td th:text="${gc.url}"></td>
-							<td sec:authorize="hasRole('MDM ADMIN')"><a class="btn btn-primary" th:text="#{form.edit}" th:href="@{editGC(id=${gc.id})}"></a>
+					<tbody>
+						<tr th:each="gc : ${gcProjections}">
+							<td th:text="${#locale.language eq 'fr' ? gc.getGrantingStageNameFr() : gc.getGrantingStageNameEn()}"></td>
+							<td th:text="${#locale.language eq 'fr' ? gc.getGrantingSystemNameFr() : gc.getGrantingSystemNameEn()}"></td>
+							<td th:text="${gc.getDescription()}"></td>
+							<td th:text="${gc.getUrl()}"></td>
+							<td sec:authorize="hasRole('MDM ADMIN')"><a class="btn btn-primary" th:text="#{form.edit}" th:href="@{editGC(id=${gc.getId()})}"></a>
 							</td>
-							<td sec:authorize="hasRole('MDM ADMIN')"><a class="btn btn-primary" th:text="#{form.delete}" th:href="@{deleteGC(id=${gc.id})}"
+							<td sec:authorize="hasRole('MDM ADMIN')"><a class="btn btn-primary" th:text="#{form.delete}" th:href="@{deleteGC(id=${gc.getId()})}"
 								id="deleteGrantingCapabilityLink"></a></td>
 						</tr>
 					</tbody>
@@ -106,23 +106,23 @@
 					</div>
 				</div>
 
-				<table id="fundingCycles" class="wb-tables table table-striped table-hover dataTable" aria-live="polite">
+				<table id="systemFundingCycles" class="wb-tables table table-striped table-hover dataTable" aria-live="polite">
 					<thead>
 						<tr>
-							<th th:text="#{th.grantingSystem}"></th>
+							<th th:text="#{th.extId}"></th>
 							<th th:text="#{th.systemFo}"></th>
-							<th th:text="#{th.yr}"></th>
 							<!-- 						<td th:text="#{th.startDateSystemPlanned}"></td> -->
 							<!-- 						<td th:text="#{th.endDateSystemPlanned}"></td> -->
 							<th th:text="#{th.numApps}"></th>
+							<th th:text="#{th.yr}"></th>
 						</tr>
 					</thead>
 					<tbody>
-						<tr th:each="row : ${linkedSystemFundingCycles}">
-							<td th:text="${row.systemFundingOpportunity.grantingSystem.acronym}"></td>
-							<td th:text="${row.systemFundingOpportunity.getLocalizedAttribute('name')}"></td>
-							<td th:text="${row.fiscalYear}"></td>
-							<td th:text="${row.numAppsReceived}"></td>
+						<tr th:each="sfc : ${sfcProjections}">
+							<td th:text="${sfc.getExtId()}"></td>
+							<td th:text="${#locale.language eq 'fr' ? sfc.getSystemFundingOpportunityNameFr() : sfc.getSystemFundingOpportunityNameEn()}"></td>
+							<td th:text="${#numbers.formatInteger(sfc.getNumAppsReceived(), 1, 'COMMA')}"></td>
+							<td th:text="${sfc.getFiscalYear()}"></td>
 						</tr>
 					</tbody>
 				</table>

@@ -5,12 +5,13 @@ import java.util.Optional;
 
 import ca.gc.tri_agency.granting_data.app.exception.UniqueColumnException;
 import ca.gc.tri_agency.granting_data.model.FiscalYear;
+import ca.gc.tri_agency.granting_data.model.projection.FiscalYearProjection;
 
 public interface FiscalYearService {
 
 	FiscalYear findFiscalYearById(Long id);
 	
-	List<FiscalYear> findAllFiscalYearsOrderByYearAsc();
+	List<FiscalYearProjection> findAllFiscalYearsOrderByYearAsc();
 	
 	Optional<FiscalYear> findFiscalYearByYear(Long yr);
 	

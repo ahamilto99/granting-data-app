@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ca.gc.tri_agency.granting_data.model.GrantingCapability;
+import ca.gc.tri_agency.granting_data.model.projection.GrantingCapabilityProjection;
 import ca.gc.tri_agency.granting_data.repo.GrantingCapabilityRepository;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.GrantingCapabilityService;
@@ -54,6 +55,12 @@ public class GrantingCapabilityServiceImpl implements GrantingCapabilityService 
 	@Override
 	public List<GrantingCapability> findGrantingCapabilitiesByGrantingStageNameEn(String nameEn) {
 		return gcRepo.findByGrantingStageNameEn(nameEn);
+	}
+	
+	@Transactional(readOnly = true)
+	@Override
+	public List<GrantingCapabilityProjection> findGrantingCapabilitiesForBrowseViewFO(Long foId) {
+		return gcRepo.findForBrowseViewFO(foId);
 	}
 
 }

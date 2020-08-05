@@ -8,22 +8,29 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import ca.gc.tri_agency.granting_data.model.FundingCycle;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
+import ca.gc.tri_agency.granting_data.model.projection.FundingCycleProjection;
 import ca.gc.tri_agency.granting_data.repo.FundingCycleRepository;
-import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
+import ca.gc.tri_agency.granting_data.security.SecurityUtils;
 import ca.gc.tri_agency.granting_data.service.FundingCycleService;
+import ca.gc.tri_agency.granting_data.service.MemberRoleService;
 
 @Service
 public class FundingCycleServiceImpl implements FundingCycleService {
 
 	private FundingCycleRepository fcRepo;
 
+	private MemberRoleService mrService;
+
 	@Autowired
-	public FundingCycleServiceImpl(FundingCycleRepository fcRepo) {
+	public FundingCycleServiceImpl(FundingCycleRepository fcRepo, MemberRoleService mrService) {
 		this.fcRepo = fcRepo;
+		this.mrService = mrService;
 	}
 
 	@Override
@@ -143,9 +150,13 @@ public class FundingCycleServiceImpl implements FundingCycleService {
 		return fcRepo.findByEndDateNOIBetween(dates[0], dates[1]);
 	}
 
-	@AdminOnly
 	@Override
-	public FundingCycle saveFundingCycle(FundingCycle fc) {
+	public FundingCycle saveFundingCycle(FundingCycle fc) throws AccessDeniedException {
+		Long foId = fc.getFundingOpportunity().getId();
+		if (!mrService.checkIfCurrentUserCanCreateFC(foId)) {
+			throw new AccessDeniedException(SecurityUtils.getCurrentUsername()
+					+ " does not have permission to create a FundingCycle for FundingOpportunty id=" + foId);
+		}
 		return fcRepo.save(fc);
 	}
 
@@ -157,5 +168,11 @@ public class FundingCycleServiceImpl implements FundingCycleService {
 			retval.put(fc.getFundingOpportunity().getId(), fc);
 		}
 		return retval;
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public List<FundingCycleProjection> findFCsForBrowseViewFO(Long foId) {
+		return fcRepo.findForBrowseViewFO(foId);
 	}
 }
