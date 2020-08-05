@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.security.access.AccessDeniedException;
 
 import ca.gc.tri_agency.granting_data.model.FundingCycle;
+import ca.gc.tri_agency.granting_data.model.projection.FundingCycleProjection;
 
 public interface FundingCycleService {
 
@@ -34,5 +35,7 @@ public interface FundingCycleService {
 	FundingCycle saveFundingCycle(FundingCycle fc) throws AccessDeniedException;
 	
 	Map<Long, FundingCycle> findFundingCyclesByFundingOpportunityMap();
+
+	List<FundingCycleProjection> findFCsForBrowseViewFO(Long foId);
 	
 }

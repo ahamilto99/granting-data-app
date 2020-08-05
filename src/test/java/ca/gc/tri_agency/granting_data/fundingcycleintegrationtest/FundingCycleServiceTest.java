@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.Tag;
@@ -20,6 +21,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
 import ca.gc.tri_agency.granting_data.model.FundingCycle;
+import ca.gc.tri_agency.granting_data.model.projection.FundingCycleProjection;
 import ca.gc.tri_agency.granting_data.repo.FundingCycleRepository;
 import ca.gc.tri_agency.granting_data.service.FiscalYearService;
 import ca.gc.tri_agency.granting_data.service.FundingCycleService;
@@ -197,10 +199,19 @@ public class FundingCycleServiceTest {
 
 	@WithAnonymousUser
 	@Test
-	public void testFindFundingCyclesByFundingOpportunityMap() {
+	public void test_findFundingCyclesByFundingOpportunityMap() {
 		Map<Long, FundingCycle> fcsByFosMap = fcService.findFundingCyclesByFundingOpportunityMap();
 		assertNotNull(fcsByFosMap);
 		assertTrue(0 < fcsByFosMap.size());
 	}
 
+	@Tag("user_story_14750")
+	@WithAnonymousUser
+	@Test
+	public void test_anonUserCanFindAllFCsForOneFO() {
+		List<FundingCycleProjection> fcProjections = fcService.findFCsForBrowseViewFO(100L);
+
+		assertEquals(1, fcProjections.size());
+		assertEquals(9_162, fcProjections.get(0).getNumAppsExpected());
+	}
 }

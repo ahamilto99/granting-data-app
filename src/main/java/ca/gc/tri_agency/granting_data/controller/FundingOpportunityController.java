@@ -28,6 +28,7 @@ import ca.gc.tri_agency.granting_data.security.SecurityUtils;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.AgencyService;
 import ca.gc.tri_agency.granting_data.service.BusinessUnitService;
+import ca.gc.tri_agency.granting_data.service.FundingCycleService;
 import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
 import ca.gc.tri_agency.granting_data.service.GrantingCapabilityService;
 import ca.gc.tri_agency.granting_data.service.SystemFundingCycleService;
@@ -48,20 +49,23 @@ public class FundingOpportunityController {
 
 	private BusinessUnitService buService;
 
-	private MessageSource msgSource;
+	private FundingCycleService fcService;
 
 	private ADUserService adUserService;
+
+	private MessageSource msgSource;
 
 	@Autowired
 	public FundingOpportunityController(FundingOpportunityService foService, GrantingCapabilityService gcService,
 			SystemFundingCycleService sfcService, AgencyService agencyService, SystemFundingOpportunityService sfoService,
-			BusinessUnitService buService, MessageSource msgSource, ADUserService adUserService) {
+			BusinessUnitService buService, FundingCycleService fcService, MessageSource msgSource, ADUserService adUserService) {
 		this.foService = foService;
 		this.gcService = gcService;
 		this.sfcService = sfcService;
 		this.adUserService = adUserService;
 		this.agencyService = agencyService;
 		this.sfoService = sfoService;
+		this.fcService = fcService;
 		this.buService = buService;
 		this.msgSource = msgSource;
 	}
@@ -89,6 +93,7 @@ public class FundingOpportunityController {
 		model.addAttribute("foProjections", foService.findBrowseViewFoResult(id)); // returns List b/c one FO can have multiple Agencies
 		model.addAttribute("gcProjections", gcService.findGrantingCapabilitiesForBrowseViewFO(id));
 		model.addAttribute("sfcProjections", sfcService.findSystemFundingCyclesByLinkedFundingOpportunity(id));
+		model.addAttribute("fcProjections", fcService.findFCsForBrowseViewFO(id));
 
 		if (SecurityUtils.isCurrentUserAdmin()) {
 			model.addAttribute("revisionList", foService.findFundingOpportunityRevisionsById(id));

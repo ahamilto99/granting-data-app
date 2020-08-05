@@ -6,7 +6,9 @@ public interface FundingCycleProjection {
 
 	Long getId();
 	
-	Long numExpectedApps();
+	Long getNumAppsExpected();
+
+	Boolean getIsOpenEnded();
 	
 	LocalDate getStartDate();
 	
@@ -19,6 +21,8 @@ public interface FundingCycleProjection {
 	LocalDate getStartDateLOI();
 	
 	LocalDate getEndDateLOI();
+	
+	Long getFundingOpportunityId();
 	
 	Long getFiscalYearId();
 	

@@ -1,0 +1,18 @@
+.expd-clps-div {
+	font-size: 22px;
+	font-weight: bolder;
+	margin-top: 25px;
+}
+
+.expd-clps-btn {
+	background: #2572b4;
+	color: #ffffff;
+	border: none;
+	margin-left: 10px;
+	margin-bottom: 25px;
+	position: relative;
+	bottom: 3px;
+	left: 5px;
+	width: 25px;
+	height: 25px;
+}

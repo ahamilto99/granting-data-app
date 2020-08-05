@@ -10,9 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import ca.gc.tri_agency.granting_data.model.FundingCycle;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
+import ca.gc.tri_agency.granting_data.model.projection.FundingCycleProjection;
 import ca.gc.tri_agency.granting_data.repo.FundingCycleRepository;
 import ca.gc.tri_agency.granting_data.security.SecurityUtils;
 import ca.gc.tri_agency.granting_data.service.FundingCycleService;
@@ -166,5 +168,11 @@ public class FundingCycleServiceImpl implements FundingCycleService {
 			retval.put(fc.getFundingOpportunity().getId(), fc);
 		}
 		return retval;
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public List<FundingCycleProjection> findFCsForBrowseViewFO(Long foId) {
+		return fcRepo.findForBrowseViewFO(foId);
 	}
 }
