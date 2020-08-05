@@ -222,31 +222,39 @@ public class FundingCycleServiceTest {
 	public void test_buProgramLeadCanEditLinkedFC() {
 		LocalDate newStartDate = LocalDate.now();
 
-		// verify a Program Lead can edit a FC
-		FundingCycle fc1 = fcService.findFundingCycleById(13L);
-		fc1.setStartDate(newStartDate);
-
-		fcService.saveFundingCycle(fc1);
-
+		FundingCycle fc = fcService.findFundingCycleById(13L);
+		fc.setStartDate(newStartDate);
+		fcService.saveFundingCycle(fc);
+		
 		assertEquals(newStartDate, fcService.findFundingCycleById(13L).getStartDate());
+	}
+	
+	@Tag("user_story_19207")
+	@WithMockUser(username = "dev")
+	@Test
+	public void test_buProgramOfficerCannotEditLinkedFC() {
+		LocalDate newStartDate = LocalDate.now();
 
-		// verify a Program Officer cannot edit a FC
-		FundingCycle fc2 = fcService.findFundingCycleById(41L);
-		fc2.setStartDate(newStartDate);
-
-		assertThrows(AccessDeniedException.class, () -> fcService.saveFundingCycle(fc2));
-
+		FundingCycle fc = fcService.findFundingCycleById(41L);
+		fc.setStartDate(newStartDate);
+		
+		assertThrows(AccessDeniedException.class, () -> fcService.saveFundingCycle(fc));
 		assertNotEquals(newStartDate, fcService.findFundingCycleById(41L).getStartDate());
-
-		// verify a non-BU member cannot edit a FC
-		FundingCycle fc3 = fcService.findFundingCycleById(102L);
-		fc3.setStartDate(newStartDate);
-
-		assertThrows(AccessDeniedException.class, () -> fcService.saveFundingCycle(fc3));
-
-		assertNotEquals(newStartDate, fcService.findFundingCycleById(102L).getStartDate());
 	}
 
+	@Tag("user_story_19207")
+	@WithMockUser(username = "dev")
+	@Test
+	public void test_buNonMemberCannotEditLinkedFC() {
+		LocalDate newStartDate = LocalDate.now();
+
+		FundingCycle fc = fcService.findFundingCycleById(102L);
+		fc.setStartDate(newStartDate);
+
+		assertThrows(AccessDeniedException.class, () -> fcService.saveFundingCycle(fc));
+		assertNotEquals(newStartDate, fcService.findFundingCycleById(102L).getStartDate());
+	}
+	
 	@Tag("user_story_19207")
 	@WithMockUser(roles = "MDM ADMIN")
 	@Test
@@ -255,7 +263,6 @@ public class FundingCycleServiceTest {
 
 		FundingCycle fc = fcService.findFundingCycleById(1L);
 		fc.setEndDate(newEndDate);
-
 		fcService.saveFundingCycle(fc);
 
 		assertEquals(newEndDate, fcService.findFundingCycleById(1L).getEndDate());
