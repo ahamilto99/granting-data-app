@@ -214,4 +214,49 @@ public class FundingCycleServiceTest {
 		assertEquals(1, fcProjections.size());
 		assertEquals(9_162, fcProjections.get(0).getNumAppsExpected());
 	}
+
+	@Tag("user_story_19213")
+	@WithMockUser(roles = "MDM ADMIN")
+	@Test
+	public void test_adminCanDeleteFC() {
+		long initFCCount = fcRepo.count();
+
+		FundingCycle fc = fcService.findFundingCycleById(141L);
+
+		fcService.deleteFundingCycle(fc);
+
+		assertEquals(initFCCount - 1, fcRepo.count());
+	}
+
+	@Tag("user_story_19213")
+	@WithMockUser(username = "dev")
+	@Test
+	public void test_buProgramLeadCanDeleteFC() {
+		long initFCCount = fcRepo.count();
+
+		FundingCycle fc = fcService.findFundingCycleById(127L);
+
+		fcService.deleteFundingCycle(fc);
+
+		assertEquals(initFCCount - 1, fcRepo.count());
+	}
+
+	@Tag("user_story_19213")
+	@WithMockUser(username = "dev")
+	@Test
+	public void test_buProgramOfficerCannotDeleteFC() {
+		FundingCycle fc = fcService.findFundingCycleById(11L);
+
+		assertThrows(AccessDeniedException.class, () -> fcService.deleteFundingCycle(fc));
+	}
+
+	@Tag("user_story_19213")
+	@WithMockUser(username = "dev")
+	@Test
+	public void test_buNonMemberCannotDeleteFC() {
+		FundingCycle fc = fcService.findFundingCycleById(1L);
+
+		assertThrows(AccessDeniedException.class, () -> fcService.deleteFundingCycle(fc));
+	}
+
 }
