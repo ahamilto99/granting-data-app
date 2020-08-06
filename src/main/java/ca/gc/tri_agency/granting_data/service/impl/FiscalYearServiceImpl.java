@@ -30,8 +30,8 @@ public class FiscalYearServiceImpl implements FiscalYearService {
 	}
 
 	@Override
-	public List<FiscalYearProjection> findAllFiscalYearsOrderByYearAsc() {
-		return fyRepo.findAllOrderedByYear();
+	public List<FiscalYearProjection> findAllFiscalYearProjectionsOrderByYear() {
+		return fyRepo.findAllProjectionsOrderByYear();
 	}
 
 	@Override
@@ -53,4 +53,8 @@ public class FiscalYearServiceImpl implements FiscalYearService {
 		return fyRepo.findNumAppsExpectedForEachYear();
 	}
 	
+	@Override
+	public List<FiscalYear> findAllFiscalYearEntitiesOrderByYear() {
+		return fyRepo.findAll();
+	}
 }

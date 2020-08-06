@@ -68,8 +68,7 @@ public class FundingCycleServiceTest {
 	@WithAnonymousUser
 	@Test
 	public void test_findFundingCyclesByFiscalYearId() {
-		assertEquals(0, fcService.findFundingCyclesByFiscalYearId(Long.MAX_VALUE).size());
-		assertTrue(0 < fcService.findFundingCyclesByFiscalYearId(1L).size());
+		assertEquals(36, fcService.findFundingCyclesByFiscalYearId(3L).size());
 	}
 
 	/*

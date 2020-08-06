@@ -103,7 +103,7 @@
 								<th th:text="#{th.systemFo}"></th>
 								<!-- 						<th th:text="#{th.startDateSystemPlanned}"></th> -->
 								<!-- 						<th th:text="#{th.endDateSystemPlanned}"></th> -->
-								<th th:text="#{th.numAppsExpected}"></th>
+								<th th:text="#{th.appsExpected}"></th>
 								<th th:text="#{th.fyr}"></th>
 							</tr>
 						</thead>
@@ -135,7 +135,7 @@
 								<th th:text="#{th.endDateNOI}"></th>
 								<th th:text="#{th.startDateLOI}"></th>
 								<th th:text="#{th.endDateLOI}"></th>
-								<th th:text="#{th.numAppsExpected}"></th>
+								<th th:text="#{th.appsExpected}"></th>
 								<th th:text="#{th.fyr}"></th>
 							</tr>
 						</thead>
@@ -202,10 +202,6 @@
 							</tr>
 						</tbody>
 					</table>
-				</div>
-
-				<div sec:authorize="isAuthenticated()" th:if="${@memberRoleServiceImpl.checkIfCurrentUserCanCreateFC(param.id)}" class="form-group">
-					<a class="btn btn-primary" th:text="#{link.createFC}" th:href="@{/manage/createFC(foId=${param.id})}"></a>
 				</div>
 
 			</div>

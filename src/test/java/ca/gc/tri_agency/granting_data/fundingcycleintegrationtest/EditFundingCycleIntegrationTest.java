@@ -38,6 +38,8 @@ public class EditFundingCycleIntegrationTest {
 	@Autowired
 	private WebApplicationContext ctx;
 
+	private static final String EDIT_FC_BTN = "href=\"/manage/editFC?id=";
+
 	private MockMvc mvc;
 
 	@BeforeEach
@@ -53,8 +55,8 @@ public class EditFundingCycleIntegrationTest {
 		Long newNumAppsReceived = RandomUtils.nextLong(1L, 10_000L);
 		LocalDate newStartDate = LocalDate.now();
 
-		String fcIdStr = "13";
-		Long fcId = 13L;
+		String fcIdStr = "77";
+		Long fcId = 77L;
 
 		FundingCycle fc = fcService.findFundingCycleById(fcId);
 		LocalDate initEndDate = fc.getEndDate();
@@ -69,14 +71,12 @@ public class EditFundingCycleIntegrationTest {
 
 		// verify "Edit" button is visible on manage/manageFO
 		mvc.perform(MockMvcRequestBuilders.get("/manage/manageFo").param("id", fcIdStr)).andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.content().string(Matchers
-						.containsString("<a class=\"btn btn-primary\" href=\"editFC?id=" + fcIdStr + "\">Edit</a>")));
+				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString(EDIT_FC_BTN + fcIdStr)));
 
 		// verify that fields on manage/editFC are populated
 		mvc.perform(MockMvcRequestBuilders.get("/manage/editFC").param("id", fcIdStr)).andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.content()
-						.string(Matchers.containsString("<option value=\"" + initLinkedFO.toString()
-								+ "\" selected=\"selected\">2019</option>")))
+						.string(Matchers.containsString("<option value=\"3\" selected=\"selected\">2019</option>")))
 				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString(initNumAppsExpected.toString())));
 
 		// verify that FC is edited
@@ -89,7 +89,7 @@ public class EditFundingCycleIntegrationTest {
 				.param("expectedApplications", newNumAppsReceived.toString()))
 				.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
 				.andExpect(MockMvcResultMatchers.redirectedUrl("/manage/manageFo?id=" + initLinkedFO.toString())).andReturn()
-				.getFlashMap().containsValue("Successfully edited Funding Cycle"), "Edit success flash attribute is missing");
+				.getFlashMap().containsValue("Successfully Edited Funding Cycle"), "Edit success flash attribute is missing");
 
 		FundingCycle editedFC = fcService.findFundingCycleById(fcId);
 
@@ -116,8 +116,7 @@ public class EditFundingCycleIntegrationTest {
 
 		// verify "Edit" button does not appear for a Program Officer
 		mvc.perform(MockMvcRequestBuilders.get("/manage/manageFo").param("id", "17")).andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.content().string(Matchers.not(Matchers
-						.containsString("<a class=\"btn btn-primary\" href=\"editFC?id=" + fcIdStr + "\">Edit</a>"))));
+				.andExpect(MockMvcResultMatchers.content().string(Matchers.not(Matchers.containsString(EDIT_FC_BTN + fcIdStr))));
 
 		// verify Program Officer cannot access manage/editFC page
 		mvc.perform(MockMvcRequestBuilders.get("/manage/editFC").param("id", fcIdStr))
@@ -136,14 +135,14 @@ public class EditFundingCycleIntegrationTest {
 	@WithMockUser(username = "jfs")
 	@Test
 	public void test_buNonMemberCannotEditFC_shouldReturn403() throws Exception {
-		String fcIdStr = "2";
+		String fcIdStr = "43";
+		Long fcId = 43L;
 
 		Long newNumAppsReceived = RandomUtils.nextLong(1L, 100_000L);
 
 		// verify "Edit" button does not appear for a user that is not a member of the linked FO's BU
-		mvc.perform(MockMvcRequestBuilders.get("/manage/manageFo").param("id", "2")).andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.content().string(Matchers.not(Matchers
-						.containsString("<a class=\"btn btn-primary\" href=\"editFC?id=" + fcIdStr + "\">Edit</a>"))));
+		mvc.perform(MockMvcRequestBuilders.get("/manage/manageFo").param("id", "43")).andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.content().string(Matchers.not(Matchers.containsString(EDIT_FC_BTN + fcIdStr))));
 
 		// verify that a user who is not a member of the linked FO's BU cannot access manage/editFC page
 		mvc.perform(MockMvcRequestBuilders.get("/manage/editFC").param("id", fcIdStr))
@@ -151,11 +150,11 @@ public class EditFundingCycleIntegrationTest {
 
 		// verify that a user who is not a member of the linked FO's BU cannot edit a FC
 		mvc.perform(MockMvcRequestBuilders.post("/manage/editFC").param("id", fcIdStr).param("fiscalYear", "1")
-				.param("startDate", "2020-01-01").param("isOpen", "true").param("fundingOpportunity", "17")
+				.param("startDate", "2020-01-01").param("isOpen", "true").param("fundingOpportunity", "43")
 				.param("expectedApplications", newNumAppsReceived.toString()))
 				.andExpect(MockMvcResultMatchers.status().isForbidden());
 
-		assertNotEquals(newNumAppsReceived, fcService.findFundingCycleById(17L).getExpectedApplications());
+		assertNotEquals(newNumAppsReceived, fcService.findFundingCycleById(fcId).getExpectedApplications());
 	}
 
 }

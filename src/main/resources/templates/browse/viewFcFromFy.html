@@ -20,22 +20,35 @@
 
 			<div class="panel-body">
 
-				<table id="fcsTable" class="wb-tables table table-striped table-hover dataTable" aria-live="polite">
-					<thead>
-						<tr>
-							<th th:text="#{th.foName}"></th>
-							<th th:text="#{th.cycleStart}"></th>
-							<th th:text="#{th.cycleEnd}"></th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr th:each="fc : ${fc}">
-							<td><a th:href="@{viewFo(id=${fc.fundingOpportunity.id})}" th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}"></a></td>
-							<td><span th:text="${fc.startDate}"></span></td>
-							<td><span th:text="${fc.endDate}"></span></td>
-						</tr>
-					</tbody>
-				</table>
+				<table id="fcTable" class="wb-tables table table-striped table-hover" aria-live="polite">
+						<thead>
+							<tr>
+								<th th:text="#{th.fo}"></th>
+								<th th:text="#{th.startDate}"></th>
+								<th th:text="#{th.openEnded}"></th>
+								<th th:text="#{th.endDate}"></th>
+								<th th:text="#{th.startDateNOI}"></th>
+								<th th:text="#{th.endDateNOI}"></th>
+								<th th:text="#{th.startDateLOI}"></th>
+								<th th:text="#{th.endDateLOI}"></th>
+								<th th:text="#{th.appsExpected}"></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="fc : ${fcProjections}">
+								<td><a th:href="@{/browse/viewFo(id=${fc.getFundingOpportunityId()})}" th:text="${#locale.language eq 'fr' ? fc.getFundingOpportunityNameFr() : fc.getFundingOpportunityNameEn()}"></a></td>
+								<td th:text="${fc.getStartDate()}"></td>
+								<td th:if="${fc.getIsOpenEnded()}" th:text="#{msg.yes}"></td>
+								<td th:if="${fc.getIsOpenEnded()} eq false" th:text="#{msg.no}"></td>
+								<td th:text="${fc.getEndDate()}"></td>
+								<td th:text="${fc.getStartDateNOI()}"></td>
+								<td th:text="${fc.getEndDateNOI()}"></td>
+								<td th:text="${fc.getStartDateLOI()}"></td>
+								<td th:text="${fc.getEndDateLOI()}"></td>
+								<td th:text="${#numbers.formatInteger(fc.getNumAppsExpected(), 1, 'COMMA')}"></td>
+							</tr>
+						</tbody>
+					</table>
 			
 			</div>
 

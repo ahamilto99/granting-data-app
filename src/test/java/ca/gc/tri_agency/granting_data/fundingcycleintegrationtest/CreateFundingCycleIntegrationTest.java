@@ -45,7 +45,7 @@ public class CreateFundingCycleIntegrationTest {
 		long initFCCount = fcRepo.count();
 
 		// verify "Create Funding Cycle" is visible to Program Lead
-		mvc.perform(MockMvcRequestBuilders.get("/browse/viewFo").param("id", "35")).andExpect(MockMvcResultMatchers.status().isOk())
+		mvc.perform(MockMvcRequestBuilders.get("/manage/manageFo").param("id", "35")).andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString(">Create Funding Cycle</a>")));
 
 		// verify Program Lead can access createFC page
@@ -57,8 +57,8 @@ public class CreateFundingCycleIntegrationTest {
 				.param("fundingOpportunity", "35").param("fiscalYear", "2").param("startDate", "2017-01-01")
 				.param("endDate", "2017-12-31").param("expectedApplications", "99"))
 				.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-				.andExpect(MockMvcResultMatchers.redirectedUrl("/browse/viewFo?id=35")).andReturn().getFlashMap()
-				.containsValue("Successfully created a Funding Cycle for this Funding Opportunity"),
+				.andExpect(MockMvcResultMatchers.redirectedUrl("/manage/manageFo?id=35")).andReturn().getFlashMap()
+				.containsValue("Successfully Created a Funding Cycle for this Funding Opportunity"),
 				"Created FundingCycle flash attribute is missing");
 
 		assertEquals(initFCCount + 1, fcRepo.count());
@@ -71,7 +71,7 @@ public class CreateFundingCycleIntegrationTest {
 		long initFCCount = fcRepo.count();
 
 		// verify "Create Funding Cycle" button is NOT visible to a Program Officer
-		mvc.perform(MockMvcRequestBuilders.get("/browse/viewFo").param("id", "41")).andExpect(MockMvcResultMatchers.status().isOk())
+		mvc.perform(MockMvcRequestBuilders.get("/manage/manageFo").param("id", "41")).andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.content()
 						.string(Matchers.not(Matchers.containsString(">Create Funding Cycle</a>"))));
 
@@ -94,7 +94,7 @@ public class CreateFundingCycleIntegrationTest {
 		long initFCCount = fcRepo.count();
 
 		// verify "Create Funding Cycle" button is visible to Admin
-		mvc.perform(MockMvcRequestBuilders.get("/browse/viewFo").param("id", "1")).andExpect(MockMvcResultMatchers.status().isOk())
+		mvc.perform(MockMvcRequestBuilders.get("/manage/manageFo").param("id", "1")).andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString(">Create Funding Cycle</a>")));
 
 		// verify Admin can access createFC page
@@ -105,8 +105,8 @@ public class CreateFundingCycleIntegrationTest {
 		assertTrue(mvc.perform(MockMvcRequestBuilders.post("/manage/createFC").param("foId", "1").param("fiscalYear", "1")
 				.param("open", "true").param("expectedApplications", "123").param("fundingOpportunity", "1"))
 				.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-				.andExpect(MockMvcResultMatchers.redirectedUrl("/browse/viewFo?id=1")).andReturn().getFlashMap()
-				.containsValue("Successfully created a Funding Cycle for this Funding Opportunity"),
+				.andExpect(MockMvcResultMatchers.redirectedUrl("/manage/manageFo?id=1")).andReturn().getFlashMap()
+				.containsValue("Successfully Created a Funding Cycle for this Funding Opportunity"),
 				"Created FundingCycle flash attribute is missing");
 
 		assertEquals(initFCCount + 1, fcRepo.count());
