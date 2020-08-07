@@ -66,32 +66,28 @@
 					<a class="btn btn-primary" th:href="@{/manage/manageFo(id=${param.id})}" role="button" th:text="#{link.manageFo}"></a>
 				</div>
 
-				<div class="expd-clps-div">
-					<span th:text="#{h.grantingCapabilities}"></span>
-					<button id="collapseExpandGCsBtn" class="btn-xs expd-clps-btn" th:title="#{msg.expandCollapse(#{h.linkedSfcs})}"
-						onclick="expandCollapseTable('grantingCapabilitiesTable', 'collapseExpandGCsBtn')">+</button>
+				<div class="form-group">
+					<h3 th:text="#{h.grantingCapabilities}"></h3>
 				</div>
 
-				<div id="grantingCapabilitiesTable" hidden="true">
-					<table class="wb-tables table table-striped table-hover dataTable" aria-live="polite">
-						<thead>
-							<tr>
-								<th th:text="#{th.grantingStage}"></th>
-								<th th:text="#{th.gs}"></th>
-								<th th:text="#{th.description}"></th>
-								<th th:text="#{th.url}"></th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr th:each="gc : ${gcProjections}">
-								<td th:text="${#locale.language eq 'fr' ? gc.getGrantingStageNameFr() : gc.getGrantingStageNameEn()}"></td>
-								<td th:text="${#locale.language eq 'fr' ? gc.getGrantingSystemNameFr() : gc.getGrantingSystemNameEn()}"></td>
-								<td th:text="${gc.getDescription()}"></td>
-								<td th:text="${gc.getUrl()}"></td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
+				<table id="grantingCapabilitiesTable" class="wb-tables table table-striped table-hover dataTable" aria-live="polite">
+					<thead>
+						<tr>
+							<th th:text="#{th.grantingStage}"></th>
+							<th th:text="#{th.gs}"></th>
+							<th th:text="#{th.description}"></th>
+							<th th:text="#{th.url}"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="gc : ${gcProjections}">
+							<td th:text="${#locale.language eq 'fr' ? gc.getGrantingStageNameFr() : gc.getGrantingStageNameEn()}"></td>
+							<td th:text="${#locale.language eq 'fr' ? gc.getGrantingSystemNameFr() : gc.getGrantingSystemNameEn()}"></td>
+							<td th:text="${gc.getDescription()}"></td>
+							<td th:text="${gc.getUrl()}"></td>
+						</tr>
+					</tbody>
+				</table>
 
 				<div class="expd-clps-div">
 					<span th:text="#{h.linkedSfcs}"></span>
@@ -107,7 +103,7 @@
 								<th th:text="#{th.systemFo}"></th>
 								<!-- 						<th th:text="#{th.startDateSystemPlanned}"></th> -->
 								<!-- 						<th th:text="#{th.endDateSystemPlanned}"></th> -->
-								<th th:text="#{th.numAppsExpected}"></th>
+								<th th:text="#{th.appsExpected}"></th>
 								<th th:text="#{th.fyr}"></th>
 							</tr>
 						</thead>
@@ -139,7 +135,7 @@
 								<th th:text="#{th.endDateNOI}"></th>
 								<th th:text="#{th.startDateLOI}"></th>
 								<th th:text="#{th.endDateLOI}"></th>
-								<th th:text="#{th.numAppsExpected}"></th>
+								<th th:text="#{th.appsExpected}"></th>
 								<th th:text="#{th.fyr}"></th>
 							</tr>
 						</thead>
@@ -206,10 +202,6 @@
 							</tr>
 						</tbody>
 					</table>
-				</div>
-
-				<div sec:authorize="isAuthenticated()" th:if="${@memberRoleServiceImpl.checkIfCurrentUserCanCreateFC(param.id)}" class="form-group">
-					<a class="btn btn-primary" th:text="#{link.createFC}" th:href="@{/manage/createFC(foId=${param.id})}"></a>
 				</div>
 
 			</div>

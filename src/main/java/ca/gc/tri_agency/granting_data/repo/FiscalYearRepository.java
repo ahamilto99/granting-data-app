@@ -3,6 +3,8 @@ package ca.gc.tri_agency.granting_data.repo;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.OrderBy;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -22,6 +24,9 @@ public interface FiscalYearRepository extends JpaRepository<FiscalYear, Long> {
 	List<Object[]> findNumAppsExpectedForEachYear();
 	
 	@Query("SELECT id AS id, year AS year FROM FiscalYear ORDER BY year")
-	List<FiscalYearProjection> findAllOrderedByYear();
+	List<FiscalYearProjection> findAllProjectionsOrderByYear();
+	
+	@OrderBy("year")
+	List<FiscalYear> findAll();
 
 }

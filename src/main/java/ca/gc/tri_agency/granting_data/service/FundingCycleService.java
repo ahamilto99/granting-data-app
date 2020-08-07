@@ -16,7 +16,7 @@ public interface FundingCycleService {
 	
 	List<FundingCycle> findFundingCyclesByFundingOpportunityId(Long foId);
 	
-	List<FundingCycle> findFundingCyclesByFiscalYearId(Long fyId);
+	List<FundingCycleProjection> findFundingCyclesByFiscalYearId(Long fyId);
 	
 //	Map<String, List<FundingCycle>> findMonthlyFundingCyclesMapByDate(long plusMinusMonth);
 	

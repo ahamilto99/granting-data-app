@@ -5,6 +5,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -43,8 +44,8 @@ public class FundingCycleController {
 	}
 
 	@GetMapping("/browse/viewFcFromFy")
-	public String viewFundingCyclesFromFiscalYear(@RequestParam("fyId") long fyId, Model model) {
-		model.addAttribute("fc", fcService.findFundingCyclesByFiscalYearId(fyId));
+	public String viewFundingCyclesFromFiscalYear(@RequestParam("fyId") Long fyId, Model model) {
+		model.addAttribute("fcProjections", fcService.findFundingCyclesByFiscalYearId(fyId));
 		return "browse/viewFcFromFy";
 	}
 
@@ -66,14 +67,14 @@ public class FundingCycleController {
 
 	@GetMapping("/manage/createFC")
 	public String createFundingCycleGet(@RequestParam("foId") Long foId, Model model) throws AccessDeniedException {
-		if (!mrService.checkIfCurrentUserCanCreateFC(foId)) {
+		if (!mrService.checkIfCurrentUserCanCreateUpdateDeleteFC(foId)) {
 			throw new AccessDeniedException(
 					SecurityUtils.getCurrentUsername() + " cannot create a FundingCycle for FundingOpportunity id=" + foId);
 		}
 
 		model.addAttribute("foId", foId);
 		model.addAttribute("fundingCycle", new FundingCycle());
-		model.addAttribute("fy", fyService.findAllFiscalYearsOrderByYearAsc());
+		model.addAttribute("fYrs", fyService.findAllFiscalYearProjectionsOrderByYear());
 
 		return "manage/createFundingCycle";
 	}
@@ -81,13 +82,13 @@ public class FundingCycleController {
 	@PostMapping("/manage/createFC")
 	public String createFundingCyclePost(@RequestParam("foId") Long foId, @Valid @ModelAttribute("fundingCycle") FundingCycle fc,
 			BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) throws AccessDeniedException {
-		if (!mrService.checkIfCurrentUserCanCreateFC(foId)) {
+		if (!mrService.checkIfCurrentUserCanCreateUpdateDeleteFC(foId)) {
 			throw new AccessDeniedException(
 					SecurityUtils.getCurrentUsername() + " cannot create a FundingCycle for FundingOpportunity id=" + foId);
 		}
 
 		if (bindingResult.hasErrors()) {
-			model.addAttribute("fy", fyService.findAllFiscalYearsOrderByYearAsc());
+			model.addAttribute("fYrs", fyService.findAllFiscalYearProjectionsOrderByYear());
 			return "manage/createFundingCycle";
 		}
 
@@ -95,8 +96,43 @@ public class FundingCycleController {
 
 		String actionMsg = msgSource.getMessage("h.createdFC", null, LocaleContextHolder.getLocale());
 		redirectAttributes.addFlashAttribute("actionMsg", actionMsg);
-		
-		return "redirect:/browse/viewFo?id=" + foId;
+
+		return "redirect:/manage/manageFo?id=" + foId;
 	}
 
+	@GetMapping("/manage/editFC")
+	public String editFundingCycleGet(@RequestParam("id") Long fcId, Model model) {
+		FundingCycle fc;
+		try {
+			fc = fcService.findFundingCycleById(fcId);
+		} catch (DataRetrievalFailureException drfe) {
+			throw new AccessDeniedException(SecurityUtils.getCurrentUsername()
+					+ " tried to access a FundingCycle that does not exist so that she/he could update it");
+		}
+
+		if (!mrService.checkIfCurrentUserCanCreateUpdateDeleteFC(fc.getId())) {
+			throw new AccessDeniedException(SecurityUtils.getCurrentUsername() + " cannot update the FundingCycle id=" + fc.getId());
+		}
+
+		model.addAttribute("fc", fc);
+		model.addAttribute("fYrs", fyService.findAllFiscalYearProjectionsOrderByYear());
+
+		return "manage/editFundingCycle";
+	}
+
+	@PostMapping("/manage/editFC")
+	public String editFundingCyclePost(@RequestParam("id") Long fcId, @Valid @ModelAttribute("fc") FundingCycle fc,
+			BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
+		if (bindingResult.hasErrors()) {
+			model.addAttribute("fYrs", fyService.findAllFiscalYearProjectionsOrderByYear());
+			return "manage/editFundingCycle";
+		}
+
+		fcService.saveFundingCycle(fc);
+
+		String actionMsg = msgSource.getMessage("h.editedFC", null, LocaleContextHolder.getLocale());
+		redirectAttributes.addFlashAttribute("actionMsg", actionMsg);
+
+		return "redirect:/manage/manageFo?id=" + fc.getFundingOpportunity().getId();
+	}
 }

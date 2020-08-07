@@ -3,6 +3,7 @@ package ca.gc.tri_agency.granting_data.model;
 import java.time.LocalDate;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -24,7 +25,7 @@ public class FundingCycle implements LocalizedParametersModel {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_FUNDING_CYCLE")
 	private Long id;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "fiscal_year_id")
 	private FiscalYear fiscalYear;
 
@@ -60,7 +61,7 @@ public class FundingCycle implements LocalizedParametersModel {
 	@NotNull
 	private Long expectedApplications;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "funding_opportunity_id")
 	private FundingOpportunity fundingOpportunity;
 

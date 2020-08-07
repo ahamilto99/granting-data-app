@@ -145,7 +145,7 @@ public class MemberRoleServiceImpl implements MemberRoleService {
 
 	@Transactional(readOnly = true)
 	@Override
-	public boolean checkIfCurrentUserCanCreateFC(Long foId) {
+	public boolean checkIfCurrentUserCanCreateUpdateDeleteFC(Long foId) {
 		if (SecurityUtils.isCurrentUserAdmin()) {
 			return true;
 		}
