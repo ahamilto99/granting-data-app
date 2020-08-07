@@ -175,4 +175,26 @@ public class FundingCycleServiceImpl implements FundingCycleService {
 	public List<FundingCycleProjection> findFCsForBrowseViewFO(Long foId) {
 		return fcRepo.findForBrowseViewFO(foId);
 	}
+
+	@Transactional
+	@Override
+	public void deleteFundingCycle(Long fcId) throws AccessDeniedException {
+		FundingCycle fc;
+		
+		try {
+			fc = findFundingCycleById(fcId);
+		} catch (DataRetrievalFailureException drfe) {
+			throw new AccessDeniedException(SecurityUtils.getCurrentUsername() + " is trying to delete a FundingCycle that"
+					+ " does not exist (id=" + fcId + ")");
+		}
+		
+		FundingOpportunity fo = fc.getFundingOpportunity();
+		if (fo == null || !mrService.checkIfCurrentUserCanCreateFC(fo.getId())) {
+			throw new AccessDeniedException(SecurityUtils.getCurrentUsername()
+					+ " does not have permission to delete the FundingCycle id=" + fc.getId());
+		}
+
+		fcRepo.delete(fc);
+	}
+
 }

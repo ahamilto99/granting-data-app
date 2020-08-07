@@ -37,5 +37,7 @@ public interface FundingCycleService {
 	Map<Long, FundingCycle> findFundingCyclesByFundingOpportunityMap();
 
 	List<FundingCycleProjection> findFCsForBrowseViewFO(Long foId);
+
+	void deleteFundingCycle(Long fcId) throws AccessDeniedException;
 	
 }
