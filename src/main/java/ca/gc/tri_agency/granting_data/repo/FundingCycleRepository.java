@@ -31,11 +31,20 @@ public interface FundingCycleRepository extends JpaRepository<FundingCycle, Long
 	
 	List<FundingCycle> findByEndDateNOIBetween(LocalDate endDateNOIStart, LocalDate endDateNOIEnd);
 	
-	List<FundingCycle> findByFiscalYearId(Long fyId);
+	@Query("SELECT fc.id AS id, fc.expectedApplications AS numAppsExpected, fc.isOpen AS isOpenEnded, fc.startDate AS startDate,"
+			+ " fc.endDate AS endDate, fc.startDateNOI AS startDateNOI, fc.endDateNOI AS endDateNOI,"
+			+ " fc.startDateLOI AS startDateLOI, fc.endDateLOI AS endDateLOI, fy.id AS fiscalYearId, fy.year AS fiscalYear,"
+			+ " fo.id AS fundingOpportunityId, fo.nameEn AS fundingOpportunityNameEn, fo.nameFr AS fundingOpportunityNameFr"
+			+ " FROM FundingCycle fc"
+			+ " JOIN FiscalYear fy ON fc.fiscalYear.id = fy.id"
+			+ " JOIN FundingOpportunity fo ON fc.fundingOpportunity.id = fo.id"
+			+ " WHERE fy.id = :fyId"
+			+ " ORDER BY fo.nameEn")
+	List<FundingCycleProjection> findByFiscalYearId(@Param("fyId") Long fyId);
 	
-	@Query("SELECT fc.expectedApplications AS numAppsExpected, fc.isOpen AS isOpenEnded, fc.startDate AS startDate, fc.endDate AS endDate,"
-			+ " fc.startDateNOI AS startDateNOI, fc.endDateNOI AS endDateNOI, fc.startDateLOI AS startDateLOI,"
-			+ " fc.endDateLOI AS endDateLOI, fy.id AS fiscalYearId, fy.year AS fiscalYear"
+	@Query("SELECT fc.id AS id, fc.expectedApplications AS numAppsExpected, fc.isOpen AS isOpenEnded, fc.startDate AS startDate,"
+			+ " fc.endDate AS endDate, fc.startDateNOI AS startDateNOI, fc.endDateNOI AS endDateNOI,"
+			+ " fc.startDateLOI AS startDateLOI, fc.endDateLOI AS endDateLOI, fy.id AS fiscalYearId, fy.year AS fiscalYear"
 			+ " FROM FundingCycle fc"
 			+ " JOIN FiscalYear fy ON fc.fiscalYear.id = fy.id"
 			+ " WHERE fc.fundingOpportunity.id = :foId"

@@ -6,13 +6,13 @@
 
 <head th:replace="fragments/general.html :: common_header(~{::title},~{})">
 <meta charset="utf-8">
-<title th:text="#{h.createFc}"></title>
+<title th:text="#{h.editFC}"></title>
 </head>
 <body id="createFundingCyclePage" class="home" vocab="http://schema.org/" typeof="WebPage">
 	<div th:insert="fragments/general.html :: header_nav('home')"></div>
 	<main role="main" property="mainContentOfPage" class="container">
 
-		<h1 th:text="#{h.createFc}"></h1>
+		<h1 th:text="#{h.editFC}"></h1>
 
 		<div th:insert="fragments/general.html :: profile_info('home')"></div>
 
@@ -21,14 +21,18 @@
 			<div class="panel-body">
 
 				<div class="web-frmvld">
-
-					<form action="#" th:action="@{createFC(foId=${param.foId})}" th:object="${fundingCycle}" method="post">
-
+				
+					<form action="#" th:action="@{editFC(id=${param.id})}" th:object="${fc}" method="post">
+					
+						<input type="hidden" name="id" th:value="${fc.id}" th:field="*{id}"/>
+					
+						<input type="hidden" name="fundingOpportunity" th:value="${fc.fundingOpportunity.id}" th:field="*{fundingOpportunity.id}"/>
+					
 						<div class="form-group">
 							<label for="fiscalYearDropdown" class="required"><span class="field-name" th:text="#{form.fy}"></span><strong
 								class="required" th:utext="#{form.required}"></strong></label>
 							<div>
-								<select id="fiscalYearDropdown" th:field="*{fiscalYear}" class="form-control" required>
+								<select id="fiscalYearDropdown" th:field="*{fiscalYear.id}" class="form-control" required>
 									<option th:each="fy : ${fYrs}" th:value="${fy.getId()}" th:text="${fy.getYear()}"></option>
 								</select>
 							</div>
@@ -48,8 +52,6 @@
 								th:field="*{endDate}" class="form-control" style="height: 100%;" data-rule-dateISO="true" />
 						</div>
 
-						<!-- <div th:if="${fo.isNOI}"> -->
-
 						<div class="form-group">
 							<label for="startDateNOI"><span class="field-name" th:text="#{form.startDateNOI}"></span></label> <input
 								id="startDateNOI" type="date" th:field="*{startDateNOI}" class="form-control" style="height: 100%;" data-rule-dateISO="true" />
@@ -59,11 +61,6 @@
 							<label for="endDateNOI"><span class="field-name" th:text="#{form.endDateNOI}"></span></label> <input id="endDateNOI" type="date"
 								th:field="*{endDateNOI}" class="form-control" style="height: 100%;" data-rule-dateISO="true" />
 						</div>
-
-						<!-- </div> -->
-
-
-						<!-- <div th:if="${fo.isLOI}"> -->
 
 						<div class="form-group">
 							<label for="startDateLOI"><span class="field-name" th:text="#{form.startDateLOI}"></span></label> <input id="startDateLOI"
@@ -75,23 +72,19 @@
 								th:field="*{endDateLOI}" class="form-control" style="height: 100%;" data-rule-dateISO="true" />
 						</div>
 
-						<!-- </div> -->
-
 						<div class="form-group">
 							<label for="numAppsInput" class="required"><span class="field-name" th:text="#{form.numAppsExpected}"></span><strong
 								class="required" th:utext="#{form.required}"></strong></label> <input id="numAppsInput" th:field="*{expectedApplications}"
 								class="form-control" th:type="number" min="1" required />
 						</div>
 
-						<input type="hidden" name="fundingOpportunity" th:value="${param.foId}" />
-
 						<div>
 							<input type="submit" class="btn btn-primary" role="button" th:value="#{input.submit}" /> <a
-								th:href="@{/browse/viewFo(id=${param.foId})}" class="btn btn-link" th:text="#{msg.cancel}"></a>
-						</div>
-
+								th:href="@{/manage/manageFo(id=${fc.fundingOpportunity.id})}" class="btn btn-link" th:text="#{msg.cancel}"></a>
+						</div>			
+					
 					</form>
-
+				
 				</div>
 
 			</div>
@@ -106,9 +99,26 @@
 	
 	<script type="text/javascript">
 			$(document).ready(function(){
+
+				 if ($('#isOpen').is(":checked")) {
+					  $("#endDate").val("");
+				          $("#endDate").attr("disabled" , "disabled");
+				      
+				          $("#startDateNOI").val("");
+			  	          $("#startDateNOI").attr("disabled", "disabled");
+				       
+				          $("#endDateNOI").val("");
+				          $("#endDateNOI").attr("disabled" , "disabled");
+				       
+				          $("#startDateLOI").val("");
+			   	          $("#startDateLOI").attr("disabled", "disabled");
+				       
+				          $("#endDateLOI").val("");
+				          $("#endDateLOI").attr("disabled" , "disabled");
+				  }	
 				
 				  $('#isOpen').click(function(){
-				    
+					  
 					  if($(this).is(":checked")) {
 				       
 						  $("#endDate").val("");

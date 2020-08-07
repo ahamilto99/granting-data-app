@@ -116,6 +116,7 @@ public class FundingOpportunityController {
 		model.addAttribute("foProjections", foService.findBrowseViewFoResult(id));
 		model.addAttribute("sfcProjections", sfcService.findSystemFundingCyclesByLinkedFundingOpportunity(id));
 		model.addAttribute("gcProjections", gcService.findGrantingCapabilitiesForBrowseViewFO(id));
+		model.addAttribute("fcProjections", fcService.findFCsForBrowseViewFO(id));
 		return "manage/manageFundingOpportunity";
 	}
 

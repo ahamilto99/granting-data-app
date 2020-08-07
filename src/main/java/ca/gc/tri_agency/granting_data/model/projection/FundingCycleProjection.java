@@ -23,6 +23,10 @@ public interface FundingCycleProjection {
 	LocalDate getEndDateLOI();
 	
 	Long getFundingOpportunityId();
+
+	String getFundingOpportunityNameEn();
+	
+	String getFundingOpportunityNameFr();
 	
 	Long getFiscalYearId();
 	

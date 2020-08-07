@@ -24,6 +24,6 @@ public interface MemberRoleService {
 
 	boolean checkIfCurrentUserEdiAuthorized(Long buId);
 	
-	boolean checkIfCurrentUserCanCreateFC(Long foId);
+	boolean checkIfCurrentUserCanCreateUpdateDeleteFC(Long foId);
 	
 }

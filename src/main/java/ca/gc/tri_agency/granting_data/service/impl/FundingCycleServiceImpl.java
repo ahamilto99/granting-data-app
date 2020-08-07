@@ -1,7 +1,6 @@
 package ca.gc.tri_agency.granting_data.service.impl;
 
 import java.time.LocalDate;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,51 +47,11 @@ public class FundingCycleServiceImpl implements FundingCycleService {
 		return fcRepo.findByFundingOpportunityId(foId);
 	}
 
+	@Transactional(readOnly = true)
 	@Override
-	public List<FundingCycle> findFundingCyclesByFiscalYearId(Long fyId) {
-		List<FundingCycle> fcList = fcRepo.findByFiscalYearId(fyId);
-		fcList.sort(Comparator.comparing((FundingCycle fc) -> {
-			FundingOpportunity fo = fc.getFundingOpportunity();
-			if (null != fo.getLocalizedAttribute("name")) {
-				return fc.getFundingOpportunity().getLocalizedAttribute("name");
-			}
-			return fo.getNameEn();
-		}));
-		return fcList;
+	public List<FundingCycleProjection> findFundingCyclesByFiscalYearId(Long fyId) {
+		return fcRepo.findByFiscalYearId(fyId);
 	}
-
-	// This method is not used
-//	@Override
-//	public Map<String, List<FundingCycle>> findMonthlyFundingCyclesMapByDate(long plusMinusMonth) {
-//		Map<String, List<FundingCycle>> fcsByStartDateMap = new TreeMap<>();
-//		LocalDate startDate, endDate;
-//		startDate = endDate = LocalDate.now();
-//		if (plusMinusMonth == 0) {
-//			endDate = endDate.plusMonths(1);
-//		} else if (plusMinusMonth < 0) {
-//			startDate = startDate.minusMonths(plusMinusMonth * -1);
-//			endDate = endDate.minusMonths(plusMinusMonth * -1 + 1);
-//		} else {
-//			startDate = startDate.plusMonths(plusMinusMonth);
-//			endDate = endDate.plusMonths(plusMinusMonth + 1);
-//		}
-//
-//		List<FundingCycle> fcList = fcRepo
-//				.findByStartDateGreaterThanEqualAndStartDateLessThanOrEndDateGreaterThanEqualAndEndDateLessThan(
-//						startDate, endDate, startDate, endDate);
-//		fcListLoop: for (FundingCycle fc : fcList) {
-//			String startDateStr = fc.getStartDate().toString();
-//			if (fcsByStartDateMap.containsKey(startDateStr)) {
-//				fcsByStartDateMap.get(startDateStr).add(fc);
-//				continue fcListLoop;
-//			}
-//			List<FundingCycle> newFcList = new ArrayList<>();
-//			newFcList.add(fc);
-//			fcsByStartDateMap.put(startDateStr, newFcList);
-//		}
-//
-//		return fcsByStartDateMap;
-//	}
 
 	private LocalDate[] getDayRange(int plusMinusMonth) {
 		LocalDate[] dates = new LocalDate[2];
@@ -150,10 +109,11 @@ public class FundingCycleServiceImpl implements FundingCycleService {
 		return fcRepo.findByEndDateNOIBetween(dates[0], dates[1]);
 	}
 
+	@Transactional
 	@Override
 	public FundingCycle saveFundingCycle(FundingCycle fc) throws AccessDeniedException {
 		Long foId = fc.getFundingOpportunity().getId();
-		if (!mrService.checkIfCurrentUserCanCreateFC(foId)) {
+		if (!mrService.checkIfCurrentUserCanCreateUpdateDeleteFC(foId)) {
 			throw new AccessDeniedException(SecurityUtils.getCurrentUsername()
 					+ " does not have permission to create a FundingCycle for FundingOpportunty id=" + foId);
 		}
@@ -180,16 +140,16 @@ public class FundingCycleServiceImpl implements FundingCycleService {
 	@Override
 	public void deleteFundingCycle(Long fcId) throws AccessDeniedException {
 		FundingCycle fc;
-		
+
 		try {
 			fc = findFundingCycleById(fcId);
 		} catch (DataRetrievalFailureException drfe) {
 			throw new AccessDeniedException(SecurityUtils.getCurrentUsername() + " is trying to delete a FundingCycle that"
 					+ " does not exist (id=" + fcId + ")");
 		}
-		
+
 		FundingOpportunity fo = fc.getFundingOpportunity();
-		if (fo == null || !mrService.checkIfCurrentUserCanCreateFC(fo.getId())) {
+		if (fo == null || !mrService.checkIfCurrentUserCanCreateUpdateDeleteFC(fo.getId())) {
 			throw new AccessDeniedException(SecurityUtils.getCurrentUsername()
 					+ " does not have permission to delete the FundingCycle id=" + fc.getId());
 		}

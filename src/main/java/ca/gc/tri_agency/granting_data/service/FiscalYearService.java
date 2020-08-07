@@ -10,13 +10,15 @@ import ca.gc.tri_agency.granting_data.model.projection.FiscalYearProjection;
 public interface FiscalYearService {
 
 	FiscalYear findFiscalYearById(Long id);
-	
-	List<FiscalYearProjection> findAllFiscalYearsOrderByYearAsc();
-	
+
+	List<FiscalYearProjection> findAllFiscalYearProjectionsOrderByYear();
+
 	Optional<FiscalYear> findFiscalYearByYear(Long yr);
-	
+
 	FiscalYear saveFiscalYear(FiscalYear fy) throws UniqueColumnException;
-	
+
 	List<Object[]> findNumAppsExpectedForEachFiscalYear();
-	
+
+	List<FiscalYear> findAllFiscalYearEntitiesOrderByYear();
+
 }
