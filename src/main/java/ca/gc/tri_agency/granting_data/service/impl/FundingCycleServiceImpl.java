@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ca.gc.tri_agency.granting_data.model.FundingCycle;
+import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.projection.FundingCycleProjection;
 import ca.gc.tri_agency.granting_data.repo.FundingCycleRepository;
 import ca.gc.tri_agency.granting_data.security.SecurityUtils;
@@ -108,6 +109,7 @@ public class FundingCycleServiceImpl implements FundingCycleService {
 		return fcRepo.findByEndDateNOIBetween(dates[0], dates[1]);
 	}
 
+	@Transactional
 	@Override
 	public FundingCycle saveFundingCycle(FundingCycle fc) throws AccessDeniedException {
 		Long foId = fc.getFundingOpportunity().getId();
@@ -133,4 +135,45 @@ public class FundingCycleServiceImpl implements FundingCycleService {
 	public List<FundingCycleProjection> findFCsForBrowseViewFO(Long foId) {
 		return fcRepo.findForBrowseViewFO(foId);
 	}
+
+	@Transactional
+	@Override
+	public void deleteFundingCycle(Long fcId) throws AccessDeniedException {
+		FundingCycle fc;
+
+		try {
+			fc = findFundingCycleById(fcId);
+		} catch (DataRetrievalFailureException drfe) {
+			throw new AccessDeniedException(SecurityUtils.getCurrentUsername() + " is trying to delete a FundingCycle that"
+					+ " does not exist (id=" + fcId + ")");
+		}
+
+		FundingOpportunity fo = fc.getFundingOpportunity();
+		if (fo == null || !mrService.checkIfCurrentUserCanCreateUpdateDeleteFC(fo.getId())) {
+			throw new AccessDeniedException(SecurityUtils.getCurrentUsername()
+					+ " does not have permission to delete the FundingCycle id=" + fc.getId());
+		}
+
+		fcRepo.delete(fc);
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public FundingCycleProjection findFundingCycleForConfirmDeleteFC(Long fcId) throws AccessDeniedException {
+		final String FORBIDDEN_MSG = " is trying to access the deleteFC page for the FundingCycle id=";
+
+		FundingCycleProjection fcProjection = fcRepo.findForDeleteFC(fcId).orElseThrow(() -> {
+			if (SecurityUtils.isCurrentUserAdmin()) {
+				return new DataRetrievalFailureException("FundingCycle id=" + fcId + " does not exist");
+			}
+			return new AccessDeniedException(SecurityUtils.getCurrentUsername() + FORBIDDEN_MSG + fcId + " which does not exist");
+		});
+
+		if (!mrService.checkIfCurrentUserCanCreateUpdateDeleteFC(fcProjection.getFundingOpportunityId())) {
+			throw new AccessDeniedException(SecurityUtils.getCurrentUsername() + FORBIDDEN_MSG + fcId);
+		}
+
+		return fcProjection;
+	}
+
 }

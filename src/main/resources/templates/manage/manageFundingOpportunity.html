@@ -141,6 +141,8 @@
 							<th th:text="#{th.fyr}"></th>
 							<th sec:authorize="isAuthenticated()" th:if="${@memberRoleServiceImpl.checkIfCurrentUserCanCreateUpdateDeleteFC(param.id)}"
 								th:text="#{link.edit}"></th>
+							<th sec:authorize="isAuthenticated()" th:if="${@memberRoleServiceImpl.checkIfCurrentUserCanCreateUpdateDeleteFC(param.id)}"
+								th:text="#{form.delete}"></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -157,6 +159,8 @@
 							<td th:text="${fc.getFiscalYear()}"></td>
 							<td sec:authorize="isAuthenticated()" th:if="${@memberRoleServiceImpl.checkIfCurrentUserCanCreateUpdateDeleteFC(param.id)}"><a
 								class="btn btn-primary" th:href="@{/manage/editFC(id=${fc.getId()})}" th:text="#{link.edit}"></a></td>
+							<td sec:authorize="isAuthenticated()" th:if="${@memberRoleServiceImpl.checkIfCurrentUserCanCreateUpdateDeleteFC(param.id)}"><a
+								class="btn btn-primary" th:href="@{/manage/deleteFC(id=${fc.getId()})}" th:text="#{form.delete}"></a></td>	
 						</tr>
 					</tbody>
 				</table>

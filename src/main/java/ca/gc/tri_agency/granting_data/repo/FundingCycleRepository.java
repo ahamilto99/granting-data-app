@@ -2,15 +2,19 @@ package ca.gc.tri_agency.granting_data.repo;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import ca.gc.tri_agency.granting_data.model.FundingCycle;
 import ca.gc.tri_agency.granting_data.model.projection.FundingCycleProjection;
 
+@Transactional(readOnly = true)
 @Repository
 public interface FundingCycleRepository extends JpaRepository<FundingCycle, Long> {
 
@@ -50,5 +54,10 @@ public interface FundingCycleRepository extends JpaRepository<FundingCycle, Long
 			+ " WHERE fc.fundingOpportunity.id = :foId"
 			+ " ORDER BY fc.startDate")
 	List<FundingCycleProjection> findForBrowseViewFO(@Param("foId") Long foId);
+	
+	@Query("SELECT id AS id, startDate AS startDate, expectedApplications AS numAppsExpected, fundingOpportunity.id AS fundingOpportunityId"
+			+ " FROM FundingCycle"
+			+ " WHERE id = :fcId")
+	Optional<FundingCycleProjection> findForDeleteFC(@RequestParam("fcId") Long fcId);
 	
 }

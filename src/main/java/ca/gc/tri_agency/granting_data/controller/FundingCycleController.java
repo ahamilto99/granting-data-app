@@ -101,7 +101,7 @@ public class FundingCycleController {
 	}
 
 	@GetMapping("/manage/editFC")
-	public String editFundingCycleGet(@RequestParam("id") Long fcId, Model model) {
+	public String editFundingCycleGet(@RequestParam("id") Long fcId, Model model) throws AccessDeniedException {
 		FundingCycle fc;
 		try {
 			fc = fcService.findFundingCycleById(fcId);
@@ -122,7 +122,7 @@ public class FundingCycleController {
 
 	@PostMapping("/manage/editFC")
 	public String editFundingCyclePost(@RequestParam("id") Long fcId, @Valid @ModelAttribute("fc") FundingCycle fc,
-			BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
+			BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) throws AccessDeniedException {
 		if (bindingResult.hasErrors()) {
 			model.addAttribute("fYrs", fyService.findAllFiscalYearProjectionsOrderByYear());
 			return "manage/editFundingCycle";
@@ -135,4 +135,23 @@ public class FundingCycleController {
 
 		return "redirect:/manage/manageFo?id=" + fc.getFundingOpportunity().getId();
 	}
+
+	@GetMapping("/manage/deleteFC")
+	public String deleteFundingCycle(@RequestParam("id") Long fcId, Model model) throws AccessDeniedException {
+		model.addAttribute("fc", fcService.findFundingCycleForConfirmDeleteFC(fcId));
+
+		return "manage/deleteFundingCycle";
+	}
+
+	@PostMapping("/manage/deleteFC")
+	public String deleteFundingCyclePost(@RequestParam("fcId") Long fcId, @RequestParam("foId") Long foId,
+			RedirectAttributes redirectAttributes) throws AccessDeniedException {
+		fcService.deleteFundingCycle(fcId);
+
+		String actionMsg = msgSource.getMessage("h.deletedFC", null, LocaleContextHolder.getLocale());
+		redirectAttributes.addFlashAttribute("actionMsg", actionMsg);
+
+		return "redirect:/manage/manageFo?id=" + foId;
+	}
+
 }

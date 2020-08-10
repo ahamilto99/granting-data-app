@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<!--[if lt IE 9]><html class="no-js lt-ie9" lang="en" dir="ltr"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!--<![endif]-->
+
+<head th:replace="fragments/general.html :: common_header(~{::title},~{})">
+<meta charset="utf-8">
+<title th:text="#{h.deleteFC}"></title>
+</head>
+<body id="deleteFundingCyclePage" class="home" vocab="http://schema.org/" typeof="WebPage">
+	<div th:insert="fragments/general.html :: header_nav('home')"></div>
+	<main role="main" property="mainContentOfPage" class="container">
+
+		<h1 th:text="#{h.deleteFC}"></h1>
+
+		<div th:insert="fragments/general.html :: profile_info('home')"></div>
+
+		<div class="panel panel-default">
+
+			<div class="panel-body">
+
+				<p
+					th:text="#{p.confirmDeleteFC(${#dates.format(#conversions.convert(fc.getStartDate(), 'java.sql.Date'), 'EEEE MMMM d, yyyy')}, ${#numbers.formatInteger(fc.getNumAppsExpected(), 1, 'COMMA')})}"
+					style="font-size: 14pt; margin-bottom: 25px;"></p>
+
+				<div class="web-frmvld">
+
+					<form action="#" th:action="@{/manage/deleteFC}" method="post">
+					
+						<input type="hidden" th:value="${fc.getId()}" th:name="fcId">
+
+						<input type="hidden" th:value="${fc.getFundingOpportunityId()}" th:name="foId">
+
+						<input type="submit" class="btn btn-primary" th:value="#{form.delete}" /> <a class="btn btn-link"
+							th:href="@{/manage/manageFo(id=${fc.getFundingOpportunityId()})}" th:text="#{msg.cancel}"></a>
+
+					</form>
+
+				</div>
+
+			</div>
+
+			<div th:insert="fragments/general :: returnHome"></div>
+
+		</div>
+
+	</main>
+
+	<footer th:insert="fragments/general :: footer(~{})"></footer>
+
+</body>
+</html>

@@ -44,21 +44,20 @@ public class DeleteMemberRoleIntegrationTest {
 	@Test
 	public void test_adminCanDeleteMemberRole_shouldSucceedWith302() throws Exception {
 		// verifies "Delete" button is visible to an admin
-		mvc.perform(MockMvcRequestBuilders.get("/browse/viewBU").param("id", "1"))
-				.andExpect(MockMvcResultMatchers.status().isOk())
+		mvc.perform(MockMvcRequestBuilders.get("/browse/viewBU").param("id", "1")).andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("id=\"deleteMemberRole\"")));
-		
+
 		// verifies that an admin can delete a MemberRole
 		long initMRCount = mrRepo.count();
-		
+
 		mvc.perform(MockMvcRequestBuilders.get("/browse/viewBU").param("mrId", "3"))
-		.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-		.andExpect(MockMvcResultMatchers.redirectedUrl("/browse/viewBU?id=1")).andExpect(MockMvcResultMatchers
-				.flash().attribute("actionMsg", "Successfully Deleted Member Role for: rwi"));
-		
+				.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+				.andExpect(MockMvcResultMatchers.redirectedUrl("/browse/viewBU?id=1"))
+				.andExpect(MockMvcResultMatchers.flash().attribute("actionMsg", "Successfully Deleted Member Role for: rwi"));
+
 		mvc.perform(MockMvcRequestBuilders.get("/browse/ViewBU").param("id", "1"))
-		.andExpect(MockMvcResultMatchers.flash().attributeCount(0));
-		
+				.andExpect(MockMvcResultMatchers.flash().attributeCount(0));
+
 		assertEquals(initMRCount - 1, mrRepo.count());
 	}
 
@@ -67,18 +66,18 @@ public class DeleteMemberRoleIntegrationTest {
 	@Test
 	public void test_nonAdminCannotDelete_shouldReturn403() throws Exception {
 		// verifies that the "Delete" button is not visible to a non-admin
-		mvc.perform(MockMvcRequestBuilders.get("/browse/viewBU").param("id", "1"))
-		.andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.content()
-				.string(Matchers.not(Matchers.containsString("id=\"deleteMemberRole\""))));
-		
+		mvc.perform(MockMvcRequestBuilders.get("/browse/viewBU").param("id", "1")).andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.content()
+						.string(Matchers.not(Matchers.containsString("id=\"deleteMemberRole\""))));
+
 		// verifies a non-admin cannot delete a MemberRole
 		long initMRCount = mrRepo.count();
 
 		mvc.perform(MockMvcRequestBuilders.get("/browse/viewBU").param("mrId", "1"))
-				.andExpect(MockMvcResultMatchers.status().isForbidden()).andExpect(MockMvcResultMatchers.content()
-						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
+				.andExpect(MockMvcResultMatchers.status().isForbidden())
+				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
 
 		assertEquals(initMRCount, mrRepo.count());
 	}
-	
+
 }
