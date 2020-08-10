@@ -40,7 +40,7 @@ public class DeleteFundingCycleIntegrationTest {
 
 	private final String DELETE_FC_URL = "/manage/deleteFC";
 
-	private final String DEL_BTN_HALF_1 = "<a class=\"btn btn-primary\" href=\"" + DELETE_FC_URL + "?id=";
+	private final String DEL_BTN_HALF_1 = "class=\"btn btn-primary\" href=\"" + DELETE_FC_URL + "?id=";
 
 	private final String DEL_BTN_HALF_2 = "\">Delete</a>";
 
@@ -73,7 +73,7 @@ public class DeleteFundingCycleIntegrationTest {
 
 		// verify Program Officer can delete a FundingCycle
 		Assertions.assertTrue(
-				mvc.perform(MockMvcRequestBuilders.post(DELETE_FC_URL).param("id", fcId))
+				mvc.perform(MockMvcRequestBuilders.post(DELETE_FC_URL).param("fcId", fcId).param("foId", foId))
 						.andExpect(MockMvcResultMatchers.status().isFound())
 						.andExpect(MockMvcResultMatchers.redirectedUrl(MANAGE_FO_URL + "?id=" + foId)).andReturn()
 						.getFlashMap().containsValue(FLASH_ATTRIBUTE),
@@ -102,7 +102,7 @@ public class DeleteFundingCycleIntegrationTest {
 		mvc.perform(MockMvcRequestBuilders.get(DELETE_FC_URL).param("id", fcId)).andExpect(MockMvcResultMatchers.status().isForbidden());
 
 		// verify Program Officer cannot delete a FundingCycle
-		mvc.perform(MockMvcRequestBuilders.post(DELETE_FC_URL).param("id", fcId))
+		mvc.perform(MockMvcRequestBuilders.post(DELETE_FC_URL).param("fcId", fcId).param("foId", foId))
 				.andExpect(MockMvcResultMatchers.status().isForbidden());
 
 		Assertions.assertEquals(initFCCount, fcRepo.count());
@@ -126,7 +126,7 @@ public class DeleteFundingCycleIntegrationTest {
 		mvc.perform(MockMvcRequestBuilders.get(DELETE_FC_URL).param("id", fcId)).andExpect(MockMvcResultMatchers.status().isForbidden());
 
 		// verify user who is not a member of the linked BU cannot delete a FundingCycle
-		mvc.perform(MockMvcRequestBuilders.post(DELETE_FC_URL).param("id", fcId))
+		mvc.perform(MockMvcRequestBuilders.post(DELETE_FC_URL).param("fcId", fcId).param("foId", foId))
 				.andExpect(MockMvcResultMatchers.status().isForbidden());
 
 		Assertions.assertEquals(initFCCount, fcRepo.count());
@@ -151,7 +151,7 @@ public class DeleteFundingCycleIntegrationTest {
 				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString(DELETE_PAGE_ID)));
 
 		// verify admin users can delete FundingCycles
-		Assertions.assertTrue(mvc.perform(MockMvcRequestBuilders.post(DELETE_FC_URL).param("id", fcId))
+		Assertions.assertTrue(mvc.perform(MockMvcRequestBuilders.post(DELETE_FC_URL).param("fcId", fcId).param("foId", foId))
 				.andExpect(MockMvcResultMatchers.status().isFound())
 				.andExpect(MockMvcResultMatchers.redirectedUrl(MANAGE_FO_URL + "?id=" + foId)).andReturn().getFlashMap()
 				.containsValue(FLASH_ATTRIBUTE), "Deletion message flash attribute is missing");

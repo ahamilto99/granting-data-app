@@ -157,4 +157,23 @@ public class FundingCycleServiceImpl implements FundingCycleService {
 		fcRepo.delete(fc);
 	}
 
+	@Transactional(readOnly = true)
+	@Override
+	public FundingCycleProjection findFundingCycleForConfirmDeleteFC(Long fcId) throws AccessDeniedException {
+		final String FORBIDDEN_MSG = " is trying to access the deleteFC page for the FundingCycle id=";
+
+		FundingCycleProjection fcProjection = fcRepo.findForDeleteFC(fcId).orElseThrow(() -> {
+			if (SecurityUtils.isCurrentUserAdmin()) {
+				return new DataRetrievalFailureException("FundingCycle id=" + fcId + " does not exist");
+			}
+			return new AccessDeniedException(SecurityUtils.getCurrentUsername() + FORBIDDEN_MSG + fcId + " which does not exist");
+		});
+
+		if (!mrService.checkIfCurrentUserCanCreateUpdateDeleteFC(fcProjection.getFundingOpportunityId())) {
+			throw new AccessDeniedException(SecurityUtils.getCurrentUsername() + FORBIDDEN_MSG + fcId);
+		}
+
+		return fcProjection;
+	}
+
 }
