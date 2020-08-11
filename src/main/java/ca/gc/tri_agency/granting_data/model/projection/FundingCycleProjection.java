@@ -31,4 +31,6 @@ public interface FundingCycleProjection {
 	Long getFiscalYearId();
 	
 	Long getFiscalYear();
+	
+	Long getAgencyId();
 }

@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import ca.gc.tri_agency.granting_data.model.FundingCycle;
 import ca.gc.tri_agency.granting_data.model.projection.FundingCycleProjection;
 
-@Transactional(readOnly = true)
 @Repository
+@Transactional(readOnly = true)
 public interface FundingCycleRepository extends JpaRepository<FundingCycle, Long> {
 
 	List<FundingCycle> findByFundingOpportunityId(Long foId);
@@ -59,5 +59,20 @@ public interface FundingCycleRepository extends JpaRepository<FundingCycle, Long
 			+ " FROM FundingCycle"
 			+ " WHERE id = :fcId")
 	Optional<FundingCycleProjection> findForDeleteFC(@RequestParam("fcId") Long fcId);
+	
+	@Query("SELECT fc.id AS id, fc.startDate AS startDate, fc.startDateNOI AS startDateNOI, fc.endDateNOI as endDateNOI,"
+			+ " fc.startDateLOI AS startDateLOI, fc.endDateLOI AS endDateLOI, fc.expectedApplications AS numAppsExpected,"
+			+ " fo.id AS fundingOpportunityId, fo.nameEn AS fundingOpportunityNameEn, fo.nameFr AS fundingOpportunityNameFr,"
+			+ " bu.agency.id AS agencyId"
+			+ " FROM FundingCycle fc"
+			+ " JOIN FundingOpportunity fo ON fc.fundingOpportunity.id = fo.id"
+			+ " JOIN BusinessUnit bu ON fo.businessUnit.id = bu.id"
+			+ " WHERE fc.startDate BETWEEN :start AND :end"
+			+ " OR fc.startDateNOI BETWEEN :start AND :end"
+			+ " OR fc.startDateLOI BETWEEN :start AND :end"
+			+ " OR fc.endDate BETWEEN :start AND :end"
+			+ " OR fc.endDateNOI BETWEEN :start AND :end"
+			+ " OR fc.endDateLOI BETWEEN :start AND :end")
+	List<FundingCycleProjection> findForCalendar(@Param("start") LocalDate dayRangeStart, @Param("end") LocalDate dayRangeEnd);
 	
 }

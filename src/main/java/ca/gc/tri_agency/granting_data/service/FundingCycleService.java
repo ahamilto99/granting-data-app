@@ -43,4 +43,6 @@ public interface FundingCycleService {
 
 	FundingCycleProjection findFundingCycleForConfirmDeleteFC(Long fcId) throws AccessDeniedException;
 
+	List<FundingCycleProjection> findFundingCyclesForCalendar(int plusMinusMonth);
+
 }
