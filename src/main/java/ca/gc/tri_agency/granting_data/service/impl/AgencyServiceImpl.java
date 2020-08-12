@@ -7,6 +7,7 @@ import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
 
 import ca.gc.tri_agency.granting_data.model.Agency;
+import ca.gc.tri_agency.granting_data.model.projection.AgencyProjection;
 import ca.gc.tri_agency.granting_data.repo.AgencyRepository;
 import ca.gc.tri_agency.granting_data.service.AgencyService;
 
@@ -28,6 +29,17 @@ public class AgencyServiceImpl implements AgencyService {
 	@Override
 	public List<Agency> findAllAgencies() {
 		return agencyRepo.findAll();
+	}
+
+	@Override
+	public List<AgencyProjection> findResultsForBrowseViewAgency(Long agencyId) {
+		List<AgencyProjection> agencyProjections = agencyRepo.findForBrowseViewAgency(agencyId);
+		
+		if (agencyProjections.isEmpty()) {
+			throw new DataRetrievalFailureException("Agency id=" + agencyId + " does not exist");
+		}
+		
+		return agencyProjections;
 	}
 
 }

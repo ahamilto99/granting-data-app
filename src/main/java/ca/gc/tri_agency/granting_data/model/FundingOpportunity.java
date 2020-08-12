@@ -201,4 +201,51 @@ public class FundingOpportunity implements LocalizedParametersModel {
 		}
 	}
 	
+	@Override
+	public int hashCode() {
+		return 2020;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		
+		if (obj == null || getClass() != obj.getClass()) { 
+			return false;
+		}
+		
+		return id != null && id.equals(((FundingOpportunity) obj).id);
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("FundingOpportunity [id=");
+		builder.append(id);
+		builder.append(", nameEn=");
+		builder.append(nameEn);
+		builder.append(", nameFr=");
+		builder.append(nameFr);
+		builder.append(", fundingType=");
+		builder.append(fundingType);
+		builder.append(", frequency=");
+		builder.append(frequency);
+		builder.append(", isJointInitiative=");
+		builder.append(isJointInitiative);
+		builder.append(", isNOI=");
+		builder.append(isNOI);
+		builder.append(", isLOI=");
+		builder.append(isLOI);
+		builder.append(", partnerOrg=");
+		builder.append(partnerOrg);
+		builder.append(", isEdiRequired=");
+		builder.append(isEdiRequired);
+		builder.append(", isComplex=");
+		builder.append(isComplex);
+		builder.append("]");
+		return builder.toString();
+	}
+	
 }
