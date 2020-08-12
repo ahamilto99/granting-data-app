@@ -84,31 +84,6 @@ public class FundingCycleController {
 		model.addAttribute("endLOIDates", fcProjections.stream()
 				.filter(fc -> fc.getEndDateLOI().isAfter(startDisplayRange) && fc.getEndDateLOI().isBefore(endDisplayRange))
 				.sorted(Comparator.comparing(FundingCycleProjection::getEndDate)).collect(Collectors.toList()));
-		
-//		fcProjections.stream()
-//		.filter(fc -> fc.getStartDate().isAfter(startDisplayRange) && fc.getStartDate().isBefore(endDisplayRange))
-//		.sorted(Comparator.comparing(FundingCycleProjection::getStartDate)).iterator().forEachRemaining(fc -> {
-//			System.out.println(fc.getId());
-//			System.out.println(fc.getAgencyId());
-//			System.out.println(fc.getFundingOpportunityId());
-//			System.out.println(fc.getFundingOpportunityNameEn());
-//			System.out.println(fc.getFundingOpportunityNameFr());
-//			System.out.println(fc.getNumAppsExpected());
-//			System.out.println(fc.getStartDate());
-//			System.out.println(fc.getEndDate());
-//			System.out.println(fc.getStartDateNOI());
-//			System.out.println(fc.getEndDateNOI());
-//			System.out.println(fc.getStartDateLOI());
-//			System.out.println(fc.getEndDateLOI());
-//			System.out.println();
-//		});
-
-//		model.addAttribute("startLOIDates", fcService.findMonthlyFundingCyclesByStartDateLOI(plusMinusMonth));
-//		model.addAttribute("endLOIDates", fcService.findMonthlyFundingCyclesByEndDateLOI(plusMinusMonth));
-//		model.addAttribute("endLOIDates", fcService.findMonthlyFundingCyclesByEndDateLOI(plusMinusMonth));
-//		model.addAttribute("endLOIDates", fcService.findMonthlyFundingCyclesByEndDateLOI(plusMinusMonth));
-//		model.addAttribute("startNOIDates", fcService.findMonthlyFundingCyclesByStartDateNOI(plusMinusMonth));
-//		model.addAttribute("endNOIDates", fcService.findMonthlyFundingCyclesByEndDateNOI(plusMinusMonth));
 
 		return "browse/viewCalendar";
 	}
