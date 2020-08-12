@@ -39,14 +39,9 @@ public class BrowseFundingCycleIntegrationTest {
 	@WithAnonymousUser
 	@Test
 	public void test_anonUserCanAccessViewCalendarPage_shouldSucceedWith200() throws Exception {
-		Pattern startDateNoiRegex = Pattern
-				.compile("<div style=\\\"text-align: right;\\\">26<\\/div>[\\r\\n\\s]+<div>[\\r\\n\\s]+<div hidden="
-						+ "\\\"true\\\"><\\/div>[\\r\\n\\s]+<div style=\\\"max-height: 16px; margin-bottom: 5px;"
-						+ "\\\">[\\r\\n\\s]+<a class=\\\"sshrc startDateNOI\\\"[\\r\\n\\s]+title=\\\"Mitacs"
-						+ " Elevate[\\r\\n\\s]+Applications Expected: 8,013\\\"[\\r\\n\\s]+href=\\\"viewFo\\?"
-						+ "id=102\\\">Mitacs Elevate<\\/a>[\\r\\n\\s]+<\\/div>");
+		Pattern startDateNoiRegex = Pattern.compile("class=\"cihr endDate\"");
 
-		String response = mvc.perform(MockMvcRequestBuilders.get("/browse/viewCalendar").param("plusMinusMonth", "3"))
+		String response = mvc.perform(MockMvcRequestBuilders.get("/browse/viewCalendar").param("plusMinusMonth", "5"))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.content()
 						.string(Matchers.containsString("id=\"viewFundingCycleCalendarPage\"")))
@@ -54,9 +49,14 @@ public class BrowseFundingCycleIntegrationTest {
 
 		Matcher startDateNoiMatcher = startDateNoiRegex.matcher(response);
 
-		Assertions.assertTrue(startDateNoiMatcher.find(),
-				"FundingCycle is not displayed in the calendar; at the beginning of every month, we have to adjust the"
-						+ " plusMinusMonth request param so that it corresponds to November 2020");
+		int numMatches = 0;
+		while (startDateNoiMatcher.find()) {
+			++numMatches;
+		}
+
+		Assertions.assertEquals(2, numMatches, "At the beginning of every month, we have to adjust the plusMinusMonth request"
+				+ " param so that it corresponds to January 2021; there are 2 Funding Cycles for CIHR that have a start"
+				+ " date in January 2021.");
 	}
 
 	@WithAnonymousUser
