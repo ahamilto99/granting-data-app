@@ -1,7 +1,7 @@
 package ca.gc.tri_agency.granting_data.fundingcycleintegrationtest;
 
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -333,6 +333,16 @@ public class FundingCycleServiceTest {
 	@Test
 	public void test_adminCanFindFundingCycleForConfirmDeleteFC() {
 		assertNotNull(fcService.findFundingCycleForConfirmDeleteFC(2L));
+	}
+
+	@Tag("user_story_19229")
+	@WithAnonymousUser
+	@Test
+	public void test_findFCsForCalendar() {
+		List<FundingCycleProjection> fcProjections = fcService.findFundingCyclesForCalendar(3);
+
+		assertEquals(1, fcProjections.size());
+		assertEquals(LocalDate.of(2020, 11, 26), fcProjections.get(0).getStartDateNOI());
 	}
 
 }
