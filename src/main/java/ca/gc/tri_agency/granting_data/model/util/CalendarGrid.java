@@ -12,15 +12,13 @@ public class CalendarGrid {
 	
 	// This is used in /browse/viewCalendar.html in order to ensure that a FundingOpportunity 
 	// is not duplicated. E.g. without this, if a FundingOpportunity's startDate was on the
-	// 30th of the queried month, then it would be appear twice since the grid contains 35 cells
+	// 30th of the queried month, then it would be appear twice since the grid contains 42 cells
 	public long currentMonth = -1;
 
 	public CalendarGrid(long plusMinusMonth) {
 		LocalDate startDate;
 		if (plusMinusMonth == 0) {
 			month = YearMonth.now();
-		} else if (plusMinusMonth < 0) {
-			month = YearMonth.now().plusMonths(plusMinusMonth);
 		} else {
 			month = YearMonth.now().plusMonths(plusMinusMonth);
 		}

@@ -177,29 +177,10 @@ public class FundingCycleServiceImpl implements FundingCycleService {
 	}
 
 	@Override
-	public List<FundingCycleProjection> findFundingCyclesForCalendar(int plusMinusMonth) {
+	public List<FundingCycleProjection> findFundingCyclesForCalendar(long plusMinusMonth) {
 		LocalDate calendarDay = LocalDate.now().plusMonths(plusMinusMonth);
-		
+
 		return fcRepo.findForCalendar(calendarDay.withDayOfMonth(1).minusDays(8), calendarDay.withDayOfMonth(28).plusDays(13));
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

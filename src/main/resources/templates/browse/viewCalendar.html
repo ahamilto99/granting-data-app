@@ -86,39 +86,43 @@
 }
 
 .startDate {
-	color: red;
-	font-weight: bold;
-	margin-top: 0px;
-	margin-bottom: 0px;
+	border: 3px red solid;
+	margin-bottom: 2px;
+	text-decoration: none;
 }
 
 .endDate {
-	color: black;
-	font-weight: bold;
-	margin-top: 0px;
-	margin-bottom: 0px;
+	border: 3px black solid;
+	margin-bottom: 2px;
+	text-decoration: none;
 }
 
 .startDateLOI {
-	color: darkgreen;
-	font-weight: bold;
-	margin-top: 0px;
-	margin-bottom: 0px;
+	border: 3px darkgreen solid;
+	margin-bottom: 2px;
+	text-decoration: none;
 }
 
 .endDateLOI {
-	color: purple;
-	font-weight: bold;
+	border: 3px purple solid;
+	margin-bottom: 2px;
+	text-decoration: none;
 }
 
 .startDateNOI {
-	color: saddlebrown;
-	font-weight: bold;
+	border: 3px saddlebrown solid;
+	margin-bottom: 2px;
+	text-decoration: none;
 }
 
 .endDateNOI {
-	color: blue;
-	font-weight: bold;
+	border: 3px blue solid;
+	margin-bottom: 2px;
+	text-decoration: none;
+}
+
+a:link, a:visited {
+	color: black;
 }
 </style>
 <body id="viewFundingCycleCalendarPage">
@@ -158,91 +162,122 @@
 						<div class="col-md-1 cal-weekday-header" th:text="#{day.f}"></div>
 						<div class="col-md-1 cal-weekday-header" th:text="#{day.sa}"></div>
 					</div>
-
-
 					<div th:each="row : ${calGrid.dataGrid}" class="row">
 						<div class="col-md-1 cal-day-cell" th:each="col : ${row}" style="overflow: hidden;">
 							<div style="text-align: right;" th:text="${col} ? ${col.dayOfMonth} : 'N/A'"></div>
+
 							<div th:if="${col != null}">
 
 								<div hidden="true" th:text="(${col.dayOfMonth} == 1) ? ${++calGrid.currentMonth}"></div>
 
 								<div th:each="fc : ${startDates}"
-									th:if="${fc.startDate.getDayOfMonth()} == ${col.dayOfMonth} and ${fc.startDate.getMonthValue()} == ${calGrid.month.plusMonths(calGrid.currentMonth).getMonthValue()}"
-									style="max-height: 16px;">
-									<a th:if="${fc.fundingOpportunity.businessUnit.agency.id} == 1" class="sshrc startDate"
-										th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
-										th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a th:if="${fc.fundingOpportunity.businessUnit.agency.id} == 2"
-										class="nserc startDate" th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
-										th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a
-										th:if="${fc.fundingOpportunity.businessUnit.agency.id} == 3" class="cihr startDate"
-										th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
-										th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a>
+									th:if="${#dates.day(#conversions.convert(fc.getStartDate(), 'java.sql.Date'))} eq ${col.dayOfMonth} 
+									and ${#dates.month(#conversions.convert(fc.getStartDate(), 'java.sql.Date'))} 
+									eq ${calGrid.month.plusMonths(calGrid.currentMonth).getMonthValue()}"
+									style="max-height: 16px; margin-bottom: 5px; margin-left: -2px;">
+									<a th:if="${fc.getAgencyId()} eq 1" class="sshrc startDate linkSD"
+										th:title="${#locale.language eq 'fr'} ? ${fc.getFundingOpportunityNameFr()} + '&#0013;' + #{msg.appsExpected(${fc.getNumAppsExpected()})} 
+										: ${fc.getFundingOpportunityNameEn()} + '&#0013;' + #{msg.appsExpected(${fc.getNumAppsExpected()})}"
+										th:text="${#locale.language eq 'fr' ? fc.getFundingOpportunityNameFr() : fc.getFundingOpportunityNameEn()}"
+										th:href="@{viewFo(id=${fc.getFundingOpportunityId()})}"></a> <a th:if="${fc.getAgencyId()} eq 2" class="nserc startDate linkSD"
+										th:title="${#locale.language eq 'fr'} ? ${fc.getFundingOpportunityNameFr()} + '&#0013;' + #{msg.appsExpected(${fc.getNumAppsExpected()})} 
+										: ${fc.getFundingOpportunityNameEn()} + '&#0013;' + #{msg.appsExpected(${fc.getNumAppsExpected()})}"
+										th:text="${#locale.language eq 'fr' ? fc.getFundingOpportunityNameFr() : fc.getFundingOpportunityNameEn()}"
+										th:href="@{viewFo(id=${fc.getFundingOpportunityId()})}"></a> <a th:if="${fc.getAgencyId()} eq 3" class="cihr startDate linkSD"
+										th:title="${#locale.language eq 'fr'} ? ${fc.getFundingOpportunityNameFr()} + '&#0013;' + #{msg.appsExpected(${fc.getNumAppsExpected()})} 
+										: ${fc.getFundingOpportunityNameEn()} + '&#0013;' + #{msg.appsExpected(${fc.getNumAppsExpected()})}"
+										th:text="${#locale.language eq 'fr' ? fc.getFundingOpportunityNameFr() : fc.getFundingOpportunityNameEn()}"
+										th:href="@{viewFo(id=${fc.getFundingOpportunityId()})}"></a>
 								</div>
 
 								<div th:each="fc : ${endDates}"
-									th:if="${fc.endDate.getDayOfMonth()} == ${col.dayOfMonth} and ${fc.endDate.getMonthValue()} == ${calGrid.month.plusMonths(calGrid.currentMonth).getMonthValue()}"
-									style="max-height: 16px;">
-									<a th:if="${fc.fundingOpportunity.businessUnit.agency.id} == 1" class="sshrc endDate"
-										th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
-										th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a th:if="${fc.fundingOpportunity.businessUnit.agency.id} == 2"
-										class="nserc endDate" th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
-										th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a
-										th:if="${fc.fundingOpportunity.businessUnit.agency.id} == 3" class="cihr endDate"
-										th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
-										th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a>
+									th:if="${fc.getEndDate().getDayOfMonth()} == ${col.dayOfMonth} and ${fc.getEndDate().getMonthValue()} == ${calGrid.month.plusMonths(calGrid.currentMonth).getMonthValue()}"
+									style="max-height: 16px; margin-bottom: 5px; margin-left: -2px;">
+									<a th:if="${fc.getAgencyId()} eq 1" class="sshrc endDate"
+										th:title="${#locale.language eq 'fr'} ? ${fc.getFundingOpportunityNameFr()} + '&#0013;' + #{msg.appsExpected(${fc.getNumAppsExpected()})} 
+										: ${fc.getFundingOpportunityNameEn()} + '&#0013;' + #{msg.appsExpected(${fc.getNumAppsExpected()})}"
+										th:text="${#locale.language eq 'fr' ? fc.getFundingOpportunityNameFr() : fc.getFundingOpportunityNameEn()}"
+										th:href="@{viewFo(id=${fc.getFundingOpportunityId()})}"></a> <a th:if="${fc.getAgencyId()} eq 2" class="nserc endDate"
+										th:title="${#locale.language eq 'fr'} ? ${fc.getFundingOpportunityNameFr()} + '&#0013;' + #{msg.appsExpected(${fc.getNumAppsExpected()})} 
+										: ${fc.getFundingOpportunityNameEn()} + '&#0013;' + #{msg.appsExpected(${fc.getNumAppsExpected()})}"
+										th:text="${#locale.language eq 'fr' ? fc.getFundingOpportunityNameFr() : fc.getFundingOpportunityNameEn()}"
+										th:href="@{viewFo(id=${fc.getFundingOpportunityId()})}"></a> <a th:if="${fc.getAgencyId()} eq 3" class="cihr endDate"
+										th:title="${#locale.language eq 'fr'} ? ${fc.getFundingOpportunityNameFr()} + '&#0013;' + #{msg.appsExpected(${fc.getNumAppsExpected()})} 
+										: ${fc.getFundingOpportunityNameEn()} + '&#0013;' + #{msg.appsExpected(${fc.getNumAppsExpected()})}"
+										th:text="${#locale.language eq 'fr' ? fc.getFundingOpportunityNameFr() : fc.getFundingOpportunityNameEn()}"
+										th:href="@{viewFo(id=${fc.getFundingOpportunityId()})}"></a>
 								</div>
-
-								<div th:each="fc : ${startLOIDates}"
-									th:if="${fc.startDateLOI.getDayOfMonth()} == ${col.dayOfMonth} and ${fc.startDateLOI.getMonthValue()} == ${calGrid.month.plusMonths(calGrid.currentMonth).getMonthValue()}"
-									style="max-height: 16px;">
-									<a th:if="${fc.fundingOpportunity.businessUnit.agency.id} == 1" class="sshrc startDateLOI"
-										th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
-										th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a th:if="${fc.fundingOpportunity.businessUnit.agency.id} == 2"
-										class="nserc startDateLOI" th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
-										th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a
-										th:if="${fc.fundingOpportunity.businessUnit.agency.id} == 3" class="cihr startDateLOI"
-										th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
-										th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a>
-								</div>
-
-								<div th:each="fc : ${endLOIDates}"
-									th:if="${fc.endDateLOI.getDayOfMonth()} == ${col.dayOfMonth} and ${fc.endDateLOI.getMonthValue()} == ${calGrid.month.plusMonths(calGrid.currentMonth).getMonthValue()}"
-									style="max-height: 16px;">
-									<a th:if="${fc.fundingOpportunity.businessUnit.agency.id} == 1" class="sshrc endDateLOI"
-										th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
-										th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a th:if="${fc.fundingOpportunity.businessUnit.agency.id} == 2"
-										class="nserc endDateLOI" th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
-										th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a
-										th:if="${fc.fundingOpportunity.businessUnit.agency.id} == 3" class="cihr endDateLOI"
-										th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
-										th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a>
-								</div>
-
+								
 								<div th:each="fc : ${startNOIDates}"
-									th:if="${fc.startDateNOI.getDayOfMonth()} == ${col.dayOfMonth} and ${fc.startDateNOI.getMonthValue()} == ${calGrid.month.plusMonths(calGrid.currentMonth).getMonthValue()}"
-									style="max-height: 16px;">
-									<a th:if="${fc.fundingOpportunity.businessUnit.agency.id} == 1" class="sshrc startDateNOI"
-										th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
-										th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a th:if="${fc.fundingOpportunity.businessUnit.agency.id} == 2"
-										class="nserc startDateNOI" th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
-										th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a
-										th:if="${fc.fundingOpportunity.businessUnit.agency.id} == 3" class="cihr startDateNOI"
-										th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
-										th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a>
+									th:if="${fc.getStartDateNOI().getDayOfMonth()} eq ${col.dayOfMonth} and ${fc.getStartDateNOI().getMonthValue()} eq ${calGrid.month.plusMonths(calGrid.currentMonth).getMonthValue()}"
+									style="max-height: 16px; margin-bottom: 5px; margin-left: -2px;">
+									<a th:if="${fc.getAgencyId()} eq 1" class="sshrc startDateNOI"
+										th:title="${#locale.language eq 'fr'} ? ${fc.getFundingOpportunityNameFr()} + '&#0013;' + #{msg.appsExpected(${fc.getNumAppsExpected()})} 
+										: ${fc.getFundingOpportunityNameEn()} + '&#0013;' + #{msg.appsExpected(${fc.getNumAppsExpected()})}"
+										th:text="${#locale.language eq 'fr' ? fc.getFundingOpportunityNameFr() : fc.getFundingOpportunityNameEn()}"
+										th:href="@{viewFo(id=${fc.getFundingOpportunityId()})}"></a> <a th:if="${fc.getAgencyId()} eq 2" class="nserc startDateNOI"
+										th:title="${#locale.language eq 'fr'} ? ${fc.getFundingOpportunityNameFr()} + '&#0013;' + #{msg.appsExpected(${fc.getNumAppsExpected()})} 
+										: ${fc.getFundingOpportunityNameEn()} + '&#0013;' + #{msg.appsExpected(${fc.getNumAppsExpected()})}"
+										th:text="${#locale.language eq 'fr' ? fc.getFundingOpportunityNameFr() : fc.getFundingOpportunityNameEn()}"
+										th:href="@{viewFo(id=${fc.getFundingOpportunityId()})}"></a> <a th:if="${fc.getAgencyId()} eq 3" class="cihr startDateNOI"
+										th:title="${#locale.language eq 'fr'} ? ${fc.getFundingOpportunityNameFr()} + '&#0013;' + #{msg.appsExpected(${fc.getNumAppsExpected()})} 
+										: ${fc.getFundingOpportunityNameEn()} + '&#0013;' + #{msg.appsExpected(${fc.getNumAppsExpected()})}"
+										th:text="${#locale.language eq 'fr' ? fc.getFundingOpportunityNameFr() : fc.getFundingOpportunityNameEn()}"
+										th:href="@{viewFo(id=${fc.getFundingOpportunityId()})}"></a>
 								</div>
-
+								
 								<div th:each="fc : ${endNOIDates}"
-									th:if="${fc.endDateNOI.getDayOfMonth()} == ${col.dayOfMonth} and ${fc.endDateNOI.getMonthValue()} == ${calGrid.month.plusMonths(calGrid.currentMonth).getMonthValue()}"
-									style="max-height: 16px;">
-									<a th:if="${fc.fundingOpportunity.businessUnit.agency.id} == 1" class="sshrc endDateNOI"
-										th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
-										th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a th:if="${fc.fundingOpportunity.businessUnit.agency.id} == 2"
-										class="nserc endDateNOI" th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
-										th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a> <a
-										th:if="${fc.fundingOpportunity.businessUnit.agency.id} == 3" class="cihr endDateNOI"
-										th:title="${fc.fundingOpportunity.getLocalizedAttribute('name')}" th:text="${fc.fundingOpportunity.getLocalizedAttribute('name')}"
-										th:href="@{viewFo(id=${fc.fundingOpportunity.id})}"></a>
+									th:if="${fc.getEndDateNOI().getDayOfMonth()} eq ${col.dayOfMonth} and ${fc.getEndDateNOI().getMonthValue()} eq ${calGrid.month.plusMonths(calGrid.currentMonth).getMonthValue()}"
+									style="max-height: 16px; margin-bottom: 5px; margin-left: -2px;">
+									<a th:if="${fc.getAgencyId()} eq 1" class="sshrc endDateNOI"
+										th:title="${#locale.language eq 'fr'} ? ${fc.getFundingOpportunityNameFr()} + '&#0013;' + #{msg.appsExpected(${fc.getNumAppsExpected()})} 
+										: ${fc.getFundingOpportunityNameEn()} + '&#0013;' + #{msg.appsExpected(${fc.getNumAppsExpected()})}"
+										th:text="${#locale.language eq 'fr' ? fc.getFundingOpportunityNameFr() : fc.getFundingOpportunityNameEn()}"
+										th:href="@{viewFo(id=${fc.getFundingOpportunityId()})}"></a> <a th:if="${fc.getAgencyId()} eq 2" class="nserc endDateNOI"
+										th:title="${#locale.language eq 'fr'} ? ${fc.getFundingOpportunityNameFr()} + '&#0013;' + #{msg.appsExpected(${fc.getNumAppsExpected()})} 
+										: ${fc.getFundingOpportunityNameEn()} + '&#0013;' + #{msg.appsExpected(${fc.getNumAppsExpected()})}"
+										th:text="${#locale.language eq 'fr' ? fc.getFundingOpportunityNameFr() : fc.getFundingOpportunityNameEn()}"
+										th:href="@{viewFo(id=${fc.getFundingOpportunityId()})}"></a> <a th:if="${fc.getAgencyId()} eq 3" class="cihr endDateNOI"
+										th:title="${#locale.language eq 'fr'} ? ${fc.getFundingOpportunityNameFr()} + '&#0013;' + #{msg.appsExpected(${fc.getNumAppsExpected()})} 
+										: ${fc.getFundingOpportunityNameEn()} + '&#0013;' + #{msg.appsExpected(${fc.getNumAppsExpected()})}"
+										th:text="${#locale.language eq 'fr' ? fc.getFundingOpportunityNameFr() : fc.getFundingOpportunityNameEn()}"
+										th:href="@{viewFo(id=${fc.getFundingOpportunityId()})}"></a>
+								</div>
+								
+								<div th:each="fc : ${startLOIDates}"
+									th:if="${fc.getStartDateLOI().getDayOfMonth()} eq ${col.dayOfMonth} and ${fc.getStartDateLOI().getMonthValue()} eq ${calGrid.month.plusMonths(calGrid.currentMonth).getMonthValue()}"
+									style="max-height: 16px; margin-bottom: 5px; margin-left: -2px;">
+									<a th:if="${fc.getAgencyId()} eq 1" class="sshrc startDateLOI"
+										th:title="${#locale.language eq 'fr'} ? ${fc.getFundingOpportunityNameFr()} + '&#0013;' + #{msg.appsExpected(${fc.getNumAppsExpected()})} 
+										: ${fc.getFundingOpportunityNameEn()} + '&#0013;' + #{msg.appsExpected(${fc.getNumAppsExpected()})}"
+										th:text="${#locale.language eq 'fr' ? fc.getFundingOpportunityNameFr() : fc.getFundingOpportunityNameEn()}"
+										th:href="@{viewFo(id=${fc.getFundingOpportunityId()})}"></a> <a th:if="${fc.getAgencyId()} eq 2" class="nserc startDateLOI"
+										th:title="${#locale.language eq 'fr'} ? ${fc.getFundingOpportunityNameFr()} + '&#0013;' + #{msg.appsExpected(${fc.getNumAppsExpected()})} 
+										: ${fc.getFundingOpportunityNameEn()} + '&#0013;' + #{msg.appsExpected(${fc.getNumAppsExpected()})}"
+										th:text="${#locale.language eq 'fr' ? fc.getFundingOpportunityNameFr() : fc.getFundingOpportunityNameEn()}"
+										th:href="@{viewFo(id=${fc.getFundingOpportunityId()})}"></a> <a th:if="${fc.getAgencyId()} eq 3" class="cihr startDateLOI"
+										th:title="${#locale.language eq 'fr'} ? ${fc.getFundingOpportunityNameFr()} + '&#0013;' + #{msg.appsExpected(${fc.getNumAppsExpected()})} 
+										: ${fc.getFundingOpportunityNameEn()} + '&#0013;' + #{msg.appsExpected(${fc.getNumAppsExpected()})}"
+										th:text="${#locale.language eq 'fr' ? fc.getFundingOpportunityNameFr() : fc.getFundingOpportunityNameEn()}"
+										th:href="@{viewFo(id=${fc.getFundingOpportunityId()})}"></a>
+								</div>
+								
+								<div th:each="fc : ${endLOIDates}"
+									th:if="${fc.getEndDateLOI().getDayOfMonth()} eq ${col.dayOfMonth} and ${fc.getEndDateLOI().getMonthValue()} eq ${calGrid.month.plusMonths(calGrid.currentMonth).getMonthValue()}"
+									style="max-height: 16px; margin-bottom: 5px; margin-left: -2px;">
+									<a th:if="${fc.getAgencyId()} eq 1" class="sshrc endDateLOI"
+										th:title="${#locale.language eq 'fr'} ? ${fc.getFundingOpportunityNameFr()} + '&#0013;' + #{msg.appsExpected(${fc.getNumAppsExpected()})} 
+										: ${fc.getFundingOpportunityNameEn()} + '&#0013;' + #{msg.appsExpected(${fc.getNumAppsExpected()})}"
+										th:text="${#locale.language eq 'fr' ? fc.getFundingOpportunityNameFr() : fc.getFundingOpportunityNameEn()}"
+										th:href="@{viewFo(id=${fc.getFundingOpportunityId()})}"></a> <a th:if="${fc.getAgencyId()} eq 2" class="nserc endDateLOI"
+										th:title="${#locale.language eq 'fr'} ? ${fc.getFundingOpportunityNameFr()} + '&#0013;' + #{msg.appsExpected(${fc.getNumAppsExpected()})} 
+										: ${fc.getFundingOpportunityNameEn()} + '&#0013;' + #{msg.appsExpected(${fc.getNumAppsExpected()})}"
+										th:text="${#locale.language eq 'fr' ? fc.getFundingOpportunityNameFr() : fc.getFundingOpportunityNameEn()}"
+										th:href="@{viewFo(id=${fc.getFundingOpportunityId()})}"></a> <a th:if="${fc.getAgencyId()} eq 3" class="cihr endDateLOI"
+										th:title="${#locale.language eq 'fr'} ? ${fc.getFundingOpportunityNameFr()} + '&#0013;' + #{msg.appsExpected(${fc.getNumAppsExpected()})} 
+										: ${fc.getFundingOpportunityNameEn()} + '&#0013;' + #{msg.appsExpected(${fc.getNumAppsExpected()})}"
+										th:text="${#locale.language eq 'fr' ? fc.getFundingOpportunityNameFr() : fc.getFundingOpportunityNameEn()}"
+										th:href="@{viewFo(id=${fc.getFundingOpportunityId()})}"></a>
 								</div>
 
 							</div>
@@ -254,24 +289,24 @@
 						<h3 th:text="#{h.legend}" class="col-sm-offset-1"></h3>
 
 						<div class="form-group row">
-							<div class="col-sm-offset-1 col-sm-1" th:text="#{msg.cihr}"></div>
-							<div class="col-sm-1 cihr">&nbsp;</div>
-							<div class="col-sm-2 startDate" th:text="#{msg.startDate}" style="width: 150px;"></div>
-							<div class="col-sm-2 endDate" th:text="#{msg.endDate}"></div>
+							<!-- <div class="col-sm-offset-1 col-sm-1" ></div> -->
+							<div class="col-sm-offset-1 col-sm-1 cihr" th:text="#{msg.cihr}" style="margin-right: 50px; width: 115px;"></div>
+							<div class="col-sm-1 startDate" th:text="#{msg.startDate}" style="font-size: 12px; margin-right: 50px; width: 115px;"></div>
+							<div class="col-sm-1 endDate" th:text="#{msg.endDate}" style="font-size: 12px; width: 115px;"></div>
 						</div>
 
 						<div class="form-group row">
-							<div class="col-sm-offset-1 col-sm-1" th:text="#{msg.nserc}"></div>
-							<div class="col-sm-1 nserc">&nbsp;</div>
-							<div class="col-sm-2 startDateLOI" th:text="#{msg.startDateLOI}" style="width: 150px; padding-right: 0px;"></div>
-							<div class="col-sm-2 endDateLOI" th:text="#{msg.endDateLOI}"></div>
+							<!-- <div class="col-sm-offset-1 col-sm-1" th:text="#{msg.nserc}"></div> -->
+							<div class="col-sm-offset-1 col-sm-1 nserc" th:text="#{msg.nserc}" style="margin-right: 50px; width: 115px;"></div>
+							<div class="col-sm-1 startDateLOI" th:text="#{msg.startDateLOI}" style="font-size: 12px; width: 115px;  margin-right: 50px;"></div>
+							<div class="col-sm-1 endDateLOI" th:text="#{msg.endDateLOI}" style="font-size: 12px; width: 115px;"></div>
 						</div>
 
 						<div class="form-group row">
-							<div class="col-sm-offset-1 col-sm-1" th:text="#{msg.SSHRC}"></div>
-							<div class="col-sm-1 sshrc">&nbsp;</div>
-							<div class="col-sm-2 startDateNOI" th:text="#{msg.startDateNOI}" style="width: 150px; padding-right: 0px;"></div>
-							<div class="col-sm-2 endDateNOI" th:text="#{msg.endDateNOI}"></div>
+							<!-- <div class="col-sm-offset-1 col-sm-1" th:text="#{msg.SSHRC}"></div> -->
+							<div class="col-sm-offset-1 col-sm-1 sshrc" th:text="#{msg.SSHRC}" style="margin-right: 50px; width: 115px;"></div>
+							<div class="col-sm-1 startDateNOI" th:text="#{msg.startDateNOI}" style="font-size: 12px; width: 115px; margin-right: 50px;"></div>
+							<div class="col-sm-1 endDateNOI" th:text="#{msg.endDateNOI}" style="font-size: 12px; width: 115px;"></div>
 						</div>
 
 					</div>

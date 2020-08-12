@@ -1,5 +1,10 @@
 package ca.gc.tri_agency.granting_data.controller;
 
+import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import ca.gc.tri_agency.granting_data.model.FundingCycle;
+import ca.gc.tri_agency.granting_data.model.projection.FundingCycleProjection;
 import ca.gc.tri_agency.granting_data.model.util.CalendarGrid;
 import ca.gc.tri_agency.granting_data.security.SecurityUtils;
 import ca.gc.tri_agency.granting_data.service.FiscalYearService;
@@ -50,17 +56,59 @@ public class FundingCycleController {
 	}
 
 	@GetMapping("/browse/viewCalendar")
-	public String viewCalendar(@RequestParam(name = "plusMinusMonth", defaultValue = "0") Integer plusMinusMonth, Model model) {
+	public String viewCalendar(@RequestParam(name = "plusMinusMonth", defaultValue = "0") Long plusMinusMonth, Model model) {
 		model.addAttribute("plusMonth", plusMinusMonth + 1);
 		model.addAttribute("minusMonth", plusMinusMonth - 1);
 		model.addAttribute("calGrid", new CalendarGrid(plusMinusMonth));
 
-		model.addAttribute("startDates", fcService.findMonthlyFundingCyclesByStartDate(plusMinusMonth));
-		model.addAttribute("endDates", fcService.findMonthlyFundingCyclesByEndDate(plusMinusMonth));
-		model.addAttribute("startLOIDates", fcService.findMonthlyFundingCyclesByStartDateLOI(plusMinusMonth));
-		model.addAttribute("endLOIDates", fcService.findMonthlyFundingCyclesByEndDateLOI(plusMinusMonth));
-		model.addAttribute("startNOIDates", fcService.findMonthlyFundingCyclesByStartDateNOI(plusMinusMonth));
-		model.addAttribute("endNOIDates", fcService.findMonthlyFundingCyclesByEndDateNOI(plusMinusMonth));
+		List<FundingCycleProjection> fcProjections = fcService.findFundingCyclesForCalendar(plusMinusMonth);
+
+		LocalDate startDisplayRange = LocalDate.now().plusMonths(plusMinusMonth).withDayOfMonth(1).minusDays(9);
+		LocalDate endDisplayRange = LocalDate.now().plusMonths(plusMinusMonth).withDayOfMonth(28).plusDays(14);
+
+		model.addAttribute("startDates", fcProjections.stream()
+				.filter(fc -> fc.getStartDate().isAfter(startDisplayRange) && fc.getStartDate().isBefore(endDisplayRange))
+				.sorted(Comparator.comparing(FundingCycleProjection::getStartDate)).collect(Collectors.toList()));
+		model.addAttribute("endDates", fcProjections.stream()
+				.filter(fc -> fc.getEndDate().isAfter(startDisplayRange) && fc.getEndDate().isBefore(endDisplayRange))
+				.sorted(Comparator.comparing(FundingCycleProjection::getEndDate)).collect(Collectors.toList()));
+		model.addAttribute("startNOIDates", fcProjections.stream()
+				.filter(fc -> fc.getStartDateNOI().isAfter(startDisplayRange) && fc.getStartDateNOI().isBefore(endDisplayRange))
+				.sorted(Comparator.comparing(FundingCycleProjection::getStartDateNOI)).collect(Collectors.toList()));
+		model.addAttribute("endNOIDates", fcProjections.stream()
+				.filter(fc -> fc.getEndDateNOI().isAfter(startDisplayRange) && fc.getEndDateNOI().isBefore(endDisplayRange))
+				.sorted(Comparator.comparing(FundingCycleProjection::getEndDateNOI)).collect(Collectors.toList()));
+		model.addAttribute("startLOIDates", fcProjections.stream()
+				.filter(fc -> fc.getStartDateLOI().isAfter(startDisplayRange) && fc.getStartDateLOI().isBefore(endDisplayRange))
+				.sorted(Comparator.comparing(FundingCycleProjection::getStartDateLOI)).collect(Collectors.toList()));
+		model.addAttribute("endLOIDates", fcProjections.stream()
+				.filter(fc -> fc.getEndDateLOI().isAfter(startDisplayRange) && fc.getEndDateLOI().isBefore(endDisplayRange))
+				.sorted(Comparator.comparing(FundingCycleProjection::getEndDate)).collect(Collectors.toList()));
+		
+//		fcProjections.stream()
+//		.filter(fc -> fc.getStartDate().isAfter(startDisplayRange) && fc.getStartDate().isBefore(endDisplayRange))
+//		.sorted(Comparator.comparing(FundingCycleProjection::getStartDate)).iterator().forEachRemaining(fc -> {
+//			System.out.println(fc.getId());
+//			System.out.println(fc.getAgencyId());
+//			System.out.println(fc.getFundingOpportunityId());
+//			System.out.println(fc.getFundingOpportunityNameEn());
+//			System.out.println(fc.getFundingOpportunityNameFr());
+//			System.out.println(fc.getNumAppsExpected());
+//			System.out.println(fc.getStartDate());
+//			System.out.println(fc.getEndDate());
+//			System.out.println(fc.getStartDateNOI());
+//			System.out.println(fc.getEndDateNOI());
+//			System.out.println(fc.getStartDateLOI());
+//			System.out.println(fc.getEndDateLOI());
+//			System.out.println();
+//		});
+
+//		model.addAttribute("startLOIDates", fcService.findMonthlyFundingCyclesByStartDateLOI(plusMinusMonth));
+//		model.addAttribute("endLOIDates", fcService.findMonthlyFundingCyclesByEndDateLOI(plusMinusMonth));
+//		model.addAttribute("endLOIDates", fcService.findMonthlyFundingCyclesByEndDateLOI(plusMinusMonth));
+//		model.addAttribute("endLOIDates", fcService.findMonthlyFundingCyclesByEndDateLOI(plusMinusMonth));
+//		model.addAttribute("startNOIDates", fcService.findMonthlyFundingCyclesByStartDateNOI(plusMinusMonth));
+//		model.addAttribute("endNOIDates", fcService.findMonthlyFundingCyclesByEndDateNOI(plusMinusMonth));
 
 		return "browse/viewCalendar";
 	}
