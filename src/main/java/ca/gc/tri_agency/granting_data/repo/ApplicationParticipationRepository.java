@@ -10,12 +10,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import ca.gc.tri_agency.granting_data.model.ApplicationParticipation;
 import ca.gc.tri_agency.granting_data.model.projection.ApplicationParticipationProjection;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 
 @Repository
+@Transactional(readOnly = true)
 public interface ApplicationParticipationRepository extends JpaRepository<ApplicationParticipation, Long> {
 
 	String ONE_APP_PART_QUERY = "SELECT ap.id AS id, ap.applicationIdentifier AS applicationIdentifier, ap.applId AS applId,"

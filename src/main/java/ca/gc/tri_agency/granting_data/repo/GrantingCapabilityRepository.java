@@ -6,11 +6,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import ca.gc.tri_agency.granting_data.model.GrantingCapability;
 import ca.gc.tri_agency.granting_data.model.projection.GrantingCapabilityProjection;
 
 @Repository
+@Transactional(readOnly = true)
 public interface GrantingCapabilityRepository extends JpaRepository<GrantingCapability, Long> {
 
 	List<GrantingCapability> findByFundingOpportunityId(Long id);

@@ -8,11 +8,13 @@ import javax.persistence.OrderBy;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import ca.gc.tri_agency.granting_data.model.FiscalYear;
 import ca.gc.tri_agency.granting_data.model.projection.FiscalYearProjection;
 
 @Repository
+@Transactional(readOnly = true)
 public interface FiscalYearRepository extends JpaRepository<FiscalYear, Long> {
 
 	Optional<FiscalYear> findByYear(Long year);
