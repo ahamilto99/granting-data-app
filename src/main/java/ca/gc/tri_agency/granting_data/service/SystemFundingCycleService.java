@@ -11,7 +11,7 @@ public interface SystemFundingCycleService {
 	
 	SystemFundingCycle findSystemFundingCycleById(Long id);
 	
-	List<SystemFundingCycle> findAllSystemFundingCycles();
+	List<SystemFundingCycleProjection> findAllSystemFundingCycleExtIds();
 
 	List<SystemFundingCycle> findSFCsBySFOid(Long sfoId);
 	

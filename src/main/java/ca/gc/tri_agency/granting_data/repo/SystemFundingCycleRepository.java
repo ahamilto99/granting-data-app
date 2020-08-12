@@ -24,4 +24,7 @@ public interface SystemFundingCycleRepository extends JpaRepository<SystemFundin
 			+ " JOIN FundingOpportunity fo ON sfo.linkedFundingOpportunity.id = fo.id"
 			+ " WHERE fo.id = :foId")
 	List<SystemFundingCycleProjection> findForBrowseViewFO(@Param("foId") Long foId);
+	
+	@Query("SELECT extId AS extId FROM SystemFundingCycle")
+	List<SystemFundingCycleProjection> findAllExtIds();
 }

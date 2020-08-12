@@ -30,8 +30,8 @@ public class SystemFundingCycleServiceImpl implements SystemFundingCycleService 
 	}
 
 	@Override
-	public List<SystemFundingCycle> findAllSystemFundingCycles() {
-		return sfcRepo.findAll();
+	public List<SystemFundingCycleProjection> findAllSystemFundingCycleExtIds() {
+		return sfcRepo.findAllExtIds();
 	}
 
 	@Override
