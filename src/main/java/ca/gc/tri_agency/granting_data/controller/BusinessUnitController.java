@@ -95,9 +95,8 @@ public class BusinessUnitController {
 			return "admin/editBU";
 		}
 		buService.saveBusinessUnit(bu);
-		String actionMsg = msgSource.getMessage("h.editedBu", null, LocaleContextHolder.getLocale());
-		redirectAttributes.addFlashAttribute("actionMsg", actionMsg + bu.getLocalizedAttribute("name"));
-		return "redirect:/browse/viewAgency?id=" + bu.getAgency().getId();
+
+		return "redirect:/browse/viewBU?id=" + bu.getId();
 	}
 
 }

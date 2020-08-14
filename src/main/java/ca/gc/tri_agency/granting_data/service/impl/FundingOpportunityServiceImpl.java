@@ -5,15 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 
-import org.hibernate.envers.AuditReader;
-import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.RevisionType;
-import org.hibernate.envers.query.AuditEntity;
-import org.hibernate.envers.query.AuditQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
@@ -27,6 +22,7 @@ import ca.gc.tri_agency.granting_data.model.auditing.UsernameRevisionEntity;
 import ca.gc.tri_agency.granting_data.model.projection.FundingOpportunityProjection;
 import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
+import ca.gc.tri_agency.granting_data.service.AuditService;
 import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
 
 @Service
@@ -34,14 +30,17 @@ public class FundingOpportunityServiceImpl implements FundingOpportunityService 
 
 	private FundingOpportunityRepository foRepo;
 
+	private AuditService auditService;
+
 	private final String COL_SEPARATOR = "\n~@~\n";
 
 	@PersistenceUnit
 	private EntityManagerFactory emf;
 
 	@Autowired
-	public FundingOpportunityServiceImpl(FundingOpportunityRepository foRepo) {
+	public FundingOpportunityServiceImpl(FundingOpportunityRepository foRepo, AuditService auditService) {
 		this.foRepo = foRepo;
+		this.auditService = auditService;
 	}
 
 	@Override
@@ -124,7 +123,7 @@ public class FundingOpportunityServiceImpl implements FundingOpportunityService 
 		List<FundingOpportunityProjection> resultSet = foRepo.findResultsForGoldenListTable();
 
 		Map<String, String[]> resultSetMapWithoutValues = new HashMap<>();
-		
+
 		resultSet.forEach(projection -> {
 			String key = projection.getId().toString() + COL_SEPARATOR + projection.getNameEn() + COL_SEPARATOR
 					+ projection.getNameFr() + COL_SEPARATOR + projection.getBusinessUnitNameEn() + COL_SEPARATOR
@@ -185,11 +184,11 @@ public class FundingOpportunityServiceImpl implements FundingOpportunityService 
 	@Override
 	public List<FundingOpportunityProjection> findBrowseViewFoResult(Long foId) throws DataRetrievalFailureException {
 		List<FundingOpportunityProjection> foProjections = foRepo.findResultsForViewFO(foId);
-		
+
 		if (foProjections.size() == 0) {
 			throw new DataRetrievalFailureException("That Funding Opportunity does not exist");
 		}
-		
+
 		return foProjections;
 	}
 
@@ -218,42 +217,15 @@ public class FundingOpportunityServiceImpl implements FundingOpportunityService 
 	}
 
 	@AdminOnly
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<String[]> findFundingOpportunityRevisionsById(Long foId) {
-		EntityManager em = emf.createEntityManager();
-		em.getTransaction().begin();
-
-		AuditReader auditReader = AuditReaderFactory.get(em);
-
-		AuditQuery auditQuery = auditReader.createQuery().forRevisionsOfEntity(FundingOpportunity.class, false, true);
-		auditQuery.add(AuditEntity.id().eq(foId));
-		auditQuery.addOrder(AuditEntity.revisionProperty("id").asc());
-		List<Object[]> revisionList = auditQuery.getResultList();
-
-		em.getTransaction().commit();
-		em.close();
-
-		return convertAuditResults(revisionList);
+		return convertAuditResults(auditService.findRevisionsForOneFO(foId));
 	}
 
 	@AdminOnly
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<String[]> findAllFundingOpportunitiesRevisions() {
-		EntityManager em = emf.createEntityManager();
-		em.getTransaction().begin();
-
-		AuditReader auditReader = AuditReaderFactory.get(em);
-
-		AuditQuery auditQuery = auditReader.createQuery().forRevisionsOfEntity(FundingOpportunity.class, false, true);
-		auditQuery.addOrder(AuditEntity.revisionProperty("id").asc());
-		List<Object[]> revisionList = auditQuery.getResultList();
-
-		em.getTransaction().commit();
-		em.close();
-
-		return convertAuditResults(revisionList);
+		return convertAuditResults(auditService.findRevisionsForAllFOs());
 	}
 
 }

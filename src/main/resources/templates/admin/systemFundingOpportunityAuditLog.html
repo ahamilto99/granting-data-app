@@ -6,7 +6,7 @@
 
 <head th:replace="fragments/general.html :: common_header(~{::title},~{})">
 <meta charset="utf-8">
-<title th:text="#{h.foAllAuditLogs}"></title>
+<title th:text="#{h.sfoAllAuditLogs}"></title>
 </head>
 <body id="systemFundingOpportunityAuditLogPage" class="home" vocab="http://schema.org/" typeof="WebPage">
 	<div th:replace="fragments/general.html :: header_nav('home')"></div>
@@ -23,11 +23,19 @@
 					<thead>
 						<tr>
 							<th th:text="#{th.id}"></th>
-							<th th:text="#{th.user}"></th>
+							<th th:text="#{th.user}
+									+ '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+									+ '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+									+ '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+									+ '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'"></th>
 							<th th:text="#{th.type}"></th>
 							<th th:text="#{th.extId}"></th>
-							<th th:text="#{form.nameEn}"></th>
-							<th th:text="#{form.nameFr}"></th>
+							<th th:text="#{form.nameEn}
+									+ '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+									+ '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'"></th>
+							<th th:text="#{form.nameFr}
+									+ '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+									+ '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'"></th>
 							<th th:text="#{th.grantingSystem}"></th>
 							<th th:text="#{th.linkedFo}"></th>
 							<th th:text="#{th.date}"></th>

@@ -3,16 +3,9 @@ package ca.gc.tri_agency.granting_data.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
 import javax.transaction.Transactional;
 
-import org.hibernate.envers.AuditReader;
-import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.RevisionType;
-import org.hibernate.envers.query.AuditEntity;
-import org.hibernate.envers.query.AuditQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
@@ -24,6 +17,7 @@ import ca.gc.tri_agency.granting_data.model.auditing.UsernameRevisionEntity;
 import ca.gc.tri_agency.granting_data.model.file.FundingCycleDatasetRow;
 import ca.gc.tri_agency.granting_data.repo.SystemFundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
+import ca.gc.tri_agency.granting_data.service.AuditService;
 import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
 import ca.gc.tri_agency.granting_data.service.SystemFundingOpportunityService;
 
@@ -34,19 +28,20 @@ public class SystemFundingOpportunityServiceImpl implements SystemFundingOpportu
 
 	private FundingOpportunityService foService;
 
-	@PersistenceUnit
-	private EntityManagerFactory emf;
+	private AuditService auditService;
 
 	@Autowired
-	public SystemFundingOpportunityServiceImpl(SystemFundingOpportunityRepository sfoRepo, FundingOpportunityService foService) {
+	public SystemFundingOpportunityServiceImpl(SystemFundingOpportunityRepository sfoRepo, FundingOpportunityService foService,
+			AuditService auditService) {
 		this.sfoRepo = sfoRepo;
 		this.foService = foService;
+		this.auditService = auditService;
 	}
 
 	@Override
 	public SystemFundingOpportunity findSystemFundingOpportunityById(Long id) {
-		return sfoRepo.findById(id).orElseThrow(
-				() -> new DataRetrievalFailureException("That System Funding Opportunity does not exist"));
+		return sfoRepo.findById(id)
+				.orElseThrow(() -> new DataRetrievalFailureException("That System Funding Opportunity does not exist"));
 	}
 
 	@Override
@@ -87,8 +82,7 @@ public class SystemFundingOpportunityServiceImpl implements SystemFundingOpportu
 		SystemFundingOpportunity systemFo = findSystemFundingOpportunityById(sfoId);
 		FundingOpportunity fo = foService.findFundingOpportunityById(foId);
 		if (systemFo.getLinkedFundingOpportunity() != fo) {
-			throw new DataRetrievalFailureException(
-					"System Funding Opportunity is not linked with that Funding Opportunity");
+			throw new DataRetrievalFailureException("System Funding Opportunity is not linked with that Funding Opportunity");
 		}
 		systemFo.setLinkedFundingOpportunity(null);
 		saveSystemFundingOpportunity(systemFo);
@@ -121,11 +115,10 @@ public class SystemFundingOpportunityServiceImpl implements SystemFundingOpportu
 			UsernameRevisionEntity revEntity = (UsernameRevisionEntity) objArr[1];
 			RevisionType revType = (RevisionType) objArr[2];
 
-			auditArrList.add(new String[] { sfo.getId().toString(), revEntity.getUsername(), revType.toString(),
-					sfo.getNameEn(), sfo.getNameFr(), sfo.getExtId(),
+			auditArrList.add(new String[] { sfo.getId().toString(), revEntity.getUsername(), revType.toString(), sfo.getExtId(),
+					sfo.getNameEn(), sfo.getNameFr(),
 					(sfo.getGrantingSystem() != null) ? sfo.getGrantingSystem().getId().toString() : null,
-					(sfo.getLinkedFundingOpportunity() != null)
-							? sfo.getLinkedFundingOpportunity().getId().toString()
+					(sfo.getLinkedFundingOpportunity() != null) ? sfo.getLinkedFundingOpportunity().getId().toString()
 							: null,
 					revEntity.getRevTimestamp().toString() });
 		});
@@ -134,42 +127,15 @@ public class SystemFundingOpportunityServiceImpl implements SystemFundingOpportu
 	}
 
 	@AdminOnly
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<String[]> findAllSystemFundingOpportunityRevisions() {
-		EntityManager em = emf.createEntityManager();
-		em.getTransaction().begin();
-
-		AuditReader auditReader = AuditReaderFactory.get(em);
-
-		AuditQuery auditQuery = auditReader.createQuery().forRevisionsOfEntity(SystemFundingOpportunity.class, false, true);
-		auditQuery.addOrder(AuditEntity.revisionProperty("id").asc());
-		List<Object[]> revisionList = auditQuery.getResultList();
-
-		em.getTransaction().commit();
-		em.close();
-
-		return convertAuditResults(revisionList);
+		return convertAuditResults(auditService.findRevisionsForAllSFOs());
 	}
 
 	@AdminOnly
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<String[]> findSystemFundingOpportunityRevisionById(Long sfoId) {
-		EntityManager em = emf.createEntityManager();
-		em.getTransaction().begin();
-
-		AuditReader auditReader = AuditReaderFactory.get(em);
-
-		AuditQuery auditQuery = auditReader.createQuery().forRevisionsOfEntity(SystemFundingOpportunity.class, false, true);
-		auditQuery.add(AuditEntity.id().eq(sfoId));
-		auditQuery.addOrder(AuditEntity.revisionProperty("id").asc());
-		List<Object[]> revisionList = auditQuery.getResultList();
-
-		em.getTransaction().commit();
-		em.close();
-
-		return convertAuditResults(revisionList);
+		return convertAuditResults(auditService.findRevisionsForOneSFO(sfoId));
 	}
 
 	@Override
