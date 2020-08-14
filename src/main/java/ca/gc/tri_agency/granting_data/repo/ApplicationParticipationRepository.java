@@ -114,27 +114,3 @@ public interface ApplicationParticipationRepository extends JpaRepository<Applic
 	List<ApplicationParticipationProjection> findOneWithEdiData(Long apId);
 	
 } // @formatter:on
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
