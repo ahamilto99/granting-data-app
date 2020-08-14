@@ -27,9 +27,10 @@ public class AgencyController {
 		List<AgencyProjection> agencyProjections = agencyService.findResultsForBrowseViewAgency(id);
 
 		model.addAttribute("agency", agencyProjections.get(0));
-		model.addAttribute("agencyFos", agencyProjections);
-		model.addAttribute("agencyBUs",
-				agencyProjections.stream().filter(Utility.getDistinctProjectionsByField(AgencyProjection::getBuId)).iterator());
+		model.addAttribute("agencyFos", agencyProjections.stream().filter(a -> a.getFoId() != null)
+				.filter(Utility.isSubProjectionIdUnique(AgencyProjection::getFoId)).iterator());
+		model.addAttribute("agencyBUs", agencyProjections.stream().filter(a -> a.getBuId() != null)
+				.filter(Utility.isSubProjectionIdUnique(AgencyProjection::getBuId)).iterator());
 
 		return "browse/viewAgency";
 	}

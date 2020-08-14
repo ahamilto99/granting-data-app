@@ -20,6 +20,7 @@ import org.springframework.test.context.ActiveProfiles;
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
 import ca.gc.tri_agency.granting_data.model.ApplicationParticipation;
 import ca.gc.tri_agency.granting_data.model.dto.AppPartEdiAuthorizedDto;
+import ca.gc.tri_agency.granting_data.model.projection.ApplicationParticipationProjection;
 import ca.gc.tri_agency.granting_data.repo.ApplicationParticipationRepository;
 import ca.gc.tri_agency.granting_data.service.ApplicationParticipationService;
 import ca.gc.tri_agency.granting_data.service.GenderService;
@@ -126,4 +127,16 @@ public class ApplicationParticipationServiceTest {
 		assertEquals("Female", savedAp.getGender().getNameEn());
 
 	}
+
+	@Tag("user_story_19147")
+	@WithMockUser(username = "rwi")
+	@Test
+	public void test_findAppPartWithEdiData() {
+		List<ApplicationParticipationProjection> apProjection = apService.findAppPartWithEdiData(14L);
+
+		apProjection.forEach(ap -> assertEquals(14L, ap.getId()));
+
+		assertThrows(AccessDeniedException.class, () -> apService.findAppPartWithEdiData(1L));
+	}
+
 }
