@@ -6,8 +6,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
 
 import javax.persistence.Tuple;
 
@@ -48,8 +46,6 @@ import ca.gc.tri_agency.granting_data.service.VisibleMinorityService;
 
 @Service
 public class ApplicationParticipationServiceImpl implements ApplicationParticipationService {
-
-	Map<GrantingSystem, ReferenceBean[]> roleMap;
 
 	private SecureRandom sRand = new SecureRandom();
 
@@ -244,13 +240,6 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		return retval;
 	}
 
-	private class ReferenceBean {
-		String id;
-		String nameEn;
-		String nameFr;
-
-	}
-
 	@Override
 	public long generateTestAppParicipationsForAllSystemFundingOpportunities() {
 		List<ApplicationParticipation> participations = new ArrayList<ApplicationParticipation>();
@@ -440,13 +429,6 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 
 	private int generateRandNumBtw(int start, int end) {
 		return sRand.nextInt(end) + start;
-	}
-
-	private List<ApplicationParticipationProjection> findAppPartsForCurrentUser() {
-		if (SecurityUtils.isCurrentUserAdmin()) {
-			return appParticipationRepo.findAllForAdmin();
-		}
-		return appParticipationRepo.findForCurrentUser(SecurityUtils.getCurrentUsername());
 	}
 
 	@Override
