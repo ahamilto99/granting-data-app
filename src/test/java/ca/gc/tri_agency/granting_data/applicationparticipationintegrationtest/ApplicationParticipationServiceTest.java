@@ -124,7 +124,7 @@ public class ApplicationParticipationServiceTest {
 		assertEquals(initApRepoCount + 1L, apRepo.count());
 		assertEquals(appIdentifier, savedAp.getApplicationIdentifier());
 		assertEquals(currentTimestamp, savedAp.getCreateDate());
-		assertEquals("Female", savedAp.getGender().getNameEn());
+		assertEquals(1L, savedAp.getGender().getId());
 
 	}
 
