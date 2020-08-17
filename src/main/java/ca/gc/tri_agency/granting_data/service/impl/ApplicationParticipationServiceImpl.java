@@ -568,8 +568,8 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 	}
 
 	/*
-	 * Returns a List even though we are querying for one AP because an applicant can have multiple indigenous identities
-	 * and/or can have multiple ethnicities  
+	 * Returns a List even though we are querying for one AP because an applicant can have multiple
+	 * indigenous identities and/or can have multiple ethnicities
 	 */
 	@Transactional(readOnly = true)
 	@Override
@@ -595,5 +595,20 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		appParticipationRepo.findIdsForCurrentUserEdiAuthorized(username).forEach(ap -> ids.add(ap.getId()));
 
 		return ids;
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public Long[] findAppPartEdiDataForBu(Long buId) {
+		Tuple ediTuple = appParticipationRepo.findEdiDataForBU(buId);
+		
+		System.out.printf("%n%n%n%d %d %d %d %d%n%n%n", (Long) ediTuple.get("numDisableds"),
+				(Long) ediTuple.get("numFemales"), (Long) ediTuple.get("numMales"), (Long) ediTuple.get("numNonBinaries"),
+				(Long) ediTuple.get("numApps"));
+
+		return new Long[] { (Long) appParticipationRepo.findIndigenousCountForBU(buId).get("total"),
+				(Long) appParticipationRepo.findMinorityCountForBU(buId).get("total"), (Long) ediTuple.get("numDisableds"),
+				(Long) ediTuple.get("numFemales"), (Long) ediTuple.get("numMales"), (Long) ediTuple.get("numNonBinaries"),
+				(Long) ediTuple.get("numApps") };
 	}
 }

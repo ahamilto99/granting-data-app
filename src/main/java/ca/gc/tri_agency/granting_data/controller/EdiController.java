@@ -26,8 +26,9 @@ public class EdiController {
 	
 	@GetMapping("/manage/viewBuEdiData")
 	public String viewBuEdiData(@RequestParam("buId") Long buId, Model model)  throws AccessDeniedException {
-		model.addAttribute("buName", buService.findBusinessUnitName(buId));
 		model.addAttribute("ediMap", buService.findEdiAppPartDataForAuthorizedBUMember(buId));
+		model.addAttribute("buName", buService.findBusinessUnitName(buId));
+		
 		return "/manage/viewBuEdiData";
 	}
 }

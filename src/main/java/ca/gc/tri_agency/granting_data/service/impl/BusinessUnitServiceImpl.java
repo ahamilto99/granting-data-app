@@ -91,6 +91,7 @@ public class BusinessUnitServiceImpl implements BusinessUnitService {
 		return convertAuditResults(auditService.findRevisionsForAllBUs());
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public Map<String, Long> findEdiAppPartDataForAuthorizedBUMember(Long buId) throws AccessDeniedException {
 		if (mrService.checkIfCurrentUserEdiAuthorized(buId) == false) {
@@ -98,7 +99,7 @@ public class BusinessUnitServiceImpl implements BusinessUnitService {
 					SecurityUtils.getCurrentUsername() + " does not have permission to view EDI data for BU id=" + buId);
 		}
 
-		Long[] ediArr = findAppPartEdiDataForBU(buId);
+		Long[] ediArr = apService.findAppPartEdiDataForBu(buId);
 
 		Map<String, Long> ediMap = new HashMap<>();
 		ediMap.put("numIndigenousApps", ediArr[0]);
@@ -112,20 +113,9 @@ public class BusinessUnitServiceImpl implements BusinessUnitService {
 		return ediMap;
 	}
 
-	@Transactional(readOnly = true)
-	private Long[] findAppPartEdiDataForBU(Long buId) {
-		Long indigenousCount = apService.findAppPartIndigenousCountForBU(buId);
-		Long minorityCount = apService.findAppMinorityCountForBU(buId);
-		Long disabledCount = apService.findAppPartDisabledCountForBU(buId);
-		Long[] genderCounts = apService.findAppPartGenderCountsForBU(buId);
-		Long appCount = apService.findAppPartCountForBU(buId);
-
-		return new Long[] { indigenousCount, minorityCount, disabledCount, genderCounts[0], genderCounts[1], genderCounts[2], appCount };
-	}
-
 	@Override
 	public BusinessUnitProjection findBusinessUnitName(Long buId) {
-		return buRepo.fetchName(buId);
+		return buRepo.findName(buId).orElseThrow(() -> new DataRetrievalFailureException("BusinessUnit id=" + buId + " does not exist"));
 	}
 
 	@Override
@@ -141,8 +131,13 @@ public class BusinessUnitServiceImpl implements BusinessUnitService {
 
 	@Override
 	public BusinessUnit findBusinessUnitWithAgency(Long buId) {
-		return buRepo.findWithAgency(buId);
-//				.orElseThrow(() -> new DataRetrievalFailureException("BusinessUnit id=" + buId + " does not exist"));
+		BusinessUnit bu =  buRepo.findWithAgency(buId);
+		
+		if (bu == null) {
+				throw new DataRetrievalFailureException("BusinessUnit id=" + buId + " does not exist");
+		}
+		
+		return bu;
 	}
 
 }

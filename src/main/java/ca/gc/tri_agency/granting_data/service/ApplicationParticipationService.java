@@ -74,5 +74,7 @@ public interface ApplicationParticipationService {
 	 * and/or can have multiple ethnicities  
 	 */
 	List<ApplicationParticipationProjection> findAppPartWithEdiData(Long apId) throws AccessDeniedException;
+	
+	Long[] findAppPartEdiDataForBu(Long buId);
 
 }

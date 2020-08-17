@@ -113,4 +113,61 @@ public interface ApplicationParticipationRepository extends JpaRepository<Applic
 			+ " WHERE ap.id = ?1")
 	List<ApplicationParticipationProjection> findOneWithEdiData(Long apId);
 	
+	@Query("SELECT COUNT(CASE WHEN ap.disabilityResponse IS NOT NULL THEN 'numDisableds' END) AS numDisableds,"
+			+ " COUNT(CASE WHEN ap.gender.id = 1 THEN 'numFemales' END) AS numFemales,"
+			+ " COUNT(CASE WHEN ap.gender.id = 2 THEN 'numMales' END) AS numMales,"
+			+ " COUNT(CASE WHEN ap.gender.id > 2 THEN 'numNonBinaries' END) AS numNonBinaries,"
+			+ " COUNT(ap.id) AS numApps"
+			+ " FROM ApplicationParticipation ap"
+			+ " WHERE ap.programId IN "
+			+ "	(SELECT sfo.extId FROM SystemFundingOpportunity sfo"
+			+ " 		JOIN FundingOpportunity fo ON sfo.linkedFundingOpportunity.id = fo.id"
+			+ " 		JOIN BusinessUnit bu ON fo.businessUnit.id = bu.id "
+			+ "		WHERE bu.id = ?1)")
+	Tuple findEdiDataForBU(Long buId);
+	
 } // @formatter:on
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

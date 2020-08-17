@@ -76,6 +76,7 @@ public class BusinessUnitController {
 	@AdminOnly
 	@GetMapping("/admin/editBU")
 	public String editBusinessUnitGet(@RequestParam("id") Long id, Model model) {
+		System.out.println(buService.findBusinessUnitWithAgency(id));
 		model.addAttribute("bu", buService.findBusinessUnitWithAgency(id));
 		
 		return "admin/editBU";
