@@ -17,6 +17,7 @@ import ca.gc.tri_agency.granting_data.model.BusinessUnit;
 import ca.gc.tri_agency.granting_data.model.auditing.UsernameRevisionEntity;
 import ca.gc.tri_agency.granting_data.model.projection.BusinessUnitProjection;
 import ca.gc.tri_agency.granting_data.repo.BusinessUnitRepository;
+import ca.gc.tri_agency.granting_data.security.SecurityUtils;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.ApplicationParticipationService;
 import ca.gc.tri_agency.granting_data.service.AuditService;
@@ -45,7 +46,7 @@ public class BusinessUnitServiceImpl implements BusinessUnitService {
 
 	@Override
 	public BusinessUnit findBusinessUnitById(Long id) {
-		return buRepo.findById(id).orElseThrow(() -> new DataRetrievalFailureException("That Business Unit does not exist"));
+		return buRepo.findById(id).orElseThrow(() -> new DataRetrievalFailureException("BusinessUnit id=" + id + " does not exist"));
 	}
 
 	@Override
@@ -93,7 +94,8 @@ public class BusinessUnitServiceImpl implements BusinessUnitService {
 	@Override
 	public Map<String, Long> findEdiAppPartDataForAuthorizedBUMember(Long buId) throws AccessDeniedException {
 		if (mrService.checkIfCurrentUserEdiAuthorized(buId) == false) {
-			throw new AccessDeniedException("Current user does not have permission to view EDI data for BU id=" + buId);
+			throw new AccessDeniedException(
+					SecurityUtils.getCurrentUsername() + " does not have permission to view EDI data for BU id=" + buId);
 		}
 
 		Long[] ediArr = findAppPartEdiDataForBU(buId);
@@ -121,10 +123,26 @@ public class BusinessUnitServiceImpl implements BusinessUnitService {
 		return new Long[] { indigenousCount, minorityCount, disabledCount, genderCounts[0], genderCounts[1], genderCounts[2], appCount };
 	}
 
-	@Transactional(readOnly = true)
 	@Override
-	public BusinessUnitProjection fetchBusinessUnitName(Long buId) {
+	public BusinessUnitProjection findBusinessUnitName(Long buId) {
 		return buRepo.fetchName(buId);
+	}
+
+	@Override
+	public List<BusinessUnitProjection> findResultsForBrowseViewBU(Long buId) {
+		List<BusinessUnitProjection> buProjections = buRepo.findForViewBU(buId);
+
+		if (buProjections.isEmpty()) {
+			throw new DataRetrievalFailureException("BusinessUnit id=" + buId + " does not exist");
+		}
+
+		return buProjections;
+	}
+
+	@Override
+	public BusinessUnit findBusinessUnitWithAgency(Long buId) {
+		return buRepo.findWithAgency(buId);
+//				.orElseThrow(() -> new DataRetrievalFailureException("BusinessUnit id=" + buId + " does not exist"));
 	}
 
 }

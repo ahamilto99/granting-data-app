@@ -12,4 +12,6 @@ public interface AgencyService {
 	List<Agency> findAllAgencies();
 	
 	List<AgencyProjection> findResultsForBrowseViewAgency(Long agencyId);
+	
+	AgencyProjection findAgencyName(Long agencyId);
 }

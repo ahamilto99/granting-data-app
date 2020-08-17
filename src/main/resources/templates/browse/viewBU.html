@@ -20,45 +20,50 @@
 
 			<div class="panel-body">
 
-				<p th:if="${actionMsg != null}" style="font-weight: bold;" th:text="${actionMsg}"></p>
+				<div class="form-group" th:if="${actionMsg != null}">
+					<h4 th:utext="${actionMsg}" style="margin-bottom: 40px;"></h4>
+				</div>
 
 				<div class="form-group row">
 					<label class="col-sm-2 col-form-label" th:text="#{form.nameEn}"></label>
-					<div class="col-sm-10" th:text="${bu.nameEn}"></div>
+					<div class="col-sm-10" th:text="${buProjections.get(0).getNameEn()}"></div>
 				</div>
 
 				<div class="form-group row">
 					<label class="col-sm-2 col-form-label" th:text="#{form.nameFr}"></label>
-					<div class="col-sm-10" th:text="${bu.nameFr}"></div>
+					<div class="col-sm-10" th:text="${buProjections.get(0).getNameFr()}"></div>
 				</div>
 
 				<div class="form-group row">
 					<label class="col-sm-2 col-form-label" th:text="#{form.acronymEn}"></label>
-					<div class="col-sm-10" th:text="${bu.acronymEn}"></div>
+					<div class="col-sm-10" th:text="${buProjections.get(0).getAcronymEn()}"></div>
 				</div>
 
 				<div class="form-group row">
 					<label class="col-sm-2 col-form-label" th:text="#{form.acronymFr}"></label>
-					<div class="col-sm-10" th:text="${bu.acronymFr}"></div>
+					<div class="col-sm-10" th:text="${buProjections.get(0).getAcronymFr()}"></div>
 				</div>
 
 				<div class="form-group row">
 					<label class="col-sm-2 col-form-label" th:text="#{form.agency}"></label>
 					<div class="col-sm-10">
-						<a th:href="@{/browse/viewAgency(id=${bu.agency.id})}" th:text="${bu.agency.getLocalizedAttribute('name')}"></a>
+						<a th:href="@{/browse/viewAgency(id=${buProjections.get(0).getAgencyId()})}"
+							th:text="${#locale.language eq 'fr' ? buProjections.get(0).getAgencyFr() : buProjections.get(0).getAgencyEn()}"></a>
 					</div>
 				</div>
 
-				<div class="form-group">
-					<a sec:authorize="hasRole('MDM ADMIN')" th:href="@{/admin/editBU(id=${bu.id})}" id="editBULink" class="btn btn-primary" th:text="#{link.editBU}" style="margin-right: 25px;"></a>
-					<a th:if="${@memberRoleServiceImpl.checkIfCurrentUserEdiAuthorized(bu.id)} eq true" th:href="@{/manage/viewBuEdiData(buId=${bu.id})}" id="viewEdiLink" class="btn btn-primary" th:text="#{link.buEdiData}"></a>
+				<div sec:authorize="isAuthenticated()" class="form-group">
+					<a sec:authorize="hasRole('MDM ADMIN')" th:href="@{/admin/editBU(id=${param.id})}" id="editBULink" class="btn btn-primary"
+						th:text="#{link.editBU}" style="margin-right: 25px;"></a> <a
+						th:if="${@memberRoleServiceImpl.checkIfCurrentUserEdiAuthorized(param.id)} eq true" th:href="@{/manage/viewBuEdiData(buId=${param.id})}"
+						id="viewEdiLink" class="btn btn-primary" th:text="#{link.buEdiData}"></a>
 				</div>
 
-				<div class="form-group">
+				<div sec:authorize="hasRole('MDM ADMIN')" class="form-group">
 					<h3 th:text="#{h.auditLog}"></h3>
 				</div>
 
-				<table id="auditLogTable" class="wb-tables table table-striped table-hover dataTable" aria-live="polite">
+				<table sec:authorize="hasRole('MDM ADMIN')" id="auditLogTable" class="wb-tables table table-striped table-hover dataTable" aria-live="polite">
 					<thead>
 						<tr>
 							<th th:text="#{th.user}" />
@@ -98,26 +103,22 @@
 							<th sec:authorize="hasRole('MDM ADMIN')" th:text="#{form.delete}" />
 						</tr>
 					</thead>
-					<tbody th:if="${!mrList.isEmpty()}">
-						<tr th:each="mr : ${mrList}">
+					<tbody th:if="${buProjections.get(0).getMemRoleId() ne null}">
+						<tr th:each="bu : ${buProjections}">
 							<!-- <td th:text="${mr.fullName}" /> -->
-							<td th:text="${mr.userLogin}" />
-							<td th:text="${mr.role.getLocalizedAttribute('name')}" />
-							<td th:text="${mr.ediAuthorized} == true ? #{msg.yes} : #{msg.no}" />
+							<td th:text="${bu.getMemRoleLogin()}" />
+							<td th:text="${#locale.language eq 'fr' ? bu.getMemRoleFr() : bu.getMemRoleEn()}" />
+							<td th:text="${bu.getMemRoleEdiAuthorized()} ? #{msg.yes} : #{msg.no}" />
 							<td sec:authorize="hasRole('MDM ADMIN')"><a th:text="#{msg.view}" class="btn btn-primary"
-								th:href="@{/admin/auditLogMR(id=${mr.id})}"></a></td>
+								th:href="@{/admin/auditLogMR(id=${bu.getMemRoleId()})}"></a></td>
 							<td sec:authorize="hasRole('MDM ADMIN')"><a th:text="#{form.delete}" class="btn btn-primary" th:id="deleteMemberRole"
-								th:href="@{/browse/viewBU(mrId=${mr.id})}"></a></td>
+								th:href="@{/browse/viewBU(mrId=${bu.getMemRoleId()})}"></a></td>
 						</tr>
 					</tbody>
 				</table>
 
-				<div th:if="${actionMsg != null}" class="form-group">
-					<h4 th:text="${actionMsg}"></h4>
-				</div>
-
 				<div class="form-group" sec:authorize="hasRole('MDM ADMIN')">
-					<a class="btn btn-primary" th:href="@{/admin/createMR(buId=${bu.id})}" th:text="#{link.createMR}" id="createMemberRoleLink"></a>
+					<a class="btn btn-primary" th:href="@{/admin/createMR(buId=${param.id})}" th:text="#{link.createMR}" id="createMemberRoleLink"></a>
 				</div>
 
 			</div>

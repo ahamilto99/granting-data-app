@@ -67,7 +67,7 @@ public class CreateBusinessUnitIntegrationTest {
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_adminCanAccessCreateBUPage_shouldSucceedWith200() throws Exception {
-		String agencyName = agencyService.findAgencyById(1L).getNameEn();
+		String agencyName = agencyService.findAgencyName(1L).getNameEn();
 		assertTrue(mvc.perform(get("/admin/createBU?agencyId=1")).andExpect(status().isOk()).andReturn().getResponse()
 				.getContentAsString().contains('>' + agencyName + "</label>"));
 	}

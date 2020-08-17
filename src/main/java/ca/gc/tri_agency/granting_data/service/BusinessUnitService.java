@@ -25,5 +25,9 @@ public interface BusinessUnitService {
 
 	Map<String, Long> findEdiAppPartDataForAuthorizedBUMember(Long buId) throws AccessDeniedException;
 	
-	BusinessUnitProjection fetchBusinessUnitName(Long buId);
+	BusinessUnitProjection findBusinessUnitName(Long buId);
+	
+	List<BusinessUnitProjection> findResultsForBrowseViewBU(Long buId);
+	
+	BusinessUnit findBusinessUnitWithAgency(Long buId);
 }

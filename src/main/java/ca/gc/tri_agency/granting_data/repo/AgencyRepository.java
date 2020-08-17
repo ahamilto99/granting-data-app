@@ -1,6 +1,7 @@
 package ca.gc.tri_agency.granting_data.repo;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -26,4 +27,9 @@ public interface AgencyRepository extends JpaRepository<Agency, Long> { // @form
 			+ " ORDER BY fo.nameEn")
 	List<AgencyProjection> findForBrowseViewAgency(@Param("agencyId") Long agencyId);
 
+	@Query("SELECT id AS id, nameEn AS nameEn, nameFr AS nameFr"
+			+ " FROM Agency"
+			+ " WHERE id = ?1")
+	Optional<AgencyProjection> findName(Long agencyId);
+	
 }	// @formatter:on
