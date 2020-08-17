@@ -489,32 +489,6 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 				sfo -> sfo.setLinkedFundingOpportunity(foService.findFundingOpportunityById(Math.abs(sRand.nextInt(141) + 1L))));
 	}
 
-	@Override
-	public Long[] findAppPartGenderCountsForBU(Long buId) {
-		Tuple counts = appParticipationRepo.findGenderCounts(buId);
-		return new Long[] { (Long) counts.get("female"), (Long) counts.get("male"), (Long) counts.get("nonbinary") };
-	}
-
-	@Override
-	public Long findAppPartDisabledCountForBU(Long buId) {
-		return (Long) appParticipationRepo.findDisabledCountForBU(buId).get("total");
-	}
-
-	@Override
-	public Long findAppPartIndigenousCountForBU(Long buId) {
-		return (Long) appParticipationRepo.findIndigenousCountForBU(buId).get("total");
-	}
-
-	@Override
-	public Long findAppMinorityCountForBU(Long buId) {
-		return (Long) appParticipationRepo.findMinorityCountForBU(buId).get("total");
-	}
-
-	@Override
-	public Long findAppPartCountForBU(Long buId) {
-		return (Long) appParticipationRepo.findNumAPsForBU(buId).get("total");
-	}
-
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	private void addFCsForFOs() {
 		fcRepo.deleteAllInBatch();

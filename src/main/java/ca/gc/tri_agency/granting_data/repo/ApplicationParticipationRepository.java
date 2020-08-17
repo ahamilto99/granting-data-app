@@ -77,16 +77,6 @@ public interface ApplicationParticipationRepository extends JpaRepository<Applic
 	@Query(ONE_APP_PART_QUERY + " AND" + BU_MEMBER_CLAUSE)
 	Optional<ApplicationParticipationProjection> findOneAppPartById(@Param("apId") Long apId, @Param("username") String userLogin) throws AccessDeniedException;
 	
-	@Query("SELECT COUNT(CASE WHEN ap.gender.id = 1 THEN 'female' END) AS female,"
-			+ " COUNT(CASE WHEN ap.gender.id = 2 THEN 'male' END) AS male,"
-			+ " COUNT(CASE WHEN ap.gender.id > 2 THEN 'nonbinary' END) AS nonbinary"
-			+ " FROM ApplicationParticipation ap WHERE" 
-			+ EDI_SUBQUERY_JPQL)
-	Tuple findGenderCounts(@Param("buId") Long buId);
-
-	@Query("SELECT COUNT(ap.id) AS total FROM ApplicationParticipation ap WHERE ap.disabilityResponse IS NOT NULL AND" + EDI_SUBQUERY_JPQL)
-	Tuple findDisabledCountForBU(@Param("buId") Long buId);
-
 	@Query("SELECT COUNT(DISTINCT ap.id) AS total FROM ApplicationParticipation ap JOIN ap.indigenousIdentities ii WHERE"
 			+ EDI_SUBQUERY_JPQL)
 	Tuple findIndigenousCountForBU(@Param("buId") Long buId);
@@ -94,10 +84,6 @@ public interface ApplicationParticipationRepository extends JpaRepository<Applic
 	@Query("SELECT COUNT(DISTINCT ap.id) AS total FROM ApplicationParticipation ap JOIN ap.visibleMinorities vm WHERE" + EDI_SUBQUERY_JPQL)
 	Tuple findMinorityCountForBU(@Param("buId") Long buId);
 	
-	@Query("SELECT COUNT(ap.id) AS total FROM ApplicationParticipation ap WHERE"
-			+ EDI_SUBQUERY_JPQL)
-	Tuple findNumAPsForBU(@Param("buId") Long buId);
-
 	/*
 	 * Returns a List even though we are querying for one AP because an applicant can have multiple indigenous identities
 	 * and/or can have multiple ethnicities  
@@ -127,47 +113,3 @@ public interface ApplicationParticipationRepository extends JpaRepository<Applic
 	Tuple findEdiDataForBU(Long buId);
 	
 } // @formatter:on
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
