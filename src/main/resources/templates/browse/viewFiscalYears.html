@@ -30,9 +30,10 @@
 					</thead>
 					<tbody>
 						<tr th:each="fy : ${fiscalYearStats}" class="form-group row">
-							<td th:text="${fy[1]}"></td>
-							<td th:text="${fy[2] ne null ? #numbers.formatInteger(fy[2], 1, 'COMMA') : 0}"></td>
-							<td><span th:if="${fy[2] eq null}" th:text="#{msg.none}"></span><a th:if="${fy[2] ne null}" class="btn btn-primary" th:href="@{viewFcFromFy(fyId=${fy[0]})}" role="button" th:text="#{msg.view}"></a></td>
+							<td th:text="${fy.getYear()}"></td>
+							<td th:text="${fy.getNumAppsReceived() gt 0 ? #numbers.formatInteger(fy.getNumAppsReceived(), 1, 'COMMA') : 0}"></td>
+							<td><a th:if="${fy.getNumAppsReceived() gt 0}" class="btn btn-primary" th:href="@{viewFcFromFy(fyId=${fy.getId()})}" role="button"
+								th:text="#{msg.view}"></a><span th:if="${fy.getNumAppsReceived() eq null}" th:text="#{msg.none}"></span></td>
 						</tr>
 					</tbody>
 				</table>

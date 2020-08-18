@@ -47,4 +47,15 @@ public class FiscalYear {
 		this.year = year;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("FiscalYear [id=");
+		builder.append(id);
+		builder.append(", year=");
+		builder.append(year);
+		builder.append("]");
+		return builder.toString();
+	}
+
 }

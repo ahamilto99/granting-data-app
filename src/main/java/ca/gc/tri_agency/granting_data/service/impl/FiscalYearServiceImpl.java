@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
 
-import ca.gc.tri_agency.granting_data.app.exception.UniqueColumnException;
 import ca.gc.tri_agency.granting_data.model.FiscalYear;
 import ca.gc.tri_agency.granting_data.model.projection.FiscalYearProjection;
 import ca.gc.tri_agency.granting_data.repo.FiscalYearRepository;
@@ -41,15 +41,12 @@ public class FiscalYearServiceImpl implements FiscalYearService {
 
 	@AdminOnly
 	@Override
-	public FiscalYear saveFiscalYear(FiscalYear fy) throws UniqueColumnException {
-		if (findFiscalYearByYear(fy.getYear()).isPresent()) {
-			throw new UniqueColumnException("That Year already exists");
-		}
+	public FiscalYear saveFiscalYear(FiscalYear fy) throws DataIntegrityViolationException {
 		return fyRepo.save(fy);
 	}
 
 	@Override
-	public List<Object[]> findNumAppsExpectedForEachFiscalYear() {
+	public List<FiscalYearProjection> findNumAppsExpectedForEachFiscalYear() {
 		return fyRepo.findNumAppsExpectedForEachYear();
 	}
 	

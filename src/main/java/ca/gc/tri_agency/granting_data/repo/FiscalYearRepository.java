@@ -15,20 +15,21 @@ import ca.gc.tri_agency.granting_data.model.projection.FiscalYearProjection;
 
 @Repository
 @Transactional(readOnly = true)
-public interface FiscalYearRepository extends JpaRepository<FiscalYear, Long> {
+public interface FiscalYearRepository extends JpaRepository<FiscalYear, Long> { // @formatter:off
 
 	Optional<FiscalYear> findByYear(Long year);
-	
-	@Query("SELECT fy.id, fy.year, SUM(sfc.numAppsReceived) FROM FiscalYear fy"
+
+	@Query("SELECT fy.id AS id, fy.year AS year, SUM(sfc.numAppsReceived) AS numAppsReceived"
+			+ " FROM FiscalYear fy"
 			+ " LEFT JOIN SystemFundingCycle sfc ON fy.year = sfc.fiscalYear"
 			+ " GROUP BY sfc.fiscalYear, fy.id"
 			+ " ORDER BY fy.year")
-	List<Object[]> findNumAppsExpectedForEachYear();
-	
+	List<FiscalYearProjection> findNumAppsExpectedForEachYear();
+
 	@Query("SELECT id AS id, year AS year FROM FiscalYear ORDER BY year")
 	List<FiscalYearProjection> findAllProjectionsOrderByYear();
-	
+
 	@OrderBy("year")
 	List<FiscalYear> findAll();
 
-}
+} // @formatter:on
