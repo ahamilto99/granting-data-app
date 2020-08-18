@@ -17,7 +17,6 @@ import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
@@ -59,7 +58,6 @@ public class FiscalYearServiceTest {
 	}
 
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
-	@Rollback
 	@Test
 	public void test_adminCanCreateFiscalYear() {
 		long initFYCount = fyRepo.count();
@@ -85,6 +83,6 @@ public class FiscalYearServiceTest {
 		List<FiscalYearProjection> results = fyService.findNumAppsExpectedForEachFiscalYear();
 		
 		assertEquals(4, results.size());
-		assertEquals(12_467L, results.get(0).getNumAppsReceived());
+		assertEquals(159_845L, results.get(2).getNumAppsReceived());
 	}
 }

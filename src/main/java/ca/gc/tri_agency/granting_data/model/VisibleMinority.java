@@ -69,7 +69,7 @@ public class VisibleMinority implements LocalizedParametersModel {
 			return false;
 		}
 		
-		return id != null && id.equals(((VisibleMinority) obj).id);
+		return id != null && id.equals(((VisibleMinority) obj).getId());
 	}
 	
 	@Override

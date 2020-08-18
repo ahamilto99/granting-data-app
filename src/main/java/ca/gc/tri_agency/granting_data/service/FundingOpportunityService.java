@@ -33,4 +33,6 @@ public interface FundingOpportunityService {
 	List<String[]> findGoldenListTableResults();
 	
 	List<FundingOpportunityProjection> findBrowseViewFoResult(Long foId);
+	
+	boolean checkIfFundingOpportunityExists(Long foId);
 }

@@ -27,5 +27,7 @@ public interface FundingOpportunityProjection {
 	Long getGrantingStageId();		// for Golden List table
 	
 	String getGrantingSystemAcronym();	// for Golden List table
+	
+	Long getCount();
 
 }

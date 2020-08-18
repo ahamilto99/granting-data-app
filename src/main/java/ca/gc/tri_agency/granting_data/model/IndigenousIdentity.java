@@ -69,7 +69,7 @@ public class IndigenousIdentity implements LocalizedParametersModel {
 			return false;
 		}
 		
-		return id != null && id.equals(((IndigenousIdentity) obj).id);
+		return id != null && id.equals(((IndigenousIdentity) obj).getId());
 	}
 
 	@Override

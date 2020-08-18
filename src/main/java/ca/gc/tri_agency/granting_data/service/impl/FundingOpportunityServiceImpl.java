@@ -5,9 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
-
 import org.hibernate.envers.RevisionType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
@@ -33,9 +30,6 @@ public class FundingOpportunityServiceImpl implements FundingOpportunityService 
 	private AuditService auditService;
 
 	private final String COL_SEPARATOR = "\n~@~\n";
-
-	@PersistenceUnit
-	private EntityManagerFactory emf;
 
 	@Autowired
 	public FundingOpportunityServiceImpl(FundingOpportunityRepository foRepo, AuditService auditService) {
@@ -226,6 +220,11 @@ public class FundingOpportunityServiceImpl implements FundingOpportunityService 
 	@Override
 	public List<String[]> findAllFundingOpportunitiesRevisions() {
 		return convertAuditResults(auditService.findRevisionsForAllFOs());
+	}
+
+	@Override
+	public boolean checkIfFundingOpportunityExists(Long foId) {
+		return foRepo.findIfItExists(foId).getCount() == 1L;
 	}
 
 }

@@ -38,5 +38,10 @@ public interface FundingOpportunityRepository extends JpaRepository<FundingOppor
 			+ " LEFT JOIN BusinessUnit bu ON fo.businessUnit = bu.id"
 			+ " WHERE fo.id = :foId")
 	List<FundingOpportunityProjection> findResultsForViewFO(@Param("foId") Long foId);
+	
+	@Query("SELECT COUNT(id) AS count"
+			+ " FROM FundingOpportunity"
+			+ " WHERE id = ?1")
+	FundingOpportunityProjection findIfItExists(Long foId);
 
 }

@@ -62,9 +62,9 @@ public class BrowseFundingCycleIntegrationTest {
 	@WithAnonymousUser
 	@Test
 	public void test_anonUserCanAccessViewFcFromFyPage_shouldSucceedWith200() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get("/browse/viewFcFromFy").param("fyId", "1"))
+		mvc.perform(MockMvcRequestBuilders.get("/browse/viewFCsForFY").param("fyId", "1"))
 				.andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("id=\"viewFcFromFyPage\"")));
+				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("id=\"viewFundingCyclesForFiscalYearPage\"")));
 	}
 
 }

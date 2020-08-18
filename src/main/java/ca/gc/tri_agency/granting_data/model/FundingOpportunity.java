@@ -216,7 +216,7 @@ public class FundingOpportunity implements LocalizedParametersModel {
 			return false;
 		}
 		
-		return id != null && id.equals(((FundingOpportunity) obj).id);
+		return id != null && id.equals(((FundingOpportunity) obj).getId());
 	}
 
 	@Override

@@ -1,9 +1,7 @@
 package ca.gc.tri_agency.granting_data.service.impl;
 
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
@@ -12,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ca.gc.tri_agency.granting_data.model.FundingCycle;
-import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.projection.FundingCycleProjection;
 import ca.gc.tri_agency.granting_data.repo.FundingCycleRepository;
 import ca.gc.tri_agency.granting_data.security.SecurityUtils;
@@ -34,7 +31,7 @@ public class FundingCycleServiceImpl implements FundingCycleService {
 
 	@Override
 	public FundingCycle findFundingCycleById(Long id) {
-		return fcRepo.findById(id).orElseThrow(() -> new DataRetrievalFailureException("That Funding Cycle does not exist"));
+		return fcRepo.findById(id).orElseThrow(() -> new DataRetrievalFailureException("FundingCycle id=" + id + " does not exist"));
 	}
 
 	@Override
@@ -47,90 +44,37 @@ public class FundingCycleServiceImpl implements FundingCycleService {
 		return fcRepo.findByFundingOpportunityId(foId);
 	}
 
-	@Transactional(readOnly = true)
 	@Override
 	public List<FundingCycleProjection> findFundingCyclesByFiscalYearId(Long fyId) {
-		return fcRepo.findByFiscalYearId(fyId);
-	}
+		List<FundingCycleProjection> fcProjections = fcRepo.findByFiscalYearId(fyId);
 
-	private LocalDate[] getDayRange(int plusMinusMonth) {
-		LocalDate[] dates = new LocalDate[2];
-		dates[0] = dates[1] = LocalDate.now();
-		dates[0] = dates[0].withDayOfMonth(15);
-		dates[1] = dates[1].withDayOfMonth(15);
-
-		if (plusMinusMonth == 0) {
-			dates[0] = dates[0].minusMonths(1);
-			dates[1] = dates[1].plusMonths(1);
-		} else if (plusMinusMonth < 0) {
-			dates[0] = dates[0].minusMonths(plusMinusMonth * -1 - 1);
-			dates[1] = dates[1].minusMonths(plusMinusMonth * -1 + 1);
-		} else {
-			dates[0] = dates[0].plusMonths(plusMinusMonth - 1);
-			dates[1] = dates[1].plusMonths(plusMinusMonth + 1);
+		if (fcProjections.isEmpty()) {
+			throw new DataRetrievalFailureException("FiscalYear id=" + fyId + " does not exist");
 		}
 
-		return dates;
-	}
-
-	@Override
-	public List<FundingCycle> findMonthlyFundingCyclesByStartDate(int plusMinusMonth) {
-		LocalDate[] dates = getDayRange(plusMinusMonth);
-		return fcRepo.findByStartDateBetween(dates[0], dates[1]);
-	}
-
-	@Override
-	public List<FundingCycle> findMonthlyFundingCyclesByEndDate(int plusMinusMonth) {
-		LocalDate[] dates = getDayRange(plusMinusMonth);
-		return fcRepo.findByEndDateBetween(dates[0], dates[1]);
-	}
-
-	@Override
-	public List<FundingCycle> findMonthlyFundingCyclesByStartDateLOI(int plusMinusMonth) {
-		LocalDate[] dates = getDayRange(plusMinusMonth);
-		return fcRepo.findByStartDateLOIBetween(dates[0], dates[1]);
-	}
-
-	@Override
-	public List<FundingCycle> findMonthlyFundingCyclesByEndDateLOI(int plusMinusMonth) {
-		LocalDate[] dates = getDayRange(plusMinusMonth);
-		return fcRepo.findByEndDateLOIBetween(dates[0], dates[1]);
-	}
-
-	@Override
-	public List<FundingCycle> findMonthlyFundingCyclesByStartDateNOI(int plusMinusMonth) {
-		LocalDate[] dates = getDayRange(plusMinusMonth);
-		return fcRepo.findByStartDateNOIBetween(dates[0], dates[1]);
-	}
-
-	@Override
-	public List<FundingCycle> findMonthlyFundingCyclesByEndDateNOI(int plusMinusMonth) {
-		LocalDate[] dates = getDayRange(plusMinusMonth);
-		return fcRepo.findByEndDateNOIBetween(dates[0], dates[1]);
+		return fcProjections;
 	}
 
 	@Transactional
 	@Override
 	public FundingCycle saveFundingCycle(FundingCycle fc) throws AccessDeniedException {
 		Long foId = fc.getFundingOpportunity().getId();
-		if (!mrService.checkIfCurrentUserCanCreateUpdateDeleteFC(foId)) {
+		Long fcId = fc.getId();
+
+		System.out.println("\n\n\n" + foId + "\n\n\n");
+		System.out.println("\n\n\n" + fcId + "\n\n\n");
+
+		if (fcId == null && !mrService.checkIfCurrentUserCanCreateFC(foId)) {
 			throw new AccessDeniedException(SecurityUtils.getCurrentUsername()
 					+ " does not have permission to create a FundingCycle for FundingOpportunty id=" + foId);
+		} else if (fcId != null && !mrService.checkIfCurrentUserCanUpdateDeleteFC(fcId)) {
+			throw new AccessDeniedException(
+					SecurityUtils.getCurrentUsername() + " does not have permission to update the FundingCycle id=" + fcId);
 		}
+
 		return fcRepo.save(fc);
 	}
 
-	@Override
-	public Map<Long, FundingCycle> findFundingCyclesByFundingOpportunityMap() {
-		Map<Long, FundingCycle> retval = new HashMap<Long, FundingCycle>();
-		List<FundingCycle> fundingCycles = findAllFundingCycles();
-		for (FundingCycle fc : fundingCycles) {
-			retval.put(fc.getFundingOpportunity().getId(), fc);
-		}
-		return retval;
-	}
-
-	@Transactional(readOnly = true)
 	@Override
 	public List<FundingCycleProjection> findFCsForBrowseViewFO(Long foId) {
 		return fcRepo.findForBrowseViewFO(foId);
@@ -138,40 +82,26 @@ public class FundingCycleServiceImpl implements FundingCycleService {
 
 	@Transactional
 	@Override
-	public void deleteFundingCycle(Long fcId) throws AccessDeniedException {
-		FundingCycle fc;
-
-		try {
-			fc = findFundingCycleById(fcId);
-		} catch (DataRetrievalFailureException drfe) {
-			throw new AccessDeniedException(SecurityUtils.getCurrentUsername() + " is trying to delete a FundingCycle that"
-					+ " does not exist (id=" + fcId + ")");
+	public void deleteFundingCycleId(Long fcId) throws AccessDeniedException {
+		if (!mrService.checkIfCurrentUserCanUpdateDeleteFC(fcId)) {
+			throw new AccessDeniedException(
+					SecurityUtils.getCurrentUsername() + " does not have permission to delete the FundingCycle id=" + fcId);
 		}
 
-		FundingOpportunity fo = fc.getFundingOpportunity();
-		if (fo == null || !mrService.checkIfCurrentUserCanCreateUpdateDeleteFC(fo.getId())) {
-			throw new AccessDeniedException(SecurityUtils.getCurrentUsername()
-					+ " does not have permission to delete the FundingCycle id=" + fc.getId());
-		}
-
-		fcRepo.delete(fc);
+		fcRepo.deleteByIdentifier(fcId);
 	}
 
 	@Transactional(readOnly = true)
 	@Override
 	public FundingCycleProjection findFundingCycleForConfirmDeleteFC(Long fcId) throws AccessDeniedException {
-		final String FORBIDDEN_MSG = " is trying to access the deleteFC page for the FundingCycle id=";
+		if (!mrService.checkIfCurrentUserCanUpdateDeleteFC(fcId)) {
+			throw new AccessDeniedException(SecurityUtils.getCurrentUsername()
+					+ " is trying to access the deleteFC page for the FundingCycle id=" + fcId);
+		}
 
 		FundingCycleProjection fcProjection = fcRepo.findForDeleteFC(fcId).orElseThrow(() -> {
-			if (SecurityUtils.isCurrentUserAdmin()) {
-				return new DataRetrievalFailureException("FundingCycle id=" + fcId + " does not exist");
-			}
-			return new AccessDeniedException(SecurityUtils.getCurrentUsername() + FORBIDDEN_MSG + fcId + " which does not exist");
+			return new DataRetrievalFailureException("FundingCycle id=" + fcId + " does not exist");
 		});
-
-		if (!mrService.checkIfCurrentUserCanCreateUpdateDeleteFC(fcProjection.getFundingOpportunityId())) {
-			throw new AccessDeniedException(SecurityUtils.getCurrentUsername() + FORBIDDEN_MSG + fcId);
-		}
 
 		return fcProjection;
 	}

@@ -8,7 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -71,84 +70,6 @@ public class FundingCycleServiceTest {
 		assertEquals(36, fcService.findFundingCyclesByFiscalYearId(3L).size());
 	}
 
-	/*
-	 * B/c findMonthlyFundingCyclesByStartDate(int plusMinusMonth) uses LocalDate.now() as the value to
-	 * which plusMinusMonth is applied, this test will at times fail since the test database contains
-	 * fixed dates for the FundingCycle entries. In order to resolve a failure, the value for
-	 * plusMinusMonth must be changed.
-	 */
-	@WithAnonymousUser
-	@Test
-	public void test_findMonthlyFundingCyclesByStartDate() {
-		assertEquals(0, fcService.findMonthlyFundingCyclesByStartDate(Integer.MAX_VALUE).size());
-		assertTrue(0 < fcService.findMonthlyFundingCyclesByStartDate(12).size());
-	}
-
-	/*
-	 * B/c findMonthlyFundingCyclesByEndDate(int plusMinusMonth) uses LocalDate.now() as the value to
-	 * which plusMinusMonth is applied, this test will at times fail since the test database contains
-	 * fixed dates for the FundingCycle entries. In order to resolve a failure, the value for
-	 * plusMinusMonth must be changed.
-	 */
-	@WithAnonymousUser
-	@Test
-	public void test_findMonthlyFundingCyclesByEndDate() {
-		assertEquals(0, fcService.findMonthlyFundingCyclesByEndDate(0).size());
-		assertTrue(0 < fcService.findMonthlyFundingCyclesByEndDate(8).size());
-	}
-
-	/*
-	 * B/c findMonthlyFundingCyclesByStartDateLOI(int plusMinusMonth) uses LocalDate.now() as the value
-	 * to which plusMinusMonth is applied, this test will at times fail since the test database contains
-	 * fixed dates for the FundingCycle entries. In order to resolve a failure, the value for
-	 * plusMinusMonth must be changed.
-	 */
-	@WithAnonymousUser
-	@Test
-	public void test_findMonthlyFundingCyclesByStartDateLOI() {
-		assertEquals(0, fcService.findMonthlyFundingCyclesByStartDateLOI(-1_000).size());
-		assertTrue(0 < fcService.findMonthlyFundingCyclesByStartDateLOI(12).size());
-	}
-
-	/*
-	 * B/c findMonthlyFundingCyclesByEndDateLOI(int plusMinusMonth) uses LocalDate.now() as the value to
-	 * which plusMinusMonth is applied, this test will at times fail since the test database contains
-	 * fixed dates for the FundingCycle entries. In order to resolve a failure, the value for
-	 * plusMinusMonth must be changed.
-	 */
-	@WithAnonymousUser
-	@Test
-	public void test_findMonthlyFundingCyclesByEndDateLOI() {
-		assertEquals(0, fcService.findMonthlyFundingCyclesByEndDateLOI(Integer.MAX_VALUE).size());
-		assertTrue(0 < fcService.findMonthlyFundingCyclesByEndDateLOI(12).size());
-	}
-
-	/*
-	 * B/c findMonthlyFundingCyclesByStartDateNOI(int plusMinusMonth) uses LocalDate.now() as the value
-	 * to which plusMinusMonth is applied, this test will at times fail since the test database contains
-	 * fixed dates for the FundingCycle entries. In order to resolve a failure, the value for
-	 * plusMinusMonth must be changed.
-	 */
-	@WithAnonymousUser
-	@Test
-	public void test_findMonthlyFundingCyclesByStartDateNOI() {
-		assertEquals(0, fcService.findMonthlyFundingCyclesByStartDateNOI(Integer.MAX_VALUE).size());
-		assertTrue(0 < fcService.findMonthlyFundingCyclesByStartDateNOI(8).size());
-	}
-
-	/*
-	 * B/c findMonthlyFundingCyclesByEndDateNOI(int plusMinusMonth) uses LocalDate.now() as the value to
-	 * which plusMinusMonth is applied, this test will at times fail since the test database contains
-	 * fixed dates for the FundingCycle entries. In order to resolve a failure, the value for
-	 * plusMinusMonth must be changed.
-	 */
-	@WithAnonymousUser
-	@Test
-	public void test_findMonthlyFundingCyclesByEndDateNOI() {
-		assertEquals(0, fcService.findMonthlyFundingCyclesByEndDateNOI(Integer.MAX_VALUE).size());
-		assertTrue(0 < fcService.findMonthlyFundingCyclesByEndDateNOI(8).size());
-	}
-
 	@Tag("user_story_19201")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
@@ -177,32 +98,26 @@ public class FundingCycleServiceTest {
 	public void test_buProgramLeadCanCreateFundingCycle() {
 		long initFCCount = fcRepo.count();
 
-		FundingCycle fc = new FundingCycle();
-		fc.setIsOpen(true);
-		fc.setStartDate(LocalDate.of(2020, 1, 1));
-		fc.setExpectedApplications(1_000L);
-		fc.setFiscalYear(fyService.findFiscalYearById(4L));
-		fc.setFundingOpportunity(foService.findFundingOpportunityById(77L));
+		FundingCycle fc1 = new FundingCycle();
+		fc1.setIsOpen(true);
+		fc1.setStartDate(LocalDate.of(2020, 1, 1));
+		fc1.setExpectedApplications(1_000L);
+		fc1.setFiscalYear(fyService.findFiscalYearById(4L));
+		fc1.setFundingOpportunity(foService.findFundingOpportunityById(77L));
 
 		// jfs can create a FC for FO id=77 since he's a Program Lead for BU id=2
-		fcService.saveFundingCycle(fc);
+		fcService.saveFundingCycle(fc1);
 		assertEquals(initFCCount + 1, fcRepo.count());
 
 		// jfs cannot create a FC for FO id=17 since he's a Program Officer for BU id=3
-		fc.setFundingOpportunity(foService.findFundingOpportunityById(17L));
-		assertThrows(AccessDeniedException.class, () -> fcService.saveFundingCycle(fc));
+		FundingCycle fc2 = new FundingCycle();
+		fc2.setFundingOpportunity(foService.findFundingOpportunityById(17L));
+		assertThrows(AccessDeniedException.class, () -> fcService.saveFundingCycle(fc2));
 
 		// jfs cannot create a FC for FO id=35 since he's not even a member of BU id=4
-		fc.setFundingOpportunity(foService.findFundingOpportunityById(35L));
-		assertThrows(AccessDeniedException.class, () -> fcService.saveFundingCycle(fc));
-	}
-
-	@WithAnonymousUser
-	@Test
-	public void test_findFundingCyclesByFundingOpportunityMap() {
-		Map<Long, FundingCycle> fcsByFosMap = fcService.findFundingCyclesByFundingOpportunityMap();
-		assertNotNull(fcsByFosMap);
-		assertTrue(0 < fcsByFosMap.size());
+		FundingCycle fc3 = new FundingCycle();
+		fc3.setFundingOpportunity(foService.findFundingOpportunityById(35L));
+		assertThrows(AccessDeniedException.class, () -> fcService.saveFundingCycle(fc3));
 	}
 
 	@Tag("user_story_14750")
@@ -221,7 +136,7 @@ public class FundingCycleServiceTest {
 	public void test_adminCanDeleteFC() {
 		long initFCCount = fcRepo.count();
 
-		fcService.deleteFundingCycle(141L);
+		fcService.deleteFundingCycleId(141L);
 
 		assertEquals(initFCCount - 1, fcRepo.count());
 	}
@@ -232,7 +147,7 @@ public class FundingCycleServiceTest {
 	public void test_buProgramLeadCanDeleteFC() {
 		long initFCCount = fcRepo.count();
 
-		fcService.deleteFundingCycle(127L);
+		fcService.deleteFundingCycleId(127L);
 
 		assertEquals(initFCCount - 1, fcRepo.count());
 	}
@@ -241,14 +156,14 @@ public class FundingCycleServiceTest {
 	@WithMockUser(username = "dev")
 	@Test
 	public void test_buProgramOfficerCannotDeleteFC() {
-		assertThrows(AccessDeniedException.class, () -> fcService.deleteFundingCycle(11L));
+		assertThrows(AccessDeniedException.class, () -> fcService.deleteFundingCycleId(11L));
 	}
 
 	@Tag("user_story_19213")
 	@WithMockUser(username = "dev")
 	@Test
 	public void test_buNonMemberCannotDeleteFC() {
-		assertThrows(AccessDeniedException.class, () -> fcService.deleteFundingCycle(1L));
+		assertThrows(AccessDeniedException.class, () -> fcService.deleteFundingCycleId(1L));
 	}
 
 	@Tag("user_story_19207")

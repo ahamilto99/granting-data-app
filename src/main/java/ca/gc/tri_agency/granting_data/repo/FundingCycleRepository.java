@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -16,27 +17,10 @@ import ca.gc.tri_agency.granting_data.model.projection.FundingCycleProjection;
 
 @Repository
 @Transactional(readOnly = true)
-public interface FundingCycleRepository extends JpaRepository<FundingCycle, Long> {
+public interface FundingCycleRepository extends JpaRepository<FundingCycle, Long> { // @formatter:off
 
 	List<FundingCycle> findByFundingOpportunityId(Long foId);
 
-	List<FundingCycle> findByStartDateGreaterThanEqualAndStartDateLessThanOrEndDateGreaterThanEqualAndEndDateLessThan(LocalDate startDate,
-			LocalDate endDate, LocalDate startDate2, LocalDate endDate2);
-
-	List<FundingCycle> findByStartDateBetween(LocalDate startDateStart, LocalDate startDateEnd);
-
-	List<FundingCycle> findByEndDateBetween(LocalDate endDateStart, LocalDate endDateEnd);
-
-	List<FundingCycle> findByStartDateLOIBetween(LocalDate startDateLOIStart, LocalDate startDateLOIEnd);
-
-	List<FundingCycle> findByEndDateLOIBetween(LocalDate endDateLOIStart, LocalDate endDateLOIEnd);
-
-	List<FundingCycle> findByStartDateNOIBetween(LocalDate startDateNOIStart, LocalDate startDateNOIEnd);
-
-	List<FundingCycle> findByEndDateNOIBetween(LocalDate endDateNOIStart, LocalDate endDateNOIEnd);
-
-	// @formatter:off
-	
 	@Query("SELECT fc.id AS id, fc.expectedApplications AS numAppsExpected, fc.isOpen AS isOpenEnded, fc.startDate AS startDate,"
 			+ " fc.endDate AS endDate, fc.startDateNOI AS startDateNOI, fc.endDateNOI AS endDateNOI,"
 			+ " fc.startDateLOI AS startDateLOI, fc.endDateLOI AS endDateLOI, fy.id AS fiscalYearId, fy.year AS fiscalYear,"
@@ -77,5 +61,10 @@ public interface FundingCycleRepository extends JpaRepository<FundingCycle, Long
 			+ " OR fc.endDateLOI BETWEEN :start AND :end")
 	List<FundingCycleProjection> findForCalendar(@Param("start") LocalDate dayRangeStart, @Param("end") LocalDate dayRangeEnd);
 	
-	// @formatter:on
-}
+	@Transactional
+	@Modifying(flushAutomatically = true, clearAutomatically = true)
+	@Query("DELETE FROM FundingCycle"
+			+ " WHERE id = ?1")
+	void deleteByIdentifier(Long fcId);
+	
+} // @formatter:on

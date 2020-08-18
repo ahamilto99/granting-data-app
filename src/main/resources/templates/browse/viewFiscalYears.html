@@ -38,7 +38,7 @@
 					</tbody>
 				</table>
 
-				<div sec:authorize="hasRole('MDM ADMIN')" class="form-group row">
+				<div sec:authorize="hasRole('MDM ADMIN')">
 					<a id="createFiscalYearLink" th:href="@{/manage/createFY}" th:text="#{link.createFy}" class="btn-primary btn"></a>
 				</div>
 

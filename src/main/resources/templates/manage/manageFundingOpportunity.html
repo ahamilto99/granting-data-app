@@ -139,9 +139,9 @@
 							<th th:text="#{th.endDateLOI}"></th>
 							<th th:text="#{th.appsExpected}"></th>
 							<th th:text="#{th.fyr}"></th>
-							<th sec:authorize="isAuthenticated()" th:if="${@memberRoleServiceImpl.checkIfCurrentUserCanCreateUpdateDeleteFC(param.id)}"
+							<th sec:authorize="isAuthenticated()" th:if="${@memberRoleServiceImpl.checkIfCurrentUserCanCreateFC(param.id)}"
 								th:text="#{link.edit}"></th>
-							<th sec:authorize="isAuthenticated()" th:if="${@memberRoleServiceImpl.checkIfCurrentUserCanCreateUpdateDeleteFC(param.id)}"
+							<th sec:authorize="isAuthenticated()" th:if="${@memberRoleServiceImpl.checkIfCurrentUserCanCreateFC(param.id)}"
 								th:text="#{form.delete}"></th>
 						</tr>
 					</thead>
@@ -157,15 +157,15 @@
 							<td th:text="${fc.getEndDateLOI()}"></td>
 							<td th:text="${#numbers.formatInteger(fc.getNumAppsExpected(), 1, 'COMMA')}"></td>
 							<td th:text="${fc.getFiscalYear()}"></td>
-							<td sec:authorize="isAuthenticated()" th:if="${@memberRoleServiceImpl.checkIfCurrentUserCanCreateUpdateDeleteFC(param.id)}"><a
+							<td sec:authorize="isAuthenticated()" th:if="${@memberRoleServiceImpl.checkIfCurrentUserCanUpdateDeleteFC(fc.getId())}"><a
 								class="btn btn-primary" th:href="@{/manage/editFC(id=${fc.getId()})}" th:text="#{link.edit}"></a></td>
-							<td sec:authorize="isAuthenticated()" th:if="${@memberRoleServiceImpl.checkIfCurrentUserCanCreateUpdateDeleteFC(param.id)}"><a
+							<td sec:authorize="isAuthenticated()" th:if="${@memberRoleServiceImpl.checkIfCurrentUserCanUpdateDeleteFC(fc.getId())}"><a
 								class="btn btn-primary" th:href="@{/manage/deleteFC(id=${fc.getId()})}" th:text="#{form.delete}"></a></td>	
 						</tr>
 					</tbody>
 				</table>
 
-				<div sec:authorize="isAuthenticated()" th:if="${@memberRoleServiceImpl.checkIfCurrentUserCanCreateUpdateDeleteFC(param.id)}"
+				<div sec:authorize="isAuthenticated()" th:if="${@memberRoleServiceImpl.checkIfCurrentUserCanCreateFC(param.id)}"
 					class="form-group">
 					<a class="btn btn-primary" th:text="#{link.createFC}" th:href="@{/manage/createFC(foId=${param.id})}"></a>
 				</div>

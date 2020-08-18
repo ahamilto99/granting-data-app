@@ -19,10 +19,21 @@ public interface FiscalYearRepository extends JpaRepository<FiscalYear, Long> { 
 
 	Optional<FiscalYear> findByYear(Long year);
 
-	@Query("SELECT fy.id AS id, fy.year AS year, SUM(sfc.numAppsReceived) AS numAppsReceived"
+	/*
+	 * This query sums both the FCs and SFCs for each FY
+	 * 
+	 * @Query(value = "SELECT FY.ID AS id, FY.YEAR AS year,"
+			+ " ISNULL(SUM(FC.EXPECTED_APPLICATIONS), 0) + ISNULL(SUM(SFC.NUM_APPS_RECEIVED), 0) AS numAppsReceived"
+			+ " FROM FISCAL_YEAR FY"
+			+ " LEFT JOIN FUNDING_CYCLE FC ON FY.ID = FC.FISCAL_YEAR_ID"
+			+ " LEFT JOIN SYSTEM_FUNDING_CYCLE SFC ON FY.YEAR = SFC.FISCAL_YEAR"
+			+ " GROUP BY FY.ID, FY.YEAR"
+			+ " ORDER BY FY.YEAR;", nativeQuery = true)
+	 */
+	@Query("SELECT fy.id AS id, fy.year AS year, SUM(fc.expectedApplications) AS numAppsReceived"
 			+ " FROM FiscalYear fy"
-			+ " LEFT JOIN SystemFundingCycle sfc ON fy.year = sfc.fiscalYear"
-			+ " GROUP BY sfc.fiscalYear, fy.id"
+			+ " LEFT JOIN FundingCycle fc ON fy.id = fc.fiscalYear.id"
+			+ " GROUP BY fy.year, fy.id"
 			+ " ORDER BY fy.year")
 	List<FiscalYearProjection> findNumAppsExpectedForEachYear();
 

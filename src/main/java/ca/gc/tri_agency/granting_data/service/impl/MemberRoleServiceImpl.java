@@ -95,7 +95,6 @@ public class MemberRoleServiceImpl implements MemberRoleService {
 	@Override
 	public boolean checkIfCurrentUserEdiAuthorized(Long buId) {
 		if (SecurityUtils.isCurrentUserAdmin()) {
-			// an admin user can access the EDI data for all BUs
 			return true;
 		}
 
@@ -105,12 +104,21 @@ public class MemberRoleServiceImpl implements MemberRoleService {
 	}
 
 	@Override
-	public boolean checkIfCurrentUserCanCreateUpdateDeleteFC(Long foId) {
+	public boolean checkIfCurrentUserCanCreateFC(Long foId) {
 		if (SecurityUtils.isCurrentUserAdmin()) {
 			return true;
 		}
 
 		return mrRepo.findIfCanCreateFC(SecurityUtils.getCurrentUsername(), foId) != null;
+	}
+
+	@Override
+	public boolean checkIfCurrentUserCanUpdateDeleteFC(Long fcId) {
+		if (SecurityUtils.isCurrentUserAdmin()) {
+			return true;
+		}
+
+		return mrRepo.findIfCanUpdateDeleteFC(SecurityUtils.getCurrentUsername(), fcId) != null;
 	}
 
 }
