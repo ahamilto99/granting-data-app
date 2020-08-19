@@ -88,6 +88,7 @@ public class BusinessUnitController {
 		if (bindingResult.hasErrors()) {
 			return "admin/editBU";
 		}
+		
 		buService.saveBusinessUnit(bu);
 		
 		String actionMsg = msgSource.getMessage("h.editedBu", null, LocaleContextHolder.getLocale());

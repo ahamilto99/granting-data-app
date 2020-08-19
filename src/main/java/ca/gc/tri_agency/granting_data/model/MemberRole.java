@@ -1,6 +1,7 @@
 package ca.gc.tri_agency.granting_data.model;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,12 +28,12 @@ public class MemberRole {
 	@NotNull
 	private Boolean ediAuthorized;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "role_id")
 	@NotNull
 	private Role role;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "business_unit_id")
 	@NotNull
 	private BusinessUnit businessUnit;

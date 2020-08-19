@@ -1,6 +1,7 @@
 package ca.gc.tri_agency.granting_data.repo;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,7 +15,7 @@ import ca.gc.tri_agency.granting_data.model.projection.FundingOpportunityProject
 
 @Repository
 @Transactional(readOnly = true)
-public interface FundingOpportunityRepository extends JpaRepository<FundingOpportunity, Long> {
+public interface FundingOpportunityRepository extends JpaRepository<FundingOpportunity, Long> { // @formatter:off
 
 	List<FundingOpportunity> findByNameEn(String nameEn);
 
@@ -28,7 +29,8 @@ public interface FundingOpportunityRepository extends JpaRepository<FundingOppor
 			+ " FROM FundingOpportunity fo"
 			+ " LEFT JOIN fo.businessUnit bu"
 			+ " LEFT JOIN GrantingCapability gc ON fo.id = gc.fundingOpportunity"
-			+ " LEFT JOIN GrantingSystem gSys ON gc.grantingSystem = gSys.id ORDER BY nameEn, grantingSystemAcronym")
+			+ " LEFT JOIN GrantingSystem gSys ON gc.grantingSystem = gSys.id"
+			+ " ORDER BY id")
 	List<FundingOpportunityProjection> findResultsForGoldenListTable();
 	
 	@Query("SELECT fo.nameEn AS nameEn, fo.nameFr AS nameFr, fo.frequency AS frequency, fo.fundingType AS fundingType, bu.id AS businessUnitId,"
@@ -43,5 +45,17 @@ public interface FundingOpportunityRepository extends JpaRepository<FundingOppor
 			+ " FROM FundingOpportunity"
 			+ " WHERE id = ?1")
 	FundingOpportunityProjection findIfItExists(Long foId);
-
-}
+	
+	@Query("SELECT nameEn AS nameEn, nameFr AS nameFr"
+			+ " FROM FundingOpportunity"
+			+ " WHERE id = ?1")
+	Optional<FundingOpportunityProjection> findName(Long foId);
+	
+	@Query("SELECT fo, bu"
+			+ " FROM FundingOpportunity fo"
+			+ " LEFT JOIN FETCH BusinessUnit bu ON fo.businessUnit.id = bu.id"
+			+ " LEFT JOIN FETCH fo.participatingAgencies a"
+			+ " WHERE fo.id = ?1")
+	List<FundingOpportunity> findEager(Long foId);
+	
+} // @formatter:on

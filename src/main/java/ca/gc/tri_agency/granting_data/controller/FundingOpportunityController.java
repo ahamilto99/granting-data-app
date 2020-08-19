@@ -1,6 +1,5 @@
 package ca.gc.tri_agency.granting_data.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,7 +20,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ca.gc.tri_agency.granting_data.form.FundingOpportunityFilterForm;
 import ca.gc.tri_agency.granting_data.ldap.ADUser;
 import ca.gc.tri_agency.granting_data.ldap.ADUserService;
-import ca.gc.tri_agency.granting_data.model.Agency;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.security.SecurityUtils;
@@ -108,36 +106,41 @@ public class FundingOpportunityController {
 			List<ADUser> matchingUsers = adUserService.searchADUsers(username.trim());
 			model.addAttribute("matchingUsers", matchingUsers);
 		}
+
 		return "manage/searchUser";
 	}
 
 	@GetMapping("/manage/manageFo")
 	public String manageFundingOpportunity(@RequestParam("id") Long id, Model model) {
 		model.addAttribute("foProjections", foService.findBrowseViewFoResult(id));
-		model.addAttribute("sfcProjections", sfcService.findSystemFundingCyclesByLinkedFundingOpportunity(id));
 		model.addAttribute("gcProjections", gcService.findGrantingCapabilitiesForBrowseViewFO(id));
+		model.addAttribute("sfcProjections", sfcService.findSystemFundingCyclesByLinkedFundingOpportunity(id));
 		model.addAttribute("fcProjections", fcService.findFCsForBrowseViewFO(id));
+
 		return "manage/manageFundingOpportunity";
 	}
 
 	@AdminOnly
 	@GetMapping("/manage/editFo")
 	public String editFundingOpportunityGet(@RequestParam("id") Long id, Model model) {
-		FundingOpportunity fo = foService.findFundingOpportunityById(id);
-		model = populateAgencyOptions(model, fo);
-		model.addAttribute("programForm", fo);
+		model.addAttribute("fo", foService.findFundingOpportunityEager(id).get(0));
+
 		return "manage/editFundingOpportunity";
 	}
 
 	@AdminOnly
 	@PostMapping("/manage/editFo")
-	public String editFundingOpportunityPost(@Valid @ModelAttribute("programForm") FundingOpportunity fo, BindingResult bindingResult,
-			Model model) {
+	public String editFundingOpportunityPost(@Valid @ModelAttribute("fo") FundingOpportunity fo, BindingResult bindingResult,
+			RedirectAttributes redirectAttributes,  Model model) {
 		if (bindingResult.hasErrors()) {
-			model = populateAgencyOptions(model, fo);
 			return "/manage/editFundingOpportunity";
 		}
+		
 		foService.saveFundingOpportunity(fo);
+		
+		String actionMsg = msgSource.getMessage("h.editedFO", null, LocaleContextHolder.getLocale());
+		redirectAttributes.addFlashAttribute("actionMsg", actionMsg);
+		
 		return "redirect:/browse/viewFo?id=" + fo.getId();
 	}
 
@@ -149,37 +152,41 @@ public class FundingOpportunityController {
 			fo.setNameEn(sfo.getNameEn());
 			fo.setNameFr(sfo.getNameFr());
 		}
+
 		model.addAttribute("fo", fo);
-		model.addAttribute("allAgencies", agencyService.findAllAgencies());
 		model.addAttribute("allBusinessUnits", buService.findAllBusinessUnits());
+		
 		return "admin/createFo";
 	}
 
 	@PostMapping("/admin/createFo")
-	public String createFundingOpportunityPost(@Valid @ModelAttribute("fo") FundingOpportunity command, BindingResult bindingResult,
+	public String createFundingOpportunityPost(@Valid @ModelAttribute("fo") FundingOpportunity fo, BindingResult bindingResult,
 			Model model, RedirectAttributes redirectAttributes) throws Exception {
 		if (bindingResult.hasErrors()) {
 			model.addAttribute("allAgencies", agencyService.findAllAgencies());
 			return "admin/createFo";
 		}
-		foService.saveFundingOpportunity(command);
-		String createdFo = msgSource.getMessage("h.createdFo", null, LocaleContextHolder.getLocale());
-		redirectAttributes.addFlashAttribute("actionMessage", createdFo + command.getLocalizedAttribute("name"));
-		return "redirect:/admin/home";
+		
+		foService.saveFundingOpportunity(fo);
+		
+		String actionMsg = msgSource.getMessage("h.createdFo", null, LocaleContextHolder.getLocale());
+		redirectAttributes.addFlashAttribute("actionMsg", actionMsg + fo.getLocalizedAttribute("name"));
+		
+		return "redirect:/browse/fundingOpportunities";
 	}
 
-	private Model populateAgencyOptions(Model model, FundingOpportunity fo) {
-		List<Agency> allAgencies = agencyService.findAllAgencies();
-		List<Agency> otherAgencies = new ArrayList<Agency>();
-		for (Agency a : allAgencies) {
-			if (!fo.getParticipatingAgencies().contains(a)) {
-				otherAgencies.add(a);
-			}
-		}
-		model.addAttribute("otherAgencies", otherAgencies);
-		model.addAttribute("allAgencies", allAgencies);
-		return model;
-	}
+//	private Model populateAgencyOptions(Model model, FundingOpportunity fo) {
+//		List<Agency> allAgencies = agencyService.findAllAgencies();
+//		List<Agency> otherAgencies = new ArrayList<Agency>();
+//		for (Agency a : allAgencies) {
+//			if (!fo.getParticipatingAgencies().contains(a)) {
+//				otherAgencies.add(a);
+//			}
+//		}
+//		model.addAttribute("otherAgencies", otherAgencies);
+//		model.addAttribute("allAgencies", allAgencies);
+//		return model;
+//	}
 
 	@AdminOnly
 	@GetMapping("/admin/auditLogFO")

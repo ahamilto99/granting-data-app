@@ -98,7 +98,7 @@ public class CreateBusinessUnitIntegrationTest {
 				.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
 				.andExpect(MockMvcResultMatchers.redirectedUrl("/browse/viewAgency?id=" + Long.toString(agencyId)))
 				.andExpect(MockMvcResultMatchers.flash().attribute("actionMsg",
-						"Created the Business Unit named: " + nameEn));
+						"Created Business Unit: " + nameEn));
 
 		// when viewBU page is refreshed, flash attribute should disappear
 		mvc.perform(MockMvcRequestBuilders.get("/browse/viewAgency?id=" + Long.toString(agencyId)))

@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
+import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
 import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
 
@@ -62,7 +63,8 @@ public class FundingOpportunityControllerIntegrationTest {
 	@Test
 	public void test_adminCanEditFundingOpportunity_shouldSucceedWith302() throws Exception {
 		long initFOCount = foRepo.count();
-
+		FundingOpportunity initFO = foService.findFundingOpportunityById(1L);
+		
 		String nameFr = RandomStringUtils.randomAlphabetic(25);
 		String frequency = RandomStringUtils.randomAlphabetic(10);
 
@@ -70,13 +72,16 @@ public class FundingOpportunityControllerIntegrationTest {
 				.param("frequency", frequency).param("nameFr", nameFr)
 				.param("nameEn", "Collaborative Health Research Projects (CHRP) (5640)").param("division", "MCT")
 				.param("_isJointInitiative", "on").param("_isComplex", "on").param("_isNOI", "on")
-				.param("_isLOI", "on").param("_participatingAgencies", "1"))
+				.param("_isLOI", "on").param("businessUnit", "1"))
 				.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
 				.andExpect(MockMvcResultMatchers.redirectedUrl("/browse/viewFo?id=1"));
 
+		FundingOpportunity editedFO = foService.findFundingOpportunityById(1L);
+		
 		assertEquals(initFOCount, foRepo.count());
-		assertEquals(nameFr, foService.findFundingOpportunityById(1L).getNameFr());
-		assertEquals(frequency, foService.findFundingOpportunityById(1L).getFrequency());
+		assertEquals(nameFr, editedFO.getNameFr());
+		assertEquals(frequency, editedFO.getFrequency());
+		assertEquals(initFO.getBusinessUnit().getId(), editedFO.getBusinessUnit().getId());
 	}
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })

@@ -227,4 +227,24 @@ public class FundingOpportunityServiceImpl implements FundingOpportunityService 
 		return foRepo.findIfItExists(foId).getCount() == 1L;
 	}
 
+	@Override
+	public FundingOpportunityProjection findFundingOpportunityName(Long foId) {
+		return foRepo.findName(foId)
+				.orElseThrow(() -> new DataRetrievalFailureException("FundingOpportunity id=" + foId + " does not exist"));
+	}
+
+	/*
+	 * FO has a many-to-many relationship with Agency thus many rows can be returned when eager fetching
+	 */
+	@Override
+	public List<FundingOpportunity> findFundingOpportunityEager(Long foId) {
+		List<FundingOpportunity> foList = foRepo.findEager(foId);
+
+		if (foList.isEmpty()) {
+			throw new DataRetrievalFailureException("FundingOpportunity id=" + foId + " does not exist");
+		}
+
+		return foList;
+	}
+
 }

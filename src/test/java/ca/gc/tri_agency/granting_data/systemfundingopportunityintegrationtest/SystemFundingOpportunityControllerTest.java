@@ -1,6 +1,10 @@
 package ca.gc.tri_agency.granting_data.systemfundingopportunityintegrationtest;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,6 +30,7 @@ import org.springframework.web.context.WebApplicationContext;
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.repo.SystemFundingOpportunityRepository;
+import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
 import ca.gc.tri_agency.granting_data.service.SystemFundingOpportunityService;
 
 @SpringBootTest(classes = GrantingDataApp.class)
@@ -34,6 +39,9 @@ public class SystemFundingOpportunityControllerTest {
 
 	@Autowired
 	private SystemFundingOpportunityService sfoService;
+
+	@Autowired
+	private FundingOpportunityService foService;
 
 	@Autowired
 	private SystemFundingOpportunityRepository sfoRepo;
@@ -73,8 +81,10 @@ public class SystemFundingOpportunityControllerTest {
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_unlinkFoConfirmationPageAccessableByAdmin_shouldSucceedWith200() throws Exception {
-		String sfoName = sfoService.findSystemFundingOpportunityById(1L).getNameEn();
-		String foName = sfoService.findSystemFundingOpportunityById(1L).getLinkedFundingOpportunity().getNameEn();
+		SystemFundingOpportunity sfo = sfoService.findSystemFundingOpportunityById(1L);
+		String sfoName = sfo.getNameEn();
+		String foName = foService.findFundingOpportunityName(sfo.getLinkedFundingOpportunity().getId()).getNameEn();
+				
 		assertTrue(mvc.perform(MockMvcRequestBuilders.get("/admin/confirmUnlink").param("sfoId", "1"))
 				.andExpect(MockMvcResultMatchers.status().isOk()).andReturn().getResponse().getContentAsString()
 				.contains("Are you sure you want to unlink the System Funding Opportunity named " + sfoName
