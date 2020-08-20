@@ -93,4 +93,35 @@ public class GrantingCapability {
 		this.url = url;
 	}
 
+	@Override
+	public int hashCode() {
+		return 2020;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		
+		if (obj == null || getClass() != obj.getClass()) {
+			return false;
+		}
+		
+		return id != null && id.equals(((GrantingCapability) obj).getId());
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("GrantingCapability [id=");
+		builder.append(id);
+		builder.append(", description=");
+		builder.append(description);
+		builder.append(", url=");
+		builder.append(url);
+		builder.append("]");
+		return builder.toString();
+	}
+
 }

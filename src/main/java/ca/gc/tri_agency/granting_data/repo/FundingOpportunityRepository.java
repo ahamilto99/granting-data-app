@@ -54,7 +54,7 @@ public interface FundingOpportunityRepository extends JpaRepository<FundingOppor
 	@Query("SELECT fo, bu"
 			+ " FROM FundingOpportunity fo"
 			+ " LEFT JOIN FETCH BusinessUnit bu ON fo.businessUnit.id = bu.id"
-			+ " LEFT JOIN FETCH fo.participatingAgencies a"
+			+ " LEFT JOIN FETCH fo.participatingAgencies"
 			+ " WHERE fo.id = ?1")
 	List<FundingOpportunity> findEager(Long foId);
 	
