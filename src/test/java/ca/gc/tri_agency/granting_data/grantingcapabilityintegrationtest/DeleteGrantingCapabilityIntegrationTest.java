@@ -104,7 +104,7 @@ public class DeleteGrantingCapabilityIntegrationTest {
 
 		String foId = String.valueOf(gcService.findGrantingCapabilityById(103L).getFundingOpportunity().getId());
 
-		mvc.perform(MockMvcRequestBuilders.post("/manage/deleteGC").param("id", "103"))
+		mvc.perform(MockMvcRequestBuilders.post("/manage/deleteGC").param("id", "103").param("foId", foId))
 				.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
 				.andExpect(MockMvcResultMatchers.redirectedUrl("/manage/manageFo?id=" + foId))
 				.andExpect(MockMvcResultMatchers.flash().attribute("actionMsg",
@@ -122,9 +122,9 @@ public class DeleteGrantingCapabilityIntegrationTest {
 	public void test_nonAdminCannotDeleteGC_shouldReturn403() throws Exception {
 		long numGCs = gcRepo.count();
 
-		mvc.perform(MockMvcRequestBuilders.post("/manage/deleteGC").param("id", "104"))
-				.andExpect(MockMvcResultMatchers.status().isForbidden()).andExpect(MockMvcResultMatchers.content()
-						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
+		mvc.perform(MockMvcRequestBuilders.post("/manage/deleteGC").param("id", "104").param("foId", "106"))
+				.andExpect(MockMvcResultMatchers.status().isForbidden())
+				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
 
 		assertEquals(numGCs, gcRepo.count());
 	}

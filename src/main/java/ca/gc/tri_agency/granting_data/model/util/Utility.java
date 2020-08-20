@@ -17,5 +17,9 @@ public class Utility {
 		return projection -> distinctProjections.add(subProjectionIdGetter.apply(projection));
 
 	}
+	
+	public static String returnNotFoundMsg(String entityType, Long id) {
+		return entityType + " id=" + id + " does not exist";
+	}
 
 }

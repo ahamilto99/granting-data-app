@@ -24,9 +24,9 @@ import ca.gc.tri_agency.granting_data.service.GrantingSystemService;
 public class GrantingCapabilityController {
 
 	private GrantingCapabilityService gcService;
-	
+
 	private GrantingStageService gStageService;
-	
+
 	private GrantingSystemService gSystemService;
 
 	private MessageSource msgSource;
@@ -43,9 +43,10 @@ public class GrantingCapabilityController {
 	@AdminOnly
 	@GetMapping("/manage/editGC")
 	public String editGrantingCapabilityGet(@RequestParam("id") Long id, Model model) {
-		model.addAttribute("gc", gcService.findGrantingCapabilityById(id));
+		model.addAttribute("gc", gcService.findGrantingCapabilityAndFO(id));
 		model.addAttribute("grantingStages", gStageService.findAllGrantingStages());
 		model.addAttribute("grantingSystems", gSystemService.findAllGrantingSystems());
+
 		return "manage/editGrantingCapability";
 	}
 
@@ -58,9 +59,12 @@ public class GrantingCapabilityController {
 			model.addAttribute("grantingSystems", gSystemService.findAllGrantingSystems());
 			return "manage/editGrantingCapability";
 		}
+
 		gcService.saveGrantingCapability(gc);
+
 		String actionMsg = msgSource.getMessage("h.editedGc", null, LocaleContextHolder.getLocale());
 		redirectAttributes.addFlashAttribute("actionMsg", actionMsg);
+
 		return "redirect:/manage/manageFo?id=" + gc.getFundingOpportunity().getId();
 	}
 
@@ -68,16 +72,19 @@ public class GrantingCapabilityController {
 	@GetMapping("/manage/deleteGC")
 	public String deleteGrantingCapabilityGet(@RequestParam("id") Long id, Model model) {
 		model.addAttribute("gc", gcService.findGrantingCapabilityById(id));
+
 		return "manage/deleteGrantingCapability";
 	}
 
 	@AdminOnly
 	@PostMapping("/manage/deleteGC")
-	public String deleteGrantingCapabilityPost(@RequestParam("id") Long id, RedirectAttributes redirectAttributes) {
-		String foId = gcService.findGrantingCapabilityById(id).getFundingOpportunity().getId().toString();
+	public String deleteGrantingCapabilityPost(@RequestParam("id") Long id, @RequestParam("foId") Long foId,
+			RedirectAttributes redirectAttributes) {
 		gcService.deleteGrantingCapabilityById(id);
+
 		String actionMsg = msgSource.getMessage("h.deletedGC", null, LocaleContextHolder.getLocale());
 		redirectAttributes.addFlashAttribute("actionMsg", actionMsg);
+
 		return "redirect:/manage/manageFo?id=" + foId;
 	}
 
@@ -88,20 +95,24 @@ public class GrantingCapabilityController {
 		model.addAttribute("gc", new GrantingCapability());
 		model.addAttribute("grantingSystems", gSystemService.findAllGrantingSystems());
 		model.addAttribute("grantingStages", gStageService.findAllGrantingStages());
+
 		return "manage/addGrantingCapabilities";
 	}
 
 	@AdminOnly
 	@PostMapping("/manage/addGrantingCapabilities")
-	public String createGrantingCapabilityPost(@Valid @ModelAttribute("gc") GrantingCapability command, BindingResult bindingResult,
+	public String createGrantingCapabilityPost(@Valid @ModelAttribute("gc") GrantingCapability gc, BindingResult bindingResult,
 			RedirectAttributes redirectAttributes) {
 		if (bindingResult.hasErrors()) {
 			return "manage/addGrantingCapabilities";
 		}
-		gcService.saveGrantingCapability(command);
+
+		gcService.saveGrantingCapability(gc);
+
 		String actionMsg = msgSource.getMessage("h.createdGc", null, LocaleContextHolder.getLocale());
 		redirectAttributes.addFlashAttribute("actionMsg", actionMsg);
-		return "redirect:/browse/viewFo?id=" + command.getFundingOpportunity().getId();
+
+		return "redirect:/manage/manageFo?id=" + gc.getFundingOpportunity().getId();
 	}
 
 }

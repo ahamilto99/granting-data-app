@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ca.gc.tri_agency.granting_data.model.GrantingCapability;
 import ca.gc.tri_agency.granting_data.model.projection.GrantingCapabilityProjection;
+import ca.gc.tri_agency.granting_data.model.util.Utility;
 import ca.gc.tri_agency.granting_data.repo.GrantingCapabilityRepository;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.GrantingCapabilityService;
@@ -17,6 +18,8 @@ import ca.gc.tri_agency.granting_data.service.GrantingCapabilityService;
 public class GrantingCapabilityServiceImpl implements GrantingCapabilityService {
 
 	private GrantingCapabilityRepository gcRepo;
+	
+	private static final String ENTITY_TYPE = "GrantingCapability";
 
 	@Autowired
 	public GrantingCapabilityServiceImpl(GrantingCapabilityRepository gcRepo) {
@@ -25,8 +28,8 @@ public class GrantingCapabilityServiceImpl implements GrantingCapabilityService 
 
 	@Override
 	public GrantingCapability findGrantingCapabilityById(Long id) {
-		return gcRepo.findById(id)
-				.orElseThrow(() -> new DataRetrievalFailureException("That Granting Capability does not exist"));
+		return gcRepo.findById(id).orElseThrow(
+				() -> new DataRetrievalFailureException(Utility.returnNotFoundMsg(ENTITY_TYPE, id)));
 	}
 
 	@Override
@@ -56,11 +59,21 @@ public class GrantingCapabilityServiceImpl implements GrantingCapabilityService 
 	public List<GrantingCapability> findGrantingCapabilitiesByGrantingStageNameEn(String nameEn) {
 		return gcRepo.findByGrantingStageNameEn(nameEn);
 	}
-	
-	@Transactional(readOnly = true)
+
 	@Override
 	public List<GrantingCapabilityProjection> findGrantingCapabilitiesForBrowseViewFO(Long foId) {
 		return gcRepo.findForBrowseViewFO(foId);
+	}
+
+	@Override
+	public GrantingCapability findGrantingCapabilityAndFO(Long gcId) {
+		GrantingCapability gc = gcRepo.findEagerFO(gcId);
+		
+		if (gc == null) {
+			throw new DataRetrievalFailureException(Utility.returnNotFoundMsg(ENTITY_TYPE, gcId));
+		}
+		
+		return gc;
 	}
 
 }
