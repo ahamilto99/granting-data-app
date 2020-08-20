@@ -51,7 +51,7 @@ public class DeleteMemberRoleIntegrationTest {
 		mvc.perform(MockMvcRequestBuilders.get("/browse/viewBU").param("mrId", "3"))
 				.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
 				.andExpect(MockMvcResultMatchers.redirectedUrl("/browse/viewBU?id=1"))
-				.andExpect(MockMvcResultMatchers.flash().attribute("actionMsg", "Successfully Deleted Member Role for: rwi"));
+				.andExpect(MockMvcResultMatchers.flash().attribute("actionMsg", "Successfully Deleted Member Role For: rwi"));
 
 		mvc.perform(MockMvcRequestBuilders.get("/browse/ViewBU").param("id", "1"))
 				.andExpect(MockMvcResultMatchers.flash().attributeCount(0));

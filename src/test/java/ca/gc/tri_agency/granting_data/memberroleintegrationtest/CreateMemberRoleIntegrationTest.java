@@ -60,7 +60,7 @@ public class CreateMemberRoleIntegrationTest {
 				.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
 				.andExpect(MockMvcResultMatchers.redirectedUrl("/browse/viewBU?id=1"))
 				.andExpect(MockMvcResultMatchers.flash().attribute("actionMsg",
-						Matchers.is("Successfully Created Member Role for: adm")));
+						Matchers.is("Successfully Created Member Role For: adm")));
 
 		mvc.perform(MockMvcRequestBuilders.get("/browse/viewBU").param("id", "1"))
 				.andExpect(MockMvcResultMatchers.flash().attributeCount(0));
