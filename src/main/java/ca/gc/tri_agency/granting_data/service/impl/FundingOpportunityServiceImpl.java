@@ -247,4 +247,11 @@ public class FundingOpportunityServiceImpl implements FundingOpportunityService 
 		return foList;
 	}
 
+	@Override
+	public List<FundingOpportunityProjection> findAllFundingOpportunityNames() {
+		return foRepo.findAllNames();
+	}
+	
+	
+
 }

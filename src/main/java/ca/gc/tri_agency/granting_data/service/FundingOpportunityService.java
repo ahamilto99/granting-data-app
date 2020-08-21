@@ -39,4 +39,6 @@ public interface FundingOpportunityService {
 	FundingOpportunityProjection findFundingOpportunityName(Long foId);
 
 	List<FundingOpportunity> findFundingOpportunityEager(Long foId);
+
+	List<FundingOpportunityProjection> findAllFundingOpportunityNames();
 }

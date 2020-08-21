@@ -28,6 +28,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
+import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.repo.SystemFundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
@@ -62,12 +63,14 @@ public class SystemFundingOpportunityControllerTest {
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_adminCanUnlinkFoFromSfo_shouldRedirectToViewSystemFo() throws Exception {
-		assertNotNull(sfoService.findSystemFundingOpportunityById(1L).getLinkedFundingOpportunity());
+		SystemFundingOpportunity sfo = sfoService.findSystemFundingOpportunityById(1L);
+		FundingOpportunity linkedFO = sfo.getLinkedFundingOpportunity();
 
-		mvc.perform(MockMvcRequestBuilders.post("/admin/confirmUnlink").param("sfoId", "1"))
-				.andExpect(MockMvcResultMatchers.flash().attributeCount(1))
-				.andExpect(MockMvcResultMatchers.flash().attributeExists("actionMessage"))
-				.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+		assertNotNull(linkedFO);
+
+		mvc.perform(MockMvcRequestBuilders.post("/admin/confirmUnlink").param("sfoId", "1")
+				.param("foId", Long.toString(linkedFO.getId())).param("sfoName", sfo.getNameEn())
+				.param("foName", linkedFO.getNameEn())).andExpect(MockMvcResultMatchers.status().is3xxRedirection())
 				.andExpect(MockMvcResultMatchers.redirectedUrl("/admin/viewSFO?id=1"));
 
 		assertNull(sfoService.findSystemFundingOpportunityById(1L).getLinkedFundingOpportunity());
@@ -84,7 +87,7 @@ public class SystemFundingOpportunityControllerTest {
 		SystemFundingOpportunity sfo = sfoService.findSystemFundingOpportunityById(1L);
 		String sfoName = sfo.getNameEn();
 		String foName = foService.findFundingOpportunityName(sfo.getLinkedFundingOpportunity().getId()).getNameEn();
-				
+
 		assertTrue(mvc.perform(MockMvcRequestBuilders.get("/admin/confirmUnlink").param("sfoId", "1"))
 				.andExpect(MockMvcResultMatchers.status().isOk()).andReturn().getResponse().getContentAsString()
 				.contains("Are you sure you want to unlink the System Funding Opportunity named " + sfoName
@@ -152,8 +155,7 @@ public class SystemFundingOpportunityControllerTest {
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_unlinkFoBtnVisibleToAdminWhenFoLinkedToSfo() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get("/admin/viewSFO").param("id", "1"))
-				.andExpect(MockMvcResultMatchers.status().isOk())
+		mvc.perform(MockMvcRequestBuilders.get("/admin/viewSFO").param("id", "1")).andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("id=\"unlinkSfoBtn\"")));
 	}
 
@@ -161,9 +163,8 @@ public class SystemFundingOpportunityControllerTest {
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_adminCanAccessAnalyzeSystemFOsPage_shouldSucceedWith200() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get("/admin/analyzeSFOs")).andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.content()
-						.string(Matchers.containsString("id=\"analyzeSystemFundingOpportunitiesPage\"")));
+		mvc.perform(MockMvcRequestBuilders.get("/admin/analyzeSFOs")).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(
+				MockMvcResultMatchers.content().string(Matchers.containsString("id=\"analyzeSystemFundingOpportunitiesPage\"")));
 	}
 
 	@Tag("user_story_14592")
@@ -171,15 +172,14 @@ public class SystemFundingOpportunityControllerTest {
 	@Test
 	public void test_nonAdminCannotAccessAnalyzeSystemFundingOpportunitiesPage_shouldReturn403() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/admin/analyzeSFOs")).andExpect(MockMvcResultMatchers.status().isForbidden())
-				.andExpect(MockMvcResultMatchers.content()
-						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
+				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
 	}
 
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_adminCanAccessAuditLogForAllSystemFundingOpportunities_shouldSucceedWith200() throws Exception {
-		String response = mvc.perform(MockMvcRequestBuilders.get("/admin/auditLogSFO"))
-				.andExpect(MockMvcResultMatchers.status().isOk()).andReturn().getResponse().getContentAsString();
+		String response = mvc.perform(MockMvcRequestBuilders.get("/admin/auditLogSFO")).andExpect(MockMvcResultMatchers.status().isOk())
+				.andReturn().getResponse().getContentAsString();
 
 		int numAdds = 0;
 
@@ -197,8 +197,7 @@ public class SystemFundingOpportunityControllerTest {
 	@Test
 	public void test_nonAdminCannotAccessAuditLogForAllSystemFundingOpportunities_shouldReturn403() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/admin/auditLogSFO")).andExpect(MockMvcResultMatchers.status().isForbidden())
-				.andExpect(MockMvcResultMatchers.content()
-						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
+				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
 	}
 
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
@@ -223,7 +222,7 @@ public class SystemFundingOpportunityControllerTest {
 	@Test
 	public void test_nonAdminCannotAccessAuditLogForOneSystemFundingOpportunity_shouldReturn403() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/admin/viewSFO").param("id", "1"))
-				.andExpect(MockMvcResultMatchers.status().isForbidden()).andExpect(MockMvcResultMatchers.content()
-						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
+				.andExpect(MockMvcResultMatchers.status().isForbidden())
+				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
 	}
 }

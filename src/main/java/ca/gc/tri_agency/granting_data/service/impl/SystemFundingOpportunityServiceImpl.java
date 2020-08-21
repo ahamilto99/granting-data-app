@@ -15,6 +15,8 @@ import ca.gc.tri_agency.granting_data.model.GrantingSystem;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.auditing.UsernameRevisionEntity;
 import ca.gc.tri_agency.granting_data.model.file.FundingCycleDatasetRow;
+import ca.gc.tri_agency.granting_data.model.projection.SystemFundingOpportunityProjection;
+import ca.gc.tri_agency.granting_data.model.util.Utility;
 import ca.gc.tri_agency.granting_data.repo.SystemFundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.AuditService;
@@ -23,6 +25,8 @@ import ca.gc.tri_agency.granting_data.service.SystemFundingOpportunityService;
 
 @Service
 public class SystemFundingOpportunityServiceImpl implements SystemFundingOpportunityService {
+
+	private static final String ENTITY_TYPE = "SystemFundingOpportunity";
 
 	private SystemFundingOpportunityRepository sfoRepo;
 
@@ -40,8 +44,7 @@ public class SystemFundingOpportunityServiceImpl implements SystemFundingOpportu
 
 	@Override
 	public SystemFundingOpportunity findSystemFundingOpportunityById(Long id) {
-		return sfoRepo.findById(id)
-				.orElseThrow(() -> new DataRetrievalFailureException("That System Funding Opportunity does not exist"));
+		return sfoRepo.findById(id).orElseThrow(() -> new DataRetrievalFailureException(Utility.returnNotFoundMsg(ENTITY_TYPE, id)));
 	}
 
 	@Override
@@ -68,10 +71,11 @@ public class SystemFundingOpportunityServiceImpl implements SystemFundingOpportu
 	@Transactional
 	@Override
 	public int linkSystemFundingOpportunity(Long sfoId, Long foId) {
-		SystemFundingOpportunity systemFo = findSystemFundingOpportunityById(sfoId);
+		SystemFundingOpportunity sfo = findSystemFundingOpportunityById(sfoId);
 		FundingOpportunity fo = foService.findFundingOpportunityById(foId);
-		systemFo.setLinkedFundingOpportunity(fo);
-		saveSystemFundingOpportunity(systemFo);
+		
+		sfo.setLinkedFundingOpportunity(fo);
+		
 		return 1;
 	}
 
@@ -79,13 +83,15 @@ public class SystemFundingOpportunityServiceImpl implements SystemFundingOpportu
 	@Transactional
 	@Override
 	public int unlinkSystemFundingOpportunity(Long sfoId, Long foId) {
-		SystemFundingOpportunity systemFo = findSystemFundingOpportunityById(sfoId);
-		FundingOpportunity fo = foService.findFundingOpportunityById(foId);
-		if (systemFo.getLinkedFundingOpportunity() != fo) {
-			throw new DataRetrievalFailureException("System Funding Opportunity is not linked with that Funding Opportunity");
+		SystemFundingOpportunity sfo = findSystemFundingOpportunityById(sfoId);
+
+		if (sfo.getLinkedFundingOpportunity().getId() != foId) {
+			throw new DataRetrievalFailureException(
+					"SystemFundingOpportunity id=" + sfoId + " is not linked with Funding Opportunity id=" + foId);
 		}
-		systemFo.setLinkedFundingOpportunity(null);
-		saveSystemFundingOpportunity(systemFo);
+
+		sfo.setLinkedFundingOpportunity(null);
+
 		return 1;
 	}
 
@@ -141,6 +147,25 @@ public class SystemFundingOpportunityServiceImpl implements SystemFundingOpportu
 	@Override
 	public List<SystemFundingOpportunity> findSFOsByLinkedFundingOpportunityBusinessUnitIdIn(List<Long> targetBuIds) {
 		return sfoRepo.findByLinkedFundingOpportunityBusinessUnitIdIn(targetBuIds);
+	}
+
+	@Override
+	public SystemFundingOpportunityProjection findSystemFundingOpportunityAndLinkedFOName(Long sfoId) {
+		return sfoRepo.findSFOAndFOName(sfoId)
+				.orElseThrow(() -> new DataRetrievalFailureException(Utility.returnNotFoundMsg(ENTITY_TYPE, sfoId)));
+
+	}
+
+	@Override
+	public List<SystemFundingOpportunityProjection> findAllSystemFundingOpportunitiesAndLinkedFONameAndGSysName() {
+		return sfoRepo.findAllSFOsAndFONameAndGSysName();
+	}
+
+	@Override
+	public SystemFundingOpportunityProjection findSystemFundingOpportunityNameAndLinkedFOName(Long sfoId) {
+		return sfoRepo.findSFONameAndFOName(sfoId)
+				.orElseThrow(() -> new DataRetrievalFailureException("Either: " + Utility.returnNotFoundMsg(ENTITY_TYPE, sfoId)
+						+ " or " + ENTITY_TYPE + " id=" + sfoId + " does not have a linked FundingOpportunity"));
 	}
 
 }

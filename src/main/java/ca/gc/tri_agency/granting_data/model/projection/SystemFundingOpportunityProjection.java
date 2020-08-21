@@ -12,7 +12,13 @@ public interface SystemFundingOpportunityProjection {
 	
 	Long getFundingOpportunityId();
 
-	String getFundingOpportunityNameEn();
+	String getFundingOpportunityEn();
 	
-	String getFundingOpportunityNameFr();
+	String getFundingOpportunityFr();
+	
+	Long getGrantingSystemId();
+	
+	String getGrantingSystemEn();
+	
+	String getGrantingSystemFr();
 }

@@ -30,13 +30,13 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr th:each="fo : ${systemFOs}">
-							<td><a th:href="@{viewSFO(id=${fo.id})}" th:text="${fo.extId}"></a></td>
-							<td th:text="${fo.nameEn}"></td>
-							<td th:text="${fo.grantingSystem.nameEn}"></td>
-							<th><a th:if="${fo.linkedFundingOpportunity != null}" th:href="@{../browse/viewFo(id=${fo.linkedFundingOpportunity.id})}"
-								th:text="${fo.linkedFundingOpportunity.nameEn}"></a>
-								<div th:if="${fo.linkedFundingOpportunity == null}" th:text="#{msg.notLinked}"></div></th>
+						<tr th:each="sfo : ${sfos}">
+							<td><a th:href="@{viewSFO(id=${sfo.getId()})}" th:text="${sfo.getExtId()}"></a></td>
+							<td th:text="${#locale.language eq 'fr' ? sfo.getNameFr() : sfo.getNameEn()}"></td>
+							<td th:text="${#locale.language eq 'fr' ? sfo.getGrantingSystemFr() : sfo.getGrantingSystemEn()}"></td>
+							<th><a th:if="${sfo.getFundingOpportunityId() ne null}" th:href="@{/browse/viewFo(id=${sfo.getFundingOpportunityId()})}"
+								th:text="${#locale.language eq 'fr' ? sfo.getFundingOpportunityFr() : sfo.getFundingOpportunityEn()}"></a>
+								<div th:if="${sfo.getFundingOpportunityId() eq null}" th:text="#{msg.notLinked}"></div></th>
 						</tr>
 					</tbody>
 				</table>
