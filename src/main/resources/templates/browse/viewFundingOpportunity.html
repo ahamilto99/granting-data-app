@@ -150,7 +150,7 @@
 								<td th:text="${fc.getStartDateLOI()}"></td>
 								<td th:text="${fc.getEndDateLOI()}"></td>
 								<td th:text="${#numbers.formatInteger(fc.getNumAppsExpected(), 1, 'COMMA')}"></td>
-								<td><a th:href="@{/browse/viewFcFromFy(fyId=${fc.getFiscalYearId()})}" th:text="${fc.getFiscalYear()}"></a></td>
+								<td><a th:href="@{/browse/viewFCsForFY(fyId=${fc.getFiscalYearId()})}" th:text="${fc.getFiscalYear()}"></a></td>
 							</tr>
 						</tbody>
 					</table>

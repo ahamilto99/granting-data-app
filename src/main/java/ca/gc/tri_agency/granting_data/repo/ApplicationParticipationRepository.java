@@ -29,12 +29,6 @@ public interface ApplicationParticipationRepository extends JpaRepository<Applic
 			+ " FROM ApplicationParticipation ap"
 			+ " WHERE ap.id = :apId";
 	
-	String BU_MEMBER_CLAUSE = " ap.programId IN (SELECT sfo.extId FROM SystemFundingOpportunity sfo"
-			+ " JOIN FundingOpportunity fo ON sfo.linkedFundingOpportunity.id = fo.id"
-			+ " JOIN BusinessUnit bu ON fo.businessUnit.id = bu.id"
-			+ " JOIN MemberRole mr ON bu.id = mr.businessUnit.id"
-			+ " WHERE mr.userLogin = :username) ";
-	
 	String EDI_SUBQUERY_JPQL = " ap.programId IN (SELECT sfo.extId FROM SystemFundingOpportunity sfo"
 			+ " JOIN FundingOpportunity fo ON sfo.linkedFundingOpportunity.id = fo.id"
 			+ " JOIN BusinessUnit bu ON fo.businessUnit.id = bu.id WHERE bu.id = :buId)";
@@ -74,11 +68,18 @@ public interface ApplicationParticipationRepository extends JpaRepository<Applic
 	@Query(ONE_APP_PART_QUERY)
 	Optional<ApplicationParticipationProjection> findOneAppPartByIdForAdminOnly(@Param("apId") Long apId);
 	
-	@Query(ONE_APP_PART_QUERY + " AND" + BU_MEMBER_CLAUSE)
+	@Query(ONE_APP_PART_QUERY + " AND ap.programId IN (SELECT sfo.extId FROM SystemFundingOpportunity sfo"
+			+ " JOIN FundingOpportunity fo ON sfo.linkedFundingOpportunity.id = fo.id"
+			+ " JOIN BusinessUnit bu ON fo.businessUnit.id = bu.id"
+			+ " JOIN MemberRole mr ON bu.id = mr.businessUnit.id"
+			+ " WHERE mr.userLogin = :username)")
 	Optional<ApplicationParticipationProjection> findOneAppPartById(@Param("apId") Long apId, @Param("username") String userLogin) throws AccessDeniedException;
 	
-	@Query("SELECT COUNT(DISTINCT ap.id) AS total FROM ApplicationParticipation ap JOIN ap.indigenousIdentities ii WHERE"
-			+ EDI_SUBQUERY_JPQL)
+	@Query("SELECT COUNT(DISTINCT ap.id) AS total"
+			+ " FROM ApplicationParticipation ap"
+			+ " JOIN ap.indigenousIdentities ii"
+			+ " WHERE"
+				+ EDI_SUBQUERY_JPQL)
 	Tuple findIndigenousCountForBU(@Param("buId") Long buId);
 
 	@Query("SELECT COUNT(DISTINCT ap.id) AS total FROM ApplicationParticipation ap JOIN ap.visibleMinorities vm WHERE" + EDI_SUBQUERY_JPQL)

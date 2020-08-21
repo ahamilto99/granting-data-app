@@ -32,6 +32,7 @@ import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.VisibleMinority;
 import ca.gc.tri_agency.granting_data.model.dto.AppPartEdiAuthorizedDto;
 import ca.gc.tri_agency.granting_data.model.projection.ApplicationParticipationProjection;
+import ca.gc.tri_agency.granting_data.model.util.Utility;
 import ca.gc.tri_agency.granting_data.repo.ApplicationParticipationRepository;
 import ca.gc.tri_agency.granting_data.repo.FiscalYearRepository;
 import ca.gc.tri_agency.granting_data.repo.FundingCycleRepository;
@@ -46,6 +47,8 @@ import ca.gc.tri_agency.granting_data.service.VisibleMinorityService;
 
 @Service
 public class ApplicationParticipationServiceImpl implements ApplicationParticipationService {
+
+	private static final String ENTITY_TYPE = "ApplicationParticipation";
 
 	private SecureRandom sRand = new SecureRandom();
 
@@ -417,7 +420,7 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 	@Override
 	public ApplicationParticipation getAllowdRecord(Long id) {
 		ApplicationParticipation retval = appParticipationRepo.findById(id)
-				.orElseThrow(() -> new DataRetrievalFailureException("That Application Participation record does not exist"));
+				.orElseThrow(() -> new DataRetrievalFailureException(Utility.returnNotFoundMsg(ENTITY_TYPE, id)));
 		if (!SecurityUtils.isCurrentUserAdmin()) {
 			List<String> allowedExtIds = getExtIdsQualifiedForEdi();
 			if (!allowedExtIds.contains(retval.getProgramId())) {
@@ -477,7 +480,7 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();
 		if (SecurityUtils.isCurrentUserAdmin()) {
 			return appParticipationRepo.findOneAppPartByIdForAdminOnly(apId)
-					.orElseThrow(() -> new DataRetrievalFailureException("That ApplicationParticipation does not exist"));
+					.orElseThrow(() -> new DataRetrievalFailureException(Utility.returnNotFoundMsg(ENTITY_TYPE, apId)));
 		}
 
 		return appParticipationRepo.findOneAppPartById(apId, currentUser.getName()).orElseThrow(() -> new AccessDeniedException(
@@ -556,7 +559,7 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		List<ApplicationParticipationProjection> projections = appParticipationRepo.findOneWithEdiData(apId);
 
 		if (projections.isEmpty()) {
-			throw new DataRetrievalFailureException("ApplicationParticipation id=" + apId + "does not exist");
+			throw new DataRetrievalFailureException(Utility.returnNotFoundMsg(ENTITY_TYPE, apId));
 		}
 
 		return projections;

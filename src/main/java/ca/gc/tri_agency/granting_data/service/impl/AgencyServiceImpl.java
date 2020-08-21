@@ -8,11 +8,14 @@ import org.springframework.stereotype.Service;
 
 import ca.gc.tri_agency.granting_data.model.Agency;
 import ca.gc.tri_agency.granting_data.model.projection.AgencyProjection;
+import ca.gc.tri_agency.granting_data.model.util.Utility;
 import ca.gc.tri_agency.granting_data.repo.AgencyRepository;
 import ca.gc.tri_agency.granting_data.service.AgencyService;
 
 @Service
 public class AgencyServiceImpl implements AgencyService {
+
+	private static final String ENTITY_TYPE = "Agency";
 
 	private AgencyRepository agencyRepo;
 
@@ -23,7 +26,7 @@ public class AgencyServiceImpl implements AgencyService {
 
 	@Override
 	public Agency findAgencyById(Long id) {
-		return agencyRepo.findById(id).orElseThrow(() -> new DataRetrievalFailureException("Agency id=" + id + " does not exist"));
+		return agencyRepo.findById(id).orElseThrow(() -> new DataRetrievalFailureException(Utility.returnNotFoundMsg(ENTITY_TYPE, id)));
 	}
 
 	@Override
@@ -36,7 +39,7 @@ public class AgencyServiceImpl implements AgencyService {
 		List<AgencyProjection> agencyProjections = agencyRepo.findForBrowseViewAgency(agencyId);
 
 		if (agencyProjections.isEmpty()) {
-			throw new DataRetrievalFailureException("Agency id=" + agencyId + " does not exist");
+			throw new DataRetrievalFailureException(Utility.returnNotFoundMsg(ENTITY_TYPE, agencyId));
 		}
 
 		return agencyProjections;
@@ -45,7 +48,7 @@ public class AgencyServiceImpl implements AgencyService {
 	@Override
 	public AgencyProjection findAgencyName(Long agencyId) {
 		return agencyRepo.findName(agencyId)
-				.orElseThrow(() -> new DataRetrievalFailureException("Agency id=" + agencyId + " does not exist"));
+				.orElseThrow(() -> new DataRetrievalFailureException(Utility.returnNotFoundMsg(ENTITY_TYPE, agencyId)));
 	}
 
 }

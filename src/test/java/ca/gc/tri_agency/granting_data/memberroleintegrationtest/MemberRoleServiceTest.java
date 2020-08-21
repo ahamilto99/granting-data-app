@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
@@ -110,6 +111,9 @@ public class MemberRoleServiceTest {
 
 		assertEquals(startNumRevisions + 1, endNumRevisions);
 		assertEquals(revisedUserLogin, mrRevisions.get(endNumRevisions - 1)[3]);
+		
+		// verify that no result set is return for a non-existent MemberRole
+		assertThrows(DataRetrievalFailureException.class, () -> mrService.findMemberRoleRevisionsById(Long.MAX_VALUE));
 	}
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -60,11 +59,5 @@ public interface FundingCycleRepository extends JpaRepository<FundingCycle, Long
 			+ " OR fc.endDateNOI BETWEEN :start AND :end"
 			+ " OR fc.endDateLOI BETWEEN :start AND :end")
 	List<FundingCycleProjection> findForCalendar(@Param("start") LocalDate dayRangeStart, @Param("end") LocalDate dayRangeEnd);
-	
-	@Transactional
-	@Modifying(flushAutomatically = true, clearAutomatically = true)
-	@Query("DELETE FROM FundingCycle"
-			+ " WHERE id = ?1")
-	void deleteByIdentifier(Long fcId);
 	
 } // @formatter:on

@@ -24,6 +24,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ca.gc.tri_agency.granting_data.model.FundingCycle;
 import ca.gc.tri_agency.granting_data.model.projection.FundingCycleProjection;
 import ca.gc.tri_agency.granting_data.model.util.CalendarGrid;
+import ca.gc.tri_agency.granting_data.model.util.Utility;
 import ca.gc.tri_agency.granting_data.security.SecurityUtils;
 import ca.gc.tri_agency.granting_data.service.FiscalYearService;
 import ca.gc.tri_agency.granting_data.service.FundingCycleService;
@@ -100,7 +101,7 @@ public class FundingCycleController {
 		}
 
 		if (!foService.checkIfFundingOpportunityExists(foId)) {
-			throw new DataRetrievalFailureException("FundingOpportunity id=" + foId + " does not exist");
+			throw new DataRetrievalFailureException(Utility.returnNotFoundMsg("FundingOpportunity", foId));
 		}
 
 		model.addAttribute("foId", foId);

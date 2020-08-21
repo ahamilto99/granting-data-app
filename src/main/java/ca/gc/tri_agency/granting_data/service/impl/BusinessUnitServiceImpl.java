@@ -16,6 +16,7 @@ import ca.gc.tri_agency.granting_data.model.Agency;
 import ca.gc.tri_agency.granting_data.model.BusinessUnit;
 import ca.gc.tri_agency.granting_data.model.auditing.UsernameRevisionEntity;
 import ca.gc.tri_agency.granting_data.model.projection.BusinessUnitProjection;
+import ca.gc.tri_agency.granting_data.model.util.Utility;
 import ca.gc.tri_agency.granting_data.repo.BusinessUnitRepository;
 import ca.gc.tri_agency.granting_data.security.SecurityUtils;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
@@ -26,6 +27,8 @@ import ca.gc.tri_agency.granting_data.service.MemberRoleService;
 
 @Service
 public class BusinessUnitServiceImpl implements BusinessUnitService {
+	
+	private static final String ENTITY_TYPE = "BusinessUnit";
 
 	private BusinessUnitRepository buRepo;
 
@@ -46,7 +49,7 @@ public class BusinessUnitServiceImpl implements BusinessUnitService {
 
 	@Override
 	public BusinessUnit findBusinessUnitById(Long id) {
-		return buRepo.findById(id).orElseThrow(() -> new DataRetrievalFailureException("BusinessUnit id=" + id + " does not exist"));
+		return buRepo.findById(id).orElseThrow(() -> new DataRetrievalFailureException(Utility.returnNotFoundMsg(ENTITY_TYPE, id)));
 	}
 
 	@Override
@@ -115,7 +118,7 @@ public class BusinessUnitServiceImpl implements BusinessUnitService {
 
 	@Override
 	public BusinessUnitProjection findBusinessUnitName(Long buId) {
-		return buRepo.findName(buId).orElseThrow(() -> new DataRetrievalFailureException("BusinessUnit id=" + buId + " does not exist"));
+		return buRepo.findName(buId).orElseThrow(() -> new DataRetrievalFailureException(Utility.returnNotFoundMsg(ENTITY_TYPE, buId)));
 	}
 
 	@Override
@@ -123,7 +126,7 @@ public class BusinessUnitServiceImpl implements BusinessUnitService {
 		List<BusinessUnitProjection> buProjections = buRepo.findForViewBU(buId);
 
 		if (buProjections.isEmpty()) {
-			throw new DataRetrievalFailureException("BusinessUnit id=" + buId + " does not exist");
+			throw new DataRetrievalFailureException(Utility.returnNotFoundMsg(ENTITY_TYPE, buId));
 		}
 
 		return buProjections;
@@ -134,7 +137,7 @@ public class BusinessUnitServiceImpl implements BusinessUnitService {
 		BusinessUnit bu =  buRepo.findWithAgency(buId);
 		
 		if (bu == null) {
-				throw new DataRetrievalFailureException("BusinessUnit id=" + buId + " does not exist");
+				throw new DataRetrievalFailureException(Utility.returnNotFoundMsg(ENTITY_TYPE, buId));
 		}
 		
 		return bu;

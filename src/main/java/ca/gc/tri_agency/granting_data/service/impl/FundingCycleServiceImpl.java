@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ca.gc.tri_agency.granting_data.model.FundingCycle;
 import ca.gc.tri_agency.granting_data.model.projection.FundingCycleProjection;
+import ca.gc.tri_agency.granting_data.model.util.Utility;
 import ca.gc.tri_agency.granting_data.repo.FundingCycleRepository;
 import ca.gc.tri_agency.granting_data.security.SecurityUtils;
 import ca.gc.tri_agency.granting_data.service.FundingCycleService;
@@ -19,6 +20,8 @@ import ca.gc.tri_agency.granting_data.service.MemberRoleService;
 @Service
 public class FundingCycleServiceImpl implements FundingCycleService {
 
+	private static final String ENTITY_TYPE = "FundingCycle";
+	
 	private FundingCycleRepository fcRepo;
 
 	private MemberRoleService mrService;
@@ -31,7 +34,7 @@ public class FundingCycleServiceImpl implements FundingCycleService {
 
 	@Override
 	public FundingCycle findFundingCycleById(Long id) {
-		return fcRepo.findById(id).orElseThrow(() -> new DataRetrievalFailureException("FundingCycle id=" + id + " does not exist"));
+		return fcRepo.findById(id).orElseThrow(() -> new DataRetrievalFailureException(Utility.returnNotFoundMsg(ENTITY_TYPE, id)));
 	}
 
 	@Override
@@ -49,7 +52,7 @@ public class FundingCycleServiceImpl implements FundingCycleService {
 		List<FundingCycleProjection> fcProjections = fcRepo.findByFiscalYearId(fyId);
 
 		if (fcProjections.isEmpty()) {
-			throw new DataRetrievalFailureException("FiscalYear id=" + fyId + " does not exist");
+			throw new DataRetrievalFailureException(Utility.returnNotFoundMsg(ENTITY_TYPE, fyId));
 		}
 
 		return fcProjections;
@@ -88,7 +91,7 @@ public class FundingCycleServiceImpl implements FundingCycleService {
 					SecurityUtils.getCurrentUsername() + " does not have permission to delete the FundingCycle id=" + fcId);
 		}
 
-		fcRepo.deleteByIdentifier(fcId);
+		fcRepo.deleteById(fcId);
 	}
 
 	@Transactional(readOnly = true)
@@ -100,7 +103,7 @@ public class FundingCycleServiceImpl implements FundingCycleService {
 		}
 
 		FundingCycleProjection fcProjection = fcRepo.findForDeleteFC(fcId).orElseThrow(() -> {
-			return new DataRetrievalFailureException("FundingCycle id=" + fcId + " does not exist");
+			return new DataRetrievalFailureException(Utility.returnNotFoundMsg(ENTITY_TYPE, fcId));
 		});
 
 		return fcProjection;

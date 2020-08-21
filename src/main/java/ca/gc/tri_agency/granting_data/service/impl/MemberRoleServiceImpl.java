@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import ca.gc.tri_agency.granting_data.model.MemberRole;
 import ca.gc.tri_agency.granting_data.model.auditing.UsernameRevisionEntity;
 import ca.gc.tri_agency.granting_data.model.projection.MemberRoleProjection;
+import ca.gc.tri_agency.granting_data.model.util.Utility;
 import ca.gc.tri_agency.granting_data.repo.MemberRoleRepository;
 import ca.gc.tri_agency.granting_data.security.SecurityUtils;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
@@ -19,6 +20,8 @@ import ca.gc.tri_agency.granting_data.service.MemberRoleService;
 
 @Service
 public class MemberRoleServiceImpl implements MemberRoleService {
+
+	private static final String ENTITY_TYPE = "MemberRole";
 
 	private MemberRoleRepository mrRepo;
 
@@ -32,7 +35,7 @@ public class MemberRoleServiceImpl implements MemberRoleService {
 
 	@Override
 	public MemberRole findMemberRoleById(Long id) {
-		return mrRepo.findById(id).orElseThrow(() -> new DataRetrievalFailureException("That Member Role does not exist"));
+		return mrRepo.findById(id).orElseThrow(() -> new DataRetrievalFailureException(Utility.returnNotFoundMsg(ENTITY_TYPE, id)));
 	}
 
 	@Override
@@ -78,7 +81,13 @@ public class MemberRoleServiceImpl implements MemberRoleService {
 	@AdminOnly
 	@Override
 	public List<String[]> findMemberRoleRevisionsById(Long mrId) {
-		return convertAuditResults(auditService.findRevisionsForOneMR(mrId));
+		List<String[]> resultSet =  convertAuditResults(auditService.findRevisionsForOneMR(mrId));
+
+		if (resultSet.isEmpty()) {
+			throw new DataRetrievalFailureException(Utility.returnNotFoundMsg(ENTITY_TYPE, mrId));
+		}
+		
+		return resultSet;
 	}
 
 	@AdminOnly

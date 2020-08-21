@@ -11,12 +11,11 @@ import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import ca.gc.tri_agency.granting_data.form.FundingOpportunityFilterForm;
 import ca.gc.tri_agency.granting_data.model.Agency;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
-import ca.gc.tri_agency.granting_data.model.GrantingSystem;
 import ca.gc.tri_agency.granting_data.model.auditing.UsernameRevisionEntity;
 import ca.gc.tri_agency.granting_data.model.projection.FundingOpportunityProjection;
+import ca.gc.tri_agency.granting_data.model.util.Utility;
 import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.AuditService;
@@ -24,6 +23,8 @@ import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
 
 @Service
 public class FundingOpportunityServiceImpl implements FundingOpportunityService {
+
+	private static final String ENTITY_TYPE = "FundingOpportunity";
 
 	private FundingOpportunityRepository foRepo;
 
@@ -39,7 +40,7 @@ public class FundingOpportunityServiceImpl implements FundingOpportunityService 
 
 	@Override
 	public FundingOpportunity findFundingOpportunityById(Long foId) {
-		return foRepo.findById(foId).orElseThrow(() -> new DataRetrievalFailureException("That Funding Opportunity does not exist"));
+		return foRepo.findById(foId).orElseThrow(() -> new DataRetrievalFailureException(Utility.returnNotFoundMsg(ENTITY_TYPE, foId)));
 	}
 
 	@Override
@@ -61,50 +62,6 @@ public class FundingOpportunityServiceImpl implements FundingOpportunityService 
 	@Override
 	public FundingOpportunity saveFundingOpportunity(FundingOpportunity fo) {
 		return foRepo.save(fo);
-	}
-
-	@Override
-	public List<FundingOpportunity> getFilteredFundingOpportunities(FundingOpportunityFilterForm filter, Map<Long, GrantingSystem> applyMap,
-			Map<Long, List<GrantingSystem>> awardMap) {
-		// RELATIVELY SMALL DATASET (140), SO NO USE PERFORMING A QUERY FOR EACH FILTER. WILL SIMPLY WEED
-		// THEM OUT IN A LOOP.
-		List<FundingOpportunity> fullList = findAllFundingOpportunities();
-		List<FundingOpportunity> retval = new ArrayList<FundingOpportunity>();
-		GrantingSystem targetSystem = null;
-		for (FundingOpportunity fo : fullList) {
-			if (filter.getApplySystem() != null) {
-				targetSystem = applyMap.get(fo.getId());
-				if (targetSystem == null || targetSystem != null && targetSystem.getId() != filter.getApplySystem().getId()) {
-					continue;
-				}
-			}
-			if (filter.getAwardSystem() != null) {
-				boolean hasSystem = false;
-				if (awardMap.get(fo.getId()) != null) {
-					for (GrantingSystem sys : awardMap.get(fo.getId())) {
-						if (sys == null || sys != null && sys.getId() == filter.getAwardSystem().getId()) {
-							hasSystem = true;
-						}
-					}
-
-				}
-				if (hasSystem == false) {
-					continue;
-				}
-			}
-			if (filter.getDivision() != null) {
-				if (fo.getBusinessUnit() == null || fo.getBusinessUnit().getId() != filter.getDivision().getId()) {
-					continue;
-				}
-			}
-			if (filter.getType() != null && filter.getType().length() != 0) {
-				if (fo.getFundingType() == null || filter.getType().compareTo(fo.getFundingType()) != 0) {
-					continue;
-				}
-			}
-			retval.add(fo);
-		}
-		return retval;
 	}
 
 	@Override
@@ -180,7 +137,7 @@ public class FundingOpportunityServiceImpl implements FundingOpportunityService 
 		List<FundingOpportunityProjection> foProjections = foRepo.findResultsForViewFO(foId);
 
 		if (foProjections.size() == 0) {
-			throw new DataRetrievalFailureException("That Funding Opportunity does not exist");
+			throw new DataRetrievalFailureException(Utility.returnNotFoundMsg(ENTITY_TYPE, foId));
 		}
 
 		return foProjections;
@@ -229,8 +186,7 @@ public class FundingOpportunityServiceImpl implements FundingOpportunityService 
 
 	@Override
 	public FundingOpportunityProjection findFundingOpportunityName(Long foId) {
-		return foRepo.findName(foId)
-				.orElseThrow(() -> new DataRetrievalFailureException("FundingOpportunity id=" + foId + " does not exist"));
+		return foRepo.findName(foId).orElseThrow(() -> new DataRetrievalFailureException(Utility.returnNotFoundMsg(ENTITY_TYPE, foId)));
 	}
 
 	/*
@@ -241,7 +197,7 @@ public class FundingOpportunityServiceImpl implements FundingOpportunityService 
 		List<FundingOpportunity> foList = foRepo.findEager(foId);
 
 		if (foList.isEmpty()) {
-			throw new DataRetrievalFailureException("FundingOpportunity id=" + foId + " does not exist");
+			throw new DataRetrievalFailureException(Utility.returnNotFoundMsg(ENTITY_TYPE, foId));
 		}
 
 		return foList;
@@ -251,7 +207,5 @@ public class FundingOpportunityServiceImpl implements FundingOpportunityService 
 	public List<FundingOpportunityProjection> findAllFundingOpportunityNames() {
 		return foRepo.findAllNames();
 	}
-	
-	
 
 }
