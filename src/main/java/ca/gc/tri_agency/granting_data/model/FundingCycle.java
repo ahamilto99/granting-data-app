@@ -168,6 +168,24 @@ public class FundingCycle implements LocalizedParametersModel {
 	}
 
 	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		
+		if (obj == null || getClass() != obj.getClass()) {
+			return false;
+		}
+		
+		return id != null && id.equals(((FundingCycle) obj).getId());
+	}
+	
+	@Override
+	public int hashCode() {
+		return 2020;
+	}
+
+	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("FundingCycle [id=");

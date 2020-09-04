@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -24,14 +25,14 @@ public class GrantingCapabilityServiceTest {
 
 	@Autowired
 	private GrantingCapabilityService gcService;
-	
+
 	@Autowired
 	private GrantingCapabilityRepository gcRepo;
 
 	@Tag("user_story_19005")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
-	public void testService_adminCanDeleteGC() {
+	public void test_adminCanDeleteGC() {
 		long numGCs = gcRepo.count();
 
 		gcService.deleteGrantingCapabilityById(100L);
@@ -44,14 +45,14 @@ public class GrantingCapabilityServiceTest {
 	@Tag("user_story_19005")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
-	public void testService_nonAdminCannotDeleteGC_shouldThrowAccessDeniedExcepction() {
+	public void test_nonAdminCannotDeleteGC_shouldThrowAccessDeniedExcepction() {
 		assertThrows(AccessDeniedException.class, () -> gcService.deleteGrantingCapabilityById(101L));
 	}
 
 	@Tag("user_story_19004")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
-	public void testService_adminCanEditGC() {
+	public void test_adminCanEditGC() {
 		long initGcRepoCount = gcRepo.count();
 
 		GrantingCapability gc = gcService.findGrantingCapabilityById(1L);
@@ -66,11 +67,21 @@ public class GrantingCapabilityServiceTest {
 	@Tag("user_story_19004")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
-	public void testService_nonAdminCannotEditGC_shouldThrowAccessDeniedException() {
+	public void test_nonAdminCannotEditGC_shouldThrowAccessDeniedException() {
 		GrantingCapability gc = gcService.findGrantingCapabilityById(1L);
 		String editDescription = "TEST DESCRIPTION EDIT";
 		gc.setDescription(editDescription);
 		assertThrows(AccessDeniedException.class, () -> gcService.saveGrantingCapability(gc));
+	}
+
+	@Tag("user_story_19004")
+	@WithAnonymousUser
+	@Test
+	public void test_findGrantingCapabilityAndFO() {
+		GrantingCapability gc = gcService.findGrantingCapabilityAndFO(155L);
+
+		assertEquals("PromoScience (5390)", gc.getFundingOpportunity().getNameEn());
+		assertThrows(DataRetrievalFailureException.class, () -> gcService.findGrantingCapabilityAndFO(Long.MAX_VALUE));
 	}
 
 }

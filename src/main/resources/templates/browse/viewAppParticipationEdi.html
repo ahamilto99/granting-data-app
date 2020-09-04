@@ -22,51 +22,54 @@
 
 				<div class="form-group row">
 					<label class="col-sm-4 col-form-label" th:utext="#{form.applicationIdentifier}"></label>
-					<div class="col-sm-8" th:text="${appParticipation.applicationIdentifier}"></div>
+					<div class="col-sm-8" th:text="${appParticipation.getApplicationIdentifier()}"></div>
 				</div>
 
 				<div class="form-group row">
 					<label class="col-sm-4 col-form-label" th:utext="#{form.applId}"></label>
-					<div class="col-sm-8" th:text="${appParticipation.applId}"></div>
+					<div class="col-sm-8" th:text="${appParticipation.getApplId()}"></div>
 				</div>
 
 
 				<div class="form-group row">
 					<label class="col-sm-4 col-form-label" th:utext="#{form.dateOfBirth}"></label>
-					<div class="col-sm-8" th:text="${appParticipation.dateOfBirth}"></div>
+					<div class="col-sm-8" th:text="${#dates.format(#conversions.convert(appParticipation.getDateOfBirth(), 'java.sql.Date'), 'MMMM d, yyyy')}"></div>
 				</div>
 
 				<div class="form-group row">
 					<label class="col-sm-4 col-form-label" th:utext="#{form.genderSelection}"></label>
-					<div class="col-sm-8" th:text="${appParticipation.gender.getLocalizedAttribute('name')}"></div>
+					<div class="col-sm-8" th:text="${#locale.language eq 'fr' ? appParticipation.getGenderFr() : appParticipation.getGenderEn()}"></div>
 				</div>
-
+				
 				<div class="form-group row">
-					<label class="col-sm-4 col-form-label" th:utext="#{form.indIdentityPrefNotTo}"></label>
-					<div class="col-sm-8" th:text="${#strings.capitalize(appParticipation.indIdentityPrefNotTo)}"></div>
+					<label class="col-sm-4 col-form-label" th:utext="#{form.disabilityResponse}"></label>
+					<div class="col-sm-8" th:text="${appParticipation.getDisability()} ne null ? ${appParticipation.getDisability()} : #{msg.none}"></div>
 				</div>
 
-				<div class="form-group row"
-					th:if="${appParticipation.indIdentityPrefNotTo} eq false and not ${appParticipation.indigenousIdentities.isEmpty()}"
-					th:each="ind, stats : ${appParticipation.indigenousIdentities}">
-					<label class="col-sm-4 col-form-label" th:text="#{form.indIdentityResponse} + ' ' + ${stats.index + 1}"></label>
-					<div class="col-sm-8" th:text="${ind.getLocalizedAttribute('name')}"></div>
+				<div class="form-group row" th:each="ind, stats : ${indIdentities}">
+					<label class="col-sm-4 col-form-label" th:text="#{form.indIdentityResponse} + (${stats.size gt 1} ? ' ' + ${stats.index + 1} : '')"></label>
+					<div class="col-sm-8" th:text="${#locale.language eq 'fr' ? ind.getIndIdentityFr() : ind.getIndIdentityEn()}"></div>
 				</div>
-
-				<div class="form-group row"
-					th:if="${appParticipation.indIdentityPrefNotTo} eq false and ${appParticipation.indigenousIdentities.isEmpty()}">
+				
+				<div th:if="${indIdentities.isEmpty()}" class="form-group row">
 					<label class="col-sm-4 col-form-label" th:text="#{form.indIdentityResponse}"></label>
 					<div class="col-sm-8" th:text="#{msg.none}"></div>
 				</div>
-
-				<div class="form-group row">
-					<label class="col-sm-4 col-form-label" th:utext="#{form.disabilityResponse}"></label>
-					<div class="col-sm-8" th:text="${appParticipation.disabilityResponse} ne null ? ${appParticipation.disabilityResponse} : #{msg.none}"></div>
+				
+				<div class="form-group row" th:each="vm, stats : ${vMinorities}">
+					<label class="col-sm-4 col-form-label" th:text="#{form.visibleMinorityResponse} + (${stats.size gt 1} ? ' ' + ${stats.index + 1} : '')"></label>
+					<div class="col-sm-8" th:text="${#locale.language eq 'fr' ? vm.getVisMinorityFr() : vm.getVisMinorityEn()}"></div>
+				</div>
+				
+				<div th:if="${vMinorities.isEmpty()}" class="form-group row">
+					<label class="col-sm-4 col-form-label" th:text="#{form.visibleMinorityResponse}"></label>
+					<div class="col-sm-8" th:text="#{msg.none}"></div>
 				</div>
 
-				<div class="form-group row">
-					<label class="col-sm-4 col-form-label" th:utext="#{form.visibleMinPrefNotTo}"></label>
-					<div class="col-sm-8" th:text="${#strings.capitalize(appParticipation.visibleMinPrefNotTo)}"></div>
+				<!-- <div class="form-group row"
+					th:if="${appParticipation.indIdentityPrefNotTo} eq false and ${appParticipation.indigenousIdentities.isEmpty()}">
+					<label class="col-sm-4 col-form-label" th:text="#{form.indIdentityResponse}"></label>
+					<div class="col-sm-8" th:text="#{msg.none}"></div>
 				</div>
 
 				<div class="form-group row"
@@ -79,7 +82,7 @@
 				<div class="form-group row" th:if="${appParticipation.visibleMinPrefNotTo} eq false and ${appParticipation.visibleMinorities.isEmpty()}">
 					<label class="col-sm-4 col-form-label" th:text="#{form.visibleMinorityResponse}"></label>
 					<div class="col-sm-8" th:text="#{msg.none}"></div>
-				</div>
+				</div> -->
 
 			</div>
 

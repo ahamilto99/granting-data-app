@@ -1,7 +1,5 @@
 package ca.gc.tri_agency.granting_data.model;
 
-import java.util.Objects;
-
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -123,15 +121,20 @@ public class BusinessUnit implements LocalizedParametersModel {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+
+		if (obj == null || getClass() != obj.getClass()) {
 			return false;
-		if (getClass() != obj.getClass())
-			return false;
+		}
+
 		BusinessUnit other = (BusinessUnit) obj;
-		return Objects.equals(acronymEn, other.acronymEn) && Objects.equals(acronymFr, other.acronymFr)
-				&& Objects.equals(nameEn, other.nameEn) && Objects.equals(nameFr, other.nameFr);
+		return id != null && id.equals(other.getId());
 	}
 
+	@Override
+	public int hashCode() {
+		return 2020;
+	}
 }

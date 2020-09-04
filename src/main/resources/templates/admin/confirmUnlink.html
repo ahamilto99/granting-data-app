@@ -22,13 +22,20 @@
 
 			<div class="panel-body">
 
-				<p th:text="#{p.confirmUnlink(${sfo.getLocalizedAttribute('name')},${fo.getLocalizedAttribute('name')})}"
+				<p
+					th:text="#{p.confirmUnlink(${#locale.language eq 'fr' ? sfo.getNameFr() : sfo.getNameEn()},
+							${#locale.language eq 'fr' ? sfo.getFundingOpportunityFr() : sfo.getFundingOpportunityEn()})}"
 					style="font-size: 14pt; margin-bottom: 25px;"></p>
 
 				<div>
-					<form action="#" th:action="@{'/admin/confirmUnlink'(sfoId=${sfo.id})}" method="post">
-						<input type="submit" class="btn btn-primary" role="button" th:value="#{msg.confirm}" /> <a class="btn btn-link"
-							th:href="@{'/admin/viewSystemFO'(id=${sfo.id})}" th:text="#{msg.cancel}"></a>
+					<form action="#" th:action="@{/admin/confirmUnlink(sfoId=${sfo.getId()})}" method="post">
+
+						<input type="hidden" name="foId" th:value="${sfo.getFundingOpportunityId()}"/>
+						<input type="hidden" name="sfoName" th:value="${#locale.language eq 'fr' ? sfo.getNameFr() : sfo.getNameEn()}" /> <input type="hidden"
+							name="foName" th:value="${#locale.language eq 'fr' ? sfo.getFundingOpportunityFr() : sfo.getFundingOpportunityEn()}" /> <input
+							type="submit" class="btn btn-primary" role="button" th:value="#{msg.confirm}" /> <a class="btn btn-link"
+							th:href="@{/admin/viewSFO(id=${sfo.getId()})}" th:text="#{msg.cancel}"></a>
+
 					</form>
 				</div>
 

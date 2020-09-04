@@ -1,6 +1,7 @@
 package ca.gc.tri_agency.granting_data.model;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -15,7 +16,7 @@ import ca.gc.tri_agency.granting_data.model.util.LocalizedParametersModel;
 @Entity
 @Audited
 public class SystemFundingOpportunity implements LocalizedParametersModel {
-	
+
 	@Id
 	@SequenceGenerator(name = "SEQ_SYSTEM_FUNDING_OPPORTUNITY", sequenceName = "SEQ_SYSTEM_FUNDING_OPPORTUNITY", initialValue = 1, allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SYSTEM_FUNDING_OPPORTUNITY")
@@ -27,11 +28,11 @@ public class SystemFundingOpportunity implements LocalizedParametersModel {
 
 	private String nameFr;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "linked_funding_opportunity_id")
 	private FundingOpportunity linkedFundingOpportunity;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "granting_system_id")
 	private GrantingSystem grantingSystem;
 
@@ -77,6 +78,39 @@ public class SystemFundingOpportunity implements LocalizedParametersModel {
 
 	public void setLinkedFundingOpportunity(FundingOpportunity linkedFundingOpportunity) {
 		this.linkedFundingOpportunity = linkedFundingOpportunity;
+	}
+
+	@Override
+	public int hashCode() {
+		return 2020;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+
+		if (obj == null || getClass() != obj.getClass()) {
+			return false;
+		}
+
+		return id != null && id.equals(((SystemFundingOpportunity) obj).getId());
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("SystemFundingOpportunity [id=");
+		builder.append(id);
+		builder.append(", extId=");
+		builder.append(extId);
+		builder.append(", nameEn=");
+		builder.append(nameEn);
+		builder.append(", nameFr=");
+		builder.append(nameFr);
+		builder.append("]");
+		return builder.toString();
 	}
 
 }

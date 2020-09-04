@@ -5,15 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
-
-import org.hibernate.envers.AuditReader;
-import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.RevisionType;
-import org.hibernate.envers.query.AuditEntity;
-import org.hibernate.envers.query.AuditQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.security.access.AccessDeniedException;
@@ -24,14 +16,19 @@ import ca.gc.tri_agency.granting_data.model.Agency;
 import ca.gc.tri_agency.granting_data.model.BusinessUnit;
 import ca.gc.tri_agency.granting_data.model.auditing.UsernameRevisionEntity;
 import ca.gc.tri_agency.granting_data.model.projection.BusinessUnitProjection;
+import ca.gc.tri_agency.granting_data.model.util.Utility;
 import ca.gc.tri_agency.granting_data.repo.BusinessUnitRepository;
+import ca.gc.tri_agency.granting_data.security.SecurityUtils;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.ApplicationParticipationService;
+import ca.gc.tri_agency.granting_data.service.AuditService;
 import ca.gc.tri_agency.granting_data.service.BusinessUnitService;
 import ca.gc.tri_agency.granting_data.service.MemberRoleService;
 
 @Service
 public class BusinessUnitServiceImpl implements BusinessUnitService {
+	
+	private static final String ENTITY_TYPE = "BusinessUnit";
 
 	private BusinessUnitRepository buRepo;
 
@@ -39,19 +36,20 @@ public class BusinessUnitServiceImpl implements BusinessUnitService {
 
 	private ApplicationParticipationService apService;
 
-	@PersistenceUnit
-	private EntityManagerFactory emf;
+	private AuditService auditService;
 
 	@Autowired
-	public BusinessUnitServiceImpl(BusinessUnitRepository buRepo, MemberRoleService mrService, ApplicationParticipationService apService) {
+	public BusinessUnitServiceImpl(BusinessUnitRepository buRepo, MemberRoleService mrService, ApplicationParticipationService apService,
+			AuditService auditService) {
 		this.buRepo = buRepo;
 		this.mrService = mrService;
 		this.apService = apService;
+		this.auditService = auditService;
 	}
 
 	@Override
 	public BusinessUnit findBusinessUnitById(Long id) {
-		return buRepo.findById(id).orElseThrow(() -> new DataRetrievalFailureException("That Business Unit does not exist"));
+		return buRepo.findById(id).orElseThrow(() -> new DataRetrievalFailureException(Utility.returnNotFoundMsg(ENTITY_TYPE, id)));
 	}
 
 	@Override
@@ -85,51 +83,26 @@ public class BusinessUnitServiceImpl implements BusinessUnitService {
 	}
 
 	@AdminOnly
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<String[]> findBusinessUnitRevisionsById(Long buId) {
-		EntityManager em = emf.createEntityManager();
-		em.getTransaction().begin();
-
-		AuditReader auditReader = AuditReaderFactory.get(em);
-		AuditQuery auditQuery = auditReader.createQuery().forRevisionsOfEntity(BusinessUnit.class, false, true);
-		auditQuery.add(AuditEntity.id().eq(buId));
-		auditQuery.addOrder(AuditEntity.revisionProperty("id").asc());
-
-		List<Object[]> revisionList = auditQuery.getResultList();
-
-		em.getTransaction().commit();
-		em.close();
-
-		return convertAuditResults(revisionList);
+		return convertAuditResults(auditService.findRevisionsForOneBU(buId));
 	}
 
 	@AdminOnly
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<String[]> findAllBusinessUnitRevisions() {
-		EntityManager em = emf.createEntityManager();
-		em.getTransaction().begin();
-
-		AuditReader auditReader = AuditReaderFactory.get(em);
-		AuditQuery auditQuery = auditReader.createQuery().forRevisionsOfEntity(BusinessUnit.class, false, true);
-		auditQuery.addOrder(AuditEntity.revisionProperty("id").asc());
-
-		List<Object[]> revisionList = auditQuery.getResultList();
-
-		em.getTransaction().commit();
-		em.close();
-
-		return convertAuditResults(revisionList);
+		return convertAuditResults(auditService.findRevisionsForAllBUs());
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public Map<String, Long> findEdiAppPartDataForAuthorizedBUMember(Long buId) throws AccessDeniedException {
-		if (		mrService.checkIfCurrentUserEdiAuthorized(buId) == false) {
-			throw new AccessDeniedException("Current user does not have permission to view EDI data for BU id=" + buId);
+		if (mrService.checkIfCurrentUserEdiAuthorized(buId) == false) {
+			throw new AccessDeniedException(
+					SecurityUtils.getCurrentUsername() + " does not have permission to view EDI data for BU id=" + buId);
 		}
 
-		Long[] ediArr = findAppPartEdiDataForBU(buId);
+		Long[] ediArr = apService.findAppPartEdiDataForBu(buId);
 
 		Map<String, Long> ediMap = new HashMap<>();
 		ediMap.put("numIndigenousApps", ediArr[0]);
@@ -143,21 +116,31 @@ public class BusinessUnitServiceImpl implements BusinessUnitService {
 		return ediMap;
 	}
 
-	@Transactional(readOnly = true)
-	private Long[] findAppPartEdiDataForBU(Long buId) {
-		Long indigenousCount = apService.findAppPartIndigenousCountForBU(buId);
-		Long minorityCount = apService.findAppMinorityCountForBU(buId);
-		Long disabledCount = apService.findAppPartDisabledCountForBU(buId);
-		Long[] genderCounts = apService.findAppPartGenderCountsForBU(buId);
-		Long appCount = apService.findAppPartCountForBU(buId);
-
-		return new Long[] { indigenousCount, minorityCount, disabledCount, genderCounts[0], genderCounts[1], genderCounts[2], appCount };
+	@Override
+	public BusinessUnitProjection findBusinessUnitName(Long buId) {
+		return buRepo.findName(buId).orElseThrow(() -> new DataRetrievalFailureException(Utility.returnNotFoundMsg(ENTITY_TYPE, buId)));
 	}
 
-	@Transactional(readOnly = true)
 	@Override
-	public BusinessUnitProjection fetchBusinessUnitName(Long buId) {
-		return buRepo.fetchName(buId);
+	public List<BusinessUnitProjection> findResultsForBrowseViewBU(Long buId) {
+		List<BusinessUnitProjection> buProjections = buRepo.findForViewBU(buId);
+
+		if (buProjections.isEmpty()) {
+			throw new DataRetrievalFailureException(Utility.returnNotFoundMsg(ENTITY_TYPE, buId));
+		}
+
+		return buProjections;
+	}
+
+	@Override
+	public BusinessUnit findBusinessUnitWithAgency(Long buId) {
+		BusinessUnit bu =  buRepo.findWithAgency(buId);
+		
+		if (bu == null) {
+				throw new DataRetrievalFailureException(Utility.returnNotFoundMsg(ENTITY_TYPE, buId));
+		}
+		
+		return bu;
 	}
 
 }

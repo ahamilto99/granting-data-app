@@ -5,48 +5,42 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
-
-import org.hibernate.envers.AuditReader;
-import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.RevisionType;
-import org.hibernate.envers.query.AuditEntity;
-import org.hibernate.envers.query.AuditQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import ca.gc.tri_agency.granting_data.form.FundingOpportunityFilterForm;
 import ca.gc.tri_agency.granting_data.model.Agency;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
-import ca.gc.tri_agency.granting_data.model.GrantingSystem;
 import ca.gc.tri_agency.granting_data.model.auditing.UsernameRevisionEntity;
 import ca.gc.tri_agency.granting_data.model.projection.FundingOpportunityProjection;
+import ca.gc.tri_agency.granting_data.model.util.Utility;
 import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
+import ca.gc.tri_agency.granting_data.service.AuditService;
 import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
 
 @Service
 public class FundingOpportunityServiceImpl implements FundingOpportunityService {
 
+	private static final String ENTITY_TYPE = "FundingOpportunity";
+
 	private FundingOpportunityRepository foRepo;
+
+	private AuditService auditService;
 
 	private final String COL_SEPARATOR = "\n~@~\n";
 
-	@PersistenceUnit
-	private EntityManagerFactory emf;
-
 	@Autowired
-	public FundingOpportunityServiceImpl(FundingOpportunityRepository foRepo) {
+	public FundingOpportunityServiceImpl(FundingOpportunityRepository foRepo, AuditService auditService) {
 		this.foRepo = foRepo;
+		this.auditService = auditService;
 	}
 
 	@Override
 	public FundingOpportunity findFundingOpportunityById(Long foId) {
-		return foRepo.findById(foId).orElseThrow(() -> new DataRetrievalFailureException("That Funding Opportunity does not exist"));
+		return foRepo.findById(foId).orElseThrow(() -> new DataRetrievalFailureException(Utility.returnNotFoundMsg(ENTITY_TYPE, foId)));
 	}
 
 	@Override
@@ -71,50 +65,6 @@ public class FundingOpportunityServiceImpl implements FundingOpportunityService 
 	}
 
 	@Override
-	public List<FundingOpportunity> getFilteredFundingOpportunities(FundingOpportunityFilterForm filter, Map<Long, GrantingSystem> applyMap,
-			Map<Long, List<GrantingSystem>> awardMap) {
-		// RELATIVELY SMALL DATASET (140), SO NO USE PERFORMING A QUERY FOR EACH FILTER. WILL SIMPLY WEED
-		// THEM OUT IN A LOOP.
-		List<FundingOpportunity> fullList = findAllFundingOpportunities();
-		List<FundingOpportunity> retval = new ArrayList<FundingOpportunity>();
-		GrantingSystem targetSystem = null;
-		for (FundingOpportunity fo : fullList) {
-			if (filter.getApplySystem() != null) {
-				targetSystem = applyMap.get(fo.getId());
-				if (targetSystem == null || targetSystem != null && targetSystem.getId() != filter.getApplySystem().getId()) {
-					continue;
-				}
-			}
-			if (filter.getAwardSystem() != null) {
-				boolean hasSystem = false;
-				if (awardMap.get(fo.getId()) != null) {
-					for (GrantingSystem sys : awardMap.get(fo.getId())) {
-						if (sys == null || sys != null && sys.getId() == filter.getAwardSystem().getId()) {
-							hasSystem = true;
-						}
-					}
-
-				}
-				if (hasSystem == false) {
-					continue;
-				}
-			}
-			if (filter.getDivision() != null) {
-				if (fo.getBusinessUnit() == null || fo.getBusinessUnit().getId() != filter.getDivision().getId()) {
-					continue;
-				}
-			}
-			if (filter.getType() != null && filter.getType().length() != 0) {
-				if (fo.getFundingType() == null || filter.getType().compareTo(fo.getFundingType()) != 0) {
-					continue;
-				}
-			}
-			retval.add(fo);
-		}
-		return retval;
-	}
-
-	@Override
 	public List<FundingOpportunity> findFundingOpportunitiesByAgency(Agency agency) {
 		return foRepo.findByAgency(agency);
 	}
@@ -124,7 +74,7 @@ public class FundingOpportunityServiceImpl implements FundingOpportunityService 
 		List<FundingOpportunityProjection> resultSet = foRepo.findResultsForGoldenListTable();
 
 		Map<String, String[]> resultSetMapWithoutValues = new HashMap<>();
-		
+
 		resultSet.forEach(projection -> {
 			String key = projection.getId().toString() + COL_SEPARATOR + projection.getNameEn() + COL_SEPARATOR
 					+ projection.getNameFr() + COL_SEPARATOR + projection.getBusinessUnitNameEn() + COL_SEPARATOR
@@ -185,11 +135,11 @@ public class FundingOpportunityServiceImpl implements FundingOpportunityService 
 	@Override
 	public List<FundingOpportunityProjection> findBrowseViewFoResult(Long foId) throws DataRetrievalFailureException {
 		List<FundingOpportunityProjection> foProjections = foRepo.findResultsForViewFO(foId);
-		
+
 		if (foProjections.size() == 0) {
-			throw new DataRetrievalFailureException("That Funding Opportunity does not exist");
+			throw new DataRetrievalFailureException(Utility.returnNotFoundMsg(ENTITY_TYPE, foId));
 		}
-		
+
 		return foProjections;
 	}
 
@@ -218,42 +168,44 @@ public class FundingOpportunityServiceImpl implements FundingOpportunityService 
 	}
 
 	@AdminOnly
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<String[]> findFundingOpportunityRevisionsById(Long foId) {
-		EntityManager em = emf.createEntityManager();
-		em.getTransaction().begin();
-
-		AuditReader auditReader = AuditReaderFactory.get(em);
-
-		AuditQuery auditQuery = auditReader.createQuery().forRevisionsOfEntity(FundingOpportunity.class, false, true);
-		auditQuery.add(AuditEntity.id().eq(foId));
-		auditQuery.addOrder(AuditEntity.revisionProperty("id").asc());
-		List<Object[]> revisionList = auditQuery.getResultList();
-
-		em.getTransaction().commit();
-		em.close();
-
-		return convertAuditResults(revisionList);
+		return convertAuditResults(auditService.findRevisionsForOneFO(foId));
 	}
 
 	@AdminOnly
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<String[]> findAllFundingOpportunitiesRevisions() {
-		EntityManager em = emf.createEntityManager();
-		em.getTransaction().begin();
+		return convertAuditResults(auditService.findRevisionsForAllFOs());
+	}
 
-		AuditReader auditReader = AuditReaderFactory.get(em);
+	@Override
+	public boolean checkIfFundingOpportunityExists(Long foId) {
+		return foRepo.findIfItExists(foId).getCount() == 1L;
+	}
 
-		AuditQuery auditQuery = auditReader.createQuery().forRevisionsOfEntity(FundingOpportunity.class, false, true);
-		auditQuery.addOrder(AuditEntity.revisionProperty("id").asc());
-		List<Object[]> revisionList = auditQuery.getResultList();
+	@Override
+	public FundingOpportunityProjection findFundingOpportunityName(Long foId) {
+		return foRepo.findName(foId).orElseThrow(() -> new DataRetrievalFailureException(Utility.returnNotFoundMsg(ENTITY_TYPE, foId)));
+	}
 
-		em.getTransaction().commit();
-		em.close();
+	/*
+	 * FO has a many-to-many relationship with Agency thus many rows can be returned when eager fetching
+	 */
+	@Override
+	public List<FundingOpportunity> findFundingOpportunityEager(Long foId) {
+		List<FundingOpportunity> foList = foRepo.findEager(foId);
 
-		return convertAuditResults(revisionList);
+		if (foList.isEmpty()) {
+			throw new DataRetrievalFailureException(Utility.returnNotFoundMsg(ENTITY_TYPE, foId));
+		}
+
+		return foList;
+	}
+
+	@Override
+	public List<FundingOpportunityProjection> findAllFundingOpportunityNames() {
+		return foRepo.findAllNames();
 	}
 
 }

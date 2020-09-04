@@ -59,14 +59,12 @@ public interface ApplicationParticipationService {
 
 	ApplicationParticipationProjection findAppPartById(Long apId) throws AccessDeniedException;
 
-	Long[] findAppPartGenderCountsForBU(Long buId);
-
-	Long findAppPartDisabledCountForBU(Long buId);
-
-	Long findAppPartIndigenousCountForBU(Long buId);
-
-	Long findAppMinorityCountForBU(Long buId);
+	/*
+	 * Returns a List even though we are querying for one AP because an applicant can have multiple indigenous identities
+	 * and/or can have multiple ethnicities  
+	 */
+	List<ApplicationParticipationProjection> findAppPartWithEdiData(Long apId) throws AccessDeniedException;
 	
-	Long findAppPartCountForBU(Long buId);
+	Long[] findAppPartEdiDataForBu(Long buId);
 
 }

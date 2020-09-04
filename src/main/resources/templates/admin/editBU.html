@@ -56,7 +56,7 @@
 
 						<div class="form-group ">
 							<label for="agency"><span class="field-name" th:text="#{form.agency}"></span></label> <label
-								th:text="*{agency.getLocalizedAttribute('name')}" class="form-control" id="agency"
+								th:text="${#locale.language eq 'fr' ? bu.agency.nameFr : bu.agency.nameEn}" class="form-control" id="agency"
 								style="background-color: #f9f9f9; border: none; -webkit-box-shadow: none; box-shadow: none;"></label>
 						</div>
 

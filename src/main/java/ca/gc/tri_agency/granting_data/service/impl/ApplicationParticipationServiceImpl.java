@@ -6,7 +6,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import javax.persistence.Tuple;
 
@@ -14,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -34,6 +32,7 @@ import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.VisibleMinority;
 import ca.gc.tri_agency.granting_data.model.dto.AppPartEdiAuthorizedDto;
 import ca.gc.tri_agency.granting_data.model.projection.ApplicationParticipationProjection;
+import ca.gc.tri_agency.granting_data.model.util.Utility;
 import ca.gc.tri_agency.granting_data.repo.ApplicationParticipationRepository;
 import ca.gc.tri_agency.granting_data.repo.FiscalYearRepository;
 import ca.gc.tri_agency.granting_data.repo.FundingCycleRepository;
@@ -49,7 +48,7 @@ import ca.gc.tri_agency.granting_data.service.VisibleMinorityService;
 @Service
 public class ApplicationParticipationServiceImpl implements ApplicationParticipationService {
 
-	Map<GrantingSystem, ReferenceBean[]> roleMap;
+	private static final String ENTITY_TYPE = "ApplicationParticipation";
 
 	private SecureRandom sRand = new SecureRandom();
 
@@ -233,25 +232,15 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		}
 	}
 
-	@Transactional(readOnly = true)
 	@Override
 	public List<ApplicationParticipation> getAllowedRecords() {
 		List<ApplicationParticipation> retval = null;
-		if (SecurityContextHolder.getContext().getAuthentication().getAuthorities()
-				.contains(new SimpleGrantedAuthority("ROLE_MDM ADMIN"))) {
+		if (SecurityUtils.isCurrentUserAdmin()) {
 			retval = appParticipationRepo.findAll();
 		} else {
-			String username = SecurityContextHolder.getContext().getAuthentication().getName();
-			retval = appParticipationRepo.findAllowedRecords(username);
+			retval = appParticipationRepo.findAllowedRecords(SecurityUtils.getCurrentUsername());
 		}
 		return retval;
-	}
-
-	private class ReferenceBean {
-		String id;
-		String nameEn;
-		String nameFr;
-
 	}
 
 	@Override
@@ -274,7 +263,6 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		return participations.size();
 	}
 
-	@Transactional(readOnly = true)
 	@Override
 	public ApplicationParticipation findAppPartByApplId(String applId) {
 		return appParticipationRepo.findByApplId(applId);
@@ -402,7 +390,6 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		return appParts;
 	}
 
-	@Transactional
 	@Override
 	public void saveAllApplicationParticipations(List<ApplicationParticipation> appParticipations) {
 		appParticipationRepo.saveAll(appParticipations);
@@ -433,8 +420,8 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 	@Override
 	public ApplicationParticipation getAllowdRecord(Long id) {
 		ApplicationParticipation retval = appParticipationRepo.findById(id)
-				.orElseThrow(() -> new DataRetrievalFailureException("That Application Participation record does not exist"));
-		if (SecurityUtils.hasRole("MDM ADMIN") == false) {
+				.orElseThrow(() -> new DataRetrievalFailureException(Utility.returnNotFoundMsg(ENTITY_TYPE, id)));
+		if (!SecurityUtils.isCurrentUserAdmin()) {
 			List<String> allowedExtIds = getExtIdsQualifiedForEdi();
 			if (!allowedExtIds.contains(retval.getProgramId())) {
 				throw new AccessDeniedException("not authorized to access this record");
@@ -447,34 +434,22 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		return sRand.nextInt(end) + start;
 	}
 
-	@Transactional(readOnly = true)
-	private List<ApplicationParticipationProjection> findAppPartsForCurrentUser() {
-		if (SecurityContextHolder.getContext().getAuthentication().getAuthorities()
-				.contains(new SimpleGrantedAuthority("ROLE_MDM ADMIN"))) {
-			return appParticipationRepo.findAllForAdmin();
-		}
-		return appParticipationRepo.findForCurrentUser(SecurityContextHolder.getContext().getAuthentication().getName());
-	}
-
 	@Override
+	@Transactional(readOnly = true)
 	public List<AppPartEdiAuthorizedDto> findAppPartsForCurrentUserWithEdiAuth() {
 		List<AppPartEdiAuthorizedDto> dtoList = new ArrayList<>();
 
-		List<ApplicationParticipationProjection> projectionList = findAppPartsForCurrentUser();
-		if (SecurityContextHolder.getContext().getAuthentication().getAuthorities()
-				.contains(new SimpleGrantedAuthority("ROLE_MDM ADMIN"))) {
-			projectionList = appParticipationRepo.findAllForAdmin();
-			projectionList.forEach(p -> dtoList.add(new AppPartEdiAuthorizedDto(p.getId(), p.getApplId(), p.getProgramId(),
-					p.getFamilyName(), p.getFirstName(), p.getRoleEn(), p.getRoleFr(), p.getOrganizationNameEn(),
-					p.getOrganizationNameFr(), true)));
+		if (SecurityUtils.isCurrentUserAdmin()) {
+			appParticipationRepo.findAllForAdmin()
+					.forEach(p -> dtoList.add(new AppPartEdiAuthorizedDto(p.getId(), p.getApplId(), p.getProgramId(),
+							p.getFamilyName(), p.getFirstName(), p.getRoleEn(), p.getRoleFr(),
+							p.getOrganizationNameEn(), p.getOrganizationNameFr(), true)));
 		} else {
-			String userLogin = SecurityContextHolder.getContext().getAuthentication().getName();
-			projectionList = appParticipationRepo.findForCurrentUser(userLogin);
-			List<ApplicationParticipationProjection> idList = appParticipationRepo
-					.findIdsForCurrentUserEdiAuthorized(userLogin);
+			String userLogin = SecurityUtils.getCurrentUsername();
+			List<ApplicationParticipationProjection> projectionList = appParticipationRepo.findForCurrentUser(userLogin);
+			List<ApplicationParticipationProjection> idList = appParticipationRepo.findIdsForCurrentUserEdiAuthorized(userLogin);
 
-			// this works b/c the queries that return the idList and the projectionList both order the results
-			// by id
+			// this works b/c the queries that return the idList and the projectionList are ordered by their ids
 			int k = 0;
 			outerLoop: for (int i = 0; i < projectionList.size(); ++i) {
 				ApplicationParticipationProjection p = projectionList.get(i);
@@ -500,54 +475,21 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		return dtoList;
 	}
 
-	@Transactional(readOnly = true)
 	@Override
 	public ApplicationParticipationProjection findAppPartById(Long apId) throws AccessDeniedException {
 		Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();
-		if (currentUser.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_MDM ADMIN"))) {
-			return appParticipationRepo.findOneAppPartByIdForAdminOnly(apId).orElseThrow(
-					() -> new DataRetrievalFailureException("That ApplicationParticipation does not exist"));
-		} 
-		
-		return appParticipationRepo.findOneAppPartById(apId, currentUser.getName()).orElseThrow(() -> new AccessDeniedException("FORBIDDEN: "
-				+ currentUser.getName() + " cannot access ApplicationParticipation id=" + apId));
+		if (SecurityUtils.isCurrentUserAdmin()) {
+			return appParticipationRepo.findOneAppPartByIdForAdminOnly(apId)
+					.orElseThrow(() -> new DataRetrievalFailureException(Utility.returnNotFoundMsg(ENTITY_TYPE, apId)));
+		}
+
+		return appParticipationRepo.findOneAppPartById(apId, currentUser.getName()).orElseThrow(() -> new AccessDeniedException(
+				"FORBIDDEN: " + currentUser.getName() + " cannot access ApplicationParticipation id=" + apId));
 	}
-	
-	@Transactional
+
 	private void linkSFOsToFOs() {
-		sfoService.findAllSystemFundingOpportunities().forEach(sfo -> sfo
-				.setLinkedFundingOpportunity(foService.findFundingOpportunityById(Math.abs(sRand.nextInt(141) + 1L))));
-	}
-
-	@Transactional(readOnly = true)
-	@Override
-	public Long[] findAppPartGenderCountsForBU(Long buId) {
-		Tuple counts = appParticipationRepo.findGenderCounts(buId);
-		return new Long[] { (Long) counts.get("female"), (Long) counts.get("male"), (Long) counts.get("nonbinary") };
-	}
-
-	@Transactional(readOnly = true)
-	@Override
-	public Long findAppPartDisabledCountForBU(Long buId) {
-		return (Long) appParticipationRepo.findDisabledCountForBU(buId).get("total");
-	}
-
-	@Transactional(readOnly = true)
-	@Override
-	public Long findAppPartIndigenousCountForBU(Long buId) {
-		return (Long) appParticipationRepo.findIndigenousCountForBU(buId).get("total");
-	}
-
-	@Transactional(readOnly = true)
-	@Override
-	public Long findAppMinorityCountForBU(Long buId) {
-		return (Long) appParticipationRepo.findMinorityCountForBU(buId).get("total");
-	}
-
-	@Transactional(readOnly = true)
-	@Override
-	public Long findAppPartCountForBU(Long buId) {
-		return (Long) appParticipationRepo.findNumAPsForBU(buId).get("total");
+		sfoService.findAllSystemFundingOpportunities().forEach(
+				sfo -> sfo.setLinkedFundingOpportunity(foService.findFundingOpportunityById(Math.abs(sRand.nextInt(141) + 1L))));
 	}
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -602,4 +544,48 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 		});
 	}
 
+	/*
+	 * Returns a List even though we are querying for one AP because an applicant can have multiple
+	 * indigenous identities and/or can have multiple ethnicities
+	 */
+	@Transactional(readOnly = true)
+	@Override
+	public List<ApplicationParticipationProjection> findAppPartWithEdiData(Long apId) throws AccessDeniedException {
+		if (!SecurityUtils.isCurrentUserAdmin() && !findAppPartIdsCurrentUserIsEdiAuthorizedFor().contains(apId)) {
+			throw new AccessDeniedException("FORBIDDEN: " + SecurityUtils.getCurrentUsername() + " does not have persmission"
+					+ " to access the EDI data for ApplicationParticipation id=" + apId);
+		}
+
+		List<ApplicationParticipationProjection> projections = appParticipationRepo.findOneWithEdiData(apId);
+
+		if (projections.isEmpty()) {
+			throw new DataRetrievalFailureException(Utility.returnNotFoundMsg(ENTITY_TYPE, apId));
+		}
+
+		return projections;
+	}
+
+	private List<Long> findAppPartIdsCurrentUserIsEdiAuthorizedFor() {
+		List<Long> ids = new ArrayList<>();
+
+		String username = SecurityUtils.getCurrentUsername();
+		appParticipationRepo.findIdsForCurrentUserEdiAuthorized(username).forEach(ap -> ids.add(ap.getId()));
+
+		return ids;
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public Long[] findAppPartEdiDataForBu(Long buId) {
+		Tuple ediTuple = appParticipationRepo.findEdiDataForBU(buId);
+		
+		System.out.printf("%n%n%n%d %d %d %d %d%n%n%n", (Long) ediTuple.get("numDisableds"),
+				(Long) ediTuple.get("numFemales"), (Long) ediTuple.get("numMales"), (Long) ediTuple.get("numNonBinaries"),
+				(Long) ediTuple.get("numApps"));
+
+		return new Long[] { (Long) appParticipationRepo.findIndigenousCountForBU(buId).get("total"),
+				(Long) appParticipationRepo.findMinorityCountForBU(buId).get("total"), (Long) ediTuple.get("numDisableds"),
+				(Long) ediTuple.get("numFemales"), (Long) ediTuple.get("numMales"), (Long) ediTuple.get("numNonBinaries"),
+				(Long) ediTuple.get("numApps") };
+	}
 }

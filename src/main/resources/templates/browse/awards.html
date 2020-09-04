@@ -37,12 +37,12 @@
 
 					<tbody>
 						<tr th:each="award : ${awardList}">
-							<td th:text="${award.applId}"></td>
-							<td th:text="${award.getLocalizedAttribute('programName')}"></td>
-							<td th:text="${award.familyName} + ', ' + ${award.givenName}"></td>
-							<td th:text="'$' + ${#numbers.formatDecimal(award.awardedAmount, 0, 'DEFAULT', 2, 'DEFAULT')}"></td>
-							<td th:text="'$' + ${#numbers.formatDecimal(award.requestedAmount, 0, 'DEFAULT', 2, 'DEFAULT')}"></td>
-							<td th:text="${award.fundingYear}"></td>
+							<td th:text="${award.getApplId()}"></td>
+							<td th:text="${#locale.language eq 'fr' ? award.getProgramFr() : award.getProgramEn()}"></td>
+							<td th:text="${award.getFamilyName()} + ', ' + ${award.getFirstName()}"></td>
+							<td th:text="'$' + ${#numbers.formatDecimal(award.getAwardedAmt(), 0, 'DEFAULT', 2, 'DEFAULT')}"></td>
+							<td th:text="'$' + ${#numbers.formatDecimal(award.getRequestedAmt(), 0, 'DEFAULT', 2, 'DEFAULT')}"></td>
+							<td th:text="${award.getFundingYr()}"></td>
 						</tr>
 					</tbody>
 

@@ -72,7 +72,7 @@ public class Gender implements LocalizedParametersModel {
 			return false;
 		}
 		
-		return id != null && id.equals(((Gender) obj).id);
+		return id != null && id.equals(((Gender) obj).getId());
 
 	}
 	

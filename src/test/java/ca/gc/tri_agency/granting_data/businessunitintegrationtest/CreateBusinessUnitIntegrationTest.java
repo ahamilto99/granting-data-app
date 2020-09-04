@@ -67,7 +67,7 @@ public class CreateBusinessUnitIntegrationTest {
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_adminCanAccessCreateBUPage_shouldSucceedWith200() throws Exception {
-		String agencyName = agencyService.findAgencyById(1L).getNameEn();
+		String agencyName = agencyService.findAgencyName(1L).getNameEn();
 		assertTrue(mvc.perform(get("/admin/createBU?agencyId=1")).andExpect(status().isOk()).andReturn().getResponse()
 				.getContentAsString().contains('>' + agencyName + "</label>"));
 	}
@@ -98,7 +98,7 @@ public class CreateBusinessUnitIntegrationTest {
 				.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
 				.andExpect(MockMvcResultMatchers.redirectedUrl("/browse/viewAgency?id=" + Long.toString(agencyId)))
 				.andExpect(MockMvcResultMatchers.flash().attribute("actionMsg",
-						"Created the Business Unit named: " + nameEn));
+						"Created Business Unit: " + nameEn));
 
 		// when viewBU page is refreshed, flash attribute should disappear
 		mvc.perform(MockMvcRequestBuilders.get("/browse/viewAgency?id=" + Long.toString(agencyId)))

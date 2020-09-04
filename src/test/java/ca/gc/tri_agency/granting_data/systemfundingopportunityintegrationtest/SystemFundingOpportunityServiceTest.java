@@ -17,6 +17,8 @@ import org.springframework.test.context.ActiveProfiles;
 
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
+import ca.gc.tri_agency.granting_data.model.projection.SystemFundingOpportunityProjection;
+import ca.gc.tri_agency.granting_data.repo.SystemFundingOpportunityRepository;
 import ca.gc.tri_agency.granting_data.service.GrantingSystemService;
 import ca.gc.tri_agency.granting_data.service.SystemFundingOpportunityService;
 
@@ -29,6 +31,9 @@ public class SystemFundingOpportunityServiceTest {
 
 	@Autowired
 	private GrantingSystemService gSystemService;
+
+	@Autowired
+	private SystemFundingOpportunityRepository sfoRepo;
 
 	@WithAnonymousUser
 	@Test
@@ -137,4 +142,47 @@ public class SystemFundingOpportunityServiceTest {
 	public void test_nonAdminCannotFindSystemFundingOpportunityRevisionByIdShouldThrowException() {
 		assertThrows(AccessDeniedException.class, () -> sfoService.findSystemFundingOpportunityRevisionById(1L));
 	}
+
+	@Tag("user_story_14591")
+	@WithMockUser(roles = "MDM ADMIN")
+	@Test
+	public void test_findSystemFundingOpportunityAndFOName() {
+		SystemFundingOpportunityProjection sfoProjection = sfoService.findSystemFundingOpportunityAndLinkedFOName(10L);
+
+		assertEquals("Belmont Forum (BFBIO) (5808)", sfoProjection.getFundingOpportunityEn());
+
+		assertThrows(DataRetrievalFailureException.class, () -> sfoService.findSystemFundingOpportunityAndLinkedFOName(Long.MAX_VALUE));
+	}
+
+	@Tag("user_story_14592")
+	@WithMockUser(roles = "MDM ADMIN")
+	@Test
+	public void test_findSystemFundingOpportunityAndLinkedFONameAndGSysName() {
+		long initSFOCount = sfoRepo.count();
+
+		SystemFundingOpportunity sfo = new SystemFundingOpportunity();
+		sfo.setGrantingSystem(gSystemService.findGrantingSystemById(1L));
+
+		sfoService.saveSystemFundingOpportunity(sfo);
+
+		List<SystemFundingOpportunityProjection> sfoProjectionList = sfoService
+				.findAllSystemFundingOpportunitiesAndLinkedFONameAndGSysName();
+
+		// verifies that the result set will also include any SFOs that don't have a linked FO
+		assertEquals(initSFOCount + 1, sfoProjectionList.size());
+	}
+
+	@Tag("user_story_14592")
+	@WithMockUser(roles = "MDM ADMIN")
+	@Test
+	public void test_findSystemFundingOpportunityNameAndLinkedFOName() {
+		SystemFundingOpportunityProjection sfoProjection = sfoService.findSystemFundingOpportunityNameAndLinkedFOName(8L);
+
+		assertEquals("SSHRC Postdoctoral Fellowships", sfoProjection.getNameEn());
+		assertEquals("IRC", sfoProjection.getFundingOpportunityEn());
+
+		assertThrows(DataRetrievalFailureException.class,
+				() -> sfoService.findSystemFundingOpportunityNameAndLinkedFOName(Long.MAX_VALUE));
+	}
+
 }

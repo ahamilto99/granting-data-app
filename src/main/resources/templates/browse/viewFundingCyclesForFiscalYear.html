@@ -8,11 +8,11 @@
 <meta charset="utf-8">
 <title th:text="#{h.fcs}"></title>
 </head>
-<body id="viewFcFromFyPage" class="home" vocab="http://schema.org/" typeof="WebPage">
+<body id="viewFundingCyclesForFiscalYearPage" class="home" vocab="http://schema.org/" typeof="WebPage">
 	<div th:insert="~{fragments/general.html :: header_nav('home')}"></div>
 	<main role="main" property="mainContentOfPage" class="container">
 
-		<h1 th:text="#{h.fcs}"></h1>
+		<h1 th:text="#{h.fcs} + ' - ' + ${fcProjections.get(0).getFiscalYear()}"></h1>
 
 		<div th:insert="~{fragments/general.html :: profile_info('home')}"></div>
 

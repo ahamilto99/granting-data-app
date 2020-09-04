@@ -6,4 +6,5 @@ public interface FiscalYearProjection {
 	
 	Long getYear();
 	
+	Long getNumAppsReceived();
 }

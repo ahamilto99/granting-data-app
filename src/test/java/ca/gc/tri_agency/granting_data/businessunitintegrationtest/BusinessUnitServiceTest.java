@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +23,7 @@ import org.springframework.test.context.ActiveProfiles;
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
 import ca.gc.tri_agency.granting_data.model.Agency;
 import ca.gc.tri_agency.granting_data.model.BusinessUnit;
+import ca.gc.tri_agency.granting_data.model.projection.BusinessUnitProjection;
 import ca.gc.tri_agency.granting_data.repo.BusinessUnitRepository;
 import ca.gc.tri_agency.granting_data.service.AgencyService;
 import ca.gc.tri_agency.granting_data.service.BusinessUnitService;
@@ -65,20 +67,15 @@ public class BusinessUnitServiceTest {
 	@Test
 	public void test_adminCanEditBU() {
 		long initBuRepoCount = buRepo.count();
-		BusinessUnit buBeforeUpate = buRepo.findById(1L).get();
-		BusinessUnit buAfterUpdate = buRepo.findById(1L).get();
+		BusinessUnit bu = buRepo.findById(1L).get();
 
-		assertEquals(buBeforeUpate, buAfterUpdate);
+		String nameBefore = bu.getNameEn();
 
-		buAfterUpdate.setNameEn(RandomStringUtils.randomAlphabetic(20));
-		buAfterUpdate.setNameFr(RandomStringUtils.randomAlphabetic(20));
-		buAfterUpdate.setAcronymEn(RandomStringUtils.randomAlphabetic(5));
-		buAfterUpdate.setAcronymFr(RandomStringUtils.randomAlphabetic(5));
-
-		buService.saveBusinessUnit(buAfterUpdate);
-
+		bu.setNameEn(RandomStringUtils.randomAlphabetic(20));
+		bu = buService.saveBusinessUnit(bu);
+		
 		assertEquals(initBuRepoCount, buRepo.count());
-		assertNotEquals(buBeforeUpate, buAfterUpdate);
+		assertNotEquals(nameBefore, bu.getNameEn());
 	}
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
@@ -160,7 +157,7 @@ public class BusinessUnitServiceTest {
 	public void test_nonAdminCannotFindAllBusinessUnitRevisions() {
 		assertThrows(AccessDeniedException.class, () -> buService.findAllBusinessUnitRevisions());
 	}
-	
+
 	@Tag("user_story_19147")
 	@WithMockUser(username = "aha")
 	@Test
@@ -177,6 +174,24 @@ public class BusinessUnitServiceTest {
 
 		// user "aha" is not authorized to get EDI data associated with BU 1
 		assertThrows(AccessDeniedException.class, () -> buService.findEdiAppPartDataForAuthorizedBUMember(1L));
+	}
+
+	@WithAnonymousUser
+	@Test
+	public void test_findReultsForBrowseViewBU() {
+		List<BusinessUnitProjection> buProjections = buService.findResultsForBrowseViewBU(13L);
+
+		List<Long> mrIds = new ArrayList<>();
+
+		buProjections.forEach(bu -> {
+			assertEquals(13L, bu.getId());
+			assertEquals(1L, bu.getAgencyId());
+			mrIds.add(bu.getMemRoleId());
+		});
+
+		assertEquals(mrIds.size(), mrIds.stream().distinct().count());
+
+		assertThrows(DataRetrievalFailureException.class, () -> buService.findResultsForBrowseViewBU(Long.MAX_VALUE));
 	}
 
 }

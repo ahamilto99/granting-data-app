@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import ca.gc.tri_agency.granting_data.model.GrantingCapability;
 import ca.gc.tri_agency.granting_data.model.GrantingSystem;
+import ca.gc.tri_agency.granting_data.model.util.Utility;
 import ca.gc.tri_agency.granting_data.repo.GrantingSystemRepository;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.GrantingCapabilityService;
@@ -18,6 +19,8 @@ import ca.gc.tri_agency.granting_data.service.GrantingSystemService;
 
 @Service
 public class GrantingSystemServiceImpl implements GrantingSystemService {
+	
+	private static final String ENTITY_TYPE = "GrantingSystem";
 
 	private GrantingSystemRepository gsRepo;
 	
@@ -31,7 +34,7 @@ public class GrantingSystemServiceImpl implements GrantingSystemService {
 
 	@Override
 	public GrantingSystem findGrantingSystemById(Long id) {
-		return gsRepo.findById(id).orElseThrow(() -> new DataRetrievalFailureException("That Granting System does not exist"));
+		return gsRepo.findById(id).orElseThrow(() -> new DataRetrievalFailureException(Utility.returnNotFoundMsg(ENTITY_TYPE, id)));
 	}
 
 	@Override

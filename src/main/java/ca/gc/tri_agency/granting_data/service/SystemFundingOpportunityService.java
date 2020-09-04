@@ -5,6 +5,7 @@ import java.util.List;
 import ca.gc.tri_agency.granting_data.model.GrantingSystem;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.file.FundingCycleDatasetRow;
+import ca.gc.tri_agency.granting_data.model.projection.SystemFundingOpportunityProjection;
 
 public interface SystemFundingOpportunityService {
 
@@ -31,5 +32,11 @@ public interface SystemFundingOpportunityService {
 	List<String[]> findSystemFundingOpportunityRevisionById(Long sfoId);
 	
 	List<SystemFundingOpportunity> findSFOsByLinkedFundingOpportunityBusinessUnitIdIn(List<Long> targetBuIds);
+
+	SystemFundingOpportunityProjection findSystemFundingOpportunityAndLinkedFOName(Long sfoId);
+
+	List<SystemFundingOpportunityProjection> findAllSystemFundingOpportunitiesAndLinkedFONameAndGSysName();
+
+	SystemFundingOpportunityProjection findSystemFundingOpportunityNameAndLinkedFOName(Long sfoId);
 
 }

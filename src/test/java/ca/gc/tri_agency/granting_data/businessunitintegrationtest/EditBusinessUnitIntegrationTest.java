@@ -86,19 +86,19 @@ public class EditBusinessUnitIntegrationTest {
 		mvc.perform(MockMvcRequestBuilders.post("/admin/editBU").param("id", "1").param("nameEn", nameEn)
 				.param("nameFr", nameFr).param("acronymEn", acronymEn).param("acronymFr", acronymFr)
 				.param("agency", agencyId)).andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-				.andExpect(MockMvcResultMatchers.redirectedUrl("/browse/viewAgency?id=" + agencyId))
+				.andExpect(MockMvcResultMatchers.redirectedUrl("/browse/viewBU?id=1"))
 				.andExpect(MockMvcResultMatchers.flash().attribute("actionMsg",
-						"Edited the Business Unit named: " + nameEn));
+						"Successfully Edited Business Unit"));
 
 		// when viewBUs page is refreshed, flash attribute should disappear
-		mvc.perform(MockMvcRequestBuilders.get("/browse/viewAgency?id=" + agencyId))
+		mvc.perform(MockMvcRequestBuilders.get("/browse/viewBU?id=1"))
 				.andExpect(MockMvcResultMatchers.flash().attributeCount(0));
 
 		assertEquals(initBuRepoCount, buRepo.count());
 
 		// BusinessUnit after update
 		BusinessUnit buAfterUpdate = buRepo.findById(1L).get();
-		assertNotEquals(buBeforeUpate, buAfterUpdate);
+		assertNotEquals(buBeforeUpate.getNameEn(), buAfterUpdate.getNameEn());
 		assertEquals(buBeforeUpate.getId(), buAfterUpdate.getId());
 	}
 

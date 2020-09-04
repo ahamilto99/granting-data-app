@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -40,7 +39,6 @@ public class DeleteMemberRoleIntegrationTest {
 
 	@Tag("user_story_19193")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
-	@Rollback
 	@Test
 	public void test_adminCanDeleteMemberRole_shouldSucceedWith302() throws Exception {
 		// verifies "Delete" button is visible to an admin
@@ -53,7 +51,7 @@ public class DeleteMemberRoleIntegrationTest {
 		mvc.perform(MockMvcRequestBuilders.get("/browse/viewBU").param("mrId", "3"))
 				.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
 				.andExpect(MockMvcResultMatchers.redirectedUrl("/browse/viewBU?id=1"))
-				.andExpect(MockMvcResultMatchers.flash().attribute("actionMsg", "Successfully Deleted Member Role for: rwi"));
+				.andExpect(MockMvcResultMatchers.flash().attribute("actionMsg", "Successfully Deleted Member Role For: rwi"));
 
 		mvc.perform(MockMvcRequestBuilders.get("/browse/ViewBU").param("id", "1"))
 				.andExpect(MockMvcResultMatchers.flash().attributeCount(0));

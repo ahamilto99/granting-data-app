@@ -1,24 +1,18 @@
 package ca.gc.tri_agency.granting_data.controller;
 
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.servlet.support.RequestContextUtils;
 
-import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
-import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
+import ca.gc.tri_agency.granting_data.model.projection.SystemFundingOpportunityProjection;
 import ca.gc.tri_agency.granting_data.security.annotations.AdminOnly;
 import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
 import ca.gc.tri_agency.granting_data.service.SystemFundingOpportunityService;
@@ -43,63 +37,54 @@ public class SystemFundingOpportunityController {
 
 	@GetMapping("/admin/viewSFO")
 	public String viewSystemFundingOpportunity(@RequestParam Long id, Model model, HttpServletRequest request) {
-		Map<String, ?> inFlashMap = RequestContextUtils.getInputFlashMap(request);
-		if (inFlashMap != null) {
-			model.addAttribute("unlinkedPerformedMsg", inFlashMap.get("actionMessage"));
+		SystemFundingOpportunityProjection sfoProjection = sfoService.findSystemFundingOpportunityAndLinkedFOName(id);
+
+		model.addAttribute("sfo", sfoProjection);
+		model.addAttribute("revisionList", sfoService.findSystemFundingOpportunityRevisionById(id));
+
+		if (sfoProjection.getFundingOpportunityId() == null) {
+			model.addAttribute("fosForLink", foService.findAllFundingOpportunityNames());
 		}
 
-		model.addAttribute("systemFO", sfoService.findSystemFundingOpportunityById(id));
-		model.addAttribute("fosForLink", foService.findAllFundingOpportunities());
-		model.addAttribute("revisionList", sfoService.findSystemFundingOpportunityRevisionById(id));
 		return "admin/viewSystemFO";
 	}
 
 	@GetMapping("/admin/analyzeSFOs")
 	public String analyzeSystemFundingOpportunities(Model model) {
-		model.addAttribute("systemFOs", sfoService.findAllSystemFundingOpportunities());
+		model.addAttribute("sfos", sfoService.findAllSystemFundingOpportunitiesAndLinkedFONameAndGSysName());
+
 		return "admin/analyzeSystemFOs";
 	}
 
 	@GetMapping("/admin/confirmUnlink")
 	public String unlinkSFOFromFOGet(@RequestParam Long sfoId, Model model) {
-		SystemFundingOpportunity sfo = sfoService.findSystemFundingOpportunityById(sfoId);
-		FundingOpportunity fo = sfo.getLinkedFundingOpportunity();
-		if (fo == null) {
-			throw new DataRetrievalFailureException(
-					"That System Funding Opportunity is not linked to a Funding Opportunity");
-		}
-		model.addAttribute("sfo", sfo);
-		model.addAttribute("fo", fo);
+		SystemFundingOpportunityProjection sfoProjection = sfoService.findSystemFundingOpportunityNameAndLinkedFOName(sfoId);
+
+		model.addAttribute("sfo", sfoProjection);
 
 		return "/admin/confirmUnlink";
 	}
 
 	@PostMapping("/admin/confirmUnlink")
-	public String unlinkSFOFromFOPost(@RequestParam Long sfoId, Model model, RedirectAttributes redirectAttributes) {
-		SystemFundingOpportunity sfo = sfoService.findSystemFundingOpportunityById(sfoId);
-		FundingOpportunity fo = sfo.getLinkedFundingOpportunity();
+	public String unlinkSFOFromFOPost(@RequestParam("sfoId") Long sfoId, @RequestParam("foId") Long foId,
+			@RequestParam("sfoName") String sfoName, @RequestParam("foName") String foName, Model model,
+			RedirectAttributes redirectAttributes) {
+		sfoService.unlinkSystemFundingOpportunity(sfoId, foId);
 
-		sfoService.unlinkSystemFundingOpportunity(sfoId, fo.getId());
-
-		String wasUnlinkedFrom = msgSource.getMessage("msg.unlinkedPerformedMsg", null, LocaleContextHolder.getLocale());
-		redirectAttributes.addFlashAttribute("actionMessage",
-				sfo.getLocalizedAttribute("name") + wasUnlinkedFrom + fo.getLocalizedAttribute("name"));
-
-		model.addAttribute("systemFO", sfo);
-		model.addAttribute("fosForLink", foService.findAllFundingOpportunities());
+		String actionMsg = msgSource.getMessage("msg.unlinkedPerformedMsg", new String[] { sfoName, foName },
+				LocaleContextHolder.getLocale());
+		redirectAttributes.addFlashAttribute("actionMsg", actionMsg);
 
 		return "redirect:/admin/viewSFO?id=" + sfoId;
 	}
 
 	@PostMapping("/admin/registerFOLink")
-	public String registerProgramLinkPost(@ModelAttribute("id") Long id, @ModelAttribute("foId") Long foId,
-			RedirectAttributes redirectAttributes) {
+	public String registerProgramLinkPost(@RequestParam("id") Long id, @RequestParam("foId") Long foId,
+			@RequestParam("sfoName") String sfoName, @RequestParam("foName") String foName, RedirectAttributes redirectAttributes) {
 		sfoService.linkSystemFundingOpportunity(id, foId);
 
-		SystemFundingOpportunity sfoLinked = sfoService.findSystemFundingOpportunityById(id);
-		String linkedTo = msgSource.getMessage("msg.linkPerformed", null, LocaleContextHolder.getLocale());
-		redirectAttributes.addFlashAttribute("actionMessage", sfoLinked.getLocalizedAttribute("name") + linkedTo
-				+ sfoLinked.getLinkedFundingOpportunity().getLocalizedAttribute("name"));
+		String actionMsg = msgSource.getMessage("msg.linkPerformed", new String[] { sfoName, foName }, LocaleContextHolder.getLocale());
+		redirectAttributes.addFlashAttribute("actionMsg", actionMsg);
 
 		return "redirect:/admin/viewSFO?id=" + id;
 	}
@@ -107,6 +92,7 @@ public class SystemFundingOpportunityController {
 	@GetMapping("/admin/auditLogSFO")
 	public String systemFundingOpportunityAuditLog(Model model) {
 		model.addAttribute("revisionList", sfoService.findAllSystemFundingOpportunityRevisions());
+
 		return "admin/systemFundingOpportunityAuditLog";
 	}
 

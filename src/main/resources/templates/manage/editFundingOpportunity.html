@@ -22,10 +22,11 @@
 
 				<div class="web-frmvld">
 
-					<form action="#" th:action="@{editFo}" th:object="${programForm}" method="post">
+					<form action="#" th:action="@{editFo}" th:object="${fo}" method="post">
 
 						<input type="hidden" th:field="*{id}" /> <input type="hidden"
-							th:field="*{businessUnit}" />
+							th:field="*{businessUnit}"/>
+							<input type="hidden" th:field="*{participatingAgencies}" />
 
 						<div class="form-group">
 							<label for="nameEn" class="required"><span class="field-name" th:text="#{form.nameEn}"></span><strong class="required"
@@ -63,7 +64,7 @@
 
 						<div class="form-group">
 							<label for="numAgencies"><span class="field-name" th:text="#{form.numAgencies}"></span></label> <label class="form-control"
-								style="border: none; -webkit-box-shadow: none; box-shadow: none;" th:text="${#lists.size(programForm.participatingAgencies)}"></label>
+								style="border: none; -webkit-box-shadow: none; box-shadow: none;" th:text="${#lists.size(fo.participatingAgencies)}"></label>
 						</div>
 
 						<div class="form-group">

@@ -81,7 +81,7 @@ public class AnonymousUseCasesTest {
 		// verify the linked FCs table appears
 		int numFCs = 0;
 		
-		Pattern regex = Pattern.compile("<a href=\"\\/browse\\/viewFcFromFy\\?fyId=");
+		Pattern regex = Pattern.compile("<a href=\"\\/browse\\/viewFCsForFY\\?fyId=");
 		Matcher regexMatcher = regex.matcher(response);
 		while (regexMatcher.find()) {
 			++numFCs;

@@ -1,6 +1,7 @@
 package ca.gc.tri_agency.granting_data.model;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -28,7 +29,7 @@ public class SystemFundingCycle implements LocalizedParametersModel {
 	@Max(2050)
 	private Long fiscalYear;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "system_funding_opportunity_id")
 	private SystemFundingOpportunity systemFundingOpportunity;
 

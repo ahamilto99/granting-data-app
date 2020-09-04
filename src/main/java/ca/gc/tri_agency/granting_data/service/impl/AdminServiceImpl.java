@@ -27,6 +27,7 @@ import ca.gc.tri_agency.granting_data.model.GrantingSystem;
 import ca.gc.tri_agency.granting_data.model.SystemFundingCycle;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.file.FundingCycleDatasetRow;
+import ca.gc.tri_agency.granting_data.model.projection.SystemFundingCycleProjection;
 import ca.gc.tri_agency.granting_data.service.AdminService;
 import ca.gc.tri_agency.granting_data.service.GrantingSystemService;
 import ca.gc.tri_agency.granting_data.service.SystemFundingCycleService;
@@ -88,11 +89,11 @@ public class AdminServiceImpl implements AdminService {
 	public List<String> generateActionableFoCycleIds(List<FundingCycleDatasetRow> foCycles) {
 		// SYSTEM FCs HAVE UNIQUE IDENTIFIER THAT INCLUDES THE PROGRAM IDENTIFIER. USING
 		// THAT AS DETERMINATION FACTOR
-		List<SystemFundingCycle> dbFundingCycles = sfcService.findAllSystemFundingCycles();
+		List<SystemFundingCycleProjection> dbFundingCycles = sfcService.findAllSystemFundingCycleExtIds();
 		List<String> retval = new ArrayList<String>();
 		for (FundingCycleDatasetRow row : foCycles) {
 			boolean rowFound = false;
-			for (SystemFundingCycle cycle : dbFundingCycles) {
+			for (SystemFundingCycleProjection cycle : dbFundingCycles) {
 				if (cycle.getExtId().compareTo(row.getFoCycle()) == 0) {
 					rowFound = true;
 				}

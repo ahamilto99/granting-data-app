@@ -14,10 +14,12 @@ public interface GrantingCapabilityService {
 	GrantingCapability saveGrantingCapability(GrantingCapability gc);
 
 	List<GrantingCapability> findGrantingCapabilitiesByFoId(Long id);
-	
+
 	void deleteGrantingCapabilityById(Long id);
-	
+
 	List<GrantingCapability> findGrantingCapabilitiesByGrantingStageNameEn(String nameEn);
-	
+
 	List<GrantingCapabilityProjection> findGrantingCapabilitiesForBrowseViewFO(Long foId);
+
+	GrantingCapability findGrantingCapabilityAndFO(Long gcId);
 }

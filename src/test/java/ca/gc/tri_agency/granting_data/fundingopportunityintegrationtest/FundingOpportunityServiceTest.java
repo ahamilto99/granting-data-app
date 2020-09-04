@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -128,6 +129,15 @@ public class FundingOpportunityServiceTest {
 		assertArrayEquals(new String[] { "9", "Aboriginal Ambassadors in the Natural Sciences and Engineering (AANSE) (6610)",
 				"Bourse pour ambassadeurs autochtones des sciences naturelles et du génie", "ICSP", "FR ICSP",
 				"SP Secure Upload", "NAMIS" }, tableRow);
+	}
+	
+	@WithAnonymousUser
+	@Test
+	public void test_findFundingOpportunityAndBU() {
+		FundingOpportunity fo = foService.findFundingOpportunityEager(23L).get(0);
+		
+		assertEquals(3L, fo.getBusinessUnit().getId());
+		assertThrows(DataRetrievalFailureException.class, () -> foService.findFundingOpportunityEager(Long.MAX_VALUE));
 	}
 
 }

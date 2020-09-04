@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -99,14 +98,13 @@ public class DeleteGrantingCapabilityIntegrationTest {
 
 	@Tag("user_story_19005")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
-	@Rollback
 	@Test
 	public void test_adminCanDeleteGC_shouldSucceedWith302() throws Exception {
 		long numGCs = gcRepo.count();
 
 		String foId = String.valueOf(gcService.findGrantingCapabilityById(103L).getFundingOpportunity().getId());
 
-		mvc.perform(MockMvcRequestBuilders.post("/manage/deleteGC").param("id", "103"))
+		mvc.perform(MockMvcRequestBuilders.post("/manage/deleteGC").param("id", "103").param("foId", foId))
 				.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
 				.andExpect(MockMvcResultMatchers.redirectedUrl("/manage/manageFo?id=" + foId))
 				.andExpect(MockMvcResultMatchers.flash().attribute("actionMsg",
@@ -124,9 +122,9 @@ public class DeleteGrantingCapabilityIntegrationTest {
 	public void test_nonAdminCannotDeleteGC_shouldReturn403() throws Exception {
 		long numGCs = gcRepo.count();
 
-		mvc.perform(MockMvcRequestBuilders.post("/manage/deleteGC").param("id", "104"))
-				.andExpect(MockMvcResultMatchers.status().isForbidden()).andExpect(MockMvcResultMatchers.content()
-						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
+		mvc.perform(MockMvcRequestBuilders.post("/manage/deleteGC").param("id", "104").param("foId", "106"))
+				.andExpect(MockMvcResultMatchers.status().isForbidden())
+				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
 
 		assertEquals(numGCs, gcRepo.count());
 	}

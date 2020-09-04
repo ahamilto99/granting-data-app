@@ -1,12 +1,9 @@
 package ca.gc.tri_agency.granting_data.service;
 
 import java.util.List;
-import java.util.Map;
 
-import ca.gc.tri_agency.granting_data.form.FundingOpportunityFilterForm;
 import ca.gc.tri_agency.granting_data.model.Agency;
 import ca.gc.tri_agency.granting_data.model.FundingOpportunity;
-import ca.gc.tri_agency.granting_data.model.GrantingSystem;
 import ca.gc.tri_agency.granting_data.model.projection.FundingOpportunityProjection;
 
 public interface FundingOpportunityService {
@@ -21,9 +18,6 @@ public interface FundingOpportunityService {
 	
 	FundingOpportunity saveFundingOpportunity(FundingOpportunity fo);
 	
-	List<FundingOpportunity> getFilteredFundingOpportunities(FundingOpportunityFilterForm filter,
-			Map<Long, GrantingSystem> applyMap, Map<Long, List<GrantingSystem>> awardMap);
-
 	List<FundingOpportunity> findFundingOpportunitiesByAgency(Agency agency);
 	
 	List<String[]> findFundingOpportunityRevisionsById(Long foId);
@@ -33,4 +27,12 @@ public interface FundingOpportunityService {
 	List<String[]> findGoldenListTableResults();
 	
 	List<FundingOpportunityProjection> findBrowseViewFoResult(Long foId);
+	
+	boolean checkIfFundingOpportunityExists(Long foId);
+	
+	FundingOpportunityProjection findFundingOpportunityName(Long foId);
+
+	List<FundingOpportunity> findFundingOpportunityEager(Long foId);
+
+	List<FundingOpportunityProjection> findAllFundingOpportunityNames();
 }

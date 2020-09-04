@@ -12,4 +12,20 @@ public interface BusinessUnitProjection {
 	
 	String getAcronymFr();
 	
+	Long getAgencyId();
+	
+	String getAgencyEn();
+
+	String getAgencyFr();
+	
+	Long getMemRoleId();
+	
+	String getMemRoleLogin();
+	
+	String getMemRoleEn();
+
+	String getMemRoleFr();
+	
+	Boolean getMemRoleEdiAuthorized();
+	
 }

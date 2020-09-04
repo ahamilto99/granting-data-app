@@ -36,6 +36,22 @@
 				<div class="well">
 					<div class="row">
 						<div class="col-md-1">
+							<span class="glyphicon glyphicon-calendar"></span>
+						</div>
+						<div class="col-md-11">
+							<a href="browse/viewCalendar" th:text="#{link.fc.cal}"></a>
+							<p th:text="#{p.link.cal}"></p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-6">
+				<div class="well">
+					<div class="row">
+						<div class="col-md-1">
 							<span class="glyphicon glyphicon-stats"></span>
 						</div>
 						<div class="col-md-11">
@@ -45,9 +61,6 @@
 					</div>
 				</div>
 			</div>
-		</div>
-
-		<div class="row">
 			<div class="col-md-6">
 				<div class="well">
 					<div class="row">
@@ -61,6 +74,9 @@
 					</div>
 				</div>
 			</div>
+		</div>
+
+		<div class="row">
 			<div class="col-md-6">
 				<div class="well">
 					<div class="row">
@@ -76,7 +92,6 @@
 			</div>
 		</div>
 
-		<!-- 			<li><a href="browse/viewCalendar" th:text="#{link.fc.cal}"></a></li> -->
 
 		<div sec:authorize="hasRole('MDM ADMIN')">
 			<h3 th:text="#{p.home.adminZone}"></h3>

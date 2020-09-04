@@ -103,7 +103,7 @@ public class Agency implements LocalizedParametersModel {
 			return false;
 		}
 		
-		return id != null && id.equals(((Agency) obj).id);
+		return id != null && id.equals(((Agency) obj).getId());
 	}
 	
 	@Override

@@ -24,9 +24,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ca.gc.tri_agency.granting_data.model.FundingCycle;
 import ca.gc.tri_agency.granting_data.model.projection.FundingCycleProjection;
 import ca.gc.tri_agency.granting_data.model.util.CalendarGrid;
+import ca.gc.tri_agency.granting_data.model.util.Utility;
 import ca.gc.tri_agency.granting_data.security.SecurityUtils;
 import ca.gc.tri_agency.granting_data.service.FiscalYearService;
 import ca.gc.tri_agency.granting_data.service.FundingCycleService;
+import ca.gc.tri_agency.granting_data.service.FundingOpportunityService;
 import ca.gc.tri_agency.granting_data.service.MemberRoleService;
 
 @Controller
@@ -38,21 +40,24 @@ public class FundingCycleController {
 
 	private MemberRoleService mrService;
 
+	private FundingOpportunityService foService;
+
 	private MessageSource msgSource;
 
 	@Autowired
 	public FundingCycleController(FundingCycleService fcService, FiscalYearService fyService, MemberRoleService mrService,
-			MessageSource msgSource) {
+			FundingOpportunityService foService, MessageSource msgSource) {
 		this.fcService = fcService;
 		this.fyService = fyService;
 		this.mrService = mrService;
+		this.foService = foService;
 		this.msgSource = msgSource;
 	}
 
-	@GetMapping("/browse/viewFcFromFy")
+	@GetMapping("/browse/viewFCsForFY")
 	public String viewFundingCyclesFromFiscalYear(@RequestParam("fyId") Long fyId, Model model) {
 		model.addAttribute("fcProjections", fcService.findFundingCyclesByFiscalYearId(fyId));
-		return "browse/viewFcFromFy";
+		return "browse/viewFundingCyclesForFiscalYear";
 	}
 
 	@GetMapping("/browse/viewCalendar")
@@ -90,9 +95,13 @@ public class FundingCycleController {
 
 	@GetMapping("/manage/createFC")
 	public String createFundingCycleGet(@RequestParam("foId") Long foId, Model model) throws AccessDeniedException {
-		if (!mrService.checkIfCurrentUserCanCreateUpdateDeleteFC(foId)) {
+		if (!mrService.checkIfCurrentUserCanCreateFC(foId)) {
 			throw new AccessDeniedException(
 					SecurityUtils.getCurrentUsername() + " cannot create a FundingCycle for FundingOpportunity id=" + foId);
+		}
+
+		if (!foService.checkIfFundingOpportunityExists(foId)) {
+			throw new DataRetrievalFailureException(Utility.returnNotFoundMsg("FundingOpportunity", foId));
 		}
 
 		model.addAttribute("foId", foId);
@@ -105,11 +114,6 @@ public class FundingCycleController {
 	@PostMapping("/manage/createFC")
 	public String createFundingCyclePost(@RequestParam("foId") Long foId, @Valid @ModelAttribute("fundingCycle") FundingCycle fc,
 			BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) throws AccessDeniedException {
-		if (!mrService.checkIfCurrentUserCanCreateUpdateDeleteFC(foId)) {
-			throw new AccessDeniedException(
-					SecurityUtils.getCurrentUsername() + " cannot create a FundingCycle for FundingOpportunity id=" + foId);
-		}
-
 		if (bindingResult.hasErrors()) {
 			model.addAttribute("fYrs", fyService.findAllFiscalYearProjectionsOrderByYear());
 			return "manage/createFundingCycle";
@@ -125,19 +129,11 @@ public class FundingCycleController {
 
 	@GetMapping("/manage/editFC")
 	public String editFundingCycleGet(@RequestParam("id") Long fcId, Model model) throws AccessDeniedException {
-		FundingCycle fc;
-		try {
-			fc = fcService.findFundingCycleById(fcId);
-		} catch (DataRetrievalFailureException drfe) {
-			throw new AccessDeniedException(SecurityUtils.getCurrentUsername()
-					+ " tried to access a FundingCycle that does not exist so that she/he could update it");
+		if (!mrService.checkIfCurrentUserCanUpdateDeleteFC(fcId)) {
+			throw new AccessDeniedException(SecurityUtils.getCurrentUsername() + " cannot update the FundingCycle id=" + fcId);
 		}
 
-		if (!mrService.checkIfCurrentUserCanCreateUpdateDeleteFC(fc.getId())) {
-			throw new AccessDeniedException(SecurityUtils.getCurrentUsername() + " cannot update the FundingCycle id=" + fc.getId());
-		}
-
-		model.addAttribute("fc", fc);
+		model.addAttribute("fc", fcService.findFundingCycleById(fcId));
 		model.addAttribute("fYrs", fyService.findAllFiscalYearProjectionsOrderByYear());
 
 		return "manage/editFundingCycle";
@@ -169,7 +165,7 @@ public class FundingCycleController {
 	@PostMapping("/manage/deleteFC")
 	public String deleteFundingCyclePost(@RequestParam("fcId") Long fcId, @RequestParam("foId") Long foId,
 			RedirectAttributes redirectAttributes) throws AccessDeniedException {
-		fcService.deleteFundingCycle(fcId);
+		fcService.deleteFundingCycleId(fcId);
 
 		String actionMsg = msgSource.getMessage("h.deletedFC", null, LocaleContextHolder.getLocale());
 		redirectAttributes.addFlashAttribute("actionMsg", actionMsg);

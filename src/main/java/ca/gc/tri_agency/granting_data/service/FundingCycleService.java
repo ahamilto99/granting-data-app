@@ -1,7 +1,6 @@
 package ca.gc.tri_agency.granting_data.service;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.security.access.AccessDeniedException;
@@ -19,27 +18,11 @@ public interface FundingCycleService {
 
 	List<FundingCycleProjection> findFundingCyclesByFiscalYearId(Long fyId);
 
-//	Map<String, List<FundingCycle>> findMonthlyFundingCyclesMapByDate(long plusMinusMonth);
-
-	List<FundingCycle> findMonthlyFundingCyclesByStartDate(int plusMinusMonth);
-
-	List<FundingCycle> findMonthlyFundingCyclesByEndDate(int plusMinusMonth);
-
-	List<FundingCycle> findMonthlyFundingCyclesByStartDateLOI(int plusMinusMonth);
-
-	List<FundingCycle> findMonthlyFundingCyclesByEndDateLOI(int plusMinusMonth);
-
-	List<FundingCycle> findMonthlyFundingCyclesByStartDateNOI(int plusMinusMonth);
-
-	List<FundingCycle> findMonthlyFundingCyclesByEndDateNOI(int plusMinusMonth);
-
 	FundingCycle saveFundingCycle(FundingCycle fc) throws AccessDeniedException;
-
-	Map<Long, FundingCycle> findFundingCyclesByFundingOpportunityMap();
 
 	List<FundingCycleProjection> findFCsForBrowseViewFO(Long foId);
 
-	void deleteFundingCycle(Long fcId) throws AccessDeniedException;
+	void deleteFundingCycleId(Long fcId) throws AccessDeniedException;
 
 	FundingCycleProjection findFundingCycleForConfirmDeleteFC(Long fcId) throws AccessDeniedException;
 

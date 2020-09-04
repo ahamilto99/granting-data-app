@@ -26,8 +26,9 @@
 
 					<form action="#" th:action="@{/manage/deleteGC}" th:object="${gc}" method="post">
 
-						<input type="hidden" th:field="*{id}" /> <input type="submit" class="btn btn-primary" th:value="#{form.delete}" /> <a
-							class="btn btn-link" th:href="@{/manage/manageFo(id=${gc.fundingOpportunity.id})}" th:text="#{msg.cancel}"></a>
+						<input type="hidden" th:field="*{id}" /> <input type="hidden" name="foId" th:value="${gc.fundingOpportunity.id}" /> <input type="submit"
+							class="btn btn-primary" th:value="#{form.delete}" /> <a class="btn btn-link"
+							th:href="@{/manage/manageFo(id=${gc.fundingOpportunity.id})}" th:text="#{msg.cancel}"></a>
 
 					</form>
 

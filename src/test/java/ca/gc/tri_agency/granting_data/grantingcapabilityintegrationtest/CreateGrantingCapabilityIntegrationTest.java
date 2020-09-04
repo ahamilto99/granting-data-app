@@ -92,7 +92,7 @@ public class CreateGrantingCapabilityIntegrationTest {
 				.param("description", description).param("url", url).param("fundingOpportunity", "1")
 				.param("grantingStage", "1").param("grantingSystem", "1"))
 				.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-				.andExpect(MockMvcResultMatchers.redirectedUrl("/browse/viewFo?id=1")).andExpect(MockMvcResultMatchers
+				.andExpect(MockMvcResultMatchers.redirectedUrl("/manage/manageFo?id=1")).andExpect(MockMvcResultMatchers
 						.flash().attribute("actionMsg", "Successfully Added New Granting Capability"));
 
 		mvc.perform(MockMvcRequestBuilders.get("/browse/viewFo").param("id", "1"))

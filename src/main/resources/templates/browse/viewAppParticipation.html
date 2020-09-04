@@ -82,7 +82,7 @@
 
 				<div class="form-group row">
 					<label class="col-sm-4 col-form-label" th:utext="#{form.dateCreated}"></label>
-					<div class="col-sm-8" th:text="${formattedCreatedDate}"></div>
+					<div class="col-sm-8" th:text="${#dates.format(#conversions.convert(ap.getCreatedDate(), 'java.sql.Date'), 'MMMM d, yyyy h:mm:ss a')}"></div>
 				</div>
 
 			</div>

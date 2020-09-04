@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -35,20 +36,13 @@ public class FundingOpportunity implements LocalizedParametersModel {
 	@NotBlank
 	private String nameFr;
 
-	@NotAudited
-	@ManyToMany
-	@JoinTable(name = "FUNDING_OPPORTUNITY_PARTICIPATING_AGENCIES", 
-		joinColumns = @JoinColumn(name = "funding_opportunity_id"), 
-		inverseJoinColumns = @JoinColumn(name = "participating_agency_id"))
-	private Set<Agency> participatingAgencies;
-
 	private String fundingType; // could be dropped
 
 	private String frequency;
 
 	private Boolean isJointInitiative = false;
 
-	public Boolean isNOI = false;
+	private Boolean isNOI = false;
 
 	private Boolean isLOI = false;
 
@@ -58,13 +52,16 @@ public class FundingOpportunity implements LocalizedParametersModel {
 
 	private Boolean isComplex = false;
 
-	@ManyToOne(optional = true)
+	@ManyToOne(optional = true, fetch = FetchType.LAZY)
 	@JoinColumn(name = "business_unit_id")
 	private BusinessUnit businessUnit;
-
-	public FundingOpportunity() {
-		setParticipatingAgencies(new HashSet<Agency>());
-	}
+	
+	@NotAudited
+	@ManyToMany
+	@JoinTable(name = "FUNDING_OPPORTUNITY_PARTICIPATING_AGENCIES", 
+		joinColumns = @JoinColumn(name = "funding_opportunity_id"), 
+		inverseJoinColumns = @JoinColumn(name = "participating_agency_id"))
+	private Set<Agency> participatingAgencies = new HashSet<>();
 
 	public void loadFromForm(FundingOpportunity f) {
 		this.setFundingType(f.getFundingType());
@@ -201,4 +198,51 @@ public class FundingOpportunity implements LocalizedParametersModel {
 		}
 	}
 	
+	@Override
+	public int hashCode() {
+		return 2020;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		
+		if (obj == null || getClass() != obj.getClass()) { 
+			return false;
+		}
+		
+		return id != null && id.equals(((FundingOpportunity) obj).getId());
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("FundingOpportunity [id=");
+		builder.append(id);
+		builder.append(", nameEn=");
+		builder.append(nameEn);
+		builder.append(", nameFr=");
+		builder.append(nameFr);
+		builder.append(", fundingType=");
+		builder.append(fundingType);
+		builder.append(", frequency=");
+		builder.append(frequency);
+		builder.append(", isJointInitiative=");
+		builder.append(isJointInitiative);
+		builder.append(", isNOI=");
+		builder.append(isNOI);
+		builder.append(", isLOI=");
+		builder.append(isLOI);
+		builder.append(", partnerOrg=");
+		builder.append(partnerOrg);
+		builder.append(", isEdiRequired=");
+		builder.append(isEdiRequired);
+		builder.append(", isComplex=");
+		builder.append(isComplex);
+		builder.append("]");
+		return builder.toString();
+	}
+
 }

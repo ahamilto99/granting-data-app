@@ -19,17 +19,19 @@
 		<div class="panel panel-default">
 
 			<div class="panel-body">
-			
-			<p th:if="${actionMsg != null}" th:utext="${actionMsg}" style="font-weight: bold;"></p>
+
+				<div class="form-group" th:if="${actionMsg != null}">
+					<h4 th:utext="${actionMsg}" style="margin-bottom: 40px;"></h4>
+				</div>
 
 				<div class="form-group row">
 					<label class="col-sm-2 col-form-label" th:text="#{form.name}"></label>
-					<div class="col-sm-10" th:text="${agency.getLocalizedAttribute('name')}"></div>
+					<div class="col-sm-10" th:text="${#locale.language eq 'fr' ? agency.getNameFr() : agency.getNameEn()}"></div>
 				</div>
 
 				<div class="form-group row">
 					<label class="col-sm-2 col-form-label" th:text="#{form.acronym}"></label>
-					<div class="col-sm-10" th:text="${agency.getLocalizedAttribute('acronym')}"></div>
+					<div class="col-sm-10" th:text="${#locale.language eq 'fr' ? agency.getAcronymFr() : agency.getAcronymEn()}"></div>
 				</div>
 
 				<div class="form-group">
@@ -48,11 +50,11 @@
 					</thead>
 					<tbody>
 						<tr th:each="fo : ${agencyFos}">
-							<td><a th:href="@{'/browse/viewFo'(id=${fo.id})}" th:text="${fo.getLocalizedAttribute('name')}"></a></td>
-							<td th:text="${fo.businessUnit.getLocalizedAttribute('name')}"></td>
-							<td th:text="${fo.fundingType}"></td>
-							<td th:text="${fo.frequency}"></td>
-							<td th:text="${fo.isJointInitiative}"></td>
+							<td><a th:href="@{'/browse/viewFo'(id=${fo.getFoId()})}" th:text="${#locale.language eq 'fr' ? fo.getFoNameFr() : fo.getFoNameEn()}"></a></td>
+							<td th:text="${#locale.language eq 'fr' ? fo.getBuNameFr() : fo.getBuNameEn()}"></td>
+							<td th:text="${fo.getFoFundingType()}"></td>
+							<td th:text="${fo.getFoFrequency()}"></td>
+							<td th:text="${fo.getFoIsJointInitiative()}"></td>
 						</tr>
 					</tbody>
 				</table>
@@ -70,14 +72,15 @@
 					</thead>
 					<tbody>
 						<tr th:each="bu : ${agencyBUs}">
-							<td><a th:href="@{'/browse/viewBU'(id=${bu.id})}" id="viewBULink" th:text="${bu.getLocalizedAttribute('name')}"></a></td>
-							<td th:text="${bu.getLocalizedAttribute('acronym')}"></td>
+							<td><a th:href="@{'/browse/viewBU'(id=${bu.getBuId()})}" id="viewBULink"
+								th:text="${#locale.language eq 'fr' ? bu.getBuNameFr() : bu.getBuNameEn()}"></a></td>
+							<td th:text="${#locale.language eq 'fr' ? bu.getBuAcronymFr() : bu.getBuAcronymEn()}"></td>
 						</tr>
 					</tbody>
 				</table>
 
 				<a sec:authorize="hasRole('MDM ADMIN')" id="createBusinessUnit" class="btn btn-primary"
-					th:href="@{'/admin/createBU'(agencyId=${agency.id})}" th:text="#{link.createBusinessUnit}"></a>
+					th:href="@{'/admin/createBU'(agencyId=${agency.getId()})}" th:text="#{link.createBusinessUnit}"></a>
 			</div>
 
 			<div th:insert="fragments/general :: returnHome"></div>

@@ -52,15 +52,15 @@
 
 						<div class="form-group">
 							<label for="agency"><span class="field-name" th:text="#{form.agency}"></span></label> <label
-								th:text="${bu.agency.getLocalizedAttribute('name')}" class="form-control" id="agency"
+								th:text="${#locale.language eq 'fr' ? agency.getNameFr() : agency.getNameEn()}" class="form-control" id="agency"
 								style="border: none; -webkit-box-shadow: none; box-shadow: none;"></label>
 						</div>
 
-						<input hidden="true" th:field="*{agency}">
+						<input hidden="true" name="agency" th:value="${agency.getId()}">
 
 						<div>
 							<input th:type="submit" class="btn btn-primary" role="button" th:value="#{input.submit}" /> <a class="btn btn-link"
-								th:href="@{/browse/viewAgency(id=${bu.agency.id})}" th:text="#{msg.cancel}"></a>
+								th:href="@{/browse/viewAgency(id=${agency.getId()})}" th:text="#{msg.cancel}"></a>
 						</div>
 
 					</form>

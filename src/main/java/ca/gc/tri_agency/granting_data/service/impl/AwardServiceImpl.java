@@ -6,12 +6,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ca.gc.tri_agency.granting_data.model.ApplicationParticipation;
 import ca.gc.tri_agency.granting_data.model.Award;
+import ca.gc.tri_agency.granting_data.model.projection.AwardProjection;
 import ca.gc.tri_agency.granting_data.repo.AwardRepository;
 import ca.gc.tri_agency.granting_data.security.SecurityUtils;
 import ca.gc.tri_agency.granting_data.service.ApplicationParticipationService;
@@ -30,16 +30,6 @@ public class AwardServiceImpl implements AwardService {
 	public AwardServiceImpl(AwardRepository awardRepo, ApplicationParticipationService appPartService) {
 		this.awardRepo = awardRepo;
 		this.appPartService = appPartService;
-	}
-
-	@Override
-	public Award findAwardById(Long awardId) {
-		return awardRepo.findById(awardId).orElseThrow(() -> new DataRetrievalFailureException("That Award does not exist"));
-	}
-
-	@Override
-	public List<Award> findAllAwards() {
-		return awardRepo.findAll();
 	}
 
 	// The List<ApplicationParticipation> returned by ApplicationParticipationService's
@@ -65,10 +55,10 @@ public class AwardServiceImpl implements AwardService {
 				.filter((ApplicationParticipation appPart) -> appPart.getRoleEn() != null
 						&& appPart.getRoleEn().equals(MAIN_APPLICANT))
 				.limit((long) (percentageOfMainApplicants / 100.0 * appParts.size()))
-				.map((ApplicationParticipation appPart) -> new Award(sRand.nextDouble() * 100_000,
-						sRand.nextInt(5) + 2017L, appPart.getApplId(), appPart.getFamilyName(),
-						appPart.getGivenName(), appPart.getRoleCode(), appPart.getRoleEn(),
-						appPart.getRoleFr(), appPart.getProgramId(), appPart.getProgramEn(), appPart.getProgramFr()))
+				.map((ApplicationParticipation appPart) -> new Award(sRand.nextDouble() * 100_000, sRand.nextInt(5) + 2017L,
+						appPart.getApplId(), appPart.getFamilyName(), appPart.getGivenName(), appPart.getRoleCode(),
+						appPart.getRoleEn(), appPart.getRoleFr(), appPart.getProgramId(), appPart.getProgramEn(),
+						appPart.getProgramFr()))
 				.collect(Collectors.toList());
 
 		testAwards.forEach(award -> award.setRequestedAmount((sRand.nextDouble() + 1.0) * award.getAwardedAmount()));
@@ -79,7 +69,10 @@ public class AwardServiceImpl implements AwardService {
 	}
 
 	@Override
-	public List<Award> findAllAwardsForCurrentUser() {
+	public List<AwardProjection> findAwardsForCurrentUser() {
+		if (SecurityUtils.isCurrentUserAdmin()) {
+			return awardRepo.findAllAdminOnly();
+		}
 		return awardRepo.findForCurrentUser(SecurityUtils.getCurrentUsername());
 	}
 

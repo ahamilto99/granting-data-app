@@ -6,11 +6,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import ca.gc.tri_agency.granting_data.model.SystemFundingCycle;
 import ca.gc.tri_agency.granting_data.model.projection.SystemFundingCycleProjection;
 
 @Repository
+@Transactional(readOnly = true)
 public interface SystemFundingCycleRepository extends JpaRepository<SystemFundingCycle, Long> {
 	
 	List<SystemFundingCycle> findBySystemFundingOpportunityId(Long id);
@@ -22,4 +24,7 @@ public interface SystemFundingCycleRepository extends JpaRepository<SystemFundin
 			+ " JOIN FundingOpportunity fo ON sfo.linkedFundingOpportunity.id = fo.id"
 			+ " WHERE fo.id = :foId")
 	List<SystemFundingCycleProjection> findForBrowseViewFO(@Param("foId") Long foId);
+	
+	@Query("SELECT extId AS extId FROM SystemFundingCycle")
+	List<SystemFundingCycleProjection> findAllExtIds();
 }

@@ -11,11 +11,14 @@ import ca.gc.tri_agency.granting_data.model.SystemFundingCycle;
 import ca.gc.tri_agency.granting_data.model.SystemFundingOpportunity;
 import ca.gc.tri_agency.granting_data.model.file.FundingCycleDatasetRow;
 import ca.gc.tri_agency.granting_data.model.projection.SystemFundingCycleProjection;
+import ca.gc.tri_agency.granting_data.model.util.Utility;
 import ca.gc.tri_agency.granting_data.repo.SystemFundingCycleRepository;
 import ca.gc.tri_agency.granting_data.service.SystemFundingCycleService;
 
 @Service
 public class SystemFundingCycleServiceImpl implements SystemFundingCycleService {
+	
+	private static final String ENTITY_TYPE = "SystemFundingCycle";
 
 	private SystemFundingCycleRepository sfcRepo;
 
@@ -26,12 +29,12 @@ public class SystemFundingCycleServiceImpl implements SystemFundingCycleService 
 
 	@Override
 	public SystemFundingCycle findSystemFundingCycleById(Long id) {
-		return sfcRepo.findById(id).orElseThrow(() -> new DataRetrievalFailureException("That System Funding Cycle does not exist"));
+		return sfcRepo.findById(id).orElseThrow(() -> new DataRetrievalFailureException(Utility.returnNotFoundMsg(ENTITY_TYPE, id)));
 	}
 
 	@Override
-	public List<SystemFundingCycle> findAllSystemFundingCycles() {
-		return sfcRepo.findAll();
+	public List<SystemFundingCycleProjection> findAllSystemFundingCycleExtIds() {
+		return sfcRepo.findAllExtIds();
 	}
 
 	@Override

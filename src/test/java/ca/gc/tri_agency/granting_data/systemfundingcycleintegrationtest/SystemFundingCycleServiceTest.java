@@ -1,11 +1,12 @@
 package ca.gc.tri_agency.granting_data.systemfundingcycleintegrationtest;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import org.junit.jupiter.api.Test;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataRetrievalFailureException;
@@ -34,10 +35,11 @@ public class SystemFundingCycleServiceTest {
 		assertThrows(DataRetrievalFailureException.class, () -> sfcService.findSystemFundingCycleById(Long.MAX_VALUE));
 	}
 
+	@Tag("user_story_14589")
 	@WithAnonymousUser
 	@Test
-	public void test_findAllSystemFundingCycles() {
-		assertTrue(0 < sfcService.findAllSystemFundingCycles().size());
+	public void test_findAllSystemFundingCycleExtIds() {
+		assertEquals(10, sfcService.findAllSystemFundingCycleExtIds().size());
 	}
 
 	@WithAnonymousUser

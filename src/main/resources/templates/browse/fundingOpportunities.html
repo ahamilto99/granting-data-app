@@ -20,6 +20,10 @@
 
 			<div class="panel-body">
 
+				<div class="form-group" th:if="${actionMsg != null}">
+					<h4 th:utext="${actionMsg}" style="margin-bottom: 40px;"></h4>
+				</div>
+
 				<p th:text="#{intro.fundingOpportunities}"></p>
 
 				<div class="col-md-3">
@@ -85,8 +89,7 @@
 
 						<tbody>
 							<tr th:each="fo : ${fundingOpportunities}">
-								<td><a th:href="@{viewFo(id=${fo[0]})}">
-								<span th:text="${#locale.language eq 'fr' ? fo[2] : fo[1]}"></span></a></td>
+								<td><a th:href="@{viewFo(id=${fo[0]})}"> <span th:text="${#locale.language eq 'fr' ? fo[2] : fo[1]}"></span></a></td>
 								<td><span th:text="${#locale.language eq 'fr' ? fo[4] : fo[3]}"></span></td>
 								<td><span th:text="${fo[5]}"></span></td>
 								<td><span th:text="${fo[6]}"></span></td>
@@ -113,42 +116,51 @@
 	</main>
 
 	<footer th:replace="fragments/general.html :: footer(~{})"></footer>
-	
-	<script type="text/javascript">
 
+	<script type="text/javascript">
 		function filterTable(colNum, optSelected) {
-			var dTable = $('#fundingOpportunitiesTable').DataTable();
-			if (optSelected !== 'All' && optSelected !== "Tous") {
-				dTable
-					.column(colNum)
-					.search('(^|\\s)' + optSelected + '($|\\s)', true)
-					.draw();
-			};	
-		};
-		
-		function resetTableFilters() {
-			var dTable = $('#fundingOpportunitiesTable').DataTable();
-			dTable
-		 		.columns([1, 2, 3])
-		 		.search('.*', true)
-		 		.draw();
-		};
-	
-		$(function(){
-	
-			 $("#filterBtn").click(function(){
-					resetTableFilters();				 	
-				 
-					filterTable(1, document.getElementById("dt_division").value);
-					filterTable(2, document.getElementById("dt_applySystem").value);
-					filterTable(3, document.getElementById("dt_awardSystem").value);
-			}); 
-			 
-			$("#resetBtn").click(function() {
-				resetTableFilters();
-			}); 
-		});
-	
+	                var dTable = $('#fundingOpportunitiesTable')
+	                                .DataTable();
+	                if (optSelected !== 'All' && optSelected !== "Tous") {
+		                dTable.column(colNum).search(
+		                                '(^|\\s)' + optSelected
+		                                                + '($|\\s)',
+		                                true).draw();
+	                }
+	                ;
+                };
+
+                function resetTableFilters() {
+	                var dTable = $('#fundingOpportunitiesTable')
+	                                .DataTable();
+	                dTable.columns([ 1, 2, 3 ]).search('.*', true).draw();
+                };
+
+                $(function() {
+
+	                $("#filterBtn")
+	                                .click(
+	                                                function() {
+		                                                resetTableFilters();
+
+		                                                filterTable(
+		                                                                1,
+		                                                                document
+		                                                                                .getElementById("dt_division").value);
+		                                                filterTable(
+		                                                                2,
+		                                                                document
+		                                                                                .getElementById("dt_applySystem").value);
+		                                                filterTable(
+		                                                                3,
+		                                                                document
+		                                                                                .getElementById("dt_awardSystem").value);
+	                                                });
+
+	                $("#resetBtn").click(function() {
+		                resetTableFilters();
+	                });
+                });
 	</script>
 
 </body>
