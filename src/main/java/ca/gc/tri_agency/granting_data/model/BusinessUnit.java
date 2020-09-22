@@ -37,6 +37,9 @@ public class BusinessUnit implements LocalizedParametersModel {
 	@NotBlank
 	private String acronymFr;
 
+	// email address
+	private String distribution;
+
 	@NotAudited
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "agency_id")
@@ -46,12 +49,13 @@ public class BusinessUnit implements LocalizedParametersModel {
 	public BusinessUnit() {
 	}
 
-	public BusinessUnit(String nameEn, String nameFr, String acronymEn, String acronymFr, Agency agency) {
+	public BusinessUnit(String nameEn, String nameFr, String acronymEn, String acronymFr, String distribution, Agency agency) {
 		this.nameEn = nameEn;
 		this.nameFr = nameFr;
 		this.acronymEn = acronymEn;
 		this.acronymFr = acronymFr;
 		this.agency = agency;
+		this.distribution = distribution;
 	}
 
 	public String getNameEn() {
@@ -102,6 +106,14 @@ public class BusinessUnit implements LocalizedParametersModel {
 		return id;
 	}
 
+	public String getDistribution() {
+		return distribution;
+	}
+
+	public void setDistribution(String distribution) {
+		this.distribution = distribution;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -115,6 +127,8 @@ public class BusinessUnit implements LocalizedParametersModel {
 		builder.append(acronymEn);
 		builder.append(", acronymFr=");
 		builder.append(acronymFr);
+		builder.append(", distribution=");
+		builder.append(distribution);
 		builder.append("]");
 		return builder.toString();
 	}
