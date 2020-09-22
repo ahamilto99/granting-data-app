@@ -545,5 +545,13 @@
             <column name="program_name_fr" type="VARCHAR(255)"/>
         </addColumn>
     </changeSet>
+    <changeSet id="0000000000054" author="dev_aha">
+        <addColumn tableName="business_unit">
+            <column name="distribution" type="VARCHAR(255)"/>
+        </addColumn>
+        <addColumn tableName="business_unit_history">
+            <column name="distribution" type="VARCHAR(255)"/>
+        </addColumn>
+    </changeSet>
     
 </databaseChangeLog>

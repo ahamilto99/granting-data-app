@@ -12,6 +12,8 @@ public interface BusinessUnitProjection {
 	
 	String getAcronymFr();
 	
+	String getDistribution();
+	
 	Long getAgencyId();
 	
 	String getAgencyEn();

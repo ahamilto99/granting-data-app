@@ -1,6 +1,6 @@
 package ca.gc.tri_agency.granting_data.businessunitintegrationtest;
 
-import org.hamcrest.CoreMatchers;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,15 +35,15 @@ public class BrowseBusinessUnitsIntegrationTest {
 	public void test_viewBULinkVisibleOnViewAgencyPage_shouldSucceedWith200() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/browse/viewAgency").param("id", "1"))
 				.andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.content().string(CoreMatchers.containsString("id=\"viewBULink\"")));
+				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("id=\"viewBULink\"")));
 	}
 
 	@WithAnonymousUser
 	@Test
 	public void test_anonUserCanAccessViewBUPage_shouldSucceedWith200() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get("/browse/viewBU").param("id", "1"))
-				.andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.content().string(CoreMatchers.containsString("id=\"viewBUPage\"")));
+		mvc.perform(MockMvcRequestBuilders.get("/browse/viewBU").param("id", "1")).andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("id=\"viewBUPage\"")))
+				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("rpp@nserc-crsng.gc.ca")));
 	}
 
 }

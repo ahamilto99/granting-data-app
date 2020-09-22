@@ -48,7 +48,8 @@ public class BusinessUnitServiceTest {
 		long initBuCount = buRepo.count();
 
 		Agency agency = agencyService.findAllAgencies().get(0);
-		BusinessUnit bu = new BusinessUnit("EN NAME TEST", "FR NAME TEST", "EN ACRONYM TEST", "FR ACRONYM TEST", agency);
+		BusinessUnit bu = new BusinessUnit("EN NAME TEST", "FR NAME TEST", "EN ACRONYM TEST", "FR ACRONYM TEST", "TEST@EMAIL.COM",
+				agency);
 		buService.saveBusinessUnit(bu);
 
 		assertEquals(initBuCount + 1, buRepo.count());
@@ -58,7 +59,7 @@ public class BusinessUnitServiceTest {
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotCreateBU_shouldthrowAccessDeniedException() {
-		BusinessUnit bu = new BusinessUnit("EN NAME TEST", "FR NAME TEST", "EN ACRONYM TEST", "FR ACRONYM TEST",
+		BusinessUnit bu = new BusinessUnit("EN NAME TEST", "FR NAME TEST", "EN ACRONYM TEST", "FR ACRONYM TEST", "TEST@EMAIL.COM",
 				agencyService.findAgencyById(1L));
 		assertThrows(AccessDeniedException.class, () -> buService.saveBusinessUnit(bu));
 	}
@@ -73,7 +74,7 @@ public class BusinessUnitServiceTest {
 
 		bu.setNameEn(RandomStringUtils.randomAlphabetic(20));
 		bu = buService.saveBusinessUnit(bu);
-		
+
 		assertEquals(initBuRepoCount, buRepo.count());
 		assertNotEquals(nameBefore, bu.getNameEn());
 	}

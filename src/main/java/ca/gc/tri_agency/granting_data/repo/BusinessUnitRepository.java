@@ -23,8 +23,9 @@ public interface BusinessUnitRepository extends JpaRepository<BusinessUnit, Long
 	Optional<BusinessUnitProjection> findName(@Param("buId") Long buId);
 
 	@Query("SELECT bu.id AS id, bu.nameEn AS nameEn, bu.nameFr AS nameFr, bu.acronymEn AS acronymEn, bu.acronymFr AS acronymFr,"
-			+ " a.id AS agencyId, a.nameEn AS agencyEn, a.nameFr AS agencyFr, mr.id AS memRoleId, mr.userLogin AS memRoleLogin,"
-			+ " mr.ediAuthorized AS memRoleEdiAuthorized, r.nameEn AS memRoleEn, r.nameFr AS memRoleFr"
+			+ " bu.distribution AS distribution, a.id AS agencyId, a.nameEn AS agencyEn, a.nameFr AS agencyFr, mr.id AS memRoleId,"
+			+ " mr.userLogin AS memRoleLogin, mr.ediAuthorized AS memRoleEdiAuthorized, r.nameEn AS memRoleEn,"
+			+ " r.nameFr AS memRoleFr"
 			+ " FROM BusinessUnit bu"
 			+ " LEFT JOIN Agency a ON bu.agency.id = a.id"
 			+ " LEFT JOIN MemberRole mr ON bu.id = mr.businessUnit.id"

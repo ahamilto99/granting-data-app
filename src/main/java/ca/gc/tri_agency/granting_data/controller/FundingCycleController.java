@@ -74,21 +74,28 @@ public class FundingCycleController {
 		model.addAttribute("startDates", fcProjections.stream()
 				.filter(fc -> fc.getStartDate().isAfter(startDisplayRange) && fc.getStartDate().isBefore(endDisplayRange))
 				.sorted(Comparator.comparing(FundingCycleProjection::getStartDate)).collect(Collectors.toList()));
-		model.addAttribute("endDates", fcProjections.stream()
-				.filter(fc -> fc.getEndDate().isAfter(startDisplayRange) && fc.getEndDate().isBefore(endDisplayRange))
-				.sorted(Comparator.comparing(FundingCycleProjection::getEndDate)).collect(Collectors.toList()));
+		model.addAttribute("endDates",
+				fcProjections.stream()
+						.filter(fc -> fc.getEndDate() != null && fc.getEndDate().isAfter(startDisplayRange)
+								&& fc.getEndDate().isBefore(endDisplayRange))
+						.sorted(Comparator.comparing(FundingCycleProjection::getEndDate)).collect(Collectors.toList()));
 		model.addAttribute("startNOIDates", fcProjections.stream()
-				.filter(fc -> fc.getStartDateNOI().isAfter(startDisplayRange) && fc.getStartDateNOI().isBefore(endDisplayRange))
+				.filter(fc -> fc.getStartDateNOI() != null && fc.getStartDateNOI().isAfter(startDisplayRange)
+						&& fc.getStartDateNOI().isBefore(endDisplayRange))
 				.sorted(Comparator.comparing(FundingCycleProjection::getStartDateNOI)).collect(Collectors.toList()));
 		model.addAttribute("endNOIDates", fcProjections.stream()
-				.filter(fc -> fc.getEndDateNOI().isAfter(startDisplayRange) && fc.getEndDateNOI().isBefore(endDisplayRange))
+				.filter(fc -> fc.getEndDateNOI() != null && fc.getEndDateNOI().isAfter(startDisplayRange)
+						&& fc.getEndDateNOI().isBefore(endDisplayRange))
 				.sorted(Comparator.comparing(FundingCycleProjection::getEndDateNOI)).collect(Collectors.toList()));
 		model.addAttribute("startLOIDates", fcProjections.stream()
-				.filter(fc -> fc.getStartDateLOI().isAfter(startDisplayRange) && fc.getStartDateLOI().isBefore(endDisplayRange))
+				.filter(fc -> fc.getStartDateLOI() != null && fc.getStartDateLOI().isAfter(startDisplayRange)
+						&& fc.getStartDateLOI().isBefore(endDisplayRange))
 				.sorted(Comparator.comparing(FundingCycleProjection::getStartDateLOI)).collect(Collectors.toList()));
-		model.addAttribute("endLOIDates", fcProjections.stream()
-				.filter(fc -> fc.getEndDateLOI().isAfter(startDisplayRange) && fc.getEndDateLOI().isBefore(endDisplayRange))
-				.sorted(Comparator.comparing(FundingCycleProjection::getEndDate)).collect(Collectors.toList()));
+		model.addAttribute("endLOIDates",
+				fcProjections.stream()
+						.filter(fc -> fc.getEndDateLOI() != null && fc.getEndDateLOI().isAfter(startDisplayRange)
+								&& fc.getEndDateLOI().isBefore(endDisplayRange))
+						.sorted(Comparator.comparing(FundingCycleProjection::getEndDate)).collect(Collectors.toList()));
 
 		return "browse/viewCalendar";
 	}
