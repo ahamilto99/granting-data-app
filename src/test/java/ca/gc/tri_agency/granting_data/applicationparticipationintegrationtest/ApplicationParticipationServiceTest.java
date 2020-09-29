@@ -123,7 +123,7 @@ public class ApplicationParticipationServiceTest {
 
 		assertEquals(initApRepoCount + 1L, apRepo.count());
 		assertEquals(appIdentifier, savedAp.getApplicationIdentifier());
-		assertEquals(currentTimestamp, savedAp.getCreateDate());
+		assertEquals(currentTimestamp.getEpochSecond(), savedAp.getCreateDate().getEpochSecond());
 		assertEquals(1L, savedAp.getGender().getId());
 
 	}
