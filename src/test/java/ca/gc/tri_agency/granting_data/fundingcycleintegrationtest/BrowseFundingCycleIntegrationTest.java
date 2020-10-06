@@ -41,7 +41,7 @@ public class BrowseFundingCycleIntegrationTest {
 	public void test_anonUserCanAccessViewCalendarPage_shouldSucceedWith200() throws Exception {
 		Pattern startDateNoiRegex = Pattern.compile("class=\"cihr endDate\"");
 
-		String response = mvc.perform(MockMvcRequestBuilders.get("/browse/viewCalendar").param("plusMinusMonth", "5"))
+		String response = mvc.perform(MockMvcRequestBuilders.get("/browse/viewCalendar").param("plusMinusMonth", "3"))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.content()
 						.string(Matchers.containsString("id=\"viewFundingCycleCalendarPage\"")))
