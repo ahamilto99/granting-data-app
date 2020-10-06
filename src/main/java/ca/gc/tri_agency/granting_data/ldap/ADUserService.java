@@ -83,7 +83,7 @@ public class ADUserService {
 		try {
 			dn = ldapTemplateNSERC.findOne(findByUidQuery, ADUser.class).getDn().toString();
 		} catch (EmptyResultDataAccessException erdae) {
-			LOG.info("No NSERC user has uid=" + userLogin);
+			LOG.info("No NSERC user has sAMAccountName=" + userLogin);
 
 		}
 
@@ -91,7 +91,7 @@ public class ADUserService {
 			try {
 				dn = ldapTemplateSSHRC.findOne(findByUidQuery, ADUser.class).getDn().toString();
 			} catch (EmptyResultDataAccessException erdae) {
-				LOG.info("No SSHRC user has uid=" + userLogin);
+				LOG.info("No SSHRC user has sAMAccountName=" + userLogin);
 			}
 		}
 

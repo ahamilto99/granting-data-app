@@ -17,6 +17,9 @@
 		<div class="panel-body">
 
 			<div th:if="${param.error}" th:text="#{err.invalidLogin}"></div>
+			
+			<div th:if="${param.logout}" th:text="#{msg.loggedOut}"></div>
+			
 			<div th:if="${logout}" th:text="#{msg.loggedOut}"></div>
 			
 			<form th:action="@{/login}" method="post">

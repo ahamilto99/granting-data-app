@@ -49,39 +49,43 @@ public class WebSecurityConfig {
 	private String ldapUserDnPatternSSHRC;
 
 	@Bean
+	@Profile("dev")
 	public LdapContextSource contextSourceNSERC() {
 		LdapContextSource contextSource = new LdapContextSource();
 		contextSource.setUrl(ldapUrlNSERC);
 		contextSource.setBase(ldapBaseDnNSERC);
-
-		/*
-		 * In dev, we need to figure out how to query the AD servers either anonymously (current implementation does not work)
-		 * or else we will need a read-only account
-		 */
-//		if (SecurityUtils.getLdapUser() != null) {
-//			contextSource.setUserDn("");
-//			contextSource.setPassword("");
-//		}
-
+		contextSource.setUserDn("CN=MDMService,CN=Managed Service Accounts,DC=nserc,DC=ca");
+		contextSource.setPassword("Password1");
+		return contextSource;
+	}
+	
+	@Bean(name = "contextSourceNSERC")
+	@Profile({ "local", "test"})
+	public LdapContextSource contextSourceNSERCLocalAndTest() {
+		LdapContextSource contextSource = new LdapContextSource();
+		contextSource.setUrl(ldapUrlNSERC);
+		contextSource.setBase(ldapBaseDnNSERC);
 		contextSource.setAnonymousReadOnly(true);
 		return contextSource;
 	}
 
 	@Bean
+	@Profile("dev")
 	public LdapContextSource contextSourceSSHRC() {
 		LdapContextSource contextSource = new LdapContextSource();
 		contextSource.setUrl(ldapUrlSSHRC);
 		contextSource.setBase(ldapBaseDnSSHRC);
-
-		/*
-		 * In dev, we need to figure out how to query the AD servers anonymously (current implementation does not work)
-		 * or else we will need a read-only account
-		 */
-//		if (SecurityUtils.getLdapUser() != null) {
-//			contextSource.setUserDn("");
-//			contextSource.setPassword("");
-//		}
-
+		contextSource.setUserDn("CN=MDMService,CN=Managed Service Accounts,DC=nserc,DC=ca");
+		contextSource.setPassword("Password1");
+		return contextSource;
+	}
+	
+	@Bean(name = "contextSourceSSHRC")
+	@Profile({ "local", "test" })
+	public LdapContextSource contextSourceSSHRCLocalAndTest() {
+		LdapContextSource contextSource = new LdapContextSource();
+		contextSource.setUrl(ldapUrlSSHRC);
+		contextSource.setBase(ldapBaseDnSSHRC);
 		contextSource.setAnonymousReadOnly(true);
 		return contextSource;
 	}
@@ -153,7 +157,7 @@ public class WebSecurityConfig {
 							"/_WET_4-0/**")
 					.permitAll().and().authorizeRequests().antMatchers("/entities/**", "/reports/**")
 					.hasAnyRole("NSERC_USER", "SSHRC_USER", "AGENCY_USER").anyRequest().authenticated().and().formLogin()
-					.loginPage("/login").permitAll().and().logout().permitAll().and().exceptionHandling()
+					.loginPage("/login").permitAll().and().logout().logoutUrl("/logout").permitAll().and().exceptionHandling()
 					.accessDeniedPage("/exception/forbidden-by-role").and().headers().frameOptions().disable().and().csrf()
 					.disable();
 		}
