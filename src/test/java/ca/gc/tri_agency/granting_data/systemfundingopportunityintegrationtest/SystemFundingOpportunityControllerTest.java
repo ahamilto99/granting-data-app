@@ -215,7 +215,7 @@ public class SystemFundingOpportunityControllerTest {
 		}
 
 		assertEquals(1, numAdds);
-		assertTrue(response.contains("<h3>Audit Log</h3>"));
+		assertTrue(response.contains("<span>Audit Log</span>"));
 	}
 
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
