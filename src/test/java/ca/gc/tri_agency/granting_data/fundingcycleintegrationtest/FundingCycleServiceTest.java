@@ -254,7 +254,7 @@ public class FundingCycleServiceTest {
 	@WithAnonymousUser
 	@Test
 	public void test_findFCsForCalendar() {
-		List<FundingCycleProjection> fcProjections = fcService.findFundingCyclesForCalendar(2);
+		List<FundingCycleProjection> fcProjections = fcService.findFundingCyclesForCalendar(1);
 
 		assertEquals(1, fcProjections.size(), "At the beginning of every month, we have to adjust the plusMinusMonth request"
 				+ " param so that it corresponds to November 2020 which has 1 FundingCycle.");

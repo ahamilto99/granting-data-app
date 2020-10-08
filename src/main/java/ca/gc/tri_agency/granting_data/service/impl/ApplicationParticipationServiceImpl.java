@@ -578,10 +578,6 @@ public class ApplicationParticipationServiceImpl implements ApplicationParticipa
 	@Override
 	public Long[] findAppPartEdiDataForBu(Long buId) {
 		Tuple ediTuple = appParticipationRepo.findEdiDataForBU(buId);
-		
-		System.out.printf("%n%n%n%d %d %d %d %d%n%n%n", (Long) ediTuple.get("numDisableds"),
-				(Long) ediTuple.get("numFemales"), (Long) ediTuple.get("numMales"), (Long) ediTuple.get("numNonBinaries"),
-				(Long) ediTuple.get("numApps"));
 
 		return new Long[] { (Long) appParticipationRepo.findIndigenousCountForBU(buId).get("total"),
 				(Long) appParticipationRepo.findMinorityCountForBU(buId).get("total"), (Long) ediTuple.get("numDisableds"),
