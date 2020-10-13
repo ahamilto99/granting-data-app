@@ -176,13 +176,16 @@ public class AdminControllerIntegrationTest {
 				MockMvcResultMatchers.content().string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
 	}
 
+	@Tag("user_story_19279")
 	@WithMockUser(username = "admin", roles = "MDM ADMIN")
 	@Test
 	public void test_adminCanAccessAuditLogForAllFundingOpportunites_shouldSucceedWith200() throws Exception {
+		long numFOs = foRepo.count();
+
 		String response = mvc.perform(MockMvcRequestBuilders.get("/admin/auditLogFO"))
 				.andExpect(MockMvcResultMatchers.status().isOk()).andReturn().getResponse().getContentAsString();
 
-		int numAdds = 0;
+		long numAdds = 0;
 
 		Pattern regex = Pattern.compile("<td>ADD</td>");
 		Matcher regexMatcher = regex.matcher(response);
@@ -191,9 +194,10 @@ public class AdminControllerIntegrationTest {
 		}
 
 		assertTrue(response.contains("id=\"fundingOpportunityAuditLogPage\""));
-		assertTrue(numAdds >= 141);
+		assertEquals(numFOs, numAdds);
 	}
 
+	@Tag("user_story_19279")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotAccessAuditLogForAllFundingOpportunities_shouldReturn403() throws Exception {
@@ -202,6 +206,7 @@ public class AdminControllerIntegrationTest {
 						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
 	}
 
+	@Tag("user_story_19279")
 	@WithMockUser(username = "admin", roles = "MDM ADMIN")
 	@Test
 	public void test_adminCanAccessAuditLogForOneFundingOpportunity_shouldSucceedWith200() throws Exception {
@@ -220,6 +225,7 @@ public class AdminControllerIntegrationTest {
 		assertEquals(1, numAdds);
 	}
 
+	@Tag("user_story_19279")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotAccessAuditLogForOneFundingOpportunity_shouldReturn200() throws Exception {

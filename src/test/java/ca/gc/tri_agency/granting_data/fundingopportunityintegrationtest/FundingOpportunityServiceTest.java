@@ -53,6 +53,7 @@ public class FundingOpportunityServiceTest {
 		assertTrue(0 < foService.findFundingOpportunitiesByBusinessUnitId(1L).size());
 	}
 
+	@Tag("user_story_19279")
 	@WithMockUser(username = "admin", roles = "MDM ADMIN")
 	@Test
 	public void test_adminCanFindFundingOpportunityRevisionsById() {
@@ -83,16 +84,20 @@ public class FundingOpportunityServiceTest {
 		assertEquals(1, numAdds);
 	}
 
+	@Tag("user_story_19279")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotFindFundingOpportunityRevisionsById_shouldThrowException() {
 		assertThrows(AccessDeniedException.class, () -> foService.findFundingOpportunityRevisionsById(1L));
 	}
 
+	@Tag("user_story_19279")
 	@WithMockUser(username = "admin", roles = "MDM ADMIN")
 	@Test
 	public void test_adminCanFindAllFundingOpportunitiesRevisions() {
-		int numAdds = 0;
+		long numFOs = foRepo.count();
+		
+		long numAdds = 0;
 
 		List<String[]> foRevs = foService.findAllFundingOpportunitiesRevisions();
 		for (String[] strArr : foRevs) {
@@ -101,9 +106,10 @@ public class FundingOpportunityServiceTest {
 			}
 		}
 
-		assertTrue(numAdds >= 141);
+		assertEquals(numFOs, numAdds);
 	}
 
+	@Tag("user_story_19279")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotFindAllFundingOpportunitiesRevisions() {
