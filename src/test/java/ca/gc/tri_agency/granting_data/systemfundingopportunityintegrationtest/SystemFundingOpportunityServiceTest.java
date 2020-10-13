@@ -1,6 +1,10 @@
 package ca.gc.tri_agency.granting_data.systemfundingopportunityintegrationtest;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -99,6 +103,7 @@ public class SystemFundingOpportunityServiceTest {
 		assertThrows(DataRetrievalFailureException.class, () -> sfoService.unlinkSystemFundingOpportunity(1L, 100L));
 	}
 
+	@Tag("user_story_19301")
 	@WithMockUser(username = "admin", roles = "MDM ADMIN")
 	@Test
 	public void test_adminCanFindAllSystemFundingOpportunityRevisions() {
@@ -115,12 +120,14 @@ public class SystemFundingOpportunityServiceTest {
 		assertTrue(numAdds >= 10);
 	}
 
+	@Tag("user_story_19301")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
-	public void test_nonAdminCannotFindAllSystemFundingOpportunityRevisionsShouldThrowsException() {
+	public void test_nonAdminCannotFindAllSystemFundingOpportunityRevisions_shouldThrowsException() {
 		assertThrows(AccessDeniedException.class, () -> sfoService.findAllSystemFundingOpportunityRevisions());
 	}
 
+	@Tag("user_story_19301")
 	@WithMockUser(username = "admin", roles = "MDM ADMIN")
 	@Test
 	public void test_adminCanFindSystemFundingOpportunityRevisionById() {
@@ -137,10 +144,25 @@ public class SystemFundingOpportunityServiceTest {
 		assertEquals(1, numAdds);
 	}
 
+	@Tag("user_story_19301")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
-	public void test_nonAdminCannotFindSystemFundingOpportunityRevisionByIdShouldThrowException() {
+	public void test_nonAdminCannotFindSystemFundingOpportunityRevisionById_shouldThrowException() {
 		assertThrows(AccessDeniedException.class, () -> sfoService.findSystemFundingOpportunityRevisionById(1L));
+	}
+
+	@Tag("user_story_19301")
+	@WithMockUser(roles = "MDM ADMIN")
+	@Test
+	public void test_auditLogTracksChangesToSFOs() {
+		int numRevisions = sfoService.findAllSystemFundingOpportunityRevisions().size();
+
+		SystemFundingOpportunity sfo = sfoService.findSystemFundingOpportunityById(5L);
+		sfo.setNameEn(RandomStringUtils.random(25));
+		
+		sfoService.saveSystemFundingOpportunity(sfo);
+
+		assertEquals(numRevisions + 1, sfoService.findAllSystemFundingOpportunityRevisions().size());
 	}
 
 	@Tag("user_story_14591")
