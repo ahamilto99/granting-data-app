@@ -87,19 +87,18 @@ public class MemberRoleController {
 	public String deleteMemberRoleGet(@RequestParam("id") Long mrId, Model model) {
 		model.addAttribute("mrProjection", mrService.findMemberRoleBusinessUnitAcronymRoleName(mrId));
 		
-		return "admin/deleteMR";
+		return "admin/deleteMemberRole";
 	}
 	
-	@GetMapping(value = "/browse/viewBU", params = "mrId")
-	public String deleteMemberRole(@RequestParam("mrId") Long mrId, RedirectAttributes redirectAttributes) {
+	@PostMapping(value = "/admin/deleteMR")
+	public String deleteMemberRolePost(@RequestParam("id") Long mrId, RedirectAttributes redirectAttributes) {
 		MemberRole mr = mrService.findMemberRoleById(mrId);
 		Long buId = mr.getBusinessUnit().getId();
-		String mrLogin = mr.getUserLogin();
 
 		mrService.deleteMemberRole(mrId);
 
 		String actionMsg = msgSrc.getMessage("h.deletedMR", null, LocaleContextHolder.getLocale());
-		redirectAttributes.addFlashAttribute("actionMsg", actionMsg + mrLogin);
+		redirectAttributes.addFlashAttribute("actionMsg", actionMsg);
 
 		return "redirect:/browse/viewBU?id=" + buId;
 	}
