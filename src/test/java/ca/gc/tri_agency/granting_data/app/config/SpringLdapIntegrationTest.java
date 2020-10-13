@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -57,6 +58,9 @@ public class SpringLdapIntegrationTest {
 		assertEquals(0, adUserService.searchADUsers("ZZZZZ").size());
 	}
 
+	@Disabled("This test no longer works because the embedded LDAP servers map the user's login to the uid attribute, whereas in AD,"
+			+ " the user's login maps to the sAMAccountName attribute. If we do use our AD servers for testing, then every test in this"
+			+ " class will have to be rewritten.")
 	@Test
 	public void testFindDnByUserLogin() {
 		// NSERC ADUser

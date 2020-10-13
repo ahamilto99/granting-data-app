@@ -64,34 +64,40 @@
 						id="viewEdiLink" class="btn btn-primary" th:text="#{link.buEdiData}"></a>
 				</div>
 
-				<div sec:authorize="hasRole('MDM ADMIN')" class="form-group">
-					<h3 th:text="#{h.auditLog}"></h3>
+				<div sec:authorize="hasRole('MDM ADMIN')" class="expd-clps-div">
+					<span th:text="#{h.auditLog}"></span>
+					<button id="expandCollapseAuditTableBtn" class="btn-xs expd-clps-btn" th:title="#{msg.expandCollapse(#{h.auditLog})}"
+						onclick="expandCollapseTable('auditLogTable', 'expandCollapseAuditTableBtn')">+</button>
 				</div>
 
-				<table sec:authorize="hasRole('MDM ADMIN')" id="auditLogTable" class="wb-tables table table-striped table-hover dataTable" aria-live="polite">
-					<thead>
-						<tr>
-							<th th:text="#{th.user}" />
-							<th th:text="#{th.type}" />
-							<th th:text="#{form.nameEn}" />
-							<th th:text="#{form.nameFr}" />
-							<th th:text="#{form.acronymEn}" />
-							<th th:text="#{form.acronymFr}" />
-							<th th:text="#{th.date}" />
-						</tr>
-					</thead>
-					<tbody>
-						<tr th:each="revision : ${revisionList}">
-							<td th:text="${revision[1]}" />
-							<td th:text="${revision[2]}" />  
-							<td th:text="${revision[3]}" />
-							<td th:text="${revision[4]}" />
-							<td th:text="${revision[5]}" />
-							<td th:text="${revision[6]}" />
-							<td th:text="${revision[7]}" />
-						</tr>
-					</tbody>
-				</table>
+				<div id="auditLogTable" hidden="true">
+					<table sec:authorize="hasRole('MDM ADMIN')"
+						class="wb-tables table table-striped table-hover dataTable"
+						aria-live="polite">
+						<thead>
+							<tr>
+								<th th:text="#{th.user}" />
+								<th th:text="#{th.type}" />
+								<th th:text="#{form.nameEn}" />
+								<th th:text="#{form.nameFr}" />
+								<th th:text="#{form.acronymEn}" />
+								<th th:text="#{form.acronymFr}" />
+								<th th:text="#{th.date}" />
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="revision : ${revisionList}">
+								<td th:text="${revision[1]}" />
+								<td th:text="${revision[2]}" />
+								<td th:text="${revision[3]}" />
+								<td th:text="${revision[4]}" />
+								<td th:text="${revision[5]}" />
+								<td th:text="${revision[6]}" />
+								<td th:text="${revision[7]}" />
+							</tr>
+						</tbody>
+					</table>
+				</div>
 
 				<div class="form-group">
 					<h3 th:text="#{h.memberRoles}"></h3>
@@ -135,6 +141,8 @@
 	</main>
 
 	<footer th:replace="fragments/general :: footer(~{})"></footer>
+
+	<script type="text/javascript" th:src="@{/js/custom.js}"></script>
 
 </body>
 </html>

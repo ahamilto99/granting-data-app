@@ -23,6 +23,8 @@ public class CustomAuthoritiesMapper implements GrantedAuthoritiesMapper {
 			// check if user is a member of app admin group
 			if (authority.getAuthority().equals("DEV_APP_CRM")) { // Change "DEV_APP_CRM" to actual admin group
 				mapped.add(mapAuthority("MDM ADMIN"));
+			} else {
+				mapped.add(mapAuthority(authority.getAuthority().toUpperCase()));
 			}
 		}
 		// Add default authority if applicable

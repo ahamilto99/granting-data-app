@@ -17,10 +17,14 @@
 		<div class="panel-body">
 
 			<div th:if="${param.error}" th:text="#{err.invalidLogin}"></div>
+			
 			<div th:if="${param.logout}" th:text="#{msg.loggedOut}"></div>
+			
+			<div th:if="${logout}" th:text="#{msg.loggedOut}"></div>
+			
 			<form th:action="@{/login}" method="post">
 				<div>
-					<label th:utext="#{label.username}" style="width: 100px;"> </label><input type="text" name="username" />
+					<label th:utext="#{label.username}" style="width: 100px;"> </label><input type="text" name="username" autofocus/>
 				</div>
 				<div>
 					<label th:utext="#{label.password}" style="width: 100px;"> </label><input type="password" name="password" />

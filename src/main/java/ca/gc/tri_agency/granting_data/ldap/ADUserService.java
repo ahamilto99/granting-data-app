@@ -77,13 +77,13 @@ public class ADUserService {
 
 	public String findDnByADUserLogin(String userLogin) {
 		String dn = null;
-		LdapQuery findByUidQuery = LdapQueryBuilder.query().countLimit(1).where("objectclass").is("person").and("uid")
-				.is(userLogin);
+		LdapQuery findByUidQuery = LdapQueryBuilder.query().countLimit(1).where("objectclass").is("person")
+				.and("sAMAccountName").is(userLogin);
 
 		try {
 			dn = ldapTemplateNSERC.findOne(findByUidQuery, ADUser.class).getDn().toString();
 		} catch (EmptyResultDataAccessException erdae) {
-			LOG.info("No NSERC user has uid=" + userLogin);
+			LOG.info("No NSERC user has sAMAccountName=" + userLogin);
 
 		}
 
@@ -91,7 +91,7 @@ public class ADUserService {
 			try {
 				dn = ldapTemplateSSHRC.findOne(findByUidQuery, ADUser.class).getDn().toString();
 			} catch (EmptyResultDataAccessException erdae) {
-				LOG.info("No SSHRC user has uid=" + userLogin);
+				LOG.info("No SSHRC user has sAMAccountName=" + userLogin);
 			}
 		}
 
@@ -101,7 +101,7 @@ public class ADUserService {
 	public List<ADUser> searchADUsers(String searchStr) {
 		searchStr = "*" + searchStr + "*";
 		LdapQuery searchQuery = LdapQueryBuilder.query().countLimit(25).where("objectclass").is("person").and(LdapQueryBuilder
-				.query().where("uid").like(searchStr).or("cn").like(searchStr).or("sn").like(searchStr));
+				.query().where("sAMAccountName").like(searchStr).or("cn").like(searchStr).or("sn").like(searchStr));
 
 		List<ADUser> adUsers = ldapTemplateNSERC.find(searchQuery, ADUser.class);
 		adUsers.addAll(ldapTemplateSSHRC.find(searchQuery, ADUser.class));

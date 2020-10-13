@@ -49,20 +49,44 @@ public class WebSecurityConfig {
 	private String ldapUserDnPatternSSHRC;
 
 	@Bean
+	@Profile("dev")
 	public LdapContextSource contextSourceNSERC() {
 		LdapContextSource contextSource = new LdapContextSource();
 		contextSource.setUrl(ldapUrlNSERC);
 		contextSource.setBase(ldapBaseDnNSERC);
-//		contextSource.setAnonymousReadOnly(true);
+		contextSource.setUserDn("CN=MDMService,CN=Managed Service Accounts,DC=nserc,DC=ca");
+		contextSource.setPassword("Password1");
+		return contextSource;
+	}
+	
+	@Bean(name = "contextSourceNSERC")
+	@Profile({ "local", "test"})
+	public LdapContextSource contextSourceNSERCLocalAndTest() {
+		LdapContextSource contextSource = new LdapContextSource();
+		contextSource.setUrl(ldapUrlNSERC);
+		contextSource.setBase(ldapBaseDnNSERC);
+		contextSource.setAnonymousReadOnly(true);
 		return contextSource;
 	}
 
 	@Bean
+	@Profile("dev")
 	public LdapContextSource contextSourceSSHRC() {
 		LdapContextSource contextSource = new LdapContextSource();
 		contextSource.setUrl(ldapUrlSSHRC);
 		contextSource.setBase(ldapBaseDnSSHRC);
-//		contextSource.setAnonymousReadOnly(true);
+		contextSource.setUserDn("CN=MDMService,CN=Managed Service Accounts,DC=nserc,DC=ca");
+		contextSource.setPassword("Password1");
+		return contextSource;
+	}
+	
+	@Bean(name = "contextSourceSSHRC")
+	@Profile({ "local", "test" })
+	public LdapContextSource contextSourceSSHRCLocalAndTest() {
+		LdapContextSource contextSource = new LdapContextSource();
+		contextSource.setUrl(ldapUrlSSHRC);
+		contextSource.setBase(ldapBaseDnSSHRC);
+		contextSource.setAnonymousReadOnly(true);
 		return contextSource;
 	}
 
@@ -83,12 +107,10 @@ public class WebSecurityConfig {
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 		if (ldapUrlNSERC.contains("localhost")) {
-			auth.ldapAuthentication().userDnPatterns(ldapUserDnPatternNSERC).groupSearchBase(ldapGroupSearchBase)
-					.contextSource().url(ldapUrlNSERC + ldapBaseDnNSERC).and().passwordCompare()
-					.passwordAttribute("userPassword");
-			auth.ldapAuthentication().userDnPatterns(ldapUserDnPatternSSHRC).groupSearchBase(ldapGroupSearchBase)
-					.contextSource().url(ldapUrlSSHRC + ldapBaseDnSSHRC).and().passwordCompare()
-					.passwordAttribute("userPassword");
+			auth.ldapAuthentication().userDnPatterns(ldapUserDnPatternNSERC).groupSearchBase(ldapGroupSearchBase).contextSource()
+					.url(ldapUrlNSERC + ldapBaseDnNSERC).and().passwordCompare().passwordAttribute("userPassword");
+			auth.ldapAuthentication().userDnPatterns(ldapUserDnPatternSSHRC).groupSearchBase(ldapGroupSearchBase).contextSource()
+					.url(ldapUrlSSHRC + ldapBaseDnSSHRC).and().passwordCompare().passwordAttribute("userPassword");
 		} else {
 			auth.authenticationProvider(activeDirectoryLdapAuthenticationProviderNSERC());
 			auth.authenticationProvider(activeDirectoryLdapAuthenticationProviderSSHRC());
@@ -116,9 +138,9 @@ public class WebSecurityConfig {
 					.antMatchers("/", "/home", "/webjars/**", "/css/**", "/images/**", "/js/**", "/browse/**",
 							"/_WET_4-0/**")
 					.permitAll().and().authorizeRequests().antMatchers("/entities/**", "/reports/**")
-					.hasAnyRole("NSERC_USER", "SSHRC_USER", "AGENCY_USER").anyRequest().authenticated().and()
-					.formLogin().loginPage("/login").permitAll().and().logout().permitAll().and()
-					.exceptionHandling().accessDeniedPage("/exception/forbidden-by-role");
+					.hasAnyRole("NSERC_USER", "SSHRC_USER", "AGENCY_USER").anyRequest().authenticated().and().formLogin()
+					.loginPage("/login").permitAll().and().exceptionHandling()
+					.accessDeniedPage("/exception/forbidden-by-role");
 		}
 
 	}
@@ -134,16 +156,16 @@ public class WebSecurityConfig {
 					.antMatchers("/", "/home", "/webjars/**", "/css/**", "/images/**", "/js/**", "/browse/**",
 							"/_WET_4-0/**")
 					.permitAll().and().authorizeRequests().antMatchers("/entities/**", "/reports/**")
-					.hasAnyRole("NSERC_USER", "SSHRC_USER", "AGENCY_USER").anyRequest().authenticated().and()
-					.formLogin().loginPage("/login").permitAll().and().logout().permitAll().and()
-					.exceptionHandling().accessDeniedPage("/exception/forbidden-by-role").and().headers()
-					.frameOptions().disable().and().csrf().disable();
+					.hasAnyRole("NSERC_USER", "SSHRC_USER", "AGENCY_USER").anyRequest().authenticated().and().formLogin()
+					.loginPage("/login").permitAll().and().logout().logoutUrl("/logout").permitAll().and().exceptionHandling()
+					.accessDeniedPage("/exception/forbidden-by-role").and().headers().frameOptions().disable().and().csrf()
+					.disable();
 		}
 	}
 
 	private AuthenticationProvider activeDirectoryLdapAuthenticationProviderSSHRC() {
-		ActiveDirectoryLdapAuthenticationProvider nsercProvider = new ActiveDirectoryLdapAuthenticationProvider(
-				ldapDomainNSERC, ldapUrlNSERC, ldapBaseDnNSERC);
+		ActiveDirectoryLdapAuthenticationProvider nsercProvider = new ActiveDirectoryLdapAuthenticationProvider(ldapDomainNSERC,
+				ldapUrlNSERC, ldapBaseDnNSERC);
 		CustomAuthoritiesMapper authMapper = new CustomAuthoritiesMapper();
 		authMapper.setDefaultAuthority("NSERC_USER");
 		nsercProvider.setConvertSubErrorCodesToExceptions(true);
@@ -154,8 +176,8 @@ public class WebSecurityConfig {
 	}
 
 	private AuthenticationProvider activeDirectoryLdapAuthenticationProviderNSERC() {
-		ActiveDirectoryLdapAuthenticationProvider sshrcProvider = new ActiveDirectoryLdapAuthenticationProvider(
-				ldapDomainSSHRC, ldapUrlSSHRC, ldapBaseDnSSHRC);
+		ActiveDirectoryLdapAuthenticationProvider sshrcProvider = new ActiveDirectoryLdapAuthenticationProvider(ldapDomainSSHRC,
+				ldapUrlSSHRC, ldapBaseDnSSHRC);
 		CustomAuthoritiesMapper authMapper = new CustomAuthoritiesMapper();
 		authMapper.setDefaultAuthority("SSHRC_USER");
 		sshrcProvider.setConvertSubErrorCodesToExceptions(true);
