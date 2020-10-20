@@ -97,6 +97,7 @@ public class MemberRoleServiceTest {
 		assertThrows(AccessDeniedException.class, () -> mrService.deleteMemberRole(2L));
 	}
 
+	@Tag("user_story_19290")
 	@WithMockUser(username = "admin", roles = "MDM ADMIN")
 	@Test
 	public void test_adminCanFindMemberRoleRevisionsById() {
@@ -118,32 +119,57 @@ public class MemberRoleServiceTest {
 		assertThrows(DataRetrievalFailureException.class, () -> mrService.findMemberRoleRevisionsById(Long.MAX_VALUE));
 	}
 
+	@Tag("user_story_19290")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotFindMemberRoleRevisionsById_shouldThrowAccessDeniedException() {
 		assertThrows(AccessDeniedException.class, () -> mrService.findMemberRoleRevisionsById(1L));
 	}
 
+	@Tag("user_story_19290")
 	@WithMockUser(username = "admin", roles = "MDM ADMIN")
 	@Test
 	public void test_adminCanFindAllMemberRoleRevisions() {
+		long numMRs = mrRepo.count();
+		
 		List<String[]> auditedArrList = mrService.findAllMemberRoleRevisions();
 		assertNotNull(auditedArrList);
 
-		int numAdds = 0;
+		long numAdds = 0;
 		for (String[] strArr : auditedArrList) {
 			if (strArr[2].equals("ADD")) {
 				++numAdds;
 			}
 		}
+		
+		long numDels = 0;
+		for (String[] strArr : auditedArrList) {
+			if (strArr[2].equals("DEL")) {
+				++numDels;
+			}
+		}
 
-		assertTrue(numAdds >= 3);
+		assertEquals(numMRs, numAdds - numDels);
 	}
 
+	@Tag("user_story_19290")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotFindAllMemberRoleRevisions_shouldThrowAccessDeniedException() {
 		assertThrows(AccessDeniedException.class, () -> mrService.findAllMemberRoleRevisions());
+	}
+	
+	@Tag("user_story_19290")
+	@WithMockUser(roles = "MDM ADMIN")
+	@Test
+	public void test_auditLogTracksRevisionsToMRs() {
+		int numRevisions = mrService.findAllMemberRoleRevisions().size();
+		
+		MemberRole mr = mrService.findMemberRoleById(8L);
+		mr.setEdiAuthorized(true);
+		mrService.saveMemberRole(mr);
+		
+		assertEquals(numRevisions + 1, mrService.findAllMemberRoleRevisions().size());
 	}
 
 	@Tag("user_story_19147")
