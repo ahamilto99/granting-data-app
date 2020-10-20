@@ -12,4 +12,15 @@ public interface MemberRoleProjection {
 	
 	Long getBusinessUnitId();
 	
+	String getBusinessUnitNameEn();
+	
+	String getBusinessUnitNameFr();
+	
+	String getBusinessUnitAcronymEn();
+	
+	String getBusinessUnitAcronymFr();
+	
+	String getRoleEn();
+
+	String getRoleFr();
 }

@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -22,6 +23,7 @@ import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
 import ca.gc.tri_agency.granting_data.model.BusinessUnit;
 import ca.gc.tri_agency.granting_data.model.MemberRole;
 import ca.gc.tri_agency.granting_data.model.Role;
+import ca.gc.tri_agency.granting_data.model.projection.MemberRoleProjection;
 import ca.gc.tri_agency.granting_data.repo.MemberRoleRepository;
 import ca.gc.tri_agency.granting_data.service.BusinessUnitService;
 import ca.gc.tri_agency.granting_data.service.MemberRoleService;
@@ -111,7 +113,7 @@ public class MemberRoleServiceTest {
 
 		assertEquals(startNumRevisions + 1, endNumRevisions);
 		assertEquals(revisedUserLogin, mrRevisions.get(endNumRevisions - 1)[3]);
-		
+
 		// verify that no result set is return for a non-existent MemberRole
 		assertThrows(DataRetrievalFailureException.class, () -> mrService.findMemberRoleRevisionsById(Long.MAX_VALUE));
 	}
@@ -161,6 +163,17 @@ public class MemberRoleServiceTest {
 	@Test
 	public void test_adminUserIsAlwaysEdiAuthorized() {
 		assertTrue(mrService.checkIfCurrentUserEdiAuthorized(1L));
+	}
+
+	@Tag("user_story_19193")
+	@WithAnonymousUser
+	@Test
+	public void test_findUserLoginBusinessUnitRole() {
+		MemberRoleProjection mrProjection = mrService.findMemberRoleBusinessUnitAcronymRoleName(3L);
+
+		assertEquals("rwi", mrProjection.getUserLogin());
+		assertEquals("Program Officer", mrProjection.getRoleEn());
+		assertEquals("MCT", mrProjection.getBusinessUnitAcronymEn());
 	}
 
 }

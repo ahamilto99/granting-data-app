@@ -122,8 +122,8 @@
 							<td th:text="${bu.getMemRoleEdiAuthorized()} ? #{msg.yes} : #{msg.no}" />
 							<td sec:authorize="hasRole('MDM ADMIN')"><a th:text="#{msg.view}" class="btn btn-primary"
 								th:href="@{/admin/auditLogMR(id=${bu.getMemRoleId()})}"></a></td>
-							<td sec:authorize="hasRole('MDM ADMIN')"><a th:text="#{form.delete}" class="btn btn-primary" th:id="deleteMemberRole"
-								th:href="@{/browse/viewBU(mrId=${bu.getMemRoleId()})}"></a></td>
+							<td sec:authorize="hasRole('MDM ADMIN')"><a th:text="#{form.delete}" class="btn btn-primary" th:id="deleteMemberRoleBtn"
+								th:href="@{/admin/deleteMR(id=${bu.getMemRoleId()})}"></a></td>
 						</tr>
 					</tbody>
 				</table>

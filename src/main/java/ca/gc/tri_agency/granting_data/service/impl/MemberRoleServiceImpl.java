@@ -130,4 +130,9 @@ public class MemberRoleServiceImpl implements MemberRoleService {
 		return mrRepo.findIfCanUpdateDeleteFC(SecurityUtils.getCurrentUsername(), fcId) != null;
 	}
 
+	@Override
+	public MemberRoleProjection findMemberRoleBusinessUnitAcronymRoleName(Long mrId) {
+		return mrRepo.findUserLoginBusinessUnitNameRoleName(mrId);
+	}
+
 }
