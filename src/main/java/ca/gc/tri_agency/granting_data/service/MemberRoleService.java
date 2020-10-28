@@ -3,6 +3,7 @@ package ca.gc.tri_agency.granting_data.service;
 import java.util.List;
 
 import ca.gc.tri_agency.granting_data.model.MemberRole;
+import ca.gc.tri_agency.granting_data.model.projection.MemberRoleProjection;
 
 public interface MemberRoleService {
 
@@ -27,5 +28,7 @@ public interface MemberRoleService {
 	boolean checkIfCurrentUserCanCreateFC(Long foId);
 
 	boolean checkIfCurrentUserCanUpdateDeleteFC(Long fcId);
+
+	MemberRoleProjection findMemberRoleBusinessUnitAcronymRoleName(Long mrId);
 	
 }

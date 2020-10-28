@@ -64,9 +64,6 @@ public class FundingCycleServiceImpl implements FundingCycleService {
 		Long foId = fc.getFundingOpportunity().getId();
 		Long fcId = fc.getId();
 
-		System.out.println("\n\n\n" + foId + "\n\n\n");
-		System.out.println("\n\n\n" + fcId + "\n\n\n");
-
 		if (fcId == null && !mrService.checkIfCurrentUserCanCreateFC(foId)) {
 			throw new AccessDeniedException(SecurityUtils.getCurrentUsername()
 					+ " does not have permission to create a FundingCycle for FundingOpportunty id=" + foId);

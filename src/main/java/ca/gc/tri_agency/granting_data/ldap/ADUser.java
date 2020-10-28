@@ -6,13 +6,13 @@ import org.springframework.ldap.odm.annotations.Attribute;
 import org.springframework.ldap.odm.annotations.Entry;
 import org.springframework.ldap.odm.annotations.Id;
 
-@Entry(objectClasses = { "top", "person", "organizationalPerson", "inetOrgPerson" })
+@Entry(objectClasses = { "person" })
 public final class ADUser {
 
 	@Id
 	private Name dn;
 
-	@Attribute(name = "uid", readonly = true)
+	@Attribute(name = "sAMAccountName", readonly = true)
 	private String userLogin;
 
 	@Attribute(name = "cn", readonly = true)

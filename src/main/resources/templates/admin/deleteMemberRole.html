@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<!--[if lt IE 9]><html class="no-js lt-ie9" lang="en" dir="ltr"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!--<![endif]-->
+
+<head th:replace="~{fragments/general.html :: common_header(~{::title},~{})}">
+<meta charset="utf-8">
+<title th:text="#{h.deleteMR}"></title>
+</head>
+<body id="deleteMemberRolePage" class="home" vocab="http://schema.org/" typeof="WebPage">
+	<div th:replace="~{fragments/general.html :: header_nav('home')}"></div>
+	<main role="main" property="mainContentOfPage" class="container">
+
+		<h1 th:text="#{h.deleteMR}"></h1>
+
+		<div th:replace="~{fragments/general.html :: profile_info('home')}"></div>
+
+		<div class="panel panel-default">
+
+			<div class="panel-body">
+
+				<p th:text="#{p.confirmDeleteMR(${#locale.language eq 'fr' ? mrProjection.getRoleFr() : mrProjection.getRoleEn()}, ${mrProjection.getUserLogin()}, 
+						${#locale.language eq 'fr' ? mrProjection.getBusinessUnitAcronymFr() : mrProjection.getBusinessUnitAcronymEn()})}"
+						style="font-size: 14pt; margin-bottom: 25px;"></p>
+						
+				<div>
+					
+					<form th:action="@{/admin/deleteMR(id=${mrProjection.getId()})}" method="post">
+					
+						<input type="submit" class="btn btn-primary" th:value="#{msg.delete}" role="button"/>
+						<a class="btn btn-link" th:href="@{/browse/viewBU(id=${mrProjection.getBusinessUnitId()})}" th:text="#{msg.cancel}"></a>
+						
+					</form>
+					
+				</div>			
+			
+			</div>
+
+			<div th:replace="fragments/general :: returnHome"></div>
+
+		</div>
+
+	</main>
+
+	<footer th:replace="fragments/general :: footer(~{})"></footer>
+
+</body>
+</html>

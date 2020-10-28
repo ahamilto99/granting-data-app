@@ -32,6 +32,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import ca.gc.tri_agency.granting_data.app.GrantingDataApp;
 import ca.gc.tri_agency.granting_data.repo.FundingOpportunityRepository;
+import ca.gc.tri_agency.granting_data.repo.MemberRoleRepository;
 
 @SpringBootTest(classes = GrantingDataApp.class)
 @ActiveProfiles("test")
@@ -39,8 +40,12 @@ public class AdminControllerIntegrationTest {
 
 	@Autowired
 	private WebApplicationContext context;
+	
 	@Autowired
 	private FundingOpportunityRepository foRepo;
+	
+	@Autowired
+	private MemberRoleRepository mrRepo;
 
 	private MockMvc mvc;
 
@@ -121,26 +126,34 @@ public class AdminControllerIntegrationTest {
 		mvc.perform(get("/admin/home").contentType(MediaType.APPLICATION_XHTML_XML)).andExpect(status().isOk());
 	}
 
+	@Tag("user_story_19290")
 	@WithMockUser(username = "admin", roles = { "MDM ADMIN" })
 	@Test
 	public void test_adminCanAccessAuditLogForAllMemberRoles_shouldSucceedWith200() throws Exception {
 		String response = mvc.perform(MockMvcRequestBuilders.get("/admin/auditLogMR"))
 				.andExpect(MockMvcResultMatchers.status().isOk()).andReturn().getResponse().getContentAsString();
 
-		int numAdds = 0;
-
-		Pattern regex = Pattern.compile("<td>ADD</td>");
-		Matcher regexMatcher = regex.matcher(response);
-		while (regexMatcher.find()) {
+		long numAdds = 0;
+		Pattern addsRegex = Pattern.compile("<td>ADD</td>");
+		Matcher addsMatcher = addsRegex.matcher(response);
+		while (addsMatcher.find()) {
 			++numAdds;
+		}
+		
+		long numDels = 0;
+		Pattern delsRegex = Pattern.compile("<td>DEL</td>");
+		Matcher delsMatcher = delsRegex.matcher(response);
+		while (delsMatcher.find()) {
+			++numDels;
 		}
 
 		assertTrue(response.contains("id=\"memberRoleAuditLogPage\""));
-		assertTrue(response.contains("Audit Log - Member Roles"));
+		assertTrue(response.contains("<title>Audit Log - Member Roles</title>"));
 		assertTrue(response.contains("href=\"/admin/auditLogs\""));
-		assertTrue(numAdds >= 3);
+		assertEquals(mrRepo.count(), numAdds - numDels);
 	}
 
+	@Tag("user_story_19290")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotAccessAuditLogForAllMemberRoles_shouldReturn403() throws Exception {
@@ -149,6 +162,7 @@ public class AdminControllerIntegrationTest {
 						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
 	}
 
+	@Tag("user_story_19290")
 	@WithMockUser(username = "admin", roles = "MDM ADMIN")
 	@Test
 	public void test_adminCanAccessAuditLogForOneMemberRole_shouldSucceedWith200() throws Exception {
@@ -164,11 +178,12 @@ public class AdminControllerIntegrationTest {
 		}
 
 		assertTrue(response.contains("id=\"memberRoleAuditLogPage\""));
-		assertTrue(response.contains("Audit Log - Member Role"));
+		assertTrue(response.contains("<title>Audit Log - Member Role</title>"));
 		assertTrue(response.contains("href=\"/browse/viewBU?id=1\""));
 		assertEquals(1, numAdds);
 	}
 
+	@Tag("user_story_19290")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotAccessAuditLogForOneMemberRole_shouldReturn403() throws Exception {
@@ -176,13 +191,16 @@ public class AdminControllerIntegrationTest {
 				MockMvcResultMatchers.content().string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
 	}
 
+	@Tag("user_story_19279")
 	@WithMockUser(username = "admin", roles = "MDM ADMIN")
 	@Test
 	public void test_adminCanAccessAuditLogForAllFundingOpportunites_shouldSucceedWith200() throws Exception {
+		long numFOs = foRepo.count();
+
 		String response = mvc.perform(MockMvcRequestBuilders.get("/admin/auditLogFO"))
 				.andExpect(MockMvcResultMatchers.status().isOk()).andReturn().getResponse().getContentAsString();
 
-		int numAdds = 0;
+		long numAdds = 0;
 
 		Pattern regex = Pattern.compile("<td>ADD</td>");
 		Matcher regexMatcher = regex.matcher(response);
@@ -191,9 +209,10 @@ public class AdminControllerIntegrationTest {
 		}
 
 		assertTrue(response.contains("id=\"fundingOpportunityAuditLogPage\""));
-		assertTrue(numAdds >= 141);
+		assertEquals(numFOs, numAdds);
 	}
 
+	@Tag("user_story_19279")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotAccessAuditLogForAllFundingOpportunities_shouldReturn403() throws Exception {
@@ -202,6 +221,7 @@ public class AdminControllerIntegrationTest {
 						.string(Matchers.containsString("id=\"forbiddenByRoleErrorPage\"")));
 	}
 
+	@Tag("user_story_19279")
 	@WithMockUser(username = "admin", roles = "MDM ADMIN")
 	@Test
 	public void test_adminCanAccessAuditLogForOneFundingOpportunity_shouldSucceedWith200() throws Exception {
@@ -220,6 +240,7 @@ public class AdminControllerIntegrationTest {
 		assertEquals(1, numAdds);
 	}
 
+	@Tag("user_story_19279")
 	@WithMockUser(roles = { "NSERC_USER", "SSHRC_USER", "AGENCY_USER" })
 	@Test
 	public void test_nonAdminCannotAccessAuditLogForOneFundingOpportunity_shouldReturn200() throws Exception {

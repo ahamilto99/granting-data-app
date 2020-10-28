@@ -35,5 +35,13 @@ public interface MemberRoleRepository extends JpaRepository<MemberRole, Long> { 
 			+ " JOIN FundingCycle fc ON fo.id = fc.fundingOpportunity.id"
 			+ " WHERE mr.role.id = 1 AND mr.userLogin = :login AND fc.id = :fcId")
 	MemberRoleProjection findIfCanUpdateDeleteFC(@Param("login") String userLogin, @Param("fcId") Long fcId);
+	
+	@Query("SELECT mr.id AS id, mr.userLogin AS userLogin, bu.id AS businessUnitId, bu.acronymEn AS businessUnitAcronymEn,"
+			+ " bu.acronymFr AS businessUnitAcronymFr, r.nameEn AS roleEn, r.nameFr AS roleFr"
+			+ " FROM MemberRole mr"
+			+ " JOIN BusinessUnit bu ON mr.businessUnit.id = bu.id"
+			+ " JOIN Role r ON mr.role.id = r.id"
+			+ " WHERE mr.id = ?1")
+	MemberRoleProjection findUserLoginBusinessUnitNameRoleName(@Param("mrId") Long mrId);
 
 } // @formatter:on
